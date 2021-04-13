@@ -1,0 +1,166 @@
+#ifndef NERTC_NODE_ENGINE_H
+#define NERTC_NODE_ENGINE_H
+
+#include "nertc_engine_ex.h"
+#include "nertc_audio_device_manager.h"
+#include "nertc_video_device_manager.h"
+#include "nertc_engine_ex.h"
+#include <node.h>
+#include <node_object_wrap.h>
+#include "../shared/sdk_helper/nim_node_helper.h"
+#include "nertc_node_engine_event_handler.h"
+
+namespace nertc_node
+{
+class NertcNodeEngine : public node::ObjectWrap
+{
+private:
+    /* data */
+public:
+    static void New(const FunctionCallbackInfo<Value> &args);
+    static void InitModule(Local<Object> &module);
+
+public:
+    NIM_SDK_NODE_API(initialize);
+    NIM_SDK_NODE_API(release);
+    NIM_SDK_NODE_API(setChannelProfile);
+    NIM_SDK_NODE_API(joinChannel);
+    NIM_SDK_NODE_API(leaveChannel);
+    NIM_SDK_NODE_API(enableLocalAudio);
+    NIM_SDK_NODE_API(enableLocalVideo);
+    NIM_SDK_NODE_API(subscribeRemoteVideoStream);
+    NIM_SDK_NODE_API(setupVideoCanvas);
+    NIM_SDK_NODE_API(onVideoFrame);
+    NIM_SDK_NODE_API(onEvent);
+
+    //3.9
+    NIM_SDK_NODE_API(setClientRole);
+    NIM_SDK_NODE_API(setupSubStreamVideoCanvas);
+    NIM_SDK_NODE_API(subscribeRemoteVideoSubStream);
+    NIM_SDK_NODE_API(setMixedAudioFrameParameters);
+    NIM_SDK_NODE_API(setExternalAudioSource);
+    NIM_SDK_NODE_API(pushExternalAudioFrame);
+
+    //ex
+    NIM_SDK_NODE_API(getConnectionState);
+    NIM_SDK_NODE_API(muteLocalAudioStream);
+    NIM_SDK_NODE_API(setAudioProfile);
+    NIM_SDK_NODE_API(subscribeRemoteAudioStream);
+    NIM_SDK_NODE_API(setVideoConfig);
+    NIM_SDK_NODE_API(enableDualStreamMode);
+    NIM_SDK_NODE_API(setLocalVideoMirrorMode);
+    NIM_SDK_NODE_API(startVideoPreview);
+    NIM_SDK_NODE_API(stopVideoPreview);
+    NIM_SDK_NODE_API(muteLocalVideoStream);
+    NIM_SDK_NODE_API(setParameters);
+    NIM_SDK_NODE_API(setRecordingAudioFrameParameters);
+    NIM_SDK_NODE_API(setPlaybackAudioFrameParameters);
+    NIM_SDK_NODE_API(setAudioFrameObserver);
+    NIM_SDK_NODE_API(startAudioDump);
+    NIM_SDK_NODE_API(stopAudioDump);
+    NIM_SDK_NODE_API(startAudioMixing);
+    NIM_SDK_NODE_API(stopAudioMixing);
+    NIM_SDK_NODE_API(pauseAudioMixing);
+    NIM_SDK_NODE_API(resumeAudioMixing);
+    NIM_SDK_NODE_API(setAudioMixingSendVolume);
+    NIM_SDK_NODE_API(getAudioMixingSendVolume);
+    NIM_SDK_NODE_API(setAudioMixingPlaybackVolume);
+    NIM_SDK_NODE_API(getAudioMixingPlaybackVolume);
+    NIM_SDK_NODE_API(getAudioMixingDuration);
+    NIM_SDK_NODE_API(getAudioMixingCurrentPosition);
+    NIM_SDK_NODE_API(setAudioMixingPosition);
+    NIM_SDK_NODE_API(playEffect);
+    NIM_SDK_NODE_API(stopEffect);
+    NIM_SDK_NODE_API(stopAllEffects);
+    NIM_SDK_NODE_API(pauseEffect);
+    NIM_SDK_NODE_API(resumeEffect);
+    NIM_SDK_NODE_API(pauseAllEffects);
+    NIM_SDK_NODE_API(resumeAllEffects);
+    NIM_SDK_NODE_API(setEffectSendVolume);
+    NIM_SDK_NODE_API(getEffectSendVolume);
+    NIM_SDK_NODE_API(setEffectPlaybackVolume);
+    NIM_SDK_NODE_API(getEffectPlaybackVolume);
+    NIM_SDK_NODE_API(enableEarback);
+    NIM_SDK_NODE_API(setEarbackVolume);
+    NIM_SDK_NODE_API(onStatsObserver);
+    NIM_SDK_NODE_API(enableAudioVolumeIndication);
+    NIM_SDK_NODE_API(startScreenCaptureByScreenRect);
+    NIM_SDK_NODE_API(startScreenCaptureByDisplayId);
+    NIM_SDK_NODE_API(startScreenCaptureByWindowId);
+    NIM_SDK_NODE_API(updateScreenCaptureRegion);
+    NIM_SDK_NODE_API(stopScreenCapture);
+    NIM_SDK_NODE_API(pauseScreenCapture);
+    NIM_SDK_NODE_API(resumeScreenCapture);
+    NIM_SDK_NODE_API(setExternalVideoSource);
+    NIM_SDK_NODE_API(pushExternalVideoFrame);
+    NIM_SDK_NODE_API(getVersion);
+    NIM_SDK_NODE_API(getErrorDescription);
+    NIM_SDK_NODE_API(uploadSdkInfo);
+    NIM_SDK_NODE_API(addLiveStreamTask);
+    NIM_SDK_NODE_API(updateLiveStreamTask);
+    NIM_SDK_NODE_API(removeLiveStreamTask);
+
+    //adm
+    NIM_SDK_NODE_API(enumerateRecordDevices);
+    NIM_SDK_NODE_API(setRecordDevice);
+    NIM_SDK_NODE_API(getRecordDevice);
+    NIM_SDK_NODE_API(enumeratePlayoutDevices);
+    NIM_SDK_NODE_API(setPlayoutDevice);
+    NIM_SDK_NODE_API(getPlayoutDevice);
+    NIM_SDK_NODE_API(setRecordDeviceVolume);
+    NIM_SDK_NODE_API(getRecordDeviceVolume);
+    NIM_SDK_NODE_API(setPlayoutDeviceVolume);
+    NIM_SDK_NODE_API(getPlayoutDeviceVolume);
+    NIM_SDK_NODE_API(setPlayoutDeviceMute);
+    NIM_SDK_NODE_API(getPlayoutDeviceMute);
+    NIM_SDK_NODE_API(setRecordDeviceMute);
+    NIM_SDK_NODE_API(getRecordDeviceMute);
+    NIM_SDK_NODE_API(adjustRecordingSignalVolume);
+    NIM_SDK_NODE_API(adjustPlaybackSignalVolume);
+    NIM_SDK_NODE_API(startRecordDeviceTest);
+    NIM_SDK_NODE_API(stopRecordDeviceTest);
+    NIM_SDK_NODE_API(startPlayoutDeviceTest);
+    NIM_SDK_NODE_API(stopPlayoutDeviceTest);
+    NIM_SDK_NODE_API(startAudioDeviceLoopbackTest);
+    NIM_SDK_NODE_API(stopAudioDeviceLoopbackTest);
+
+    //vdm
+    NIM_SDK_NODE_API(enumerateCaptureDevices);
+    NIM_SDK_NODE_API(setDevice);
+    NIM_SDK_NODE_API(getDevice);
+
+    //
+    NIM_SDK_NODE_API(enumerateWindows);
+
+
+protected:
+    NertcNodeEngine(Isolate *isolate);
+    ~NertcNodeEngine();
+
+private:
+    DECLARE_CLASS;
+    nertc::IRtcEngineEx *rtc_engine_ = nullptr;
+    nertc::IAudioDeviceManager *_adm = nullptr;
+    nertc::IVideoDeviceManager *_vdm = nullptr;
+    Isolate *isolate_;
+};
+
+#define napi_get_native_this(args, native) \
+            native = ObjectWrap::Unwrap<NertcNodeEngine>(args.Holder());
+
+#define CHECK_NATIVE_THIS(engine) \
+        if(!engine->rtc_engine_) { \
+            break;\
+        }
+
+#define CHECK_NATIVE_ADM_THIS(engine) \
+        if(!engine->rtc_engine_ || !engine->_adm) { \
+            break;\
+        }
+
+#define CHECK_NATIVE_VDM_THIS(engine) \
+        if(!engine->rtc_engine_ || !engine->_vdm) { \
+            break;\
+        }
+}
+#endif //NERTC_NODE_ENGINE_H

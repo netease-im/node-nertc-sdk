@@ -1,0 +1,30 @@
+{
+  "name": "nertc-sdk",
+  "version": "1.0.0",
+  "description": "node-nertc-sdk",
+  "main": "index.js",
+  "dependencies": {
+    "lodash.isequal": "^4.5.0",
+    "nodejs": "^0.0.0",
+    "rimraf": "^3.0.0",
+    "yuv-buffer": "^1.0.0",
+    "yuv-canvas": "^1.2.6"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.22",
+    "electron-rebuild": "^2.3.5",
+    "node-gyp": "^3.8.0",
+    "typescript": "^3.7.4"
+  },
+  "scripts": {
+    "build:dts": "rimraf ./types && tsc -p config_dts.json",
+    "prebuild:ts": "npm run build:dts",
+    "build:ts": "rimraf ./js && tsc -p config_ts.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://g.hz.netease.com/nim-pc/california/node-sdk"
+  },
+  "author": "oleg",
+  "license": "ISC"
+}
