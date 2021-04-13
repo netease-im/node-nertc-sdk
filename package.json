@@ -1,6 +1,6 @@
 {
   "name": "nertc-sdk",
-  "version": "3.9.0-rc-12",
+  "version": "3.9.0-rc-13",
   "description": "node-nertc-sdk",
   "main": "index.js",
   "dependencies": {
