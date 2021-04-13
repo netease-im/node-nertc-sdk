@@ -54,13 +54,6 @@
         [
           'OS=="win"',
           {
-            'copies': [{
-              'destination': '<(PRODUCT_DIR)',
-              'files': [
-                './nertc_sdk/bin/windows/x86/nertc_sdk.dll',
-                './nertc_sdk/bin/windows/x86/SDL2.dll'
-              ]
-            }],
             'defines': [
               'WIN32',
               'WIN32_LEAN_AND_MEAN'
@@ -135,13 +128,6 @@
         [
           'OS=="mac"',
           {
-            'copies': [{
-              'destination': '<(PRODUCT_DIR)',
-              'files': [
-                './nertc_sdk/bin/darwin/nertc_sdk_Mac.framework',
-                './nertc_sdk/bin/darwin/NEFundation_Mac.framework'
-              ]
-            }],
             'defines': [
             ],
             'mac_framework_dirs': [
