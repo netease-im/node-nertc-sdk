@@ -42,7 +42,8 @@ import {
     NERtcVideoScalingMode
 } from './defs'
 import { EventEmitter } from 'events'
-const nertc = require('../bin/nertcsdk');
+// const nertc = require('../bin/nertcsdk');
+const nertc = require('bindings')('nertc-sdk');
 
 /**
  * @class NERtcEngine
