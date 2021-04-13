@@ -1,6 +1,6 @@
 {
   "name": "nertc-sdk",
-  "version": "1.0.0",
+  "version": "3.9.0-rc",
   "description": "node-nertc-sdk",
   "main": "index.js",
   "dependencies": {
@@ -23,8 +23,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://g.hz.netease.com/nim-pc/california/node-sdk"
+    "url": "git+https://github.com/surebeli/node-nertc-sdk.git"
   },
-  "author": "oleg",
-  "license": "ISC"
+  "keywords": [
+    "nim",
+    "macos",
+    "node",
+    "napi",
+    "native",
+    "windows",
+    "pc",
+    "nertc",
+    "nrtc",
+    "rtc",
+    "screenshare"
+  ],
+  "author": "surebeli <surebeli@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/surebeli/node-nertc-sdk/issues"
+  },
+  "homepage": "https://github.com/surebeli/node-nertc-sdk#readme",
 }
