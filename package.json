@@ -1,22 +1,23 @@
 {
   "name": "nertc-sdk",
-  "version": "3.9.0-rc-10",
+  "version": "3.9.0-rc-11",
   "description": "node-nertc-sdk",
   "main": "index.js",
   "dependencies": {
+    "bluebird": "^3.7.1",
     "download": "^8.0.0",
     "extract-zip": "^2.0.1",
     "just-task": "^1.4.0",
     "lodash.isequal": "^4.5.0",
-    "nodejs": "^0.0.0",
+    "node-gyp": "^3.8.0",
     "rimraf": "^3.0.0",
+    "shelljs": "^0.8.4",
     "yuv-buffer": "^1.0.0",
     "yuv-canvas": "^1.2.6"
   },
   "devDependencies": {
     "@types/node": "^12.12.22",
     "electron-rebuild": "^2.3.5",
-    "node-gyp": "^3.8.0",
     "typescript": "^3.7.4"
   },
   "scripts": {

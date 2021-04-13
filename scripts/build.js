@@ -12,18 +12,18 @@ if(!fs.existsSync(gyp_path)) {
 }
 const gyp_exec = `node ${gyp_path}`
 
-
 module.exports = ({
   electronVersion='8.1.1',
   runtime='electron',
   platform=process.platform,
-  packageVersion,
   debug = false,
   silent = false,
   msvsVersion = '2015',
   arch = 'ia32',
   distUrl = 'https://electronjs.org/headers'
 }) => {
+  logger.info('start building...');
+
   /** get command string */
   const command = [`${gyp_exec} configure`];
   
@@ -51,12 +51,11 @@ module.exports = ({
   /** start build */
   logger.info(commandStr, '\n');
 
-  logger.info("Package Version:", packageVersion);
   logger.info("Platform:", platform);
   logger.info("Electron Version:", electronVersion);
   logger.info("Runtime:", runtime, "\n");
 
-  logger.info("Build C++ addon for Agora Electron SDK...\n")
+  logger.info("Building...\n")
   
   shell.exec(`${gyp_exec} clean`, {silent}, (code, stdout, stderr) => {
     // handle error

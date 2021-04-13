@@ -15,3 +15,5 @@ temp/
 bin/*
 log/
 out/
+build/
+nertc_sdk/
