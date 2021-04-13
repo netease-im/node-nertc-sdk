@@ -12,16 +12,6 @@ temp/
 *.user
 *.tlog
 *.log
-NIM/
 bin/*
-bin/darwin-x64-76/electron-sdk.node
 log/
-sample/electron-vue/static/nertc_sdk/win32/nertc_sdk.pdb
-sample/electron-vue/static/nertc_sdk/win32/nim_tools_http.pdb
 out/
-sample/electron-vue/nertc/bin/nertcsdk.node
-nertc/bin/nertcsdk.node
-sample/electron-vue/nertc_sdk_Mac.framework.dSYM/Contents/Resources/DWARF/nertc_sdk_Mac
-sample/electron-vue/nertc_sdk_Mac.framework.dSYM/Contents/Info.plist
-sample/electron-vue/src/renderer/sdk/nertc/bin/nertcsdk.node
-sample/electron-vue/src/renderer/sdk/pcutil/pcutil.node

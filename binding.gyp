@@ -4,7 +4,9 @@
       'target_name': 'nertc-sdk',
       'include_dirs': [
       './shared',
-      './shared/libyuv/include'
+      './shared/libyuv/include',
+      './nertc_sdk',
+      './nertc_sdk/api'
       ],
       'sources': [
         './nertc_sdk_node/nertc_node_engine.cpp',
@@ -94,9 +96,9 @@
               './shared/libyuv/source/row_win.cc',
               './shared/libyuv/source/scale_win.cc'
             ],
-            'include_dirs': [
-              './nertc_sdk/api/'
-            ],
+            # 'include_dirs': [
+            #   './nertc_sdk/api/'
+            # ],
             'configurations': {
               'Release': {
                 'msvs_settings': {
@@ -156,11 +158,11 @@
                 '-rpath ./macsdk/'
                 ]
             }, 
-            'include_dirs': [
-              './nertc_sdk/',
-              './nertc_sdk/bin/darwin/nertc_sdk_Mac.framework/Headers/',
-              './nertc_sdk/bin/darwin/NEFundation_Mac.framework/Headers/'
-            ],
+            # 'include_dirs': [
+              # './nertc_sdk/',
+              # './nertc_sdk/bin/darwin/nertc_sdk_Mac.framework/Headers/',
+              # './nertc_sdk/bin/darwin/NEFundation_Mac.framework/Headers/'
+            # ],
             'sources': [
               './shared/libyuv/source/compare_gcc.cc',
               './shared/libyuv/source/rotate_gcc.cc',

@@ -4,7 +4,6 @@
 #include "nertc_engine_ex.h"
 #include "nertc_audio_device_manager.h"
 #include "nertc_video_device_manager.h"
-#include "nertc_engine_ex.h"
 #include <node.h>
 #include <node_object_wrap.h>
 #include "../shared/sdk_helper/nim_node_helper.h"
