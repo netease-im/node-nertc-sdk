@@ -1,9 +1,10 @@
 {
   "name": "nertc-sdk",
-  "version": "3.9.0-rc-8",
+  "version": "3.9.0-rc-9",
   "description": "node-nertc-sdk",
   "main": "index.js",
   "dependencies": {
+    "download": "^8.0.0",
     "extract-zip": "^2.0.1",
     "lodash.isequal": "^4.5.0",
     "nodejs": "^0.0.0",
