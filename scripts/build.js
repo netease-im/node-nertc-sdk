@@ -78,7 +78,7 @@ module.exports = ({
         logger.info('Complete, please go to `/build` and build manually')
         process.exit(0)  
       } else {
-        shell.exec(`${gyp_exec}`, {silent}, (code, stdout, stderr) => {
+        shell.exec(`${gyp_exec} build`, {silent}, (code, stdout, stderr) => {
           // handle error
           if (code !== 0) {
             logger.error('build error!!!!!');

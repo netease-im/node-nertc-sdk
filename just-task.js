@@ -20,11 +20,9 @@ task('install', () => {
         return cleanup(path.join(__dirname, "./nertc-sdk.zip")).then(_ => {
           return download().then(() => {
             logger.info("start building...");
-            return build({}).then(() => {
-              resolve()
-            }).catch(err => {
-              reject(err)
-            })
+            build({})
+            logger.info("complete building...");
+            resolve()
           })
         })
       })
