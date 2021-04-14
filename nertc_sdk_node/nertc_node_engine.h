@@ -54,7 +54,6 @@ public:
     NIM_SDK_NODE_API(setParameters);
     NIM_SDK_NODE_API(setRecordingAudioFrameParameters);
     NIM_SDK_NODE_API(setPlaybackAudioFrameParameters);
-    NIM_SDK_NODE_API(setAudioFrameObserver);
     NIM_SDK_NODE_API(startAudioDump);
     NIM_SDK_NODE_API(stopAudioDump);
     NIM_SDK_NODE_API(startAudioMixing);
@@ -127,10 +126,6 @@ public:
     NIM_SDK_NODE_API(enumerateCaptureDevices);
     NIM_SDK_NODE_API(setDevice);
     NIM_SDK_NODE_API(getDevice);
-
-    //
-    NIM_SDK_NODE_API(enumerateWindows);
-
 
 protected:
     NertcNodeEngine(Isolate *isolate);
