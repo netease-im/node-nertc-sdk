@@ -3,8 +3,6 @@
 build/*
 node_modules/
 !.gitkeep
-js/
-types/
 *.obj
 tmp/
 temp/

@@ -1,9 +1,8 @@
 const { logger } = require("just-task");
 const extract = require('extract-zip')
 const path = require("path");
-const promisify = require("bluebird").promisify
-
-const extractPromise = promisify(extract)
+// const promisify = require("bluebird").promisify
+// const extractPromise = promisify(extract)
 
 module.exports = (src, to) => {
   return new Promise((resolve, reject) => {
