@@ -17,13 +17,10 @@ task('install', () => {
   return new Promise((resolve, reject) => {
     cleanup(path.join(__dirname, "./build")).then(() => {
       cleanup(path.join(__dirname, "./nertc_sdk")).then(() => {
-        download("http://yx-web.nos.netease.com/package/nertc_sdk.zip", "../").then(f => {
+        download(`http://yx-web.nos.netease.com/package/${process.platform}-sdk.zip`, "../").then(f => {
           extract(f, "../").then(() => {
             build({})
             resolve()
-            // build({}).then(() => {
-            //   resolve()
-            // })
           })
         })
       })

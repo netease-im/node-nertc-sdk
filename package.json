@@ -1,6 +1,6 @@
 {
   "name": "nertc-sdk",
-  "version": "3.9.0-rc-18",
+  "version": "3.9.0-rc-19",
   "description": "node-nertc-sdk",
   "main": "js/nertc_sdk.js",
   "types": "types/nertc_sdk.d.ts",
@@ -11,7 +11,7 @@
     "fs-extra": "^8.1.0",
     "just-task": "^1.4.0",
     "lodash.isequal": "^4.5.0",
-    "node-gyp": "^3.8.0",
+    "node-gyp": "^7.1.2",
     "rimraf": "^3.0.0",
     "shelljs": "^0.8.4",
     "yuv-buffer": "^1.0.0",
@@ -19,7 +19,6 @@
   },
   "devDependencies": {
     "@types/node": "^12.12.22",
-    "electron-rebuild": "^2.3.5",
     "typescript": "^3.7.4"
   },
   "scripts": {
