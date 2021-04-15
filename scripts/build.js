@@ -29,6 +29,7 @@ module.exports = ({
   
   // check platform
   if (platform === 'win32') {
+    // command.push(`--arch=${arch} --msvs_version=${msvsVersion}`)
     command.push(`--arch=${arch} --msvs_version=${msvsVersion}`)
   }
 
