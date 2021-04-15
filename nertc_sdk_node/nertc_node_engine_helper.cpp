@@ -292,6 +292,7 @@ static napi_status nertc_ls_img_info_obj_to_struct(Isolate* isolate, const Local
     {
         info->height = out_i;
     }
+    return napi_ok;
 }
 
 static napi_status nertc_ls_users_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcLiveStreamUserTranscoding& user)
@@ -332,6 +333,7 @@ static napi_status nertc_ls_users_obj_to_struct(Isolate* isolate, const Local<Ob
     {
         user.audio_push = out_b;
     }
+    return napi_ok;
 }
 
 static napi_status nertc_ls_layout_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcLiveStreamLayout& layout)
