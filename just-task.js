@@ -5,21 +5,22 @@ const download = require('./scripts/download')
 const cleanup = require('./scripts/cleanup')
 const extract = require('./scripts/extract')
 
-option('electron_version', {default: '8.1.1'});
-option('runtime', {default: 'electron', choices: ['electron', 'node']});
-option('platform', {default: process.platform, choices: ['darwin', 'win32']});
-option('debug', {default: false, boolean: true});
-option('silent', {default: false, boolean: true});
-option('msvs_version', {default: '2015'});
+let electron_version = '8.5.5'
+let sdk_url = `http://yx-web.nos.netease.com/package/${process.platform}-sdk.zip`
+const projectDir = path.join(process.env.INIT_CWD, 'package.json')
+const pkgMeta = require(projectDir);
+if (pkgMeta.nertc_config) {
+  electron_version = pkg.pkgMeta.nertc_config.electron_version
+}
 
 // trigger when run npm install
 task('install', () => {
   return new Promise((resolve, reject) => {
     cleanup(path.join(__dirname, "./build")).then(() => {
       cleanup(path.join(__dirname, "./nertc_sdk")).then(() => {
-        download(`http://yx-web.nos.netease.com/package/${process.platform}-sdk.zip`, "../").then(f => {
+        download(sdk_url, "../").then(f => {
           extract(f, "../").then(() => {
-            build({})
+            build({electronVersion: electron_version})
             resolve()
           })
         })
