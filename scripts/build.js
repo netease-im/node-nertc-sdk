@@ -22,7 +22,7 @@ module.exports = ({
   arch = 'ia32',
   distUrl = 'https://electronjs.org/headers'
 }) => {
-  logger.info('start building...');
+  logger.info(`start building...${runtime}-${electronVersion}`);
 
   /** get command string */
   const command = [`${gyp_exec} configure`];

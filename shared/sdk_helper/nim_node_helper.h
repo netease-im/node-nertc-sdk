@@ -61,6 +61,17 @@ TypeName& operator=(const TypeName&) = delete
     constructor.Reset(isolate, tpl->GetFunction(isolate->GetCurrentContext()).ToLocalChecked()); \
     module->Set(isolate->GetCurrentContext(), String::NewFromUtf8(isolate, #className, v8::NewStringType::kNormal).ToLocalChecked(), tpl->GetFunction(isolate->GetCurrentContext()).ToLocalChecked());
 
+#define BEGIN_OBJECT_INIT_EX(className, constructor, fieldCount)              \
+    Isolate* isolate = context->GetIsolate();   \
+    Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, constructor); \
+    tpl->SetClassName(String::NewFromUtf8(isolate, #className, v8::NewStringType::kNormal).ToLocalChecked());               \
+    tpl->InstanceTemplate()->SetInternalFieldCount(fieldCount);
+
+#define END_OBJECT_INIT_EX(className) \
+    constructor.Reset(isolate, tpl->GetFunction(context).ToLocalChecked()); \
+    exports->Set(context, String::NewFromUtf8(isolate, #className, v8::NewStringType::kNormal).ToLocalChecked(), tpl->GetFunction(context).ToLocalChecked());
+
+
 #define NIM_SDK_NODE_API(m) \
     static void(m)(const FunctionCallbackInfo<Value> &args)
 
