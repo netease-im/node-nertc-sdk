@@ -10,7 +10,7 @@ let sdk_url = `http://yx-web.nos.netease.com/package/${process.platform}-sdk.zip
 const projectDir = path.join(process.env.INIT_CWD, 'package.json')
 const pkgMeta = require(projectDir);
 if (pkgMeta.nertc_config) {
-  electron_version = pkg.pkgMeta.nertc_config.electron_version
+  electron_version = pkgMeta.nertc_config.electron_version
 }
 
 // trigger when run npm install
