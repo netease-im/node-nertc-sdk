@@ -1,6 +1,6 @@
 {
   "name": "nertc-electron-sdk",
-  "version": "3.9.0-rc-907",
+  "version": "3.9.0-rc-908",
   "description": "node-nertc-sdk",
   "main": "js/nertc_sdk.js",
   "types": "types/nertc_sdk.d.ts",
@@ -30,7 +30,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/surebeli/node-nertc-sdk.git#feat/3.9.0/context-aware"
+    "url": "git+https://github.com/surebeli/node-nertc-sdk.git#stab/3.9.0"
   },
   "keywords": [
     "nim",
