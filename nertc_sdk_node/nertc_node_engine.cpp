@@ -21,9 +21,12 @@ NertcNodeEngine::~NertcNodeEngine()
         rtc_engine_ = nullptr;
     }
 }
-void NertcNodeEngine::InitModule(Local<Object> &module)
+// void NertcNodeEngine::InitModule(Local<Object> &module)
+void NertcNodeEngine::InitModule(Local<Object> &exports,
+                        Local<Value> &module,
+                        Local<Context> &context)
 {
-    BEGIN_OBJECT_INIT(NertcNodeEngine, New, 5)
+    BEGIN_OBJECT_INIT_EX(NertcNodeEngine, New, 5)
     SET_PROTOTYPE(initialize)
     SET_PROTOTYPE(release)
     SET_PROTOTYPE(setChannelProfile)
@@ -128,7 +131,7 @@ void NertcNodeEngine::InitModule(Local<Object> &module)
     SET_PROTOTYPE(setDevice)
     SET_PROTOTYPE(getDevice)
 
-    END_OBJECT_INIT(NertcNodeEngine)
+    END_OBJECT_INIT_EX(NertcNodeEngine)
 }
 
 void NertcNodeEngine::New(const FunctionCallbackInfo<Value> &args)
