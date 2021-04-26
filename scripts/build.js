@@ -13,16 +13,16 @@ module.exports = ({
   arch = 'ia32',
   distUrl = 'https://electronjs.org/headers'
 }) => {
-  logger.info("Platform:", platform, "\n");
-  logger.info("Runtime:", runtime, "\n");
-  logger.info("Arch:", arch, "\n");
-  logger.info("Debug:", debug, "\n");
+  logger.info("Platform:", platform)
+  logger.info("Runtime:", runtime)
+  logger.info("Arch:", arch)
+  logger.info("Debug:", debug)
 
   if (runtime === 'electron') {
-    let electron_gyp_exec = `${path.resolve(__dirname, '../../.bin/electron-rebuild')}` + process.platform === 'win32' ? '.cmd ' : ' '
+    let electron_gyp_exec = `${path.resolve(__dirname, '../../.bin/electron-rebuild')}`
     if (!fs.existsSync(electron_gyp_exec)) {
       logger.info(`electron-gyp_exec not found at ${electron_gyp_exec}, switch`)
-      electron_gyp_exec = `${path.resolve(__dirname, '../node_modules/.bin/electron-rebuild')}` + process.platform === 'win32' ? '.cmd ' : ' '
+      electron_gyp_exec = `${path.resolve(__dirname, '../node_modules/.bin/electron-rebuild')}`
     }
     let sdk_path = `${path.resolve(__dirname, '../../nertc-electron-sdk')}`
     if (!fs.existsSync(sdk_path)) {
@@ -44,21 +44,28 @@ module.exports = ({
     logger.info(commandStr, '\n');
     logger.info("Building...\n")
 
-    shell.exec(`${commandStr}`, { silent }, (code, stdout, stderr) => {
-      // handle error
+    shell.exec(`npm install -D electron-rebuild@latest`, { silent }, (code, stdout, stderr) => {
       if (code !== 0) {
-        logger.error('build error!!!!!');
+        logger.error('npm install -D electron-rebuild@latest error!!!!!');
         logger.error(stderr);
         process.exit(1)
       }
+      shell.exec(`${commandStr}`, { silent }, (code, stdout, stderr) => {
+        // handle error
+        if (code !== 0) {
+          logger.error('build error!!!!!');
+          logger.error(stderr);
+          process.exit(1)
+        }
 
-      // handle success
-      logger.info('Build complete')
-      process.exit(0)
+        // handle success
+        logger.info('Build complete')
+        process.exit(0)
+      })
     })
   } else {
-    logger.info("Node Version:", nodeVersion, "\n");
-    logger.info("MSVS Version:", msvsVersion, "\n");
+    logger.info("Node Version:", nodeVersion)
+    logger.info("MSVS Version:", msvsVersion)
     // workaround to find executable when install as dependency
     let gyp_path = `${path.resolve(__dirname, '../../node-gyp/bin/node-gyp.js')}`
 
