@@ -24,10 +24,10 @@ module.exports = ({
       logger.info(`electron-gyp_exec not found at ${electron_gyp_exec}, switch`)
       electron_gyp_exec = `${path.resolve(__dirname, '../node_modules/.bin/electron-rebuild')}` + process.platform === 'win32' ? '.cmd ' : ' '
     }
-    let sdk_path = `${path.resolve(__dirname, '../../nertc-sdk')}`
+    let sdk_path = `${path.resolve(__dirname, '../../nertc-electron-sdk')}`
     if (!fs.existsSync(sdk_path)) {
       logger.info(`sdk_path not found at ${sdk_path}, switch`)
-      sdk_path = `${path.resolve(__dirname, '../node_modules/nertc-sdk')}`
+      sdk_path = `${path.resolve(__dirname, '../node_modules/nertc-electron-sdk')}`
     }
     const command = [`${electron_gyp_exec} --module-dir=${sdk_path}`];
     // check platform
