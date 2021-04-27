@@ -1,7 +1,7 @@
 {
   "targets": [
     {
-      'target_name': 'nertc-sdk',
+      'target_name': 'nertc-electron-sdk',
       'include_dirs': [
       './shared',
       './shared/libyuv/include',
@@ -69,12 +69,7 @@
             },
             'msvs_settings': {
               'VCCLCompilerTool': {
-                # 'WarningLevel': '3',
-                # 'DisableSpecificWarnings': ['4819'],
-                # 'WarnAsError': 'false',
-                # 'ExceptionHandling': '0',
                 'AdditionalOptions': [
-                  # '/EHsc',
                   '/utf-8'
                 ]            
               }
@@ -93,13 +88,9 @@
               'Release': {
                 'msvs_settings': {
                   'VCCLCompilerTool': {
-                    # 多线程 DLL (/MD)
                     'RuntimeLibrary': '2',
-                    # 完全优化 /Os
                     'Optimization': '2',
-                    # 使用内部函数 /Oi
                     'EnableIntrinsicFunctions': 'true',
-                    # 程序数据库 (/Zi)
                     'DebugInformationFormat': '3',
                     'AdditionalOptions': [
                     ]            
@@ -110,10 +101,6 @@
                 'msvs_settings': {
                   'VCCLCompilerTool': {
                     'RuntimeLibrary': '3',
-                    # 'WarningLevel': '3',
-                    # 'DisableSpecificWarnings': ['4819'],
-                    # 'WarnAsError': 'false',
-                    # 'ExceptionHandling': '0',
                     'AdditionalOptions': [
                     ]            
                   }
@@ -156,7 +143,7 @@
               'DEBUG_INFORMATION_FORMAT': 'dwarf-with-dsym',
               'OTHER_CFLAGS': [
               ],
-            }# xcode_settings 
+            }
           }
         ]
       ]
