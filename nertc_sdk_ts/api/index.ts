@@ -43,7 +43,7 @@ import {
 } from './defs'
 import { EventEmitter } from 'events'
 // const nertc = require('../bin/nertcsdk');
-const nertc = require('bindings')('nertc-sdk');
+const nertc = require('bindings')('nertc-electron-sdk');
 
 /**
  * @class NERtcEngine

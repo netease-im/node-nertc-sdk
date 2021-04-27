@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const renderer_1 = require("../renderer");
 const events_1 = require("events");
 // const nertc = require('../bin/nertcsdk');
-const nertc = require('bindings')('nertc-sdk');
+const nertc = require('bindings')('nertc-electron-sdk');
 /**
  * @class NERtcEngine
  */
