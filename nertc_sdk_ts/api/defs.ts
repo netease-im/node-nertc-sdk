@@ -507,9 +507,6 @@ export interface NERtcEngineAPI {
     //pushExternalVideoFrame
     // setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
     //pushExternalAudioFrame
-
-    //
-    enumerateWindows(): Array<{id: number, name: String}>;
 }
 
 /** 通话相关的统计信息。*/

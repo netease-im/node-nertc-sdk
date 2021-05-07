@@ -264,7 +264,7 @@ bool AddObj(Isolate* isolate, Local<v8::Array>& infos, int index, VideoFrameInfo
     do {
         Local<v8::Object> obj = Object::New(isolate);
         nim_napi_set_object_value_uint32(isolate, obj, "type", info.m_renderType);
-        nim_napi_set_object_value_uint32(isolate, obj, "uid", info.m_uid);
+        nim_napi_set_object_value_uint64(isolate, obj, "uid", info.m_uid);
         nim_napi_set_object_value_utf8string(isolate, obj, "channelId", info.m_channelId);
         auto it = info.m_bufferList.begin();
         NODE_SET_OBJ_PROP_HEADER(obj, it);
