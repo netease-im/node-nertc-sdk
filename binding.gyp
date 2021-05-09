@@ -57,8 +57,8 @@
             'copies': [{
               'destination': '<(PRODUCT_DIR)',
               'files': [
-                './nertc_sdk/bin/x86/nertc_sdk.dll',
-                './nertc_sdk/bin/x86/SDL2.dll',
+                './nertc_sdk/bin/windows/x86/nertc_sdk.dll',
+                './nertc_sdk/bin/windows/x86/SDL2.dll',
               ]
             }],
             'defines': [

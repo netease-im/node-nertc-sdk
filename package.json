@@ -1,6 +1,6 @@
 {
   "name": "nertc-electron-sdk",
-  "version": "3.9.0-rc-912",
+  "version": "3.9.0-rc-913",
   "description": "node-nertc-sdk",
   "main": "js/nertc_sdk.js",
   "types": "types/nertc_sdk.d.ts",
