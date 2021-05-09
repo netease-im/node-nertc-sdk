@@ -25,9 +25,11 @@ module.exports = ({
       electron_gyp_exec = `${path.resolve(__dirname, '../node_modules/.bin/electron-rebuild')}`
     }
     let sdk_path = `${path.resolve(__dirname, '../../nertc-electron-sdk')}`
+    let framework_path = `${path.resolve(__dirname, '../../nertc-electron-sdk/nertc_sdk/bin/darwin')}`
     if (!fs.existsSync(sdk_path)) {
       logger.info(`sdk_path not found at ${sdk_path}, switch`)
       sdk_path = `${path.resolve(__dirname, '../node_modules/nertc-electron-sdk')}`
+      framework_path = `${path.resolve(__dirname, '../node_modules/nertc-electron-sdk/nertc_sdk/bin/darwin')}`
     }
     const command = [`${electron_gyp_exec} --module-dir=${sdk_path}`];
     // check platform
@@ -58,9 +60,18 @@ module.exports = ({
           process.exit(1)
         }
 
-        // handle success
-        logger.info('Build complete')
-        process.exit(0)
+        if(platform === "darwin") {
+          logger.info(`patch loader path for mac build..`)
+          shell.exec(`install_name_tool -add_rpath "@loader_path" ${framework_path}`, {silent}, (code, stdout, stderr) => {
+            if (code !== 0) {
+              logger.error(stderr);
+              process.exit(1)
+            }
+            // handle success
+            logger.info('Build complete')
+            process.exit(0)
+          })
+        }
       })
     })
   } else {

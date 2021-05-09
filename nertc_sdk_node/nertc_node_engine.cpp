@@ -198,6 +198,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, release)
             instance->_vdm = nullptr;
             instance->rtc_engine_ = nullptr;
         }
+        NertcNodeEventHandler::GetInstance()->RemoveAll();
+        NertcNodeRtcMediaStatsHandler::GetInstance()->RemoveAll();
     } while (false);
 }
 

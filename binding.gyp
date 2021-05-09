@@ -54,6 +54,13 @@
         [
           'OS=="win"',
           {
+            'copies': [{
+              'destination': '<(PRODUCT_DIR)',
+              'files': [
+                './nertc_sdk/bin/x86/nertc_sdk.dll',
+                './nertc_sdk/bin/x86/SDL2.dll',
+              ]
+            }],
             'defines': [
               'WIN32',
               'WIN32_LEAN_AND_MEAN'
@@ -115,17 +122,17 @@
             'defines': [
             ],
             'mac_framework_dirs': [
-              '../nertc_sdk/bin/darwin'
+              './nertc_sdk/bin/darwin'
             ],
             'library_dirs': [
-              '../nertc_sdk/bin/darwin'
+              './nertc_sdk/bin/darwin'
             ],
             'link_settings': {
               'libraries': [
                 'Foundation.framework',
                 'nertc_sdk_Mac.framework',
-                'NEFundation_Mac.framework',
-                '-rpath ./macsdk/'
+                'NEFundation_Mac.framework'
+                # '-rpath ./macsdk/'
                 ]
             }, 
             'sources': [
@@ -139,6 +146,7 @@
               'MACOSX_DEPLOYMENT_TARGET': '10.14',
               'EXCUTABLE_EXTENSION': 'node',
               'FRAMEWORK_SEARCH_PATHS': [
+                './nertc_sdk/bin/darwin'
               ],
               'DEBUG_INFORMATION_FORMAT': 'dwarf-with-dsym',
               'OTHER_CFLAGS': [
