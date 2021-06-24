@@ -1,0 +1,36 @@
+name: node-gyp
+
+on: [push]
+
+env:
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: .
+
+  # Configuration type to build.
+  # You can convert this to a build matrix if you need coverage of multiple configuration types.
+  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  BUILD_CONFIGURATION: Release
+
+jobs:
+  build:
+    runs-on: windows-2016
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '12.13.0'
+        architecture: 'x86' # optional, x64 or x86. If not specified, x64 will be used by default
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    # Build ia32
+    - run: npm install --verbose
+    - run: npx just fetch-wrapper --target_platform=win32 --target_arch=ia32
+    - run: npx just build --runtime=electron --target=8.0.0 --target_platform=win32 --target_arch=ia32
+
+    # Upload artifacts
+    - uses: actions/upload-artifact@v2
+      with:
+        path: ${{ github.workspace }}/packages/*.tar.gz

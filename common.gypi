@@ -46,11 +46,8 @@
         'Debug': {
           'msvs_settings': {
             'VCCLCompilerTool': {
-              # 多线程调试 DLL (/MDd)
               'RuntimeLibrary': '3',
-              # 不优化 /Od
               'Optimization': '0',
-              # 用于“编辑并继续”的程序数据库 (/ZI)
               'DebugInformationFormat': '4',
             },
             'VCLinkerTool': {
@@ -63,13 +60,9 @@
         'Release': {
           'msvs_settings': {
             'VCCLCompilerTool': {
-              # 多线程 DLL (/MD)
               'RuntimeLibrary': '2',
-              # 完全优化 /Os
               'Optimization': '2',
-              # 使用内部函数 /Oi
               'EnableIntrinsicFunctions': 'true',
-              # 程序数据库 (/Zi)
               'DebugInformationFormat': '3',
             },
             'VCLinkerTool': {
