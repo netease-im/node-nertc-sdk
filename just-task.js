@@ -21,8 +21,11 @@ const nativeUrl = `http://yx-web.nos.netease.com/package/1623409441/NERtc_${repl
 
 task('fetch-wrapper', () => {
   const platform = argv().target_platform
+  const arch = argv().target_arch
   const cachePath = path.join(__dirname, includePath)
   return fetchWrapper({
+    platform,
+    arch,
     fetchUrl: nativeUrl.replace(replaceKey, platform == 'win32' ? 'Windows' : 'Mac'),
     extractPath: cachePath
   })
