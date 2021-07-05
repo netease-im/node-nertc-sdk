@@ -6,7 +6,8 @@
       './shared',
       './shared/libyuv/include',
       './nertc_sdk',
-      './nertc_sdk/api'
+      './nertc_sdk/api',
+      './nertc_sdk/nertc_sdk_Mac.framework/Headers/'
       ],
       'sources': [
         './nertc_sdk_node/nertc_node_engine.cpp',
@@ -138,17 +139,18 @@
             'defines': [
             ],
             'mac_framework_dirs': [
-              '../nertc_sdk/bin/darwin'
+              '../nertc_sdk/'
             ],
             'library_dirs': [
-              '../nertc_sdk/bin/darwin'
+              '../nertc_sdk/'
             ],
             'link_settings': {
               'libraries': [
                 'Foundation.framework',
                 'nertc_sdk_Mac.framework',
                 'NEFundation_Mac.framework',
-                '-rpath ./macsdk/'
+                '-rpath ./macsdk/',
+                '-Wl,-rpath,@loader_path'
                 ]
             }, 
             'sources': [

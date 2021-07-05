@@ -2,7 +2,6 @@ const path = require('path')
 const download = require('download')
 const tar = require('tar')
 const fs = require('fs')
-const decompress = require('decompress')
 const extract = require('extract-zip')
 const { logger } = require('just-task')
 
@@ -21,17 +20,17 @@ module.exports = ({
     if (fs.existsSync(extractPath)) {
       fs.rmdirSync(extractPath, { recursive: true })
     }
+    if (fs.existsSync(extractPath.replace('nertc_sdk', 'sdk'))) {
+      fs.rmdirSync(extractPath.replace('nertc_sdk', 'sdk'), { recursive: true })
+    }
     download(fetchUrl, temporaryPath).then(() => {
       const zipFile = fs.readdirSync(temporaryPath)
       if (zipFile.length > 0) {
         if (!fs.existsSync(extractPath)) {
           fs.mkdirSync(extractPath)
         }
-        /* decompress(path.join(temporaryPath, zipFile[0]), extractPath, {
-          strip: 1
-        }) */
         extract(path.join(temporaryPath, zipFile[0]), {
-          dir: platform === 'win32' ? extractPath.replace('nertc_sdk', '') : extractPath.replace('sdk', '')
+          dir: extractPath.replace('nertc_sdk', '')
         }).then(() => {
           if (platform == 'win32') {
             let copyArch
@@ -55,6 +54,7 @@ module.exports = ({
               fs.copyFileSync(path.join(libSrcPath, lib), path.join(extractPath, `libs/${lib}`))
             })
           } else if (platform === 'darwin') {
+            fs.renameSync(path.join(extractPath.replace('nertc_sdk', ''), 'sdk'), extractPath)
           } else {
             return reject(new Error('Unsupported platform.'))
           }
