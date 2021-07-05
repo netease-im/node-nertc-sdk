@@ -12,7 +12,7 @@ module.exports = ({
 }) => {
   return new Promise((resolve, reject) => {
     logger.info(`Remove file ${extractPath}`)
-    fs.rmdir(extractPath, null);
+    fs.rmdirSync(extractPath, { recursive: true });
     logger.info(`Downloading file from: ${fetchUrl} to ${extractPath}`)
     download(fetchUrl, extractPath, {
       strip: 1,
