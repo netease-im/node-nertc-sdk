@@ -17,7 +17,7 @@ option('silent', { default: false, boolean: true })
 const includePath = 'nertc_sdk'
 const replaceKey = '{platform}'
 const packageMeta = require(path.join(__dirname, 'package.json'))
-const nativeUrl = `http://yx-web.nos.netease.com/package/NERtc_${replaceKey}_SDK_v3.9.0_electron.zip` //put a 'electron' as post-url is a temporary way to v3.9.0
+const nativeUrl = `http://yx-web.nos.netease.com/package/1625457419/NERtc_${replaceKey}_SDK_v3.9.0_electron.zip` //put a 'electron' as post-url is a temporary way to v3.9.0
 
 task('fetch-wrapper', () => {
   const platform = argv().target_platform

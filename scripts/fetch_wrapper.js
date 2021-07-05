@@ -11,8 +11,6 @@ module.exports = ({
   arch = process.arch
 }) => {
   return new Promise((resolve, reject) => {
-    logger.info(`Remove file ${extractPath}`)
-    fs.rmdirSync(extractPath, { recursive: true });
     logger.info(`Downloading file from: ${fetchUrl} to ${extractPath}`)
     download(fetchUrl, extractPath, {
       strip: 1,
