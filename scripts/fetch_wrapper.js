@@ -11,6 +11,8 @@ module.exports = ({
   arch = process.arch
 }) => {
   return new Promise((resolve, reject) => {
+    logger.info(`Remove file ${extractPath}`)
+    fs.rmdir(extractPath, null);
     logger.info(`Downloading file from: ${fetchUrl} to ${extractPath}`)
     download(fetchUrl, extractPath, {
       strip: 1,
@@ -25,7 +27,7 @@ module.exports = ({
         } else {
           reject(new Error('Unsupported arch.'))
         }
-        const dllSrcPath = path.join(extractPath, `dll/${copyArch}`)
+        const dllSrcPath = path.join(extractPath, `bin/${copyArch}`)
         const libSrcPath = path.join(extractPath, `lib/${copyArch}`)
         const dlls = fs.readdirSync(dllSrcPath)
         dlls.map((dll) => {
