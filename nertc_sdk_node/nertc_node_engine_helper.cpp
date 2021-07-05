@@ -252,7 +252,7 @@ napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Lo
                     {
                         wi[i] = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
                     }
-                    params.excluded_window_list = (nertc::source_id_t*)wi;
+                    params.excluded_window_list = (void*)wi;
                 }
                 else
                 {

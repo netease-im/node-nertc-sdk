@@ -75,7 +75,7 @@
               'WIN32_LEAN_AND_MEAN'
             ],
             'library_dirs': [
-              './nertc_sdk/lib/'
+              './nertc_sdk/libs/'
             ],
             'link_settings': {
               'libraries': [
