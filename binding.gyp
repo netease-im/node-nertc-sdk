@@ -57,8 +57,8 @@
             'copies': [{
               'destination': '<(PRODUCT_DIR)',
               'files': [
-                './nertc_sdk/bin/windows/x86/nertc_sdk.dll',
-                './nertc_sdk/bin/windows/x86/SDL2.dll',
+                './nertc_sdk/dll/nertc_sdk.dll',
+                './nertc_sdk/dll/SDL2.dll',
               ]
             }],
             'defines': [
@@ -66,7 +66,7 @@
               'WIN32_LEAN_AND_MEAN'
             ],
             'library_dirs': [
-              './nertc_sdk/libs/windows/x86/'
+              './nertc_sdk/lib/'
             ],
             'link_settings': {
               'libraries': [
@@ -78,7 +78,7 @@
               'VCCLCompilerTool': {
                 'AdditionalOptions': [
                   '/utf-8'
-                ]            
+                ]
               }
             },
             'defines!': [
@@ -100,7 +100,7 @@
                     'EnableIntrinsicFunctions': 'true',
                     'DebugInformationFormat': '3',
                     'AdditionalOptions': [
-                    ]            
+                    ]
                   }
                 },
               },
@@ -109,7 +109,7 @@
                   'VCCLCompilerTool': {
                     'RuntimeLibrary': '3',
                     'AdditionalOptions': [
-                    ]            
+                    ]
                   }
                 },
               }
@@ -119,6 +119,13 @@
         [
           'OS=="mac"',
           {
+            'copies': [{
+              'destination': '<(PRODUCT_DIR)',
+              'files': [
+                './nertc_sdk/nertc_sdk_Mac.framework',
+                './nertc_sdk/NEFundation_Mac.framework'
+              ]
+            }],
             'defines': [
             ],
             'mac_framework_dirs': [
@@ -131,8 +138,8 @@
               'libraries': [
                 'Foundation.framework',
                 'nertc_sdk_Mac.framework',
-                'NEFundation_Mac.framework'
-                # '-rpath ./macsdk/'
+                'NEFundation_Mac.framework',
+                '-Wl,-rpath,@loader_path'
                 ]
             }, 
             'sources': [
