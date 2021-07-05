@@ -15,19 +15,22 @@ option('debug', { default: false, boolean: true })
 option('silent', { default: false, boolean: true })
 
 const includePath = 'nertc_sdk'
-const replaceKey = '{platform}'
+const tempPath = 'temporary'
 const packageMeta = require(path.join(__dirname, 'package.json'))
-const nativeUrl = `http://yx-web.nos.netease.com/package/1625457419/NERtc_${replaceKey}_SDK_v3.9.0_electron.zip` //put a 'electron' as post-url is a temporary way to v3.9.0
+const nativeWinUrl = `http://yx-web.nos.netease.com/package/1625460456/NERtc_Windows_SDK_v3.9.0e.zip`
+const nativeMacUrl = `http://yx-web.nos.netease.com/package/1612231040/NERTC_Mac_SDK_v3.9.0.zip`
 
 task('fetch-wrapper', () => {
   const platform = argv().target_platform
   const arch = argv().target_arch
-  const cachePath = path.join(__dirname, includePath)
+  const temporaryPath = path.join(__dirname, tempPath)
+  const extractPath = path.join(__dirname, includePath)
   return fetchWrapper({
     platform,
     arch,
-    fetchUrl: nativeUrl.replace(replaceKey, platform == 'win32' ? 'Windows' : 'Mac'),
-    extractPath: cachePath
+    fetchUrl: process.platform === 'win32' ? nativeWinUrl : nativeMacUrl,
+    temporaryPath,
+    extractPath
   })
 })
 
@@ -113,10 +116,12 @@ task('install', () => {
     }).catch(err => {
       logger.warn(`[install] Failed to download package from: ${host}/${remotePath}/${packageName}, error code: ${err.statusCode}`)
       logger.info('[install] Start build from local source file.')
-      const cachePath = path.join(__dirname, includePath)
+      const temporaryPath = path.join(__dirname, tempPath)
+      const extractPath = path.join(__dirname, includePath)
       fetchWrapper({
-        fetchUrl: nativeUrl.replace(replaceKey, targetPlatform == 'win32' ? 'Windows' : 'Mac'),
-        extractPath: cachePath
+        fetchUrl: process.platform === 'win32' ? nativeWinUrl : nativeMacUrl,
+        temporaryPath,
+        extractPath
       }).then(() => {
         return buildAddon({
           target,

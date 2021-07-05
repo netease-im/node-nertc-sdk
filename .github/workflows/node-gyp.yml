@@ -12,9 +12,27 @@ env:
   BUILD_CONFIGURATION: Release
 
 jobs:
-  build:
-    runs-on: windows-2016
+  darwin:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '12.13.0'
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+    # Build x64
+    - run: npm install --verbose
+    - run: npx just fetch-wrapper --target_platform=darwin --target_arch=x64
+    - run: npx just build --runtime=electron --target=8.0.0 --target_platform=darwin --target_arch=x64
+    # Upload artifacts
+    - uses: actions/upload-artifact@v2
+      with:
+        path: ${{ github.workspace }}/packages/*.tar.gz
 
+  win32:
+    runs-on: windows-2016
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v2
@@ -27,9 +45,11 @@ jobs:
 
     # Build ia32
     - run: npm install --verbose
-    - run: npx just fetch-wrapper --target_platform=win32
-    - run: npx just build --runtime=electron --target=12.0.11 --target_platform=win32
-
+    - run: npx just fetch-wrapper --target_platform=win32 --target_arch=ia32
+    - run: npx just build --runtime=electron --target=8.0.0 --target_platform=win32 --target_arch=ia32
+    # Build x64
+    - run: npx just fetch-wrapper --target_platform=win32 --target_arch=x64
+    - run: npx just build --runtime=electron --target=8.0.0 --target_platform=win32 --target_arch=x64
     # Upload artifacts
     - uses: actions/upload-artifact@v2
       with:
