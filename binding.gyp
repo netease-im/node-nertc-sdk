@@ -140,7 +140,7 @@
                 'Foundation.framework',
                 'nertc_sdk_Mac.framework',
                 'NEFundation_Mac.framework',
-                '-rpath ./macsdk/',
+                '-rpath ./nertc_sdk/',
                 '-Wl,-rpath,@loader_path'
                 ]
             }, 

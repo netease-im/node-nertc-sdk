@@ -42,7 +42,8 @@ import {
     NERtcVideoScalingMode
 } from './defs'
 import { EventEmitter } from 'events'
-const nertc = require('bindings')('nertc-electron-sdk');
+// const nertc = require('bindings')('nertc-electron-sdk');
+const nertc = require('../../build/Release/nertc-electron-sdk.node');
 
 /**
  * @class NERtcEngine
