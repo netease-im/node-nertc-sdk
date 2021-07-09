@@ -69,6 +69,10 @@ class NERtcEngine extends EventEmitter {
         this.customRenderer = CustomRenderer;
     }
 
+    enumerateScreenCaptureSourceInfo(): Array<Object> {
+        return this.nertcEngine.enumerateScreenCaptureSourceInfo();
+    }
+
     /** 
      * 初始化 NERTC SDK 服务。
      * <pre>

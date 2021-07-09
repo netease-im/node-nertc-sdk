@@ -1,6 +1,7 @@
 #include "nertc_node_engine.h"
 #include "nertc_node_engine_helper.h"
 #include "nertc_node_video_frame_provider.h"
+#include "../shared/util/windows_util.h"
 
 namespace nertc_node
 {
@@ -1941,6 +1942,31 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, pushExternalAudioFrame)
         //TODO(litianyi)
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 0)
+    Local<Array> arr = Array::New(isolate);
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        CaptureTargetInfoList list = enumerateWindows();
+        uint32_t i = 0;
+        for (auto w : list)
+        {
+            Local<Object> obj = Object::New(isolate);
+            nim_napi_set_object_value_int32(isolate, obj, "id", reinterpret_cast<int32_t>(w.id));
+            nim_napi_set_object_value_utf8string(isolate, obj, "title", wstring2string(w.title));
+            nim_napi_set_object_value_int32(isolate, obj, "type", w.type);
+            nim_napi_set_object_value_int32(isolate, obj, "left", w.rc.left);
+            nim_napi_set_object_value_int32(isolate, obj, "top", w.rc.top);
+            nim_napi_set_object_value_int32(isolate, obj, "right", w.rc.right);
+            nim_napi_set_object_value_int32(isolate, obj, "bottom", w.rc.bottom);
+            arr->Set(isolate->GetCurrentContext(), i++, obj);
+        }
+    } while (false);
+    args.GetReturnValue().Set(arr);
 }
 
 }

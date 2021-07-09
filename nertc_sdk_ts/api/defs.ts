@@ -501,6 +501,9 @@ export interface NERtcEngineAPI {
     setupSubStreamVideoCanvas(uid: number, enabled: Boolean): number;
     subscribeRemoteVideoSubStream(uid: number, sub: boolean): number;
 
+    //sc
+    enumerateScreenCaptureSourceInfo(): Array<Object>;
+
     //TODO
     // setMixedAudioFrameParameters(samplerate: number): number;
     // setExternalVideoSource(enabled: boolean): number;

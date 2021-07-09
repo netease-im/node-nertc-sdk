@@ -26,6 +26,8 @@
         './shared/sdk_helper/nim_node_async_queue.cpp',
         './shared/sdk_helper/nim_event_handler.h',
         './shared/sdk_helper/nim_event_handler.cpp',
+        './shared/util/windows_util.h',
+        './shared/util/windows_util.cpp',
         './shared/libyuv/source/compare_common.cc',
         './shared/libyuv/source/compare.cc',
         './shared/libyuv/source/convert_argb.cc',
@@ -72,7 +74,9 @@
             'link_settings': {
               'libraries': [
                 '-lnertc_sdk.lib',
-                '-lWs2_32.lib'
+                '-lWs2_32.lib',
+                '-lversion.lib',
+                '-lshlwapi.lib'
               ]
             },
             'msvs_settings': {

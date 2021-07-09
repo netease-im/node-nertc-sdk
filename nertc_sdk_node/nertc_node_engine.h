@@ -130,6 +130,9 @@ public:
     NIM_SDK_NODE_API(setDevice);
     NIM_SDK_NODE_API(getDevice);
 
+    //CUSTOM
+    NIM_SDK_NODE_API(enumerateScreenCaptureSourceInfo);
+
 protected:
     NertcNodeEngine(Isolate *isolate);
     ~NertcNodeEngine();

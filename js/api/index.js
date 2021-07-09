@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const renderer_1 = require("../renderer");
 const events_1 = require("events");
-// const nertc = require('../bin/nertcsdk');
-const nertc = require('bindings')('nertc-electron-sdk');
+// const nertc = require('bindings')('nertc-electron-sdk');
+const nertc = require('../../build/Release/nertc-electron-sdk.node');
 /**
  * @class NERtcEngine
  */
@@ -21,30 +21,8 @@ class NERtcEngine extends events_1.EventEmitter {
         this.renderMode = this._checkWebGL() ? 1 : 2;
         this.customRenderer = renderer_1.CustomRenderer;
     }
-    /**
-     * Enumerates windows(windows only).
-     * <pre>
-     * This method returns windowsInfo[] that includes all windows&monitors in the system
-     * <b>NOTE:</b>
-     * You should call {@link NERtcEngine#startScreenCaptureByScreenRect} for 'Monitor' type
-     * </pre>
-     * @returns {windowsInfo[]}
-     * <pre>
-     * - Returns windowsInfo[] that includes all windows&monitors in the system: Success.
-     * <table style="width:100%;">
-     * <tr><th>Name</th><th>Type</th><th>Description</th></tr>
-     * <tr><td>windowsInfo.id</td><td>number</td><td>窗口id</td></tr>
-     * <tr><td>windowsInfo.name</td><td>String</td><td>窗口title</td></tr>
-     * <tr><td>windowsInfo.left</td><td>number</td><td>窗口左边缘坐标</td></tr>
-     * <tr><td>windowsInfo.top</td><td>number</td><td>窗口上边缘坐标</td></tr>
-     * <tr><td>windowsInfo.right</td><td>number</td><td>窗口右边缘坐标</td></tr>
-     * <tr><td>windowsInfo.bottom</td><td>number</td><td>窗口下边缘坐标</td></tr>
-     * </table>
-     * - null: 调用失败。
-     * </pre>
-     */
-    enumerateWindows() {
-        return this.nertcEngine.enumerateWindows();
+    enumerateScreenCaptureSourceInfo() {
+        return this.nertcEngine.enumerateScreenCaptureSourceInfo();
     }
     /**
      * 初始化 NERTC SDK 服务。
