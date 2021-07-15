@@ -3,6 +3,7 @@
 #include <ShlObj.h>
 #include <stdint.h>
 #include <stdio.h>
+#include "ConvertUTF.h"
 // #pragma comment(lib, "shlwapi.lib")
 
 static bool GetFileVersion(const wchar_t *file_path, WORD *major_version, WORD *minor_version, WORD *build_number, WORD *revision_number)
@@ -147,10 +148,17 @@ CaptureTargetInfoList enumerateWindows()
     windows.push_back({0, L"Desktop", RECT{0, 0, 0, 0}});
     /// for monitors
     EnumDisplayMonitors(
-        nullptr, nullptr, [](HMONITOR hmon, HDC, LPRECT pRC, LPARAM lparam) {
+        nullptr, nullptr, [](HMONITOR hmon, HDC hdc, LPRECT pRC, LPARAM lparam) {
             auto &monitors = *reinterpret_cast<CaptureTargetInfoList *>(lparam);
             wchar_t buf[100] = {0};
-            swprintf_s(buf, L"Monitor:(%d,%d,%d,%d)", pRC->left, pRC->top, pRC->right, pRC->bottom);
+            // swprintf_s(buf, L"Monitor:(%d,%d,%d,%d)", pRC->left, pRC->top, pRC->right, pRC->bottom);
+            MONITORINFOEXW infoEx;
+            memset(&infoEx, 0, sizeof(infoEx));
+            infoEx.cbSize = sizeof(infoEx);
+            if (GetMonitorInfoW(hmon, &infoEx))
+            {
+                swprintf_s(buf, L"%s", infoEx.szDevice);
+            }
             monitors.push_back({(HWND)hmon, buf, *pRC, 2});
 
             return TRUE;
@@ -172,4 +180,64 @@ CaptureTargetInfoList enumerateWindows()
     //     ar[i++] = obj;
     // }
     // return ar;
+}
+
+#ifndef COUNT_OF
+#define COUNT_OF(array)			(sizeof(array)/sizeof(array[0]))
+#endif
+
+std::wstring UTF8ToUTF16(const std::string& utf8)
+{
+	std::wstring utf16;
+	UTF16 output[4096];
+	const UTF8 *src_begin = (const UTF8*)utf8.c_str();
+	const UTF8 *src_end = src_begin + utf8.size();
+	UTF16 *dst_begin = output;
+
+	utf16.clear();
+	while (src_begin < src_end)
+	{
+		ConversionResult result = ConvertUTF8toUTF16(&src_begin,
+			src_end,
+			&dst_begin,
+			dst_begin + COUNT_OF(output),
+			lenientConversion);
+
+		utf16.append((wchar_t*)output, dst_begin - output);
+		dst_begin = output;
+		if (result == sourceIllegal || result == sourceExhausted)
+		{
+			utf16.clear();
+			break;
+		}
+	}
+	return utf16;
+}
+
+std::string UTF16ToUTF8(const std::wstring utf16)
+{
+	std::string utf8;
+	UTF8 output[8192];
+	const UTF16 *src_begin = (const UTF16*)utf16.c_str();
+	const UTF16 *src_end = src_begin + utf16.size();
+	UTF8 *dst_begin = output;
+
+	utf8.clear();
+	while (src_begin < src_end)
+	{
+		ConversionResult result = ConvertUTF16toUTF8(&src_begin,
+			src_end,
+			&dst_begin,
+			dst_begin + COUNT_OF(output),
+			lenientConversion);
+
+		utf8.append((char*)output, dst_begin - output);
+		dst_begin = reinterpret_cast<UTF8 *>(output);
+		if (result == sourceIllegal || result == sourceExhausted)
+		{
+			utf8.clear();
+			break;
+		}
+	}
+	return utf8;
 }

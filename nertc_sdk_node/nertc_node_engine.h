@@ -8,6 +8,8 @@
 #include <node_object_wrap.h>
 #include "../shared/sdk_helper/nim_node_helper.h"
 #include "nertc_node_engine_event_handler.h"
+#include "../shared/util/windows_helper.h"
+
 
 namespace nertc_node
 {
@@ -143,6 +145,8 @@ private:
     nertc::IAudioDeviceManager *_adm = nullptr;
     nertc::IVideoDeviceManager *_vdm = nullptr;
     Isolate *isolate_;
+    WindowsHelpers *_windows_helper = nullptr;
+    PrintCaptureHelper *_windows_capture_helper = nullptr;
 };
 
 #define napi_get_native_this(args, native) \

@@ -2,6 +2,7 @@
 #include "nertc_node_engine_helper.h"
 #include "nertc_node_video_frame_provider.h"
 #include "../shared/util/windows_util.h"
+#include "../shared/util/windows_helper.h"
 
 namespace nertc_node
 {
@@ -11,6 +12,10 @@ NertcNodeEngine::NertcNodeEngine(Isolate *isolate)
 {
     isolate_ = isolate;
     rtc_engine_ = (nertc::IRtcEngineEx *)createNERtcEngine();
+#ifdef WIN32
+    _windows_helper = new WindowsHelpers();
+    _windows_capture_helper = new PrintCaptureHelper();
+#endif
 }
 NertcNodeEngine::~NertcNodeEngine()
 {
@@ -20,6 +25,17 @@ NertcNodeEngine::~NertcNodeEngine()
         _adm = nullptr;
         _vdm = nullptr;
         rtc_engine_ = nullptr;
+    }
+    if (_windows_helper)
+    {
+        delete _windows_helper;
+        _windows_helper = nullptr;
+    }
+    if (_windows_capture_helper)
+    {
+        _windows_capture_helper->Cleanup();
+        delete _windows_capture_helper;
+        _windows_capture_helper = nullptr;
     }
 }
 // void NertcNodeEngine::InitModule(Local<Object> &module)
@@ -131,6 +147,8 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(enumerateCaptureDevices)
     SET_PROTOTYPE(setDevice)
     SET_PROTOTYPE(getDevice)
+
+    SET_PROTOTYPE(enumerateScreenCaptureSourceInfo)
 
     END_OBJECT_INIT_EX(NertcNodeEngine)
 }
@@ -1944,6 +1962,28 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, pushExternalAudioFrame)
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
+static std::string WideToUTF8(const std::wstring& utf16) {
+    std::string utf8;
+    size_t n = ::WideCharToMultiByte(CP_ACP, 0, utf16.c_str(), utf16.size(), NULL, 0, NULL, NULL);
+    if (0 == n)
+        return "";
+    std::vector<char> buf(n + 1);
+    ::WideCharToMultiByte(CP_ACP, 0, utf16.c_str(), -1, &buf[0], n, NULL, NULL);
+    utf8.resize(n);
+    utf8.assign(&buf[0], n);
+    return utf8;
+}
+
+static unsigned int Hash(const char *str)
+{
+    unsigned int seed = 131;
+    unsigned int hash = 0;
+    while (*str) {
+        hash = hash * seed + (*str++);
+    }
+    return (hash & 0x7FFFFFFF);
+}
+
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
 {
     CHECK_API_FUNC(NertcNodeEngine, 0)
@@ -1951,19 +1991,68 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
     do
     {
         CHECK_NATIVE_THIS(instance);
-        CaptureTargetInfoList list = enumerateWindows();
+        WindowsHelpers::CaptureTargetInfoList list; 
+        instance->_windows_helper->getCaptureWindowList(&list);
+        // CaptureTargetInfoList list = enumerateWindows();
+
         uint32_t i = 0;
         for (auto w : list)
         {
             Local<Object> obj = Object::New(isolate);
-            nim_napi_set_object_value_int32(isolate, obj, "id", reinterpret_cast<int32_t>(w.id));
-            nim_napi_set_object_value_utf8string(isolate, obj, "title", wstring2string(w.title));
+            nim_napi_set_object_value_int32(isolate, obj, "sourceId", reinterpret_cast<int32_t>(w.id));
+            nim_napi_set_object_value_utf8string(isolate, obj, "sourceName", UTF16ToUTF8(w.title));
             nim_napi_set_object_value_int32(isolate, obj, "type", w.type);
-            nim_napi_set_object_value_int32(isolate, obj, "left", w.rc.left);
-            nim_napi_set_object_value_int32(isolate, obj, "top", w.rc.top);
-            nim_napi_set_object_value_int32(isolate, obj, "right", w.rc.right);
-            nim_napi_set_object_value_int32(isolate, obj, "bottom", w.rc.bottom);
+            nim_napi_set_object_value_bool(isolate, obj, "isMinimizeWindow", w.isMinimizeWindow);
+            if (instance->_windows_capture_helper->Init(w.id) && instance->_windows_capture_helper->Capture())
+            {
+                Local<v8::Object> thumb = Object::New(isolate);
+                int size = instance->_windows_capture_helper->GetBitmapDataSize();
+                int width = instance->_windows_capture_helper->GetWidth();
+                int height = instance->_windows_capture_helper->GetHeight();
+                uint8_t *data = RGBAToBGRA(instance->_windows_capture_helper->GetBitmapAddress(), size);
+                nim_napi_set_object_value_int32(isolate, thumb, "length", size);
+                nim_napi_set_object_value_int32(isolate, thumb, "width", width);
+                nim_napi_set_object_value_int32(isolate, thumb, "height", height);
+                Local<v8::ArrayBuffer> buff = v8::ArrayBuffer::New(isolate, data, size);
+                Local<v8::Uint8Array> dataarray = v8::Uint8Array::New(buff, 0, size);
+                Local<Value> propName = String::NewFromUtf8(isolate, "buffer", NewStringType::kInternalized).ToLocalChecked();
+                thumb->Set(isolate->GetCurrentContext(), propName, dataarray);
+                Local<Value> thumbKey = String::NewFromUtf8(isolate, "thumbBGRA", NewStringType::kInternalized).ToLocalChecked();
+                obj->Set(isolate->GetCurrentContext(), thumbKey, thumb);
+            }
+
+            if (w.type == 2)
+            {
+                // HICON icon = instance->_windows_helper->getWindowIcon(w.id);
+                // if (icon != nullptr)
+                // {
+                    int iconWidth = 0, iconHeight = 0, iconSize = 0;
+                    uint8_t *data = GetWindowsIconRGBA(w.id, &iconWidth, &iconHeight, &iconSize);
+                    if (data != NULL)
+                    {
+                        uint8_t *bdata = RGBAToBGRA((void *)data, iconSize);
+                        free(data);
+                        data = nullptr;
+                        Local<v8::Object> icon = Object::New(isolate);
+                        nim_napi_set_object_value_int32(isolate, icon, "length", iconSize);
+                        nim_napi_set_object_value_int32(isolate, icon, "width", iconWidth);
+                        nim_napi_set_object_value_int32(isolate, icon, "height", iconHeight);
+                        Local<v8::ArrayBuffer> buff = v8::ArrayBuffer::New(isolate, bdata, iconSize);
+                        Local<v8::Uint8Array> dataarray = v8::Uint8Array::New(buff, 0, iconSize);
+                        Local<Value> propName = String::NewFromUtf8(isolate, "buffer", NewStringType::kInternalized).ToLocalChecked();
+                        icon->Set(isolate->GetCurrentContext(), propName, dataarray);
+                        Local<Value> thumbKey = String::NewFromUtf8(isolate, "iconBGRA", NewStringType::kInternalized).ToLocalChecked();
+                        obj->Set(isolate->GetCurrentContext(), thumbKey, icon);
+                    }
+                // }
+            }
+
+            // nim_napi_set_object_value_int32(isolate, obj, "left", w.rc.left);
+            // nim_napi_set_object_value_int32(isolate, obj, "top", w.rc.top);
+            // nim_napi_set_object_value_int32(isolate, obj, "right", w.rc.right);
+            // nim_napi_set_object_value_int32(isolate, obj, "bottom", w.rc.bottom);
             arr->Set(isolate->GetCurrentContext(), i++, obj);
+            // if (i == 1) break;
         }
     } while (false);
     args.GetReturnValue().Set(arr);
