@@ -387,6 +387,31 @@ bool WindowsHelpers::getCaptureWindowList(CaptureTargetInfoList *windows)
         return false;
     }
     CaptureTargetInfoList result;
+
+    EnumDisplayMonitors(
+        nullptr, nullptr, [](HMONITOR hmon, HDC hdc, LPRECT pRC, LPARAM lparam) {
+            auto &monitors = *reinterpret_cast<CaptureTargetInfoList *>(lparam);
+            wchar_t buf[100] = {0};
+            int x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+            int y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+            int cx = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+            int cy = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+            // swprintf_s(buf, L"screen:(%d,%d,%d,%d)-(%d,%d,%d,%d)", pRC->left, pRC->top, pRC->right, pRC->bottom, x, y, cx, cy);
+            MONITORINFOEXW infoEx;
+            memset(&infoEx, 0, sizeof(infoEx));
+            infoEx.cbSize = sizeof(infoEx);
+            if (GetMonitorInfoW(hmon, &infoEx))
+            {
+                swprintf_s(buf, L"screen:%s-(%d,%d,%d,%d)-(%d,%d,%d,%d)", infoEx.szDevice, pRC->left, pRC->top, pRC->right, pRC->bottom, x, y, cx, cy);
+
+                // swprintf_s(buf, L"%s", infoEx.szDevice);
+            }
+            monitors.push_back({(HWND)hmon, buf, "", 1, false, *pRC});
+
+            return TRUE;
+        },
+        reinterpret_cast<LPARAM>(&result));
+    
     LPARAM param = reinterpret_cast<LPARAM>(&result);
     if (EnumWindows(WindowsEnumerationHandler, param))
     {
@@ -802,6 +827,7 @@ bool PrintCaptureHelper::Init(HWND hwnd)
     bmpWidth_ = clientRect_.right - clientRect_.left;
     bmpHeight_ = clientRect_.bottom - clientRect_.top;
 
+
     const int bitcount = 32;
     bmpDataSize_ = (bmpWidth_ * bitcount + 31) / 32 * 4 * bmpHeight_;
 
@@ -816,6 +842,7 @@ bool PrintCaptureHelper::Init(HWND hwnd)
     bitmapInfo.bmiHeader.biCompression = BI_RGB;
     scrDc_ = ::GetWindowDC(hwnd_);
     memDc_ = ::CreateCompatibleDC(scrDc_);
+    // bitmap_ = ::CreateCompatibleBitmap(scrDc_, 400, 300);
     bitmap_ = ::CreateDIBSection(scrDc_, &bitmapInfo, DIB_RGB_COLORS, &bitsPtr_, nullptr, 0);
     if (bitmap_ == nullptr)
     {
@@ -874,14 +901,153 @@ bool PrintCaptureHelper::Capture() const
         return false;
     }
 
-    auto ret = ::PrintWindow(hwnd_, memDc_, PW_CLIENTONLY | PW_RENDERFULLCONTENT);
-    if (TRUE != ret)
+    bool ret = false;
+    ret = ::PrintWindow(hwnd_, memDc_, PW_CLIENTONLY | PW_RENDERFULLCONTENT);
+    if (ret)
     {
-        ret =
-            BitBlt(memDc_, 0, 0, clientRect_.right - clientRect_.left, clientRect_.bottom - clientRect_.top, scrDc_, 0, 0, SRCCOPY /*| CAPTUREBLT*/);
+        ret = ::BitBlt(memDc_, 0, 0, clientRect_.right - clientRect_.left, clientRect_.bottom - clientRect_.top, scrDc_, 0, 0, SRCCOPY /*| CAPTUREBLT*/);
     }
 
     return TRUE == ret;
+}
+
+void *PrintCaptureHelper::Crop(int x, int y, int width, int height, int zoomWidth, int zoomHeight)
+{
+    if (bitmap_ == nullptr || memDc_ == nullptr || scrDc_ == nullptr)
+    {
+        return nullptr;
+    }
+    const int bitcount = 32;
+    int size = (zoomWidth * bitcount + 31) / 32 * 4 * zoomHeight;
+    
+    BITMAPINFO bmi;
+    ZeroMemory(&bmi, sizeof(BITMAPINFO));
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = bitcount;
+    bmi.bmiHeader.biCompression = BI_RGB;
+    bmi.bmiHeader.biWidth = zoomWidth;
+    bmi.bmiHeader.biHeight = -zoomHeight;
+    bmi.bmiHeader.biSizeImage = size;
+
+    void *pdata;
+    HDC hdc = ::GetWindowDC(NULL);
+    HDC hdcMem = CreateCompatibleDC(hdc);
+    HBITMAP bitmap = ::CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &pdata, nullptr, 0);
+    if (bitmap == nullptr)
+    {
+        ::DeleteDC(hdcMem);
+        ::ReleaseDC(NULL, hdc);
+        return false;
+    }
+
+    HBITMAP oldBitmap = static_cast<HBITMAP>(::SelectObject(hdcMem, bitmap));
+
+    // SetStretchBltMode(hdcMem, STRETCH_HALFTONE); //注意第二个参数会影响显示质量
+    StretchBlt(hdcMem, 0, 0, zoomWidth, zoomHeight, memDc_, x, y, width, height, SRCCOPY);
+
+    bmpWidth_ = zoomWidth;
+    bmpHeight_ = zoomHeight;
+    bmpDataSize_ = size;
+    void* buffer = malloc(bmpDataSize_);
+    memcpy(buffer, pdata, bmpDataSize_);
+
+    ::SelectObject(hdcMem, oldBitmap);
+    ::DeleteObject(bitmap);
+    ::DeleteDC(hdcMem);
+    ::ReleaseDC(NULL, hdc);
+    return buffer;
+}
+
+void* PrintCaptureHelper::Zoom(int width, int height, int type)
+{
+    if (bitmap_ == nullptr || memDc_ == nullptr || scrDc_ == nullptr)
+    {
+        return nullptr;
+    }
+    if (type == 2)
+    {
+        if (!::PrintWindow(hwnd_, memDc_, PW_CLIENTONLY | PW_RENDERFULLCONTENT))
+        {
+            return nullptr;
+        }
+    }
+
+    const int bitcount = 32;
+    int size = (width * bitcount + 31) / 32 * 4 * height;
+    
+    BITMAPINFO bmi;
+    ZeroMemory(&bmi, sizeof(BITMAPINFO));
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = bitcount;
+    bmi.bmiHeader.biCompression = BI_RGB;
+    bmi.bmiHeader.biWidth = width;
+    bmi.bmiHeader.biHeight = -height;
+    bmi.bmiHeader.biSizeImage = size;
+
+    void *pdata;
+    HDC hdc = ::GetWindowDC(NULL);
+    HDC hdcMem = CreateCompatibleDC(hdc);
+    HBITMAP bitmap = ::CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &pdata, nullptr, 0);
+    if (bitmap == nullptr)
+    {
+        ::DeleteDC(hdcMem);
+        ::ReleaseDC(NULL, hdc);
+        return false;
+    }
+
+    HBITMAP oldBitmap = static_cast<HBITMAP>(::SelectObject(hdcMem, bitmap));
+
+    // SetStretchBltMode(hdcMem, STRETCH_HALFTONE); //注意第二个参数会影响显示质量
+    StretchBlt(hdcMem, 0, 0, width, height, memDc_, 0, 0, GetWidth(), GetHeight(), SRCCOPY);
+
+    bmpWidth_ = width;
+    bmpHeight_ = height;
+    bmpDataSize_ = size;
+    void* buffer = malloc(bmpDataSize_);
+    memcpy(buffer, pdata, bmpDataSize_);
+
+    ::SelectObject(hdcMem, oldBitmap);
+    ::DeleteObject(bitmap);
+    ::DeleteDC(hdcMem);
+    ::ReleaseDC(NULL, hdc);
+    return buffer;
+}
+
+bool PrintCaptureHelper::CaptureScreen()
+{
+    scrDc_ = GetDC(GetDesktopWindow());
+    // bmpWidth_ = GetDeviceCaps(scrDc_, HORZRES);
+    // bmpHeight_ = GetDeviceCaps(scrDc_, VERTRES);
+    bmpWidth_ = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+    bmpHeight_ = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    memDc_ = CreateCompatibleDC(scrDc_);
+
+    const int bitcount = 32;
+    int size = (bmpWidth_ * bitcount + 31) / 32 * 4 * bmpHeight_;
+    
+    BITMAPINFO bmi;
+    ZeroMemory(&bmi, sizeof(BITMAPINFO));
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = bitcount;
+    bmi.bmiHeader.biCompression = BI_RGB;
+    bmi.bmiHeader.biWidth = bmpWidth_;
+    bmi.bmiHeader.biHeight = -bmpHeight_;
+    bmi.bmiHeader.biSizeImage = size;
+
+    bitmap_ = ::CreateDIBSection(scrDc_, &bmi, DIB_RGB_COLORS, &bitsPtr_, nullptr, 0);
+    if (bitmap_ == nullptr)
+    {
+        ::DeleteDC(memDc_);
+        ::ReleaseDC(NULL, scrDc_);
+        return false;
+    }
+
+    oldBitmap_ = static_cast<HBITMAP>(::SelectObject(memDc_, bitmap_));
+
+    return BitBlt(memDc_, 0, 0, bmpWidth_, bmpHeight_, scrDc_, GetSystemMetrics(SM_XVIRTUALSCREEN), GetSystemMetrics(SM_YVIRTUALSCREEN), SRCCOPY);
 }
 
 uint8_t *RGBAToBGRA(void *src, int size)

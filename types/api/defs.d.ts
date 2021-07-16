@@ -430,7 +430,7 @@ export interface NERtcEngineAPI {
     setClientRole(role: NERtcClientRole): number;
     setupSubStreamVideoCanvas(uid: number, enabled: Boolean): number;
     subscribeRemoteVideoSubStream(uid: number, sub: boolean): number;
-    enumerateScreenCaptureSourceInfo(): Array<Object>;
+    enumerateScreenCaptureSourceInfo(thumbWidth: number, thumbHeight: number, iconWidth: number, iconHeight: number): Array<Object>;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {

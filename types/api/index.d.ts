@@ -16,7 +16,6 @@ declare class NERtcEngine extends EventEmitter {
      * @returns {NERtcEngine}
      */
     constructor();
-    enumerateScreenCaptureSourceInfo(): Array<Object>;
     /**
      * 初始化 NERTC SDK 服务。
      * <pre>
@@ -1594,6 +1593,36 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     enumerateVideoCaptureDevices(): Array<NERtcDevice>;
+    /**
+     * 枚举屏幕分享源信息。
+     * @param {number} thumbWidth 缩略图宽度 px。
+     * @param {number} thumbHeight 缩略图高度 px。
+     * @param {number} iconWidth 图标宽度 px。
+     * @param {number} iconHeight 图标高度 px。
+     * @returns {Object[]}
+     * <pre>
+     * - Object[] : 调用成功；
+     * <table style="width:100%;">
+     * <tr><th>Name</th><th>Type</th><th>Description</th></tr>
+     * <tr><td>Object.sourceId</td><td>number</td><td>信息源ID</td></tr>
+     * <tr><td>Object.sourceName</td><td>String</td><td>信息源名称</td></tr>
+     * <tr><td>Object.type</td><td>int</td><td>信息源类型:1-屏幕 2-窗口</td></tr>
+     * <tr><td>Object.isMinimizeWindow</td><td>boolean</td><td>窗口是否最小化状态</td></tr>
+     * <tr><td>Object.thumbBGRA</td><td>object</td><td>缩略图信息:
+     * - buffer - BGRA二进制数据
+     * - length - 数据大小 byte
+     * - width - 图片宽度 px
+     * - height - 图片高度 px</td></tr>
+     * <tr><td>Object.iconBGRA</td><td>object</td><td>图标信息:
+     * - buffer - BGRA二进制数据
+     * - length - 数据大小 byte
+     * - width - 图片宽度 px
+     * - height - 图片高度 px</td></tr>
+     * </table>
+     * - NULL: 调用失败。
+     * </pre>
+     */
+    enumerateScreenCaptureSourceInfo(thumbWidth: number, thumbHeight: number, iconWidth: number, iconHeight: number): Array<Object>;
     /**
      * 指定视频采集设备。
      * @param {string} id 视频采集设备的设备 ID。可以通过 {@link NERtcEngine#enumerateCaptureDevices}获取。

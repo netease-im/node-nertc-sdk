@@ -13,9 +13,9 @@ public:
         HWND              id = 0;
         std::wstring      title;
         std::string app;
-        RECT rc{0, 0, 0, 0};
         int type; //0:none 1:screen 2:window 3:webcontents(non-support) 4:currenttab(non-support)
         bool isMinimizeWindow=false;
+        RECT rc{0, 0, 0, 0};
     };
     typedef std::vector<CaptureTargetInfo> CaptureTargetInfoList;
 
@@ -75,6 +75,9 @@ public:
     bool ChangeWindowHandle(const std::string& windowName);
     bool ChangeWindowHandle(HWND hwnd);
     bool Capture() const;
+    void* Zoom(int width, int height, int type);//1:screen 2:window
+    void* Crop(int x, int y, int width, int height, int zoomWidth, int zoomHeight);//1:screen 2:window
+    bool CaptureScreen();
 
     const RECT& GetWindowRect() const { return windowRect_; }
     const RECT& GetClientRect() const { return clientRect_; }
@@ -101,5 +104,6 @@ private:
 
 uint8_t *GetWindowsIconRGBA(HWND hWnd, int *width, int *height, int *size);
 uint8_t *RGBAToBGRA(void *src, int size);
+// void *CaptureScreen(int x, int y, int width, int height);
 
 #endif // _WINDOWS_HELPERS_H_

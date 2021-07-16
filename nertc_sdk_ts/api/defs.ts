@@ -502,7 +502,7 @@ export interface NERtcEngineAPI {
     subscribeRemoteVideoSubStream(uid: number, sub: boolean): number;
 
     //sc
-    enumerateScreenCaptureSourceInfo(): Array<Object>;
+    enumerateScreenCaptureSourceInfo(thumbWidth: number, thumbHeight: number, iconWidth: number, iconHeight: number): Array<Object>;
 
     //TODO
     // setMixedAudioFrameParameters(samplerate: number): number;
