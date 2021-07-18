@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <string>
 #include <vector>
+#include <map>
 
 class PrintCaptureHelper;
 class WindowsHelpers
@@ -29,7 +30,7 @@ public:
     RECT getWindowRect(HWND hWnd) const;
     HBITMAP getWindowImage(HWND hWnd) const;
     HICON getWindowIcon(HWND hWnd) const;
-    bool static getCaptureWindowList(CaptureTargetInfoList* windows);
+    bool static getCaptureWindowList(CaptureTargetInfoList* windows, int type = 0);
     void setForegroundWindow(HWND hWnd) const;
     void sharedOutsideWindow(HWND wid, HWND hWnd, bool bFullScreen);
     void setWindowTop(HWND wid);
@@ -46,6 +47,8 @@ public:
     bool static getFileVersion(const wchar_t *file_path, WORD *major_version, WORD *minor_version, WORD *build_number, WORD *revision_number);
     int static getNTDLLVersion();
     std::wstring static getCurrentExe();
+    void updateCachedInfos(int32_t id, RECT rect) { cached_infos[id] = rect; }
+    RECT getCachedRect(int32_t id) { return cached_infos[id]; }
 
 private:
     //根据屏幕上指定的坐标点，获取坐标点窗口对应的pid
@@ -60,6 +63,7 @@ private:
 private:
     std::wstring static m_strCurrentExe;
     PrintCaptureHelper* m_pPrintCaptureHelper = nullptr;
+    std::map<int32_t, RECT> cached_infos;
 };
 
 class PrintCaptureHelper

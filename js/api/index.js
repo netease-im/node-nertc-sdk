@@ -1197,7 +1197,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * 通过屏幕 ID 共享屏幕。共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕 ID。
      * <pre>
      * <b>NOTE:</b>
-     * - 该方法仅适用于 macOS。
+     * - 该方法仅适用于 Windows 和 macOS。
      * - 该方法打开视频辅流。
      * </pre>
      * @param {number} displayId 指定待共享的屏幕 ID。开发者需要通过该参数指定你要共享的那个屏幕。
@@ -1231,6 +1231,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功；
+     * - -100: 需要先调用 {@link NERtcEngine#enumerateScreenCaptureSourceInfo} 缓存桌面信息
      * - 其他: 方法调用失败。
      * </pre>
      */

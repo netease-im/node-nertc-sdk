@@ -380,7 +380,7 @@ HICON WindowsHelpers::getWindowIcon(HWND hWnd) const
     return pixmap;
 }
 
-bool WindowsHelpers::getCaptureWindowList(CaptureTargetInfoList *windows)
+bool WindowsHelpers::getCaptureWindowList(CaptureTargetInfoList *windows, int type)
 {
     if (nullptr == windows)
     {
@@ -388,36 +388,48 @@ bool WindowsHelpers::getCaptureWindowList(CaptureTargetInfoList *windows)
     }
     CaptureTargetInfoList result;
 
-    EnumDisplayMonitors(
-        nullptr, nullptr, [](HMONITOR hmon, HDC hdc, LPRECT pRC, LPARAM lparam) {
-            auto &monitors = *reinterpret_cast<CaptureTargetInfoList *>(lparam);
-            wchar_t buf[100] = {0};
-            int x = GetSystemMetrics(SM_XVIRTUALSCREEN);
-            int y = GetSystemMetrics(SM_YVIRTUALSCREEN);
-            int cx = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-            int cy = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-            // swprintf_s(buf, L"screen:(%d,%d,%d,%d)-(%d,%d,%d,%d)", pRC->left, pRC->top, pRC->right, pRC->bottom, x, y, cx, cy);
-            MONITORINFOEXW infoEx;
-            memset(&infoEx, 0, sizeof(infoEx));
-            infoEx.cbSize = sizeof(infoEx);
-            if (GetMonitorInfoW(hmon, &infoEx))
-            {
-                swprintf_s(buf, L"screen:%s-(%d,%d,%d,%d)-(%d,%d,%d,%d)", infoEx.szDevice, pRC->left, pRC->top, pRC->right, pRC->bottom, x, y, cx, cy);
-
-                // swprintf_s(buf, L"%s", infoEx.szDevice);
-            }
-            monitors.push_back({(HWND)hmon, buf, "", 1, false, *pRC});
-
-            return TRUE;
-        },
-        reinterpret_cast<LPARAM>(&result));
-    
-    LPARAM param = reinterpret_cast<LPARAM>(&result);
-    if (EnumWindows(WindowsEnumerationHandler, param))
+    if (type == 0 || type == 1)
     {
-        std::copy(result.begin(), result.end(), std::back_inserter(*windows));
-        return true;
+        bool ret = EnumDisplayMonitors(
+            nullptr, nullptr, [](HMONITOR hmon, HDC hdc, LPRECT pRC, LPARAM lparam)
+            {
+                auto &monitors = *reinterpret_cast<CaptureTargetInfoList *>(lparam);
+                wchar_t buf[100] = {0};
+                // int x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+                // int y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+                // int cx = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+                // int cy = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+                // MONITORINFOEXW infoEx;
+                // memset(&infoEx, 0, sizeof(infoEx));
+                // infoEx.cbSize = sizeof(infoEx);
+                // if (GetMonitorInfoW(hmon, &infoEx))
+                // {
+                // swprintf_s(buf, L"screen:%s-(%d,%d,%d,%d)-(%d,%d,%d,%d)", infoEx.szDevice, pRC->left, pRC->top, pRC->right, pRC->bottom, x, y, cx, cy);
+                swprintf_s(buf, L"screen: %d", monitors.size() + 1);
+                // }
+                monitors.push_back({(HWND)hmon, buf, "", 1, false, *pRC});
+
+                return TRUE;
+            },
+            reinterpret_cast<LPARAM>(&result));
+        if (type == 1)
+        {
+            if (ret)
+                std::copy(result.begin(), result.end(), std::back_inserter(*windows));
+            return ret;
+        }
     }
+
+    if (type == 0 || type == 2)
+    {
+        LPARAM param = reinterpret_cast<LPARAM>(&result);
+        if (EnumWindows(WindowsEnumerationHandler, param))
+        {
+            std::copy(result.begin(), result.end(), std::back_inserter(*windows));
+            return true;
+        }
+    }
+
     return false;
 }
 
