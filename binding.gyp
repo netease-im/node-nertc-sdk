@@ -26,12 +26,6 @@
         './shared/sdk_helper/nim_node_async_queue.cpp',
         './shared/sdk_helper/nim_event_handler.h',
         './shared/sdk_helper/nim_event_handler.cpp',
-        './shared/util/windows_util.h',
-        './shared/util/windows_util.cpp',
-        './shared/util/windows_helper.h',
-        './shared/util/windows_helper.cpp',        
-        './shared/util/ConvertUTF.c',
-        './shared/util/ConvertUTF.h',
         './shared/libyuv/source/compare_common.cc',
         './shared/libyuv/source/compare.cc',
         './shared/libyuv/source/convert_argb.cc',
@@ -78,9 +72,7 @@
             'link_settings': {
               'libraries': [
                 '-lnertc_sdk.lib',
-                '-lWs2_32.lib',
-                '-lversion.lib',
-                '-lshlwapi.lib'
+                '-lWs2_32.lib'
               ]
             },
             'msvs_settings': {
@@ -99,6 +91,12 @@
               './shared/libyuv/source/rotate_win.cc',
               './shared/libyuv/source/row_win.cc',
               './shared/libyuv/source/scale_win.cc'
+              './shared/util/windows_helper.h',
+              './shared/util/windows_helper.cpp',   
+              './shared/util/string_util.h',
+              './shared/util/string_util.cpp',    
+              './shared/util/ConvertUTF.c',
+              './shared/util/ConvertUTF.h'
             ],
             'configurations': {
               'Release': {

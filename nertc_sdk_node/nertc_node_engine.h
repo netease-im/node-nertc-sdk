@@ -8,8 +8,9 @@
 #include <node_object_wrap.h>
 #include "../shared/sdk_helper/nim_node_helper.h"
 #include "nertc_node_engine_event_handler.h"
+#ifdef WIN32
 #include "../shared/util/windows_helper.h"
-
+#endif
 
 namespace nertc_node
 {
