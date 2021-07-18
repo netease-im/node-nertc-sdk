@@ -1,8 +1,10 @@
 #include "nertc_node_engine.h"
 #include "nertc_node_engine_helper.h"
 #include "nertc_node_video_frame_provider.h"
+#ifdef WIN32
 #include "../shared/util/windows_util.h"
 #include "../shared/util/windows_helper.h"
+#endif
 
 namespace nertc_node
 {
