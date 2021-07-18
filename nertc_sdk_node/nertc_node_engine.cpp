@@ -26,6 +26,7 @@ NertcNodeEngine::~NertcNodeEngine()
         _vdm = nullptr;
         rtc_engine_ = nullptr;
     }
+#ifdef WIN32
     if (_windows_helper)
     {
         delete _windows_helper;
@@ -37,6 +38,7 @@ NertcNodeEngine::~NertcNodeEngine()
         delete _windows_capture_helper;
         _windows_capture_helper = nullptr;
     }
+#endif
 }
 // void NertcNodeEngine::InitModule(Local<Object> &module)
 void NertcNodeEngine::InitModule(Local<Object> &exports,
@@ -149,6 +151,10 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(getDevice)
 
     SET_PROTOTYPE(enumerateScreenCaptureSourceInfo)
+
+    SET_PROTOTYPE(startSystemAudioLoopbackCapture)
+    SET_PROTOTYPE(stopSystemAudioLoopbackCapture)
+    SET_PROTOTYPE(setSystemAudioLoopbackCaptureVolume)
 
     END_OBJECT_INIT_EX(NertcNodeEngine)
 }
@@ -1962,32 +1968,11 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, pushExternalAudioFrame)
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
-static std::string WideToUTF8(const std::wstring& utf16) {
-    std::string utf8;
-    size_t n = ::WideCharToMultiByte(CP_ACP, 0, utf16.c_str(), utf16.size(), NULL, 0, NULL, NULL);
-    if (0 == n)
-        return "";
-    std::vector<char> buf(n + 1);
-    ::WideCharToMultiByte(CP_ACP, 0, utf16.c_str(), -1, &buf[0], n, NULL, NULL);
-    utf8.resize(n);
-    utf8.assign(&buf[0], n);
-    return utf8;
-}
-
-static unsigned int Hash(const char *str)
-{
-    unsigned int seed = 131;
-    unsigned int hash = 0;
-    while (*str) {
-        hash = hash * seed + (*str++);
-    }
-    return (hash & 0x7FFFFFFF);
-}
-
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
 {
     CHECK_API_FUNC(NertcNodeEngine, 4)
     Local<Array> arr = Array::New(isolate);
+#ifdef WIN32
     do
     {
         CHECK_NATIVE_THIS(instance);
@@ -2035,6 +2020,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
                         int height = instance->_windows_capture_helper->GetHeight();
                         // void *bgra = instance->_windows_capture_helper->GetBitmapAddress();
                         uint8_t *data = RGBAToBGRA(bgra, size);
+                        free(bgra);
+                        bgra = nullptr;
                         nim_napi_set_object_value_int32(isolate, thumb, "length", size);
                         nim_napi_set_object_value_int32(isolate, thumb, "width", width);
                         nim_napi_set_object_value_int32(isolate, thumb, "height", height);
@@ -2070,6 +2057,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
                     int height = instance->_windows_capture_helper->GetHeight();
                     // void *bgra = instance->_windows_capture_helper->GetBitmapAddress();
                     uint8_t *data = RGBAToBGRA(bgra, size);
+                    free(bgra);
+                    bgra = nullptr;
                     nim_napi_set_object_value_int32(isolate, thumb, "length", size);
                     nim_napi_set_object_value_int32(isolate, thumb, "width", width);
                     nim_napi_set_object_value_int32(isolate, thumb, "height", height);
@@ -2084,33 +2073,78 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
 
             if (w.type == 2)
             {
-                // HICON icon = instance->_windows_helper->getWindowIcon(w.id);
-                // if (icon != nullptr)
-                // {
-                    int iconSize = 0;
-                    uint8_t *data = GetWindowsIconRGBA(w.id, &iconWidth, &iconHeight, &iconSize);
-                    if (data != NULL)
-                    {
-                        uint8_t *bdata = RGBAToBGRA((void *)data, iconSize);
-                        free(data);
-                        data = nullptr;
-                        Local<v8::Object> icon = Object::New(isolate);
-                        nim_napi_set_object_value_int32(isolate, icon, "length", iconSize);
-                        nim_napi_set_object_value_int32(isolate, icon, "width", iconWidth);
-                        nim_napi_set_object_value_int32(isolate, icon, "height", iconHeight);
-                        Local<v8::ArrayBuffer> buff = v8::ArrayBuffer::New(isolate, bdata, iconSize);
-                        Local<v8::Uint8Array> dataarray = v8::Uint8Array::New(buff, 0, iconSize);
-                        Local<Value> propName = String::NewFromUtf8(isolate, "buffer", NewStringType::kInternalized).ToLocalChecked();
-                        icon->Set(isolate->GetCurrentContext(), propName, dataarray);
-                        Local<Value> thumbKey = String::NewFromUtf8(isolate, "iconBGRA", NewStringType::kInternalized).ToLocalChecked();
-                        obj->Set(isolate->GetCurrentContext(), thumbKey, icon);
-                    }
-                // }
+                int iconSize = 0;
+                uint8_t *data = GetWindowsIconRGBA(w.id, &iconWidth, &iconHeight, &iconSize);
+                if (data != NULL)
+                {
+                    uint8_t *bdata = RGBAToBGRA((void *)data, iconSize);
+                    free(data);
+                    data = nullptr;
+                    Local<v8::Object> icon = Object::New(isolate);
+                    nim_napi_set_object_value_int32(isolate, icon, "length", iconSize);
+                    nim_napi_set_object_value_int32(isolate, icon, "width", iconWidth);
+                    nim_napi_set_object_value_int32(isolate, icon, "height", iconHeight);
+                    Local<v8::ArrayBuffer> buff = v8::ArrayBuffer::New(isolate, bdata, iconSize);
+                    Local<v8::Uint8Array> dataarray = v8::Uint8Array::New(buff, 0, iconSize);
+                    Local<Value> propName = String::NewFromUtf8(isolate, "buffer", NewStringType::kInternalized).ToLocalChecked();
+                    icon->Set(isolate->GetCurrentContext(), propName, dataarray);
+                    Local<Value> thumbKey = String::NewFromUtf8(isolate, "iconBGRA", NewStringType::kInternalized).ToLocalChecked();
+                    obj->Set(isolate->GetCurrentContext(), thumbKey, icon);
+                }
             }
             arr->Set(isolate->GetCurrentContext(), i++, obj);
         }
     } while (false);
+#endif
     args.GetReturnValue().Set(arr);
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, startSystemAudioLoopbackCapture)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 0)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+#ifdef WIN32
+        ret = instance->rtc_engine_->startSystemAudioLoopbackCapture();
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, stopSystemAudioLoopbackCapture)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 0)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+#ifdef WIN32
+        ret = instance->rtc_engine_->stopSystemAudioLoopbackCapture();
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setSystemAudioLoopbackCaptureVolume)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 0)
+    int ret = -1;
+    do
+    {
+        auto status = napi_ok;
+        uint32_t vol;
+        GET_ARGS_VALUE(isolate, 0, uint32, vol)
+        if (status != napi_ok)
+        {
+            break;
+        }
+#ifdef WIN32
+        ret = instance->rtc_engine_->setSystemAudioLoopbackCaptureVolume(vol);
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
 }

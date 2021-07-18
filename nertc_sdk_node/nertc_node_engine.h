@@ -135,6 +135,11 @@ public:
     //CUSTOM
     NIM_SDK_NODE_API(enumerateScreenCaptureSourceInfo);
 
+    //screenshare with audio
+    NIM_SDK_NODE_API(startSystemAudioLoopbackCapture);
+    NIM_SDK_NODE_API(stopSystemAudioLoopbackCapture);
+    NIM_SDK_NODE_API(setSystemAudioLoopbackCaptureVolume);
+
 protected:
     NertcNodeEngine(Isolate *isolate);
     ~NertcNodeEngine();
@@ -145,8 +150,10 @@ private:
     nertc::IAudioDeviceManager *_adm = nullptr;
     nertc::IVideoDeviceManager *_vdm = nullptr;
     Isolate *isolate_;
+#ifdef WIN32
     WindowsHelpers *_windows_helper = nullptr;
     PrintCaptureHelper *_windows_capture_helper = nullptr;
+#endif
 };
 
 #define napi_get_native_this(args, native) \

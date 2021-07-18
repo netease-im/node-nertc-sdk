@@ -1348,6 +1348,55 @@ class NERtcEngine extends events_1.EventEmitter {
         return this.nertcEngine.resumeScreenCapture();
     }
     /**
+     * 开启声音共享。
+     * <pre>
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows。
+     * - 请在频道内调用该方法，该方法会捕获系统声音发送，开启本地语音后工作。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    startSystemAudioLoopbackCapture() {
+        return this.nertcEngine.startSystemAudioLoopbackCapture();
+    }
+    /**
+     * 关闭声音共享。
+     * <pre>
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows。
+     * - 请在频道内调用该方法，通话结束后自动关闭。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    stopSystemAudioLoopbackCapture() {
+        return this.nertcEngine.stopSystemAudioLoopbackCapture();
+    }
+    /**
+     * 设置声音共享音量。
+     * <pre>
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows。
+     * - 请在频道内调用该方法。
+     * </pre>
+     * @param {number} volume 音效音量范围为 0~100。默认 100 为原始音量。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setSystemAudioLoopbackCaptureVolume(volume) {
+        return this.nertcEngine.setSystemAudioLoopbackCaptureVolume(volume);
+    }
+    /**
      * 查询 SDK 版本号。
      * @returns {String} 当前的 SDK 版本号，格式为字符串，如1.0.0.
      */

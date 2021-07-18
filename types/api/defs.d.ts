@@ -431,6 +431,9 @@ export interface NERtcEngineAPI {
     setupSubStreamVideoCanvas(uid: number, enabled: Boolean): number;
     subscribeRemoteVideoSubStream(uid: number, sub: boolean): number;
     enumerateScreenCaptureSourceInfo(thumbWidth: number, thumbHeight: number, iconWidth: number, iconHeight: number): Array<Object>;
+    startSystemAudioLoopbackCapture(): number;
+    stopSystemAudioLoopbackCapture(): number;
+    setSystemAudioLoopbackCaptureVolume(volume: number): number;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {

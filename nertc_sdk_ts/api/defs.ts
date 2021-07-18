@@ -503,7 +503,9 @@ export interface NERtcEngineAPI {
 
     //sc
     enumerateScreenCaptureSourceInfo(thumbWidth: number, thumbHeight: number, iconWidth: number, iconHeight: number): Array<Object>;
-
+    startSystemAudioLoopbackCapture(): number;
+    stopSystemAudioLoopbackCapture(): number;
+    setSystemAudioLoopbackCaptureVolume(volume: number): number;
     //TODO
     // setMixedAudioFrameParameters(samplerate: number): number;
     // setExternalVideoSource(enabled: boolean): number;
