@@ -2163,7 +2163,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, stopSystemAudioLoopbackCapture)
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, setSystemAudioLoopbackCaptureVolume)
 {
-    CHECK_API_FUNC(NertcNodeEngine, 0)
+    CHECK_API_FUNC(NertcNodeEngine, 1)
     int ret = -1;
     do
     {
