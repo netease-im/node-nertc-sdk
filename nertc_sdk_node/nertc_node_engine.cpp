@@ -190,15 +190,26 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, initialize)
         context.video_use_exnternal_render = true;
         context.video_prefer_hw_decoder = false;
         context.video_prefer_hw_encoder = false;
+        context.log_level = nertc::kNERtcLogLevelInfo;
+        context.log_file_max_size_KBytes = 20 * 1024;
         context.event_handler = NertcNodeEventHandler::GetInstance();
-        UTF8String out, out1;
-        if (nim_napi_get_object_value_utf8string(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "app_key", out) == napi_ok)
+        UTF8String app_key, log_dir_path;
+        if (nim_napi_get_object_value_utf8string(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "app_key", app_key) == napi_ok)
         {
-            context.app_key = (const char *)out.get();
+            context.app_key = (const char *)app_key.get();
         }
-        if (nim_napi_get_object_value_utf8string(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "log_dir_path", out1) == napi_ok)
+        if (nim_napi_get_object_value_utf8string(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "log_dir_path", log_dir_path) == napi_ok)
         {
-            context.log_dir_path = (const char *)out1.get();
+            context.log_dir_path = (const char *)log_dir_path.get();
+        }
+        uint32_t logLevel = 3, log_file_max_size_KBytes = 20 * 1024;
+        if (nim_napi_get_object_value_uint32(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "log_level", logLevel) == napi_ok)
+        {
+            context.log_level = (nertc::NERtcLogLevel)logLevel;
+        }
+        if (nim_napi_get_object_value_uint32(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "log_file_max_size_KBytes", log_file_max_size_KBytes) == napi_ok)
+        {
+            context.log_file_max_size_KBytes = log_file_max_size_KBytes;
         }
         ret = instance->rtc_engine_->initialize(context);
         if (ret == 0)
@@ -1364,10 +1375,15 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, addLiveStreamTask)
     {
         CHECK_NATIVE_THIS(instance);
         auto status = napi_ok;
-        nertc::NERtcLiveStreamTaskInfo info = {};
+        nertc::NERtcLiveStreamTaskInfo info = {0};
         status = nertc_ls_task_info_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), info);
         if (status == napi_ok)
         {
+#ifdef WIN32
+            // 等mac sdk更新后可以去掉编译宏
+            info.extra_info = nullptr;
+            info.config = {0};
+#endif
             ret = instance->rtc_engine_->addLiveStreamTask(info);
             if (info.layout.users)
             {
@@ -2051,13 +2067,13 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
                     void *rgba = instance->_windows_capture_helper->Crop(left, top, sWidth, sHeight, thumbWidth, thumbHeight);
                     if (rgba != nullptr)
                     {
-                        Local<v8::Object> thumb = Object::New(isolate);
                         int size = instance->_windows_capture_helper->GetBitmapDataSize();
                         int width = instance->_windows_capture_helper->GetWidth();
                         int height = instance->_windows_capture_helper->GetHeight();
                         uint8_t *data = RGBAToBGRA(rgba, size);
                         free(rgba);
                         rgba = nullptr;
+                        Local<v8::Object> thumb = Object::New(isolate);
                         nim_napi_set_object_value_int32(isolate, thumb, "length", size);
                         nim_napi_set_object_value_int32(isolate, thumb, "width", width);
                         nim_napi_set_object_value_int32(isolate, thumb, "height", height);
@@ -2081,14 +2097,17 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
             nim_napi_set_object_value_utf8string(isolate, obj, "sourceName", UTF16ToUTF8(w.title));
             nim_napi_set_object_value_int32(isolate, obj, "type", w.type);
             nim_napi_set_object_value_bool(isolate, obj, "isMinimizeWindow", w.isMinimizeWindow);
-            if (instance->_windows_capture_helper->Init(w.id))
+            if (!w.isMinimizeWindow && instance->_windows_capture_helper->Init(w.id))
             {
+                // bool ret = instance->_windows_capture_helper->Capture();
+                // if (ret)
                 void *rgba = instance->_windows_capture_helper->Zoom(thumbWidth, thumbHeight, w.type);
                 if (rgba != nullptr)
                 {
                     int size = instance->_windows_capture_helper->GetBitmapDataSize();
                     int width = instance->_windows_capture_helper->GetWidth();
                     int height = instance->_windows_capture_helper->GetHeight();
+                    // void *rgba = instance->_windows_capture_helper->GetBitmapAddress();
                     uint8_t *data = RGBAToBGRA(rgba, size);
                     free(rgba);
                     rgba = nullptr;

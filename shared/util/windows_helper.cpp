@@ -159,49 +159,27 @@ BOOL CALLBACK WindowsEnumerationHandler(HWND hwnd, LPARAM param)
         return TRUE;
     }
 
-    // Skip windows that are invisible, minimized, have no title, or are owned,
-    // unless they have the app window style set.
-    //    HWND owner = GetWindow(hwnd, GW_OWNER);
-    //    LONG exstyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-    //    if (IsIconic(hwnd) || !IsWindowVisible(hwnd) ||
-    //        (owner && !(exstyle & WS_EX_APPWINDOW))
-    //        || (exstyle & WS_EX_LAYERED)) {
-    //        return TRUE;
-    //    }
-
-    // YXLOG(Info) << "hwnd: " << hwnd << "IsWindow: " << ::IsWindow(hwnd) << ", IsWindowVisible: " << ::IsWindowVisible(hwnd) << ", GetWindowLong: " << ::GetWindowLong(hwnd, GWL_HWNDPARENT) << ", GetLastError: " << GetLastError() << YXLOGEnd;
     const size_t kTitleLength = 500;
     WCHAR window_title[kTitleLength] = {0};
 
     const size_t kClassLength = 256;
     WCHAR class_name[kClassLength] = {0};
-
     if (::IsWindow(hwnd) && ::IsWindowVisible(hwnd) && (::GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_TOOLWINDOW) != WS_EX_TOOLWINDOW)
     {
         int class_name_length = GetClassNameW(hwnd, class_name, kClassLength);
-        if (0 == class_name_length)
+        if (0 != class_name_length)
         {
-            // YXLOG(Info) << "class_name_length: 0" << YXLOGEnd;
-            return TRUE;
-        }
-
-        // std::string strClassName = wideCharToString(class_name);
-        // YXLOG(Info) << "class_name: " << strClassName << YXLOGEnd;
-
-        GetWindowTextW(hwnd, window_title, kTitleLength);
-        // std::string strWindowTitle = wideCharToString(window_title);
-        // YXLOG(Info) << "window_title: " << strWindowTitle << YXLOGEnd;
-        //  QString strText = QString::fromStdWString(window_title);
-
-        if (wcscmp(class_name, L"TXGuiFoundation") == 0 && window_title == L"腾讯视频")
-        {
-        }
-        else
-        {
+            GetWindowTextW(hwnd, window_title, kTitleLength);
+            if (wcscmp(class_name, L"TXGuiFoundation") == 0 && window_title == L"腾讯视频")
+            {
+            }
+            else
+            {
 #ifndef _WIN64
-            if (::GetWindowLongW(hwnd, GWL_HWNDPARENT) != 0)
-                return TRUE;
+                if (::GetWindowLongW(hwnd, GWL_HWNDPARENT) != 0)
+                    return TRUE;
 #endif
+            }
         }
     }
     else
@@ -209,15 +187,6 @@ BOOL CALLBACK WindowsEnumerationHandler(HWND hwnd, LPARAM param)
         return TRUE;
     }
 
-    // int len = GetWindowTextLength(hwnd);
-    //    if (len == 0)
-    //    {
-    //        return TRUE;
-    //    }
-
-    // Skip Program Manager window and the Start button. This is the same logic
-    // that's used in Win32WindowPicker in libjingle. Consider filtering other
-    // windows as well (e.g. toolbars).
     if (wcscmp(class_name, L"Progman") == 0 || wcscmp(class_name, L"Button") == 0)
         return TRUE;
 
@@ -854,7 +823,6 @@ bool PrintCaptureHelper::Init(HWND hwnd)
     bitmapInfo.bmiHeader.biCompression = BI_RGB;
     scrDc_ = ::GetWindowDC(hwnd_);
     memDc_ = ::CreateCompatibleDC(scrDc_);
-    // bitmap_ = ::CreateCompatibleBitmap(scrDc_, 400, 300);
     bitmap_ = ::CreateDIBSection(scrDc_, &bitmapInfo, DIB_RGB_COLORS, &bitsPtr_, nullptr, 0);
     if (bitmap_ == nullptr)
     {
@@ -955,7 +923,6 @@ void *PrintCaptureHelper::Crop(int x, int y, int width, int height, int zoomWidt
 
     HBITMAP oldBitmap = static_cast<HBITMAP>(::SelectObject(hdcMem, bitmap));
 
-    // SetStretchBltMode(hdcMem, STRETCH_HALFTONE); //注意第二个参数会影响显示质量
     StretchBlt(hdcMem, 0, 0, zoomWidth, zoomHeight, memDc_, x, y, width, height, SRCCOPY);
 
     bmpWidth_ = zoomWidth;
@@ -1011,8 +978,9 @@ void* PrintCaptureHelper::Zoom(int width, int height, int type)
 
     HBITMAP oldBitmap = static_cast<HBITMAP>(::SelectObject(hdcMem, bitmap));
 
-    // SetStretchBltMode(hdcMem, STRETCH_HALFTONE); //注意第二个参数会影响显示质量
+    int oldMode = SetStretchBltMode(hdcMem, COLORONCOLOR);
     StretchBlt(hdcMem, 0, 0, width, height, memDc_, 0, 0, GetWidth(), GetHeight(), SRCCOPY);
+    SetStretchBltMode(hdcMem, COLORONCOLOR);
 
     bmpWidth_ = width;
     bmpHeight_ = height;

@@ -2088,12 +2088,12 @@ class NERtcEngine extends EventEmitter {
      * <tr><td>Object.sourceName</td><td>String</td><td>信息源名称</td></tr>
      * <tr><td>Object.type</td><td>int</td><td>信息源类型:1-屏幕 2-窗口</td></tr>
      * <tr><td>Object.isMinimizeWindow</td><td>boolean</td><td>窗口是否最小化状态</td></tr>
-     * <tr><td>Object.thumbBGRA</td><td>object</td><td>缩略图信息:
+     * <tr><td>Object.thumbBGRA</td><td>object</td><td>缩略图信息,使用前需要判断是否undefined:
      * - buffer - BGRA二进制数据
      * - length - 数据大小 byte
      * - width - 图片宽度 px
      * - height - 图片高度 px</td></tr>
-     * <tr><td>Object.iconBGRA</td><td>object</td><td>图标信息:
+     * <tr><td>Object.iconBGRA</td><td>object</td><td>图标信息,使用前需要判断是否undefined:
      * - buffer - BGRA二进制数据
      * - length - 数据大小 byte
      * - width - 图片宽度 px
