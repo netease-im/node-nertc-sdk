@@ -152,8 +152,9 @@ private:
     nertc::IVideoDeviceManager *_vdm = nullptr;
     Isolate *isolate_;
 #ifdef WIN32
-    WindowsHelpers *_windows_helper = nullptr;
-    PrintCaptureHelper *_windows_capture_helper = nullptr;
+    nertc_electron_util::WindowsHelpers *_windows_helper = nullptr;
+    std::unique_ptr<nertc_electron_util::WindowCaptureHelper> window_capture_helper_;
+    std::unique_ptr<nertc_electron_util::ScreenCaptureHelper> screen_capture_helper_;
 #endif
 };
 

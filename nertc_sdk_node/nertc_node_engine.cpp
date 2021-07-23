@@ -3,6 +3,7 @@
 #include "nertc_node_video_frame_provider.h"
 #ifdef WIN32
 #include "../shared/util/string_util.h"
+using namespace nertc_electron_util;
 #endif
 
 namespace nertc_node
@@ -15,7 +16,8 @@ NertcNodeEngine::NertcNodeEngine(Isolate *isolate)
     rtc_engine_ = (nertc::IRtcEngineEx *)createNERtcEngine();
 #ifdef WIN32
     _windows_helper = new WindowsHelpers();
-    _windows_capture_helper = new PrintCaptureHelper();
+    window_capture_helper_.reset(new WindowCaptureHelper());
+    screen_capture_helper_.reset(new ScreenCaptureHelper());
 #endif
 }
 NertcNodeEngine::~NertcNodeEngine()
@@ -32,12 +34,6 @@ NertcNodeEngine::~NertcNodeEngine()
     {
         delete _windows_helper;
         _windows_helper = nullptr;
-    }
-    if (_windows_capture_helper)
-    {
-        _windows_capture_helper->Cleanup();
-        delete _windows_capture_helper;
-        _windows_capture_helper = nullptr;
     }
 #endif
 }
@@ -2037,17 +2033,16 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
         WindowsHelpers::CaptureTargetInfoList list; 
         instance->_windows_helper->getCaptureWindowList(&list);
 
-        uint32_t i = 0, vx = 0, vy = 0;
-        bool captureScreenRet = instance->_windows_capture_helper->CaptureScreen();
+        uint32_t i = 0;
+        bool captureScreenRet = instance->screen_capture_helper_->InitScreen();
         if (captureScreenRet)
         {
-            vx = GetSystemMetrics(SM_XVIRTUALSCREEN);
-            vy = GetSystemMetrics(SM_YVIRTUALSCREEN);
-        }
-        for (auto w : list)
-        {
-            if (w.type == 1)
+            uint32_t vx = GetSystemMetrics(SM_XVIRTUALSCREEN);
+            uint32_t vy = GetSystemMetrics(SM_YVIRTUALSCREEN);
+            for (auto w : list)
             {
+                if (w.type != 1)
+                    continue;
                 Local<Object> obj = Object::New(isolate);
                 int32_t sid = reinterpret_cast<int32_t>(w.id);
                 nim_napi_set_object_value_int32(isolate, obj, "sourceId", sid);
@@ -2058,35 +2053,28 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
                 nim_napi_set_object_value_int32(isolate, obj, "right", w.rc.right);
                 nim_napi_set_object_value_int32(isolate, obj, "bottom", w.rc.bottom);
                 instance->_windows_helper->updateCachedInfos(sid, w.rc);
-                if (captureScreenRet)
+                int left = w.rc.left - vx;
+                int top = w.rc.top - vy;
+                int sWidth = w.rc.right - w.rc.left;
+                int sHeight = w.rc.bottom - w.rc.top;
+                if (instance->screen_capture_helper_->CaptureScreenRect(left, top, sWidth, sHeight, thumbWidth, thumbHeight))
                 {
-                    int left = w.rc.left - vx;
-                    int top = w.rc.top - vy;
-                    int sWidth = w.rc.right - w.rc.left;
-                    int sHeight = w.rc.bottom - w.rc.top;
-                    void *rgba = instance->_windows_capture_helper->Crop(left, top, sWidth, sHeight, thumbWidth, thumbHeight);
-                    if (rgba != nullptr)
-                    {
-                        int size = instance->_windows_capture_helper->GetBitmapDataSize();
-                        int width = instance->_windows_capture_helper->GetWidth();
-                        int height = instance->_windows_capture_helper->GetHeight();
-                        uint8_t *data = RGBAToBGRA(rgba, size);
-                        free(rgba);
-                        rgba = nullptr;
-                        Local<v8::Object> thumb = Object::New(isolate);
-                        nim_napi_set_object_value_int32(isolate, thumb, "length", size);
-                        nim_napi_set_object_value_int32(isolate, thumb, "width", width);
-                        nim_napi_set_object_value_int32(isolate, thumb, "height", height);
-                        Local<v8::ArrayBuffer> buff = v8::ArrayBuffer::New(isolate, data, size);
-                        Local<v8::Uint8Array> dataarray = v8::Uint8Array::New(buff, 0, size);
-                        Local<Value> propName = String::NewFromUtf8(isolate, "buffer", NewStringType::kInternalized).ToLocalChecked();
-                        thumb->Set(isolate->GetCurrentContext(), propName, dataarray);
-                        Local<Value> thumbKey = String::NewFromUtf8(isolate, "thumbBGRA", NewStringType::kInternalized).ToLocalChecked();
-                        obj->Set(isolate->GetCurrentContext(), thumbKey, thumb);
-                    }
+                    int size = GetRGBASize(thumbWidth, thumbHeight);
+                    uint8_t *data = RGBAToBGRA(instance->screen_capture_helper_->GetData(), size);
+                    Local<v8::Object> thumb = Object::New(isolate);
+                    nim_napi_set_object_value_int32(isolate, thumb, "length", size);
+                    nim_napi_set_object_value_int32(isolate, thumb, "width", thumbWidth);
+                    nim_napi_set_object_value_int32(isolate, thumb, "height", thumbHeight);
+                    Local<v8::ArrayBuffer> buff = v8::ArrayBuffer::New(isolate, data, size);
+                    Local<v8::Uint8Array> dataarray = v8::Uint8Array::New(buff, 0, size);
+                    Local<Value> propName = String::NewFromUtf8(isolate, "buffer", NewStringType::kInternalized).ToLocalChecked();
+                    thumb->Set(isolate->GetCurrentContext(), propName, dataarray);
+                    Local<Value> thumbKey = String::NewFromUtf8(isolate, "thumbBGRA", NewStringType::kInternalized).ToLocalChecked();
+                    obj->Set(isolate->GetCurrentContext(), thumbKey, thumb);
                 }
                 arr->Set(isolate->GetCurrentContext(), i++, obj);
             }
+            instance->screen_capture_helper_->UnintScreen();
         }
 
         for (auto w : list)
@@ -2097,24 +2085,16 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
             nim_napi_set_object_value_utf8string(isolate, obj, "sourceName", UTF16ToUTF8(w.title));
             nim_napi_set_object_value_int32(isolate, obj, "type", w.type);
             nim_napi_set_object_value_bool(isolate, obj, "isMinimizeWindow", w.isMinimizeWindow);
-            if (!w.isMinimizeWindow && instance->_windows_capture_helper->Init(w.id))
+            if (!w.isMinimizeWindow && instance->window_capture_helper_->CaptureWindow(w.id))
             {
-                // bool ret = instance->_windows_capture_helper->Capture();
-                // if (ret)
-                void *rgba = instance->_windows_capture_helper->Zoom(thumbWidth, thumbHeight, w.type);
-                if (rgba != nullptr)
+                if (instance->window_capture_helper_->Zoom(thumbWidth, thumbHeight))
                 {
-                    int size = instance->_windows_capture_helper->GetBitmapDataSize();
-                    int width = instance->_windows_capture_helper->GetWidth();
-                    int height = instance->_windows_capture_helper->GetHeight();
-                    // void *rgba = instance->_windows_capture_helper->GetBitmapAddress();
-                    uint8_t *data = RGBAToBGRA(rgba, size);
-                    free(rgba);
-                    rgba = nullptr;
+                    int size = GetRGBASize(thumbWidth, thumbHeight);
+                    uint8_t *data = RGBAToBGRA(instance->window_capture_helper_->GetData(), size);
                     Local<v8::Object> thumb = Object::New(isolate);
                     nim_napi_set_object_value_int32(isolate, thumb, "length", size);
-                    nim_napi_set_object_value_int32(isolate, thumb, "width", width);
-                    nim_napi_set_object_value_int32(isolate, thumb, "height", height);
+                    nim_napi_set_object_value_int32(isolate, thumb, "width", thumbWidth);
+                    nim_napi_set_object_value_int32(isolate, thumb, "height", thumbHeight);
                     Local<v8::ArrayBuffer> buff = v8::ArrayBuffer::New(isolate, data, size);
                     Local<v8::Uint8Array> dataarray = v8::Uint8Array::New(buff, 0, size);
                     Local<Value> propName = String::NewFromUtf8(isolate, "buffer", NewStringType::kInternalized).ToLocalChecked();
@@ -2123,30 +2103,27 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
                     obj->Set(isolate->GetCurrentContext(), thumbKey, thumb);
                 }
             }
-
-            if (w.type == 2)
+            int iconSize = 0;
+            uint8_t *rgba = GetWindowsIconRGBA(w.id, &iconWidth, &iconHeight, &iconSize);
+            if (rgba != NULL)
             {
-                int iconSize = 0;
-                uint8_t *rgba = GetWindowsIconRGBA(w.id, &iconWidth, &iconHeight, &iconSize);
-                if (rgba != NULL)
-                {
-                    uint8_t *data = RGBAToBGRA((void *)rgba, iconSize);
-                    free(rgba);
-                    rgba = nullptr;
-                    Local<v8::Object> icon = Object::New(isolate);
-                    nim_napi_set_object_value_int32(isolate, icon, "length", iconSize);
-                    nim_napi_set_object_value_int32(isolate, icon, "width", iconWidth);
-                    nim_napi_set_object_value_int32(isolate, icon, "height", iconHeight);
-                    Local<v8::ArrayBuffer> buff = v8::ArrayBuffer::New(isolate, data, iconSize);
-                    Local<v8::Uint8Array> dataarray = v8::Uint8Array::New(buff, 0, iconSize);
-                    Local<Value> propName = String::NewFromUtf8(isolate, "buffer", NewStringType::kInternalized).ToLocalChecked();
-                    icon->Set(isolate->GetCurrentContext(), propName, dataarray);
-                    Local<Value> thumbKey = String::NewFromUtf8(isolate, "iconBGRA", NewStringType::kInternalized).ToLocalChecked();
-                    obj->Set(isolate->GetCurrentContext(), thumbKey, icon);
-                }
+                uint8_t *data = RGBAToBGRA((void *)rgba, iconSize);
+                free(rgba);
+                rgba = nullptr;
+                Local<v8::Object> icon = Object::New(isolate);
+                nim_napi_set_object_value_int32(isolate, icon, "length", iconSize);
+                nim_napi_set_object_value_int32(isolate, icon, "width", iconWidth);
+                nim_napi_set_object_value_int32(isolate, icon, "height", iconHeight);
+                Local<v8::ArrayBuffer> buff = v8::ArrayBuffer::New(isolate, data, iconSize);
+                Local<v8::Uint8Array> dataarray = v8::Uint8Array::New(buff, 0, iconSize);
+                Local<Value> propName = String::NewFromUtf8(isolate, "buffer", NewStringType::kInternalized).ToLocalChecked();
+                icon->Set(isolate->GetCurrentContext(), propName, dataarray);
+                Local<Value> thumbKey = String::NewFromUtf8(isolate, "iconBGRA", NewStringType::kInternalized).ToLocalChecked();
+                obj->Set(isolate->GetCurrentContext(), thumbKey, icon);
             }
             arr->Set(isolate->GetCurrentContext(), i++, obj);
         }
+        instance->window_capture_helper_->Cleanup();
     } while (false);
 #endif
     args.GetReturnValue().Set(arr);

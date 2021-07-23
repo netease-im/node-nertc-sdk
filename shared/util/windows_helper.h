@@ -6,7 +6,10 @@
 #include <vector>
 #include <map>
 
-class PrintCaptureHelper;
+namespace nertc_electron_util
+{
+
+class WindowCaptureHelper;
 class WindowsHelpers
 {
 public:
@@ -62,27 +65,54 @@ private:
 
 private:
     std::wstring static m_strCurrentExe;
-    PrintCaptureHelper* m_pPrintCaptureHelper = nullptr;
     std::map<int32_t, RECT> cached_infos;
 };
 
-class PrintCaptureHelper
+class ScreenCaptureHelper
 {
 public:
-    PrintCaptureHelper();
-    virtual ~PrintCaptureHelper();
+    // DesktopFrame objects always hold RGBA data.
+    static const int kBytesPerPixel = 4;
 
-    bool Init(const std::string& windowName);
-    bool Init(HWND hwnd);
+public:
+    ScreenCaptureHelper() {}
+    virtual ~ScreenCaptureHelper() { UnintScreen(); }
+
+public:
+    bool InitScreen();
+    void UnintScreen();
+    bool CaptureScreenRect(int x, int y, int width, int height, int zoomWidth, int zoomHeight);
+    int GetSize(int width, int height);
+    void *GetData() {return outPtr_;}
+
+private:
+    void ClearOutPut();
+
+private:
+    HWND hwnd_ = nullptr;
+    HDC scrDc_ = nullptr;
+    HDC memDc_ = nullptr;
+    HBITMAP bitmap_ = nullptr;
+    HBITMAP oldBitmap_ = nullptr;
+    void* bitsPtr_ = nullptr;
+    void* outPtr_ = nullptr;
+};
+
+class WindowCaptureHelper
+{
+public:
+    // DesktopFrame objects always hold RGBA data.
+    static const int kBytesPerPixel = 4;
+public:
+    WindowCaptureHelper();
+    virtual ~WindowCaptureHelper();
+
+public:
+    bool CaptureWindow(HWND hwnd);
     void Cleanup();
-    bool RefreshWindow();
-    bool ChangeWindowHandle(const std::string& windowName);
-    bool ChangeWindowHandle(HWND hwnd);
-    bool Capture() const;
-    void* Zoom(int width, int height, int type);//1:screen 2:window
-    void* Crop(int x, int y, int width, int height, int zoomWidth, int zoomHeight);//1:screen 2:window
-    bool CaptureScreen();
 
+    bool Zoom(int width, int height);
+    void *GetData() {return outPtr_;}
     const RECT& GetWindowRect() const { return windowRect_; }
     const RECT& GetClientRect() const { return clientRect_; }
     int GetBitmapDataSize() const { return bmpDataSize_; }
@@ -92,12 +122,24 @@ public:
     int GetHeight() const { return bmpHeight_; }
 
 private:
+    bool Init(const std::string& windowName);
+    bool Init(HWND hwnd);
+    bool RefreshWindow();
+    bool ChangeWindowHandle(const std::string& windowName);
+    bool ChangeWindowHandle(HWND hwnd);
+    int GetSize(int width, int height);
+
+private:
+    void ClearOutPut();
+
+private:
     HWND hwnd_ = nullptr;
     HDC scrDc_ = nullptr;
     HDC memDc_ = nullptr;
     HBITMAP bitmap_ = nullptr;
     HBITMAP oldBitmap_ = nullptr;
     void* bitsPtr_ = nullptr;
+    void* outPtr_ = nullptr;
 
     RECT windowRect_ = {0, 0, 0, 0};
     RECT clientRect_ = {0, 0, 0, 0};
@@ -106,8 +148,10 @@ private:
     int bmpHeight_ = 0;
 };
 
+int GetRGBASize(int width, int height);
 uint8_t *GetWindowsIconRGBA(HWND hWnd, int *width, int *height, int *size);
 uint8_t *RGBAToBGRA(void *src, int size);
 // void *CaptureScreen(int x, int y, int width, int height);
 
+}
 #endif // _WINDOWS_HELPERS_H_

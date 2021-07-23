@@ -18,6 +18,9 @@
 #pragma comment(lib, "Advapi32.lib")
 #pragma comment(lib, "Dwmapi.lib")
 
+namespace nertc_electron_util
+{
+
 std::wstring WindowsHelpers::m_strCurrentExe = L"";
 
 //不要忘记使用完char*后delete[]释放内存
@@ -63,8 +66,6 @@ wchar_t *multiByteToWideChar(const std::string &strSrc)
 
 WindowsHelpers::WindowsHelpers()
 {
-    m_pPrintCaptureHelper = new PrintCaptureHelper();
-
     static bool bInit = false;
     if (!bInit)
     {
@@ -94,11 +95,7 @@ WindowsHelpers::WindowsHelpers()
 
 WindowsHelpers::~WindowsHelpers()
 {
-    if (m_pPrintCaptureHelper)
-    {
-        delete m_pPrintCaptureHelper;
-        m_pPrintCaptureHelper = nullptr;
-    }
+
 }
 
 bool WindowsHelpers::getFileVersion(const wchar_t *file_path, WORD *major_version, WORD *minor_version, WORD *build_number, WORD *revision_number)
@@ -210,22 +207,16 @@ BOOL CALLBACK WindowsEnumerationHandler(HWND hwnd, LPARAM param)
         if (TRUE != QueryFullProcessImageNameW(hProcess, 0, exePath, &dwPathNameSize))
         {
             CloseHandle(hProcess);
-            // YXLOG(Info) << "QueryFullProcessImageName GetLastError: " << GetLastError() << YXLOGEnd;
             return TRUE;
         }
 
         CloseHandle(hProcess);
         std::wstring strTemp = exePath;
-        // YXLOG(Info) << "exePath: " << wideCharToString(exePath) << YXLOGEnd;
         // 过滤当前的exe
         if (0 == _wcsicmp(strTemp.c_str(), WindowsHelpers::getCurrentExe().c_str()))
         {
             return TRUE;
         }
-    }
-    else
-    {
-        // YXLOG(Info) << "OpenProcess GetLastError: " << GetLastError() << YXLOGEnd;
     }
 
     WindowsHelpers::CaptureTargetInfo window;
@@ -240,7 +231,6 @@ BOOL CALLBACK WindowsEnumerationHandler(HWND hwnd, LPARAM param)
         window.app = strrchr(strExePath.c_str(), '\\') + 1;
     }
 
-    // YXLOG(Info) << "exe: " << window.app << ", window_title: " << wideCharToString(window_title) << YXLOGEnd;
     // Skip windows when we failed to convert the title or it is empty.
     if (window.title.empty())
     {
@@ -294,19 +284,6 @@ RECT WindowsHelpers::getWindowRect(HWND hWnd) const
         // YXLOG(Info) << "getWindowRect failed. GetLastError: " << GetLastError();
     }
     return rect;
-}
-
-HBITMAP WindowsHelpers::getWindowImage(HWND hWnd) const
-{
-    if (!m_pPrintCaptureHelper)
-    {
-        m_pPrintCaptureHelper->Cleanup();
-        m_pPrintCaptureHelper->Init(hWnd);
-        HBITMAP hBitmap = m_pPrintCaptureHelper->GetBitmap();
-        return hBitmap;
-    }
-
-    return HBITMAP();
 }
 
 HICON WindowsHelpers::getWindowIcon(HWND hWnd) const
@@ -770,17 +747,17 @@ std::string WindowsHelpers::getModuleNameByPid(DWORD dwPid)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief PrintCaptureHelper::PrintCaptureHelper
+/// \brief WindowCaptureHelper::WindowCaptureHelper
 ///
-PrintCaptureHelper::PrintCaptureHelper()
+WindowCaptureHelper::WindowCaptureHelper()
     : hwnd_(nullptr), scrDc_(nullptr), memDc_(nullptr), bitmap_(nullptr), oldBitmap_(nullptr), bitsPtr_(nullptr), windowRect_{0, 0, 0, 0}, clientRect_{0, 0, 0, 0}, bmpDataSize_(0) {}
 
-PrintCaptureHelper::~PrintCaptureHelper()
+WindowCaptureHelper::~WindowCaptureHelper()
 {
     Cleanup();
 }
 
-bool PrintCaptureHelper::Init(const std::string &windowName)
+bool WindowCaptureHelper::Init(const std::string &windowName)
 {
     const auto handle = ::FindWindowA(nullptr, windowName.c_str());
     if (handle == nullptr)
@@ -791,7 +768,7 @@ bool PrintCaptureHelper::Init(const std::string &windowName)
     return Init(handle);
 }
 
-bool PrintCaptureHelper::Init(HWND hwnd)
+bool WindowCaptureHelper::Init(HWND hwnd)
 {
     if (hwnd != hwnd_)
     {
@@ -807,7 +784,6 @@ bool PrintCaptureHelper::Init(HWND hwnd)
 
     bmpWidth_ = clientRect_.right - clientRect_.left;
     bmpHeight_ = clientRect_.bottom - clientRect_.top;
-
 
     const int bitcount = 32;
     bmpDataSize_ = (bmpWidth_ * bitcount + 31) / 32 * 4 * bmpHeight_;
@@ -835,7 +811,7 @@ bool PrintCaptureHelper::Init(HWND hwnd)
     return true;
 }
 
-void PrintCaptureHelper::Cleanup()
+void WindowCaptureHelper::Cleanup()
 {
     if (bitmap_ == nullptr)
     {
@@ -853,117 +829,83 @@ void PrintCaptureHelper::Cleanup()
     memDc_ = nullptr;
     bitmap_ = nullptr;
     oldBitmap_ = nullptr;
+
+    ClearOutPut();
 }
 
-bool PrintCaptureHelper::RefreshWindow()
+bool WindowCaptureHelper::RefreshWindow()
 {
     const auto hwnd = hwnd_;
     Cleanup();
     return Init(hwnd);
 }
 
-bool PrintCaptureHelper::ChangeWindowHandle(const std::string &windowName)
+bool WindowCaptureHelper::ChangeWindowHandle(const std::string &windowName)
 {
     Cleanup();
     return Init(windowName);
 }
 
-bool PrintCaptureHelper::ChangeWindowHandle(HWND hwnd)
+bool WindowCaptureHelper::ChangeWindowHandle(HWND hwnd)
 {
     Cleanup();
     return Init(hwnd);
 }
 
-bool PrintCaptureHelper::Capture() const
+bool WindowCaptureHelper::CaptureWindow(HWND hwnd)
 {
+    if (!Init(hwnd))
+    {
+        return false;
+    }
+
     if (bitmap_ == nullptr || memDc_ == nullptr || scrDc_ == nullptr)
     {
         return false;
     }
 
     bool ret = false;
-    ret = ::PrintWindow(hwnd_, memDc_, PW_CLIENTONLY | PW_RENDERFULLCONTENT);
-    if (ret)
+    ret = ::PrintWindow(hwnd_, memDc_, PW_RENDERFULLCONTENT);
+    if (!ret)
     {
-        ret = ::BitBlt(memDc_, 0, 0, clientRect_.right - clientRect_.left, clientRect_.bottom - clientRect_.top, scrDc_, 0, 0, SRCCOPY /*| CAPTUREBLT*/);
+        ret = ::PrintWindow(hwnd_, memDc_, 0);
+    }
+    if (!ret)
+    {
+        ret = ::BitBlt(memDc_, 0, 0, clientRect_.right - clientRect_.left, clientRect_.bottom - clientRect_.top, scrDc_, 0, 0, SRCCOPY | CAPTUREBLT);
     }
 
     return TRUE == ret;
 }
 
-void *PrintCaptureHelper::Crop(int x, int y, int width, int height, int zoomWidth, int zoomHeight)
+
+void WindowCaptureHelper::ClearOutPut()
+{
+    if (outPtr_)
+    {
+        free(outPtr_);
+        outPtr_ = nullptr;
+    }
+}
+
+bool WindowCaptureHelper::Zoom(int width, int height)
 {
     if (bitmap_ == nullptr || memDc_ == nullptr || scrDc_ == nullptr)
     {
-        return nullptr;
-    }
-    const int bitcount = 32;
-    int size = (zoomWidth * bitcount + 31) / 32 * 4 * zoomHeight;
-    
-    BITMAPINFO bmi;
-    ZeroMemory(&bmi, sizeof(BITMAPINFO));
-    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biBitCount = bitcount;
-    bmi.bmiHeader.biCompression = BI_RGB;
-    bmi.bmiHeader.biWidth = zoomWidth;
-    bmi.bmiHeader.biHeight = -zoomHeight;
-    bmi.bmiHeader.biSizeImage = size;
-
-    void *pdata;
-    HDC hdc = ::GetWindowDC(NULL);
-    HDC hdcMem = CreateCompatibleDC(hdc);
-    HBITMAP bitmap = ::CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &pdata, nullptr, 0);
-    if (bitmap == nullptr)
-    {
-        ::DeleteDC(hdcMem);
-        ::ReleaseDC(NULL, hdc);
         return false;
     }
 
-    HBITMAP oldBitmap = static_cast<HBITMAP>(::SelectObject(hdcMem, bitmap));
-
-    StretchBlt(hdcMem, 0, 0, zoomWidth, zoomHeight, memDc_, x, y, width, height, SRCCOPY);
-
-    bmpWidth_ = zoomWidth;
-    bmpHeight_ = zoomHeight;
-    bmpDataSize_ = size;
-    void* buffer = malloc(bmpDataSize_);
-    memcpy(buffer, pdata, bmpDataSize_);
-
-    ::SelectObject(hdcMem, oldBitmap);
-    ::DeleteObject(bitmap);
-    ::DeleteDC(hdcMem);
-    ::ReleaseDC(NULL, hdc);
-    return buffer;
-}
-
-void* PrintCaptureHelper::Zoom(int width, int height, int type)
-{
-    if (bitmap_ == nullptr || memDc_ == nullptr || scrDc_ == nullptr)
-    {
-        return nullptr;
-    }
-    if (type == 2)
-    {
-        if (!::PrintWindow(hwnd_, memDc_, PW_CLIENTONLY | PW_RENDERFULLCONTENT))
-        {
-            return nullptr;
-        }
-    }
-
-    const int bitcount = 32;
-    int size = (width * bitcount + 31) / 32 * 4 * height;
+    int buffer_size = GetRGBASize(width, height);
     
     BITMAPINFO bmi;
     ZeroMemory(&bmi, sizeof(BITMAPINFO));
     bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biBitCount = bitcount;
+    bmi.bmiHeader.biBitCount = WindowCaptureHelper::kBytesPerPixel * 8;
     bmi.bmiHeader.biCompression = BI_RGB;
     bmi.bmiHeader.biWidth = width;
     bmi.bmiHeader.biHeight = -height;
-    bmi.bmiHeader.biSizeImage = size;
+    bmi.bmiHeader.biSizeImage = buffer_size;
 
     void *pdata;
     HDC hdc = ::GetWindowDC(NULL);
@@ -980,42 +922,37 @@ void* PrintCaptureHelper::Zoom(int width, int height, int type)
 
     int oldMode = SetStretchBltMode(hdcMem, COLORONCOLOR);
     StretchBlt(hdcMem, 0, 0, width, height, memDc_, 0, 0, GetWidth(), GetHeight(), SRCCOPY);
-    SetStretchBltMode(hdcMem, COLORONCOLOR);
+    SetStretchBltMode(hdcMem, oldMode);
 
-    bmpWidth_ = width;
-    bmpHeight_ = height;
-    bmpDataSize_ = size;
-    void* buffer = malloc(bmpDataSize_);
-    memcpy(buffer, pdata, bmpDataSize_);
+    ClearOutPut();
+    outPtr_ = malloc(buffer_size);
+    memcpy(outPtr_, pdata, buffer_size);
 
     ::SelectObject(hdcMem, oldBitmap);
     ::DeleteObject(bitmap);
     ::DeleteDC(hdcMem);
     ::ReleaseDC(NULL, hdc);
-    return buffer;
+    return true;
 }
 
-bool PrintCaptureHelper::CaptureScreen()
+bool ScreenCaptureHelper::InitScreen()
 {
     scrDc_ = GetDC(GetDesktopWindow());
     // bmpWidth_ = GetDeviceCaps(scrDc_, HORZRES);
     // bmpHeight_ = GetDeviceCaps(scrDc_, VERTRES);
-    bmpWidth_ = GetSystemMetrics(SM_CXVIRTUALSCREEN);
-    bmpHeight_ = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    int width = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+    int height = GetSystemMetrics(SM_CYVIRTUALSCREEN);
     memDc_ = CreateCompatibleDC(scrDc_);
-
-    const int bitcount = 32;
-    int size = (bmpWidth_ * bitcount + 31) / 32 * 4 * bmpHeight_;
     
     BITMAPINFO bmi;
     ZeroMemory(&bmi, sizeof(BITMAPINFO));
     bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biBitCount = bitcount;
+    bmi.bmiHeader.biBitCount = ScreenCaptureHelper::kBytesPerPixel * 8;
     bmi.bmiHeader.biCompression = BI_RGB;
-    bmi.bmiHeader.biWidth = bmpWidth_;
-    bmi.bmiHeader.biHeight = -bmpHeight_;
-    bmi.bmiHeader.biSizeImage = size;
+    bmi.bmiHeader.biWidth = width;
+    bmi.bmiHeader.biHeight = -height;
+    bmi.bmiHeader.biSizeImage = GetRGBASize(width, height);
 
     bitmap_ = ::CreateDIBSection(scrDc_, &bmi, DIB_RGB_COLORS, &bitsPtr_, nullptr, 0);
     if (bitmap_ == nullptr)
@@ -1027,7 +964,92 @@ bool PrintCaptureHelper::CaptureScreen()
 
     oldBitmap_ = static_cast<HBITMAP>(::SelectObject(memDc_, bitmap_));
 
-    return BitBlt(memDc_, 0, 0, bmpWidth_, bmpHeight_, scrDc_, GetSystemMetrics(SM_XVIRTUALSCREEN), GetSystemMetrics(SM_YVIRTUALSCREEN), SRCCOPY);
+    return BitBlt(memDc_, 0, 0, width, height, scrDc_, GetSystemMetrics(SM_XVIRTUALSCREEN), GetSystemMetrics(SM_YVIRTUALSCREEN), SRCCOPY);
+}
+
+void ScreenCaptureHelper::UnintScreen()
+{
+    if (bitmap_ == nullptr)
+    {
+        return;
+    }
+
+    //删除用过的对象
+    ::SelectObject(memDc_, oldBitmap_);
+    ::DeleteObject(bitmap_);
+    ::DeleteDC(memDc_);
+    ::ReleaseDC(hwnd_, scrDc_);
+
+    hwnd_ = nullptr;
+    scrDc_ = nullptr;
+    memDc_ = nullptr;
+    bitmap_ = nullptr;
+    oldBitmap_ = nullptr;
+
+    ClearOutPut();
+}
+
+void ScreenCaptureHelper::ClearOutPut()
+{
+    if (outPtr_)
+    {
+        free(outPtr_);
+        outPtr_ = nullptr;
+    }
+}
+
+bool ScreenCaptureHelper::CaptureScreenRect(int x, int y, int width, int height, int zoomWidth, int zoomHeight)
+{
+    if (bitmap_ == nullptr || memDc_ == nullptr || scrDc_ == nullptr)
+    {
+        return false;
+    }
+    int size = GetRGBASize(zoomWidth, zoomHeight);
+    
+    BITMAPINFO bmi;
+    ZeroMemory(&bmi, sizeof(BITMAPINFO));
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = ScreenCaptureHelper::kBytesPerPixel * 8;
+    bmi.bmiHeader.biCompression = BI_RGB;
+    bmi.bmiHeader.biWidth = zoomWidth;
+    bmi.bmiHeader.biHeight = -zoomHeight;
+    bmi.bmiHeader.biSize = sizeof(bmi.bmiHeader);
+    bmi.bmiHeader.biSizeImage = size;
+
+    void *pdata;
+    HDC hdc = ::GetWindowDC(NULL);
+    HDC hdcMem = CreateCompatibleDC(hdc);
+    HBITMAP bitmap = ::CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &pdata, nullptr, 0);
+    if (bitmap == nullptr)
+    {
+        ::DeleteDC(hdcMem);
+        ::ReleaseDC(NULL, hdc);
+        return false;
+    }
+
+    HBITMAP oldBitmap = static_cast<HBITMAP>(::SelectObject(hdcMem, bitmap));
+
+    int oldMode = SetStretchBltMode(hdcMem, COLORONCOLOR);
+    StretchBlt(hdcMem, 0, 0, zoomWidth, zoomHeight, memDc_, x, y, width, height, SRCCOPY);
+    SetStretchBltMode(hdcMem, oldMode);
+
+    ClearOutPut();    
+    outPtr_ = malloc(size);
+    memcpy(outPtr_, pdata, size);
+
+    ::SelectObject(hdcMem, oldBitmap);
+    ::DeleteObject(bitmap);
+    ::DeleteDC(hdcMem);
+    ::ReleaseDC(NULL, hdc);
+
+    return true;
+}
+
+int GetRGBASize(int width, int height)
+{
+    int bytes_per_row = width * ScreenCaptureHelper::kBytesPerPixel;
+    return bytes_per_row * height;
 }
 
 uint8_t *RGBAToBGRA(void *src, int size)
@@ -1235,4 +1257,5 @@ uint8_t *GetWindowsIconRGBA(HWND hWnd, int *width, int *height, int *size)
 
     DestroyIcon(sfiTemp.hIcon);
     return reinterpret_cast<uint8_t*>(pOut);
+}
 }
