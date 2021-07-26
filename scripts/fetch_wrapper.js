@@ -8,21 +8,15 @@ const { logger } = require('just-task')
 module.exports = ({
   fetchUrl,
   extractPath,
-  temporaryPath,
   platform = process.platform,
   arch = process.arch
 }) => {
   return new Promise((resolve, reject) => {
-    logger.info(`Downloading file from: ${fetchUrl} to ${temporaryPath}`)
-    if (fs.existsSync(temporaryPath)) {
-      fs.rmdirSync(temporaryPath, { recursive: true })
-    }
+    logger.info(`Downloading src: ${fetchUrl}`)
+    logger.info(`Downloading dest: ${extractPath}`)
     if (fs.existsSync(extractPath)) {
       fs.rmdirSync(extractPath, { recursive: true })
     }
-    // if (fs.existsSync(extractPath.replace('nertc_sdk', 'sdk'))) {
-    //   fs.rmdirSync(extractPath.replace('nertc_sdk', 'sdk'), { recursive: true })
-    // }
     download(fetchUrl, extractPath, { extract: true, strip: 1 }).then(() => {
       if (platform === 'win32') {
         let copyArch
@@ -48,7 +42,6 @@ module.exports = ({
           fs.copyFileSync(path.join(libSrcPath, lib), path.join(extractPath, `lib/${lib}`))
         })
       } else if (platform === 'darwin') {
-        fs.renameSync(path.join(extractPath.replace('nertc_sdk', ''), 'sdk'), extractPath)
       } else {
         return reject(new Error('Unsupported platform.'))
       }

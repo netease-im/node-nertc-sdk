@@ -115,11 +115,9 @@ task('install', () => {
     }).catch(err => {
       logger.warn(`[install] Failed to download package from: ${host}/${remotePath}/${packageName}, error code: ${err.statusCode}`)
       logger.info('[install] Start build from local source file.')
-      const temporaryPath = path.join(__dirname, tempPath)
       const extractPath = path.join(__dirname, includePath)
       fetchWrapper({
         fetchUrl: targetPlatform === 'win32' ? nativeWinUrl : nativeMacUrl,
-        temporaryPath,
         extractPath
       }).then(() => {
         return buildAddon({
