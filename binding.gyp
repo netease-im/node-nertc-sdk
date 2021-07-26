@@ -58,8 +58,8 @@
             'copies': [{
               'destination': '<(PRODUCT_DIR)',
               'files': [
-                './nertc_sdk/bin/nertc_sdk.dll',
-                './nertc_sdk/bin/SDL2.dll',
+                './nertc_sdk/dll/nertc_sdk.dll',
+                './nertc_sdk/dll/SDL2.dll',
               ]
             }],
             'defines': [
@@ -67,7 +67,7 @@
               'WIN32_LEAN_AND_MEAN'
             ],
             'library_dirs': [
-              './nertc_sdk/libs/'
+              './nertc_sdk/lib/'
             ],
             'link_settings': {
               'libraries': [

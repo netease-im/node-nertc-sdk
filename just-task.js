@@ -17,8 +17,8 @@ option('silent', { default: false, boolean: true })
 const includePath = 'nertc_sdk'
 const tempPath = 'temporary'
 const packageMeta = require(path.join(__dirname, 'package.json'))
-const nativeWinUrl = `http://yx-web.nos.netease.com/package/1626838503/NERtc_Windows_SDK_v3.9.0_electron.zip`
-const nativeMacUrl = `http://yx-web.nos.netease.com/package/1626592715/NERTC_Mac_SDK_v3.9.0_electron.zip`
+const nativeWinUrl = `http://yx-web.nos.netease.com/package/1618217725/NERtc_Windows_SDK_v4.1.1.zip`
+const nativeMacUrl = `http://yx-web.nos.netease.com/package/1624264614/NERTC_Mac_SDK_v4.1.3.zip`
 
 task('fetch-wrapper', () => {
   const platform = argv().target_platform
@@ -85,8 +85,8 @@ task('package', () => {
 task('install', () => {
   let target = '5.0.8'
   let runtime = 'electron'
-  const targetPlatform = process.platform
-  const targetArch = process.arch
+  const targetPlatform = process.env.npm_config_target_platform || process.platform
+  const targetArch = process.env.npm_config_target_arch || process.arch
   const curPkgMeta = require(path.join(__dirname, 'package.json'))
   const rootPkgMeta = require(path.join(process.env.INIT_CWD, 'package.json'))
 
@@ -118,7 +118,7 @@ task('install', () => {
       const temporaryPath = path.join(__dirname, tempPath)
       const extractPath = path.join(__dirname, includePath)
       fetchWrapper({
-        fetchUrl: process.platform === 'win32' ? nativeWinUrl : nativeMacUrl,
+        fetchUrl: targetPlatform === 'win32' ? nativeWinUrl : nativeMacUrl,
         temporaryPath,
         extractPath
       }).then(() => {

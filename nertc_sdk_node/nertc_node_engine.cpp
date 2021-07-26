@@ -1377,7 +1377,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, addLiveStreamTask)
         {
 #ifdef WIN32
             // 等mac sdk更新后可以去掉编译宏
-            info.extra_info = nullptr;
+            memset(info.extraInfo, 0, kNERtcMacSEIBufferLength);
             info.config = {0};
 #endif
             ret = instance->rtc_engine_->addLiveStreamTask(info);
