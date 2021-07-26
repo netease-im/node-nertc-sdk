@@ -90,7 +90,7 @@
               './shared/libyuv/source/compare_win.cc',
               './shared/libyuv/source/rotate_win.cc',
               './shared/libyuv/source/row_win.cc',
-              './shared/libyuv/source/scale_win.cc'
+              './shared/libyuv/source/scale_win.cc',
               './shared/util/windows_helper.h',
               './shared/util/windows_helper.cpp',   
               './shared/util/string_util.h',
