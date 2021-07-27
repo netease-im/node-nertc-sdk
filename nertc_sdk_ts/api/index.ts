@@ -39,7 +39,10 @@ import {
     NERtcLiveStreamStateCode,
     NERtcLiveStreamTaskInfo,
     NERtcVideoMirrorMode,
-    NERtcVideoScalingMode
+    NERtcVideoScalingMode,
+    NERtcVoiceChangerType,
+    NERtcVoiceBeautifierType,
+    NERtcVoiceEqualizationBand
 } from './defs'
 import { EventEmitter } from 'events'
 // const nertc = require('bindings')('nertc-electron-sdk');
@@ -2123,10 +2126,112 @@ class NERtcEngine extends EventEmitter {
      * 获取当前使用的视频采集设备信息。
      * @returns {String} 设备ID
      */
-    getVideoDevice(): String{
+    getVideoDevice(): String {
         return this.nertcEngine.getDevice();      
     }
 
+    /**
+     * 设置 SDK 预设的人声的变声音效。
+     * @param {number} type 预设的变声音效。默认关闭变声音效：
+     * <pre>
+     * - 0: 默认关闭
+     * - 1: 机器人
+     * - 2: 巨人
+     * - 3: 恐怖
+     * - 4: 成熟
+     * - 5: 男变女
+     * - 6: 女变男
+     * - 7: 男变萝莉
+     * - 8: 女变萝莉
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setAudioEffectPreset(type: NERtcVoiceChangerType): number {
+        return this.nertcEngine.setAudioEffectPreset(type)
+    }
+
+    /**
+     * 设置 SDK 预设的美声效果。调用该方法可以为本地发流用户设置 SDK 预设的人声美声效果。
+     * <pre>
+     * <b>NOTE:</b>
+     * - 通话结束后重置为默认关闭
+     * </pre>
+     * @param {number} type 预设的美声效果模式。默认关闭美声效果：
+     * <pre>
+     * - 0: 默认关闭
+     * - 1: 低沉
+     * - 2: 圆润
+     * - 3: 清澈
+     * - 4: 磁性
+     * - 5: 录音棚
+     * - 6: 天籁
+     * - 7: KTV
+     * - 8: 悠远
+     * - 9: 教堂
+     * - 10: 卧室
+     * - 11: Live
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setVoiceBeautifierPreset(type: NERtcVoiceBeautifierType): number {
+        return this.nertcEngine.setVoiceBeautifierPreset(type)
+    }
+
+    /**
+     * 设置本地语音音调。该方法改变本地说话人声音的音调。
+     * <pre>
+     * <b>NOTE:</b>
+     * - 通话结束后该设置会重置，默认为 1.0。
+     * - 此方法与 setAudioEffectPreset 互斥，调用此方法后，已设置的变声效果会被取消。
+     * </pre>
+     * @param {number} pitch 语音频率。可以在 [0.5, 2.0] 范围内设置。取值越小，则音调越低。默认值为 1.0，表示不需要修改音调。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setLocalVoicePitch(pitch: number): number {
+        return this.nertcEngine.setLocalVoicePitch(pitch)
+    }
+
+    /**
+     * 设置本地语音音效均衡，即自定义设置本地人声均衡波段的中心频率。
+     * <pre>
+     * <b>NOTE:</b>
+     * - 该方法在加入房间前后都能调用，通话结束后重置为默认关闭状态。
+     * </pre>
+     * @param {number} bandFrequency 频谱子带索引，取值范围是 [0-9]，分别代表 10 个频带，对应的中心频率是 [31，62，125，250，500，1k，2k，4k，8k，16k] Hz：
+     * <pre>
+     * - 0: 31Hz
+     * - 1: 62Hz
+     * - 2: 125Hz
+     * - 3: 250Hz
+     * - 4: 500Hz
+     * - 5: 1kHz
+     * - 6: 2kHz
+     * - 7: 4kHz
+     * - 8: 8kHz
+     * - 9: 16kHz
+     * </pre>
+     * @param {number} bandGain 每个 band 的增益，单位是 dB，每一个值的范围是 [-15，15]，默认值为 0。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number {
+        return this.nertcEngine.setLocalVoiceEqualization(bandFrequency, bandGain)
+    }
 
     // setMixedAudioFrameParameters(samplerate: number): number {
     //     return this.nertcEngine.setMixedAudioFrameParameters(samplerate);      

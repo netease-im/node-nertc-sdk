@@ -69,6 +69,13 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(setExternalAudioRender)
     SET_PROTOTYPE(pullExternalAudioFrame)
 
+    // 4.1.1
+    SET_PROTOTYPE(setAudioEffectPreset)
+    SET_PROTOTYPE(setVoiceBeautifierPreset)
+    SET_PROTOTYPE(setLocalVoicePitch)
+    SET_PROTOTYPE(setLocalVoiceEqualization)
+
+
     SET_PROTOTYPE(getConnectionState)
     SET_PROTOTYPE(muteLocalAudioStream)
     SET_PROTOTYPE(setAudioProfile)
@@ -2055,6 +2062,86 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setExternalAudioRender)
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, pullExternalAudioFrame)
 {
     // TODO(Dylan)
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setAudioEffectPreset)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        int32_t type;
+        GET_ARGS_VALUE(isolate, 0, int32, type)
+        if (status != napi_ok)
+        {
+            break;
+        }
+        ret = instance->rtc_engine_->setAudioEffectPreset(static_cast<nertc::NERtcVoiceChangerType>(type));
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setVoiceBeautifierPreset)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        int32_t type;
+        GET_ARGS_VALUE(isolate, 0, int32, type)
+        if (status != napi_ok)
+        {
+            break;
+        }
+        ret = instance->rtc_engine_->setVoiceBeautifierPreset(static_cast<nertc::NERtcVoiceBeautifierType>(type));
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalVoicePitch)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        int64_t pitch;
+        GET_ARGS_VALUE(isolate, 0, int64, pitch)
+        if (status != napi_ok)
+        {
+            break;
+        }
+        ret = instance->rtc_engine_->setLocalVoicePitch(pitch);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalVoiceEqualization)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        int32_t band_frequency;
+        int32_t band_gain;
+        GET_ARGS_VALUE(isolate, 0, int32, band_frequency)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 1, int32, band_gain)
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->setLocalVoiceEqualization(
+            static_cast<nertc::NERtcVoiceEqualizationBand>(band_frequency), 
+            band_gain);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)

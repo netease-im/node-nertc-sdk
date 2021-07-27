@@ -530,6 +530,13 @@ export interface NERtcEngineAPI {
     startSystemAudioLoopbackCapture(): number;
     stopSystemAudioLoopbackCapture(): number;
     setSystemAudioLoopbackCaptureVolume(volume: number): number;
+
+    // 4.1.1
+    setAudioEffectPreset(type: NERtcVoiceChangerType): number;
+    setVoiceBeautifierPreset(type: NERtcVoiceBeautifierType): number;
+    setLocalVoicePitch(pitch: number): number;
+    setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
+
     //TODO
     // setMixedAudioFrameParameters(samplerate: number): number;
     // setExternalVideoSource(enabled: boolean): number;
@@ -740,4 +747,49 @@ export enum NERtcMediaStatsEventName {
 	LocalVideoStats = "onLocalVideoStats",	/**< 本地视频流统计信息回调, 每 2 秒触发一次 */
 	RemoteVideoStats = "onRemoteVideoStats",	/**< 通话中远端视频流的统计信息回调, 每 2 秒触发一次 */
 	NetworkQuality = "onNetworkQuality",	/**< 通话中每个用户的网络上下行质量报告回调, 每 2 秒触发一次, 只上报状态有变更的成员 */
+}
+
+/** 4.1.1 */
+
+/** 变声 预设值 */
+export enum NERtcVoiceChangerType {
+    kNERtcVoiceChangerOff           = 0,    /**< 默认关闭 */
+    kNERtcVoiceChangerRobot         = 1,    /**< 机器人 */
+    kNERtcVoiceChangerGaint         = 2,    /**< 巨人 */
+    kNERtcVoiceChangerHorror        = 3,    /**< 恐怖 */
+    kNERtcVoiceChangerMature        = 4,    /**< 成熟 */
+    kNERtcVoiceChangerManToWoman    = 5,    /**< 男变女 */
+    kNERtcVoiceChangerWomanToMan    = 6,    /**< 女变男 */
+    kNERtcVoiceChangerManToLoli     = 7,    /**< 男变萝莉 */
+    kNERtcVoiceChangerWomanToLoli   = 8     /**< 女变萝莉 */
+}
+
+/** 预设的美声效果 */
+export enum NERtcVoiceBeautifierType {
+    kNERtcVoiceBeautifierOff = 0,             /**< 默认关闭 */
+    kNERtcVoiceBeautifierMuffled = 1,         /**< 低沉 */
+    kNERtcVoiceBeautifierMellow = 2,          /**< 圆润 */
+    kNERtcVoiceBeautifierClear = 3,           /**< 清澈 */
+    kNERtcVoiceBeautifierMagnetic = 4,        /**< 磁性 */
+    kNERtcVoiceBeautifierRecordingstudio = 5, /**< 录音棚 */
+    kNERtcVoiceBeautifierNature = 6,          /**< 天籁 */
+    kNERtcVoiceBeautifierKTV = 7,             /**< KTV */
+    kNERtcVoiceBeautifierRemote = 8,          /**< 悠远 */
+    kNERtcVoiceBeautifierChurch = 9,          /**< 教堂 */
+    kNERtcVoiceBeautifierBedroom = 10,        /**< 卧室 */
+    kNERtcVoiceBeautifierLive = 11,           /**< Live */
+}
+
+/** 音效均衡波段的中心频率 */
+export enum NERtcVoiceEqualizationBand {
+    kNERtcVoiceEqualizationBand_31  = 0, /**<  31 Hz */
+    kNERtcVoiceEqualizationBand_62  = 1, /**<  62 Hz */
+    kNERtcVoiceEqualizationBand_125 = 2, /**<  125 Hz */
+    kNERtcVoiceEqualizationBand_250 = 3, /**<  250 Hz */
+    kNERtcVoiceEqualizationBand_500 = 4, /**<  500 Hz */
+    kNERtcVoiceEqualizationBand_1K  = 5, /**<  1 kHz */
+    kNERtcVoiceEqualizationBand_2K  = 6, /**<  2 kHz */
+    kNERtcVoiceEqualizationBand_4K  = 7, /**<  4 kHz */
+    kNERtcVoiceEqualizationBand_8K  = 8, /**<  8 kHz */
+    kNERtcVoiceEqualizationBand_16K = 9, /**<  16 kHz */
 }

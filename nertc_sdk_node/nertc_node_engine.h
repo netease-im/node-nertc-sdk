@@ -52,6 +52,12 @@ public:
     NIM_SDK_NODE_API(setExternalAudioRender);
     NIM_SDK_NODE_API(pullExternalAudioFrame);
 
+    // 4.1.1
+    NIM_SDK_NODE_API(setAudioEffectPreset);
+    NIM_SDK_NODE_API(setVoiceBeautifierPreset);
+    NIM_SDK_NODE_API(setLocalVoicePitch);
+    NIM_SDK_NODE_API(setLocalVoiceEqualization);
+
     // ex
     NIM_SDK_NODE_API(getConnectionState);
     NIM_SDK_NODE_API(muteLocalAudioStream);
