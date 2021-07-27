@@ -427,6 +427,17 @@ export enum NERtcClientRole
     kNERtcClientRoleAudience        = 1,            /**< 观众 */
 }
 
+/** SEI发送的流通道类型 */
+export enum NERtcStreamChannelType {
+    kNERtcStreamChannelTypeMainStream   = 0, /**< 主流通道 */
+    kNERtcStreamChannelTypeSubStream    = 1, /**< 辅流通道 */
+}
+
+export interface NERtcPullExternalAudioFrameCb
+{
+    (data: ArrayBuffer): void
+}
+
 export interface NERtcEngineAPI {
     initialize(context: NERtcEngineContext): number;
     release(): void;
@@ -530,6 +541,12 @@ export interface NERtcEngineAPI {
     startSystemAudioLoopbackCapture(): number;
     stopSystemAudioLoopbackCapture(): number;
     setSystemAudioLoopbackCaptureVolume(volume: number): number;
+
+    // 4.0.x
+    sendSEIMsg(data: ArrayBuffer): number;
+    sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType): number;
+    setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number;
+    pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number;
 
     // 4.1.1
     setAudioEffectPreset(type: NERtcVoiceChangerType): number;

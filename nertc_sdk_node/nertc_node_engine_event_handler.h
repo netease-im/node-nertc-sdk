@@ -383,7 +383,10 @@ public:
      * @param[in] data 接收到的 sei 数据
      * @param[in] dataSize 接收到 sei 数据的大小
      */
-    virtual void onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize) override;
+    void onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize) override;
+
+public:
+    void onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const Local<ArrayBuffer>& frame_buffer);
 
 private:
     void Node_onError(int error_code, const char* msg);
@@ -440,6 +443,7 @@ private:
     void Node_onLiveStreamState(const char* task_id, const char* url, nertc::NERtcLiveStreamStateCode state); 
     void Node_onAudioHowling(bool howling);
     void Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize);
+    void Node_onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const Local<ArrayBuffer>& frame_buffer);
 };
 
 class NertcNodeRtcMediaStatsHandler : public nim_node::EventHandler, public nertc::IRtcMediaStatsObserver

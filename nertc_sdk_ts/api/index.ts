@@ -42,7 +42,9 @@ import {
     NERtcVideoScalingMode,
     NERtcVoiceChangerType,
     NERtcVoiceBeautifierType,
-    NERtcVoiceEqualizationBand
+    NERtcVoiceEqualizationBand,
+    NERtcStreamChannelType,
+    NERtcPullExternalAudioFrameCb
 } from './defs'
 import { EventEmitter } from 'events'
 // const nertc = require('bindings')('nertc-electron-sdk');
@@ -1521,6 +1523,104 @@ class NERtcEngine extends EventEmitter {
     setSystemAudioLoopbackCaptureVolume(volume: number): number
     {
         return this.nertcEngine.setSystemAudioLoopbackCaptureVolume(volume);
+    }
+
+    /**
+     * 发送媒体补充增强信息（SEI）。
+     * <pre>
+     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onRecvSEIMsg 的回调获取 SEI 内容。
+     * - 调用时机：视频流（主流）开启后，可调用此函数。
+     * - 数据长度限制： SEI 最大数据长度为 4096 字节，超限会发送失败。如果频繁发送大量数据会导致视频码率增大，可能会导致视频画质下降甚至卡顿。
+     * - 发送频率限制：最高为视频发送的帧率，建议不超过 10 次/秒。
+     * - 生效时间：调用本接口之后，最快在下一帧视频数据帧之后发送 SEI 数据，最慢在接下来的 5 帧视频之后发送。
+     * <b>NOTE:</b>
+     * - SEI 数据跟随视频帧发送，由于在弱网环境下可能丢帧，SEI 数据也可能随之丢失，所以建议在发送频率限制之内多次发送，保证接收端收到的概率。
+     * - 调用本接口时，默认使用主流通道发送 SEI。
+     * </pre>
+     * @param {ArrayBuffer} data 自定义 SEI 数据
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    sendSEIMsg(data: ArrayBuffer): number
+    {
+        return this.nertcEngine.sendSEIMsg(data);
+    }
+
+    /**
+     * 发送媒体补充增强信息（SEI）。
+     * <pre>
+     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onRecvSEIMsg 的回调获取 SEI 内容。
+     * - 调用时机：视频流（主流）开启后，可调用此函数。
+     * - 数据长度限制： SEI 最大数据长度为 4096 字节，超限会发送失败。如果频繁发送大量数据会导致视频码率增大，可能会导致视频画质下降甚至卡顿。
+     * - 发送频率限制：最高为视频发送的帧率，建议不超过 10 次/秒。
+     * - 生效时间：调用本接口之后，最快在下一帧视频数据帧之后发送 SEI 数据，最慢在接下来的 5 帧视频之后发送。
+     * <b>NOTE:</b>
+     * - SEI 数据跟随视频帧发送，由于在弱网环境下可能丢帧，SEI 数据也可能随之丢失，所以建议在发送频率限制之内多次发送，保证接收端收到的概率。
+     * - 调用本接口时，默认使用主流通道发送 SEI。
+     * </pre>
+     * @param {ArrayBuffer} data 自定义 SEI 数据
+     * @param {number} type 发送 SEI 时，使用的流通道类型：
+     * <pre>
+     * - 0: 主流通道
+     * - 1: 辅流通道
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType)
+    {
+        return this.nertcEngine.sendSEIMsgEx(data, type);
+    }
+
+    /**
+     * 拉取外部音频数据。
+     * <pre>
+     * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
+     * <b>NOTE:</b>
+     * - 该方法需要在加入房间后调用。
+     * - 数据帧时长建议匹配 10ms 周期。
+     * - 该方法在音频渲染设备关闭后不再生效，此时会返回空数据。例如通话结束、通话前扬声器设备测试关闭等情况下，该设置不再生效。
+     * </pre>
+     * @param {boolean} enable 是否外部数据输出
+     * <pre>
+     * - true: 开启外部数据渲染
+     * - false: 关闭外部数据渲染 (默认)
+     * </pre>
+     * @param {number} sampleRate 数据采样率，后续数据按该格式返回。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效
+     * @param {number} channels channels 数据声道数，后续数据按该格式返回。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number
+    {
+        return this.nertcEngine.setExternalAudioRender(enable, sampleRate, channels);
+    }
+
+    /**
+     * 拉取外部音频数据。
+     * <pre>
+     * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
+     * <b>NOTE:</b>
+     * - 该方法需要在加入房间后调用。
+     * - 数据帧时长建议匹配 10ms 周期。
+     * - 该方法在音频渲染设备关闭后不再生效，此时会返回空数据。例如通话结束、通话前扬声器设备测试关闭等情况下，该设置不再生效。
+     * </pre>
+     * @param {number} pullLength 待拉取音频数据的字节数，单位为 byte
+     * @param {function} cb 拉取数据的回调函数
+     * @returns 
+     */
+    pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number
+    {
+        return this.nertcEngine.pullExternalAudioFrame(pullLength, cb);
     }
 
     /** 

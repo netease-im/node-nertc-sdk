@@ -2024,12 +2024,42 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, pushExternalAudioFrame)
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, sendSEIMsg)
 {
-    // TODO(Dylan)
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_ADM_THIS(instance);
+        if (!args[0]->IsArrayBuffer())
+            break;
+        auto buffer = args[0].As<ArrayBuffer>();
+        ret = instance->rtc_engine_->sendSEIMsg(
+            static_cast<const char*>(buffer->GetContents().Data()),
+            buffer->GetContents().ByteLength());
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, sendSEIMsgEx)
 {
-    // TODO(Dylan)
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_ADM_THIS(instance);
+        auto status = napi_ok;
+        if (!args[0]->IsArrayBuffer())
+            break;
+        auto buffer = args[0].As<ArrayBuffer>();
+
+        int32_t type;
+        GET_ARGS_VALUE(isolate, 1, int32, type)
+
+        ret = instance->rtc_engine_->sendSEIMsg(
+            static_cast<const char*>(buffer->GetContents().Data()), 
+            buffer->GetContents().ByteLength(),
+            static_cast<nertc::NERtcStreamChannelType>(type));
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, setExternalAudioRender)
@@ -2046,14 +2076,10 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setExternalAudioRender)
         GET_ARGS_VALUE(isolate, 0, bool, enable)
         GET_ARGS_VALUE(isolate, 1, int32, sample_rate)
         if (status != napi_ok)
-        {
             break;
-        }
         GET_ARGS_VALUE(isolate, 2, int32, channels)
         if (status != napi_ok)
-        {
             break;
-        }
         ret = instance->rtc_engine_->setExternalAudioRender(enable, sample_rate, channels);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2061,7 +2087,28 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setExternalAudioRender)
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, pullExternalAudioFrame)
 {
-    // TODO(Dylan)
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_ADM_THIS(instance);
+        auto status = napi_ok;
+        int length = 0;
+        GET_ARGS_VALUE(isolate, 0, int32, length)
+        if (status != napi_ok)
+            break;
+        ASSEMBLE_BASE_CALLBACK(1);
+        auto data = new BYTE[length];
+        if (data == nullptr)
+            break;
+        ret = instance->rtc_engine_->pullExternalAudioFrame(data, length);
+        Local<v8::ArrayBuffer> frame_buffer = ArrayBuffer::New(
+            Isolate::GetCurrent(), data, length, v8::ArrayBufferCreationMode::kInternalized);
+        NertcNodeEventHandler::GetInstance()->onPullExternalAudioFrame(bcb, frame_buffer);
+        if (data != nullptr)
+            delete[] data;
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, setAudioEffectPreset)

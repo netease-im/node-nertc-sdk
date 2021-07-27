@@ -701,6 +701,13 @@ void NertcNodeEventHandler::onRecvSEIMsg(nertc::uid_t uid, const char* data, uin
 	});
 }
 
+void NertcNodeEventHandler::onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const Local<ArrayBuffer>& frame_buffer)
+{
+    nim_node::node_async_call::async_call([=]() {
+        NertcNodeEventHandler::GetInstance()->Node_onPullExternalAudioFrame(bcb, frame_buffer);
+    });
+}
+
 void NertcNodeEventHandler::Node_onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile)
 {
     Isolate *isolate = Isolate::GetCurrent();
@@ -1023,6 +1030,15 @@ void NertcNodeEventHandler::Node_onRecvSEIMsg(nertc::uid_t uid, const char* data
 	{
 		it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
 	}
+}
+
+void NertcNodeEventHandler::Node_onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const Local<ArrayBuffer>& frame_buffer)
+{
+    Isolate* isolate = Isolate::GetCurrent();
+    const unsigned argc = 1;
+    Local<Value> argv[argc] = { frame_buffer };
+    bcb->callback_.Get(isolate)->Call(isolate->GetCurrentContext(),
+        bcb->data_.Get(isolate), argc, argv);
 }
 
 }

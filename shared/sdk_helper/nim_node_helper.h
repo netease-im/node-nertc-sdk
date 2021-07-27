@@ -28,6 +28,7 @@ using v8::Exception;
 using v8::Array;
 using v8::Number;
 using v8::Map;
+using v8::ArrayBuffer;
 
 using std::string;
 

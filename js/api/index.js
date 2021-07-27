@@ -1398,6 +1398,96 @@ class NERtcEngine extends events_1.EventEmitter {
         return this.nertcEngine.setSystemAudioLoopbackCaptureVolume(volume);
     }
     /**
+     * 发送媒体补充增强信息（SEI）。
+     * <pre>
+     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onRecvSEIMsg 的回调获取 SEI 内容。
+     * - 调用时机：视频流（主流）开启后，可调用此函数。
+     * - 数据长度限制： SEI 最大数据长度为 4096 字节，超限会发送失败。如果频繁发送大量数据会导致视频码率增大，可能会导致视频画质下降甚至卡顿。
+     * - 发送频率限制：最高为视频发送的帧率，建议不超过 10 次/秒。
+     * - 生效时间：调用本接口之后，最快在下一帧视频数据帧之后发送 SEI 数据，最慢在接下来的 5 帧视频之后发送。
+     * <b>NOTE:</b>
+     * - SEI 数据跟随视频帧发送，由于在弱网环境下可能丢帧，SEI 数据也可能随之丢失，所以建议在发送频率限制之内多次发送，保证接收端收到的概率。
+     * - 调用本接口时，默认使用主流通道发送 SEI。
+     * </pre>
+     * @param {ArrayBuffer} data 自定义 SEI 数据
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    sendSEIMsg(data) {
+        return this.nertcEngine.sendSEIMsg(data);
+    }
+    /**
+     * 发送媒体补充增强信息（SEI）。
+     * <pre>
+     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onRecvSEIMsg 的回调获取 SEI 内容。
+     * - 调用时机：视频流（主流）开启后，可调用此函数。
+     * - 数据长度限制： SEI 最大数据长度为 4096 字节，超限会发送失败。如果频繁发送大量数据会导致视频码率增大，可能会导致视频画质下降甚至卡顿。
+     * - 发送频率限制：最高为视频发送的帧率，建议不超过 10 次/秒。
+     * - 生效时间：调用本接口之后，最快在下一帧视频数据帧之后发送 SEI 数据，最慢在接下来的 5 帧视频之后发送。
+     * <b>NOTE:</b>
+     * - SEI 数据跟随视频帧发送，由于在弱网环境下可能丢帧，SEI 数据也可能随之丢失，所以建议在发送频率限制之内多次发送，保证接收端收到的概率。
+     * - 调用本接口时，默认使用主流通道发送 SEI。
+     * </pre>
+     * @param {ArrayBuffer} data 自定义 SEI 数据
+     * @param {number} type 发送 SEI 时，使用的流通道类型：
+     * <pre>
+     * - 0: 主流通道
+     * - 1: 辅流通道
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    sendSEIMsgEx(data, type) {
+        return this.nertcEngine.sendSEIMsgEx(data, type);
+    }
+    /**
+     * 拉取外部音频数据。
+     * <pre>
+     * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
+     * <b>NOTE:</b>
+     * - 该方法需要在加入房间后调用。
+     * - 数据帧时长建议匹配 10ms 周期。
+     * - 该方法在音频渲染设备关闭后不再生效，此时会返回空数据。例如通话结束、通话前扬声器设备测试关闭等情况下，该设置不再生效。
+     * </pre>
+     * @param {boolean} enable 是否外部数据输出
+     * <pre>
+     * - true: 开启外部数据渲染
+     * - false: 关闭外部数据渲染 (默认)
+     * </pre>
+     * @param {number} sampleRate 数据采样率，后续数据按该格式返回。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效
+     * @param {number} channels channels 数据声道数，后续数据按该格式返回。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setExternalAudioRender(enable, sampleRate, channels) {
+        return this.nertcEngine.setExternalAudioRender(enable, sampleRate, channels);
+    }
+    /**
+     * 拉取外部音频数据。
+     * <pre>
+     * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
+     * <b>NOTE:</b>
+     * - 该方法需要在加入房间后调用。
+     * - 数据帧时长建议匹配 10ms 周期。
+     * - 该方法在音频渲染设备关闭后不再生效，此时会返回空数据。例如通话结束、通话前扬声器设备测试关闭等情况下，该设置不再生效。
+     * </pre>
+     * @param {number} pullLength 待拉取音频数据的字节数，单位为 byte
+     * @param {function} cb 拉取数据的回调函数
+     * @returns
+     */
+    pullExternalAudioFrame(pullLength, cb) {
+        return this.nertcEngine.pullExternalAudioFrame(pullLength, cb);
+    }
+    /**
      * 查询 SDK 版本号。
      * @returns {String} 当前的 SDK 版本号，格式为字符串，如1.0.0.
      */
@@ -1935,12 +2025,12 @@ class NERtcEngine extends events_1.EventEmitter {
      * <tr><td>Object.sourceName</td><td>String</td><td>信息源名称</td></tr>
      * <tr><td>Object.type</td><td>int</td><td>信息源类型:1-屏幕 2-窗口</td></tr>
      * <tr><td>Object.isMinimizeWindow</td><td>boolean</td><td>窗口是否最小化状态</td></tr>
-     * <tr><td>Object.thumbBGRA</td><td>object</td><td>缩略图信息:
+     * <tr><td>Object.thumbBGRA</td><td>object</td><td>缩略图信息,使用前需要判断是否undefined:
      * - buffer - BGRA二进制数据
      * - length - 数据大小 byte
      * - width - 图片宽度 px
      * - height - 图片高度 px</td></tr>
-     * <tr><td>Object.iconBGRA</td><td>object</td><td>图标信息:
+     * <tr><td>Object.iconBGRA</td><td>object</td><td>图标信息,使用前需要判断是否undefined:
      * - buffer - BGRA二进制数据
      * - length - 数据大小 byte
      * - width - 图片宽度 px
@@ -1970,6 +2060,105 @@ class NERtcEngine extends events_1.EventEmitter {
      */
     getVideoDevice() {
         return this.nertcEngine.getDevice();
+    }
+    /**
+     * 设置 SDK 预设的人声的变声音效。
+     * @param {number} type 预设的变声音效。默认关闭变声音效：
+     * <pre>
+     * - 0: 默认关闭
+     * - 1: 机器人
+     * - 2: 巨人
+     * - 3: 恐怖
+     * - 4: 成熟
+     * - 5: 男变女
+     * - 6: 女变男
+     * - 7: 男变萝莉
+     * - 8: 女变萝莉
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setAudioEffectPreset(type) {
+        return this.nertcEngine.setAudioEffectPreset(type);
+    }
+    /**
+     * 设置 SDK 预设的美声效果。调用该方法可以为本地发流用户设置 SDK 预设的人声美声效果。
+     * <pre>
+     * <b>NOTE:</b>
+     * - 通话结束后重置为默认关闭
+     * </pre>
+     * @param {number} type 预设的美声效果模式。默认关闭美声效果：
+     * <pre>
+     * - 0: 默认关闭
+     * - 1: 低沉
+     * - 2: 圆润
+     * - 3: 清澈
+     * - 4: 磁性
+     * - 5: 录音棚
+     * - 6: 天籁
+     * - 7: KTV
+     * - 8: 悠远
+     * - 9: 教堂
+     * - 10: 卧室
+     * - 11: Live
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setVoiceBeautifierPreset(type) {
+        return this.nertcEngine.setVoiceBeautifierPreset(type);
+    }
+    /**
+     * 设置本地语音音调。该方法改变本地说话人声音的音调。
+     * <pre>
+     * <b>NOTE:</b>
+     * - 通话结束后该设置会重置，默认为 1.0。
+     * - 此方法与 setAudioEffectPreset 互斥，调用此方法后，已设置的变声效果会被取消。
+     * </pre>
+     * @param {number} pitch 语音频率。可以在 [0.5, 2.0] 范围内设置。取值越小，则音调越低。默认值为 1.0，表示不需要修改音调。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setLocalVoicePitch(pitch) {
+        return this.nertcEngine.setLocalVoicePitch(pitch);
+    }
+    /**
+     * 设置本地语音音效均衡，即自定义设置本地人声均衡波段的中心频率。
+     * <pre>
+     * <b>NOTE:</b>
+     * - 该方法在加入房间前后都能调用，通话结束后重置为默认关闭状态。
+     * </pre>
+     * @param {number} bandFrequency 频谱子带索引，取值范围是 [0-9]，分别代表 10 个频带，对应的中心频率是 [31，62，125，250，500，1k，2k，4k，8k，16k] Hz：
+     * <pre>
+     * - 0: 31Hz
+     * - 1: 62Hz
+     * - 2: 125Hz
+     * - 3: 250Hz
+     * - 4: 500Hz
+     * - 5: 1kHz
+     * - 6: 2kHz
+     * - 7: 4kHz
+     * - 8: 8kHz
+     * - 9: 16kHz
+     * </pre>
+     * @param {number} bandGain 每个 band 的增益，单位是 dB，每一个值的范围是 [-15，15]，默认值为 0。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setLocalVoiceEqualization(bandFrequency, bandGain) {
+        return this.nertcEngine.setLocalVoiceEqualization(bandFrequency, bandGain);
     }
     // setMixedAudioFrameParameters(samplerate: number): number {
     //     return this.nertcEngine.setMixedAudioFrameParameters(samplerate);      
@@ -2483,6 +2672,16 @@ class NERtcEngine extends events_1.EventEmitter {
          */
         this.nertcEngine.onEvent('onAudioHowling', function (howling) {
             fire('onAudioHowling', howling);
+        });
+        /**
+         * 监听 SEI 数据回调
+         * @event NERtcEngine#onReceSEIMsg
+         * @param {number} uid 发送该 sei 的用户 id
+         * @param {string} data 接收到的 sei 数据
+         * @param {number} dataSize 接收到 sei 数据的大小
+         */
+        this.nertcEngine.onEvent('onReceSEIMsg', function (uid, data, dataSize) {
+            fire('onReceSEIMsg', uid, data, dataSize);
         });
         this.nertcEngine.onVideoFrame(function (infos) {
             self.doVideoFrameReceived(infos);
