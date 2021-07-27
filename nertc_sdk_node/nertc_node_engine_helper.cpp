@@ -391,11 +391,39 @@ static napi_status nertc_ls_layout_obj_to_struct(Isolate* isolate, const Local<O
     return napi_ok;
 }
 
+napi_status nertc_ls_config_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcLiveConfig& config)
+{
+	int32_t out_i;
+	bool out_b;
+    if (nim_napi_get_object_value_bool(isolate, obj, "single_video_passthrough", out_b) == napi_ok)
+    {
+        config.single_video_passthrough = out_b;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "audio_bitrate", out_i) == napi_ok)
+    {
+        config.audio_bitrate = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "sample_rate", out_i) == napi_ok)
+    {
+        config.sampleRate = (nertc::NERtcLiveStreamAudioSampleRate)out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "channels", out_i) == napi_ok)
+    {
+        config.channels = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "audio_codec_profile", out_i) == napi_ok)
+    {
+        config.audioCodecProfile = (nertc::NERtcLiveStreamAudioCodecProfile)out_i;
+    }
+    return napi_ok;
+}
+
 napi_status nertc_ls_task_info_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcLiveStreamTaskInfo& info)
 {
     UTF8String out;
     int32_t out_i;
     bool out_b;
+
     if (nim_napi_get_object_value_utf8string(isolate, obj, "task_id", out) == napi_ok)
     {
         strcpy(info.task_id, out.toUtf8String().c_str());
@@ -413,11 +441,18 @@ napi_status nertc_ls_task_info_obj_to_struct(Isolate* isolate, const Local<Objec
         info.ls_mode = (nertc::NERtcLiveStreamMode)out_i;
     }
     Local<Value> so;
-    if ((nim_napi_get_object_value(isolate, obj, "layout", so) == napi_ok) && (nertc_ls_layout_obj_to_struct(isolate, so.As<Object>(), info.layout) == napi_ok))
+    if (nim_napi_get_object_value(isolate, obj, "layout", so) == napi_ok)
     {
-        return napi_ok;
+        if (nertc_ls_layout_obj_to_struct(isolate, so.As<Object>(), info.layout) != napi_ok)
+            return napi_invalid_arg;
     }
-    return napi_invalid_arg;
+    Local<Value> config;
+    if (nim_napi_get_object_value(isolate, obj, "config", config) == napi_ok)
+    {
+        if (nertc_ls_config_obj_to_struct(isolate, config.As<Object>(), info.config) != napi_ok)
+            return napi_invalid_arg;
+    }
+    return napi_ok;
 }
 
 napi_status nertc_stats_to_obj(Isolate* isolate, const nertc::NERtcStats& config, Local<Object>& obj)

@@ -321,6 +321,21 @@ export enum NERtcLiveStreamVideoScaleMode
     kNERtcLsModeVideoScaleCropFill = 1, /**< 1: 视频尺寸等比缩放。优先保证视窗被填满。因视频尺寸与显示视窗尺寸不一致而多出的视频将被截掉。*/
 }
 
+/** 直播推流音频采样率 */
+export enum NERtcLiveStreamAudioSampleRate
+{
+    kNERtcLiveStreamAudioSampleRate32000 = 32000, /**< 采样率为 32 kHz。*/
+    kNERtcLiveStreamAudioSampleRate44100 = 44100, /**< 采样率为 44.1 kHz。*/
+    kNERtcLiveStreamAudioSampleRate48000 = 48000  /**< （默认）采样率为 48 kHz。*/
+}
+
+/** 直播推流音频编码规格 */
+export enum NERtcLiveStreamAudioCodecProfile
+{
+    kNERtcLiveStreamAudioCodecProfileLCAAC = 0, /**< （默认）LC-AAC 规格，表示基本音频编码规格。*/
+    kNERtcLiveStreamAudioCodecProfileHEAAC = 1  /**< HE-AAC 规格，表示高效音频编码规格。*/
+}
+
 /** 直播成员布局 */
 export interface NERtcLiveStreamUserTranscoding {
     uid: number;                      /**< 用户id */
@@ -352,14 +367,23 @@ export interface NERtcLiveStreamLayout {
     bg_image: NERtcLiveStreamImageInfo;     /**< 背景图信息 */
 }
 
+export interface NERtcLiveConfig {
+    single_video_passthrough: boolean;  /**< 单路视频透传开关，默认为关闭状态，开启后，如果房间中只有一路视频流输入， 则不对输入视频流进行转码，不遵循转码布局，直接推流 CDN，如果有多个房间成员视频流混合为一路流，则该设置失效，并在恢复为一个成员画面（单路流）时也不会恢复。*/
+    audio_bitrate: number;              /**< 音频推流码率，单位为 kbps，取值范围为 10~192，语音场景建议设置为 64 及以上码率，音乐场景建议设置为 128 及以上码率。 */
+    sample_rate: NERtcLiveStreamAudioSampleRate; /**< 音频推流采样率。单位为Hz。默认为 kNERtcLiveStreamAudioSampleRate48000，即采样率为 48 kHz。 */
+    channels: number;                   /**< 音频推流声道数，默认值为 2 双声道。 */
+    audio_codec_profile: NERtcLiveStreamAudioCodecProfile /**< 音频编码规格。默认值 NERtcLiveStreamAudioCodecProfileLCAAC，普通编码规格，0: LC-AAC 规格，表示基本音频编码规格，1: HE-AAC 规格，表示高效音频编码规格 */
+}
+
 /** 直播推流任务的配置项。*/
 export interface NERtcLiveStreamTaskInfo
 {
-    task_id: String;    /**< 推流任务ID，为推流任务的唯一标识，用于过程中增删任务操作 < 64 chars*/
-    stream_url: String;    /**< 直播推流地址 <256 chars */
-    server_record_enabled: Boolean;             /**< 服务器录制功能是否开启 */
-    ls_mode: NERtcLiveStreamMode;            /**< 直播推流模式，NERtcLiveStreamMode */
-    layout: NERtcLiveStreamLayout;           /**< 视频布局 */
+    task_id: String;                /**< 推流任务ID，为推流任务的唯一标识，用于过程中增删任务操作 < 64 chars*/
+    stream_url: String;             /**< 直播推流地址 <256 chars */
+    server_record_enabled: Boolean; /**< 服务器录制功能是否开启 */
+    ls_mode: NERtcLiveStreamMode;   /**< 直播推流模式，NERtcLiveStreamMode */
+    layout: NERtcLiveStreamLayout;  /**< 视频布局 */
+    config: NERtcLiveConfig;        /**< 音视频流编码参数等设置。详细信息请参考 NERtcLiveConfig */
 }
 
 /** 音频设备链接类型。*/
@@ -672,11 +696,24 @@ export enum NERtcAudioMixingState
 */
 export enum NERtcAudioMixingErrorCode
 {
-    kNERtcAudioMixingErrorOK            = 0,      			/**< 没有错误。*/
-    kNERtcAudioMixingErrorFatal         = 1,      			/**< 通用错误。*/
-    kNERtcAudioMixingErrorCanNotOpen    = 100,      		/**< 音乐文件打开出错。*/
-    //kNERtcAudioMixingErrorTooFrequentCall = 101,      	/**< 音乐文件打开太频繁。*/
-    //kNERtcAudioMixingErrorInterruptedEOF= 102,      		/**< 音乐文件播放中断。*/
+    kNERtcAudioMixingErrorOK            = 0,        /**< 没有错误。*/
+    kNERtcAudioMixingErrorFatal         = 1,        /**< 通用错误。*/
+	kNERtcAudioMixingErrorCanNotOpen,               /**< 伴音不能正常打开*/
+	kNERtcAudioMixingErrorDecode,                   /**<音频解码错误*/
+	kNERtcAudioMixingErrorInterrupt,                /**<操作中断码*/
+	kNERtcAudioMixingErrorHttpNotFound,             /**<404 file not found，only for http / https*/
+	kNERtcAudioMixingErrorOpen,                     /**<打开流 / 文件失败*/
+	kNERtcAudioMixingErrorNInfo,                    /**<获取解码信息失败 / 超时*/
+	kNERtcAudioMixingErrorNStream,                  /**<无音频流*/
+	kNERtcAudioMixingErrorNCodec,                   /**<无解码器*/
+	kNERtcAudioMixingErrorNMem,                     /**<无内存*/
+	kNERtcAudioMixingErrorCodecOpen,                /**<解码器打开失败 / 超时*/
+	kNERtcAudioMixingErrorInvalidInfo,              /**<无效音频参数（声道、采样率）*/
+	kNERtcAudioMixingErrorOpenTimeout,              /**<打开流 / 文件超时*/
+	kNERtcAudioMixingErrorIoTimeout,                /**<网络io超时*/
+	kNERtcAudioMixingErrorIo,                       /**<网络io错误*/
+    //kNERtcAudioMixingErrorTooFrequentCall = 101,  /**< 音乐文件打开太频繁。*/
+    //kNERtcAudioMixingErrorInterruptedEOF= 102,    /**< 音乐文件播放中断。*/
 }
 
 /** 声音音量信息。一个数组，包含每个说话者的用户 ID 和音量信息。*/

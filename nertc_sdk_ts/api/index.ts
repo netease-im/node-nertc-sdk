@@ -2794,6 +2794,21 @@ class NERtcEngine extends EventEmitter {
             fire('onAudioHowling', howling);
         });
 
+        /**
+         * 监听 SEI 数据回调
+         * @event NERtcEngine#onReceSEIMsg
+         * @param {number} uid 发送该 sei 的用户 id
+         * @param {string} data 接收到的 sei 数据
+         * @param {number} dataSize 接收到 sei 数据的大小
+         */
+         this.nertcEngine.onEvent('onReceSEIMsg', function (
+            uid: number,
+            data: string,
+            dataSize: number
+        ) {
+            fire('onReceSEIMsg', uid, data, dataSize);
+        });
+
         this.nertcEngine.onVideoFrame(function(infos: any) {
             self.doVideoFrameReceived(infos);
         });
@@ -3652,6 +3667,14 @@ declare interface NERtcEngine {
      - false: 正常；。
      */
     on(event: 'onAudioHowling', cb: (howling: boolean) => void): this;
+
+    /** 收到远端流的 SEI 内容回调。
+
+     * @param uid 发送该 sei 的用户 id
+	 * @param data 接收到的 sei 数据
+	 * @param dataSize 接收到 sei 数据的大小
+     */
+    on(event: 'onReceSEIMsg', cb: (uid: number, data: string, dataSize: number) => void): this
 }
 
 export default NERtcEngine;

@@ -694,6 +694,13 @@ void NertcNodeEventHandler::onAudioHowling(bool howling)
     });
 }
 
+void NertcNodeEventHandler::onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize)
+{
+	nim_node::node_async_call::async_call([=]() {
+		NertcNodeEventHandler::GetInstance()->Node_onRecvSEIMsg(uid, data, dataSize);
+	});
+}
+
 void NertcNodeEventHandler::Node_onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile)
 {
     Isolate *isolate = Isolate::GetCurrent();
@@ -1004,5 +1011,18 @@ void NertcNodeEventHandler::Node_onAudioHowling(bool howling)
     }
 }
 
+
+void NertcNodeEventHandler::Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize)
+{
+	Isolate* isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	const unsigned argc = 3;
+	Local<Value> argv[argc] = { nim_napi_new_uint64(isolate, uid), nim_napi_new_utf8string(isolate, data) };
+	auto it = callbacks_.find("onReceSEIMsg");
+	if (it != callbacks_.end())
+	{
+		it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
+	}
+}
 
 }

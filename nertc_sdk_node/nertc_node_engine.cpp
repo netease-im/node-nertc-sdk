@@ -55,13 +55,19 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(onVideoFrame)
     SET_PROTOTYPE(onEvent)
 
-    //3.9
+    // 3.9
     SET_PROTOTYPE(setClientRole)
     SET_PROTOTYPE(setupSubStreamVideoCanvas)
     SET_PROTOTYPE(subscribeRemoteVideoSubStream)
     SET_PROTOTYPE(setMixedAudioFrameParameters)
     SET_PROTOTYPE(setExternalAudioSource)
     SET_PROTOTYPE(pushExternalAudioFrame)
+
+    // 4.0
+    SET_PROTOTYPE(sendSEIMsg)
+    SET_PROTOTYPE(sendSEIMsgEx)
+    SET_PROTOTYPE(setExternalAudioRender)
+    SET_PROTOTYPE(pullExternalAudioFrame)
 
     SET_PROTOTYPE(getConnectionState)
     SET_PROTOTYPE(muteLocalAudioStream)
@@ -1375,11 +1381,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, addLiveStreamTask)
         status = nertc_ls_task_info_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), info);
         if (status == napi_ok)
         {
-#ifdef WIN32
-            // 等mac sdk更新后可以去掉编译宏
             memset(info.extraInfo, 0, kNERtcMacSEIBufferLength);
             info.config = {0};
-#endif
             ret = instance->rtc_engine_->addLiveStreamTask(info);
             if (info.layout.users)
             {
@@ -2007,9 +2010,51 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, pushExternalAudioFrame)
     do
     {
         CHECK_NATIVE_VDM_THIS(instance);
-        //TODO(litianyi)
+        // TODO(litianyi)
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, sendSEIMsg)
+{
+    // TODO(Dylan)
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, sendSEIMsgEx)
+{
+    // TODO(Dylan)
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setExternalAudioRender)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 3)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        bool enable;
+        int sample_rate = 0;
+        int channels = 0;
+        GET_ARGS_VALUE(isolate, 0, bool, enable)
+        GET_ARGS_VALUE(isolate, 1, int32, sample_rate)
+        if (status != napi_ok)
+        {
+            break;
+        }
+        GET_ARGS_VALUE(isolate, 2, int32, channels)
+        if (status != napi_ok)
+        {
+            break;
+        }
+        ret = instance->rtc_engine_->setExternalAudioRender(enable, sample_rate, channels);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, pullExternalAudioFrame)
+{
+    // TODO(Dylan)
 }
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)

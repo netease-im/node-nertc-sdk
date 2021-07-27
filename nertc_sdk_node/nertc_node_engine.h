@@ -38,7 +38,7 @@ public:
     NIM_SDK_NODE_API(onVideoFrame);
     NIM_SDK_NODE_API(onEvent);
 
-    //3.9
+    // 3.9
     NIM_SDK_NODE_API(setClientRole);
     NIM_SDK_NODE_API(setupSubStreamVideoCanvas);
     NIM_SDK_NODE_API(subscribeRemoteVideoSubStream);
@@ -46,7 +46,13 @@ public:
     NIM_SDK_NODE_API(setExternalAudioSource);
     NIM_SDK_NODE_API(pushExternalAudioFrame);
 
-    //ex
+    // 4.0
+    NIM_SDK_NODE_API(sendSEIMsg);
+    NIM_SDK_NODE_API(sendSEIMsgEx);
+    NIM_SDK_NODE_API(setExternalAudioRender);
+    NIM_SDK_NODE_API(pullExternalAudioFrame);
+
+    // ex
     NIM_SDK_NODE_API(getConnectionState);
     NIM_SDK_NODE_API(muteLocalAudioStream);
     NIM_SDK_NODE_API(setAudioProfile);
@@ -104,7 +110,7 @@ public:
     NIM_SDK_NODE_API(updateLiveStreamTask);
     NIM_SDK_NODE_API(removeLiveStreamTask);
 
-    //adm
+    // adm
     NIM_SDK_NODE_API(enumerateRecordDevices);
     NIM_SDK_NODE_API(setRecordDevice);
     NIM_SDK_NODE_API(getRecordDevice);
@@ -128,15 +134,15 @@ public:
     NIM_SDK_NODE_API(startAudioDeviceLoopbackTest);
     NIM_SDK_NODE_API(stopAudioDeviceLoopbackTest);
 
-    //vdm
+    // vdm
     NIM_SDK_NODE_API(enumerateCaptureDevices);
     NIM_SDK_NODE_API(setDevice);
     NIM_SDK_NODE_API(getDevice);
 
-    //CUSTOM
+    // CUSTOM
     NIM_SDK_NODE_API(enumerateScreenCaptureSourceInfo);
 
-    //screenshare with audio
+    // screenshare with audio
     NIM_SDK_NODE_API(startSystemAudioLoopbackCapture);
     NIM_SDK_NODE_API(stopSystemAudioLoopbackCapture);
     NIM_SDK_NODE_API(setSystemAudioLoopbackCaptureVolume);

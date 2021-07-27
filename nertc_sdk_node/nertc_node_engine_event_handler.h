@@ -375,6 +375,16 @@ public:
      */
     virtual void onAudioHowling(bool howling);
 
+    /** 收到远端流的 SEI 内容回调。
+
+     当远端成功发送 SEI 后，本端会收到此回调。
+
+     * @param[in] uid 发送该 sei 的用户 id
+     * @param[in] data 接收到的 sei 数据
+     * @param[in] dataSize 接收到 sei 数据的大小
+     */
+    virtual void onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize) override;
+
 private:
     void Node_onError(int error_code, const char* msg);
     void Node_onWarning(int warn_code, const char* msg);
@@ -429,6 +439,7 @@ private:
     void Node_onRemoveLiveStreamTask(const char* task_id, int error_code);
     void Node_onLiveStreamState(const char* task_id, const char* url, nertc::NERtcLiveStreamStateCode state); 
     void Node_onAudioHowling(bool howling);
+    void Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize);
 };
 
 class NertcNodeRtcMediaStatsHandler : public nim_node::EventHandler, public nertc::IRtcMediaStatsObserver
