@@ -3003,15 +3003,13 @@ class NERtcEngine extends EventEmitter {
          * 监听 SEI 数据回调
          * @event NERtcEngine#onReceSEIMsg
          * @param {number} uid 发送该 sei 的用户 id
-         * @param {string} data 接收到的 sei 数据
-         * @param {number} dataSize 接收到 sei 数据的大小
+         * @param {ArrayBuffer} data 接收到的 sei 数据
          */
          this.nertcEngine.onEvent('onReceSEIMsg', function (
             uid: number,
-            data: string,
-            dataSize: number
+            data: ArrayBuffer,
         ) {
-            fire('onReceSEIMsg', uid, data, dataSize);
+            fire('onReceSEIMsg', uid, data);
         });
 
         this.nertcEngine.onVideoFrame(function(infos: any) {
@@ -3877,9 +3875,8 @@ declare interface NERtcEngine {
 
      * @param uid 发送该 sei 的用户 id
 	 * @param data 接收到的 sei 数据
-	 * @param dataSize 接收到 sei 数据的大小
      */
-    on(event: 'onReceSEIMsg', cb: (uid: number, data: string, dataSize: number) => void): this
+    on(event: 'onReceSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
 }
 
 export default NERtcEngine;

@@ -696,8 +696,10 @@ void NertcNodeEventHandler::onAudioHowling(bool howling)
 
 void NertcNodeEventHandler::onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize)
 {
+    auto copied = new char[dataSize];
+    memcpy(copied, data, dataSize);
 	nim_node::node_async_call::async_call([=]() {
-		NertcNodeEventHandler::GetInstance()->Node_onRecvSEIMsg(uid, data, dataSize);
+		NertcNodeEventHandler::GetInstance()->Node_onRecvSEIMsg(uid, copied, dataSize);
 	});
 }
 
@@ -1019,12 +1021,18 @@ void NertcNodeEventHandler::Node_onAudioHowling(bool howling)
 }
 
 
-void NertcNodeEventHandler::Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize)
+void NertcNodeEventHandler::Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t length)
 {
 	Isolate* isolate = Isolate::GetCurrent();
 	HandleScope scope(isolate);
-	const unsigned argc = 3;
-	Local<Value> argv[argc] = { nim_napi_new_uint64(isolate, uid), nim_napi_new_utf8string(isolate, data) };
+	const unsigned argc = 2;
+
+    Local<v8::ArrayBuffer> message_buffer = ArrayBuffer::New(isolate, (void*)data, length);
+
+    if (data)
+        delete[] data;
+    
+	Local<Value> argv[argc] = { nim_napi_new_uint64(isolate, uid), message_buffer };
 	auto it = callbacks_.find("onReceSEIMsg");
 	if (it != callbacks_.end())
 	{

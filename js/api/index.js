@@ -2677,11 +2677,10 @@ class NERtcEngine extends events_1.EventEmitter {
          * 监听 SEI 数据回调
          * @event NERtcEngine#onReceSEIMsg
          * @param {number} uid 发送该 sei 的用户 id
-         * @param {string} data 接收到的 sei 数据
-         * @param {number} dataSize 接收到 sei 数据的大小
+         * @param {ArrayBuffer} data 接收到的 sei 数据
          */
-        this.nertcEngine.onEvent('onReceSEIMsg', function (uid, data, dataSize) {
-            fire('onReceSEIMsg', uid, data, dataSize);
+        this.nertcEngine.onEvent('onReceSEIMsg', function (uid, data) {
+            fire('onReceSEIMsg', uid, data);
         });
         this.nertcEngine.onVideoFrame(function (infos) {
             self.doVideoFrameReceived(infos);

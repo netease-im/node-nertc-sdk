@@ -2275,8 +2275,7 @@ declare interface NERtcEngine {
 
      * @param uid 发送该 sei 的用户 id
      * @param data 接收到的 sei 数据
-     * @param dataSize 接收到 sei 数据的大小
      */
-    on(event: 'onReceSEIMsg', cb: (uid: number, data: string, dataSize: number) => void): this;
+    on(event: 'onReceSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
 }
 export default NERtcEngine;
