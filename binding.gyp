@@ -59,7 +59,8 @@
               'destination': '<(PRODUCT_DIR)',
               'files': [
                 './nertc_sdk/dll/nertc_sdk.dll',
-                './nertc_sdk/dll/SDL2.dll',
+				'./nertc_sdk/dll/protoopp.dll',
+				'./nertc_sdk/dll/SDL2.dll',
               ]
             }],
             'defines': [
