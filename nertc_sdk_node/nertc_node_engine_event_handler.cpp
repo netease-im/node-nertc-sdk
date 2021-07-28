@@ -703,10 +703,10 @@ void NertcNodeEventHandler::onRecvSEIMsg(nertc::uid_t uid, const char* data, uin
 	});
 }
 
-void NertcNodeEventHandler::onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const Local<ArrayBuffer>& frame_buffer)
+void NertcNodeEventHandler::onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length)
 {
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeEventHandler::GetInstance()->Node_onPullExternalAudioFrame(bcb, frame_buffer);
+        NertcNodeEventHandler::GetInstance()->Node_onPullExternalAudioFrame(bcb, data, length);
     });
 }
 
@@ -1040,11 +1040,12 @@ void NertcNodeEventHandler::Node_onRecvSEIMsg(nertc::uid_t uid, const char* data
 	}
 }
 
-void NertcNodeEventHandler::Node_onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const Local<ArrayBuffer>& frame_buffer)
+void NertcNodeEventHandler::Node_onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length)
 {
     Isolate* isolate = Isolate::GetCurrent();
     const unsigned argc = 1;
-    Local<Value> argv[argc] = { frame_buffer };
+    Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, data.get(), length);
+    Local<Value> argv[argc] = { buffer };
     bcb->callback_.Get(isolate)->Call(isolate->GetCurrentContext(),
         bcb->data_.Get(isolate), argc, argv);
 }

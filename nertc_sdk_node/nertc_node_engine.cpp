@@ -2098,15 +2098,9 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, pullExternalAudioFrame)
         if (status != napi_ok)
             break;
         ASSEMBLE_BASE_CALLBACK(1);
-        auto data = new BYTE[length];
-        if (data == nullptr)
-            break;
-        ret = instance->rtc_engine_->pullExternalAudioFrame(data, length);
-        Local<v8::ArrayBuffer> frame_buffer = ArrayBuffer::New(
-            Isolate::GetCurrent(), data, length, v8::ArrayBufferCreationMode::kInternalized);
-        NertcNodeEventHandler::GetInstance()->onPullExternalAudioFrame(bcb, frame_buffer);
-        if (data != nullptr)
-            delete[] data;
+        auto shared_data = std::make_shared<BYTE>(length);
+        ret = instance->rtc_engine_->pullExternalAudioFrame(shared_data.get(), length);
+        NertcNodeEventHandler::GetInstance()->onPullExternalAudioFrame(bcb, shared_data, length);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }

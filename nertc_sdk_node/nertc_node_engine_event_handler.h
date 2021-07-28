@@ -386,7 +386,7 @@ public:
     void onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize) override;
 
 public:
-    void onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const Local<ArrayBuffer>& frame_buffer);
+    void onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
 
 private:
     void Node_onError(int error_code, const char* msg);
@@ -443,7 +443,7 @@ private:
     void Node_onLiveStreamState(const char* task_id, const char* url, nertc::NERtcLiveStreamStateCode state); 
     void Node_onAudioHowling(bool howling);
     void Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize);
-    void Node_onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const Local<ArrayBuffer>& frame_buffer);
+    void Node_onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
 };
 
 class NertcNodeRtcMediaStatsHandler : public nim_node::EventHandler, public nertc::IRtcMediaStatsObserver
