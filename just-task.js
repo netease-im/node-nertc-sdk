@@ -83,6 +83,10 @@ task('package', () => {
 })
 
 task('install', () => {
+  if ((process.env.npm_config_skip_install || false)) {
+    logger.info('[install] Skip downlaod prebuilt libraries.')
+    return
+  }
   let target = '5.0.8'
   let runtime = 'electron'
   const targetPlatform = process.env.npm_config_target_platform || process.platform
