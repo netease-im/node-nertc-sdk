@@ -89,9 +89,7 @@ task('install', () => {
   const targetArch = process.env.npm_config_target_arch || process.arch
   const curPkgMeta = require(path.join(__dirname, 'package.json'))
   const rootPkgMeta = require(path.join(process.env.INIT_CWD, 'package.json'))
-
   logger.info('------------------ just install --------------------')
-
   if (rootPkgMeta.devDependencies && rootPkgMeta.devDependencies.electron) {
     // v13.1.2 => 13.1.2, remove prefix 'v'
     target = rootPkgMeta.devDependencies.electron.replace(/^.*?(\d+.+\d).*/, '$1')
@@ -124,7 +122,9 @@ task('install', () => {
           target,
           runtime
         })
-      }).then(() => resolve())
+      }).then(() => resolve()).catch((err) => {
+        reject(err)
+      })
     })
   })
 })
