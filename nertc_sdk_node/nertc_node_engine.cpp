@@ -75,6 +75,13 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(setLocalVoicePitch)
     SET_PROTOTYPE(setLocalVoiceEqualization)
 
+    // 4.1.110
+    SET_PROTOTYPE(setRemoteHighPriorityAudioStream);
+    SET_PROTOTYPE(subscribeRemoteAudioSubStream);
+    SET_PROTOTYPE(enableLocalAudioStream);
+    SET_PROTOTYPE(enableLoopbackRecording);
+    SET_PROTOTYPE(adjustLoopbackRecordingSignalVolume);
+    SET_PROTOTYPE(adjustUserPlaybackSignalVolume);
 
     SET_PROTOTYPE(getConnectionState)
     SET_PROTOTYPE(muteLocalAudioStream)
@@ -2185,6 +2192,141 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalVoiceEqualization)
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setRemoteHighPriorityAudioStream)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 3)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        bool enable = false;
+        uint64_t uid = 0;
+        int32_t stream_type;
+        GET_ARGS_VALUE(isolate, 0, bool, enable)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 1, uint64, uid)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 2, int32, stream_type)
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->setRemoteHighPriorityAudioStream(enable, uid, 
+            static_cast<nertc::NERtcAudioStreamType>(stream_type));
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, subscribeRemoteAudioSubStream)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        uint64_t uid = 0;
+        bool subscribe = false;
+        GET_ARGS_VALUE(isolate, 0, uint64, uid)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 1, bool, subscribe)
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->subscribeRemoteAudioSubStream(uid, subscribe);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableLocalAudioStream)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        bool enable = false;
+        int32_t stream_type;
+        GET_ARGS_VALUE(isolate, 0, bool, enable)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 1, int32, stream_type)
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->enableLocalAudioStream(enable, static_cast<nertc::NERtcAudioStreamType>(stream_type));
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableLoopbackRecording)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        bool enable = false;
+        UTF8String device_name;
+        GET_ARGS_VALUE(isolate, 0, bool, enable)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 1, utf8string, device_name)
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->enableLoopbackRecording(enable, 
+            device_name.length() > 0 ? device_name.toUtf8String().c_str() : nullptr
+        );
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, adjustLoopbackRecordingSignalVolume)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        uint32_t volume = 0;
+        GET_ARGS_VALUE(isolate, 0, uint32, volume)
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->adjustLoopbackRecordingSignalVolume(volume);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, adjustUserPlaybackSignalVolume)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 3)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        bool enable = false;
+        uint32_t volume = 0;
+        uint64_t uid = 0;
+        int32_t stream_type;
+        GET_ARGS_VALUE(isolate, 0, uint32, volume)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 1, uint64, uid)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 2, int32, stream_type)
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->adjustUserPlaybackSignalVolume(volume, uid,
+            static_cast<nertc::NERtcAudioStreamType>(stream_type));
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
 {
     CHECK_API_FUNC(NertcNodeEngine, 4)
@@ -2310,7 +2452,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startSystemAudioLoopbackCapture)
     {
         CHECK_NATIVE_THIS(instance);
 #ifdef WIN32
-        ret = instance->rtc_engine_->startSystemAudioLoopbackCapture();
+        // ret = instance->rtc_engine_->startSystemAudioLoopbackCapture();
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2324,7 +2466,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, stopSystemAudioLoopbackCapture)
     {
         CHECK_NATIVE_THIS(instance);
 #ifdef WIN32
-        ret = instance->rtc_engine_->stopSystemAudioLoopbackCapture();
+        // ret = instance->rtc_engine_->stopSystemAudioLoopbackCapture();
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2344,7 +2486,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setSystemAudioLoopbackCaptureVolume)
             break;
         }
 #ifdef WIN32
-        ret = instance->rtc_engine_->setSystemAudioLoopbackCaptureVolume(vol);
+        // ret = instance->rtc_engine_->setSystemAudioLoopbackCaptureVolume(vol);
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));

@@ -363,6 +363,11 @@ export declare enum NERtcStreamChannelType {
 export interface NERtcPullExternalAudioFrameCb {
     (data: ArrayBuffer): void;
 }
+/** 音频流类型，目前同时支持音频两路流：主流和辅流 */
+export declare enum NERtcAudioStreamType {
+    kNERtcAudioStreamMain = 0,
+    kNERtcAudioStreamSub = 1
+}
 export interface NERtcEngineAPI {
     initialize(context: NERtcEngineContext): number;
     release(): void;
@@ -469,6 +474,12 @@ export interface NERtcEngineAPI {
     setVoiceBeautifierPreset(type: NERtcVoiceBeautifierType): number;
     setLocalVoicePitch(pitch: number): number;
     setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
+    setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
+    subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
+    enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
+    enableLoopbackRecording(enable: boolean, deviceName: String): number;
+    adjustLoopbackRecordingSignalVolume(volume: number): number;
+    adjustUserPlaybackSignalVolume(volume: number, uid: number, streamType: NERtcAudioStreamType): number;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {

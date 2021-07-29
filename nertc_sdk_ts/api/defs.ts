@@ -438,6 +438,12 @@ export interface NERtcPullExternalAudioFrameCb
     (data: ArrayBuffer): void
 }
 
+/** 音频流类型，目前同时支持音频两路流：主流和辅流 */
+export enum NERtcAudioStreamType {
+    kNERtcAudioStreamMain = 0,  /**音频流主流*/
+    kNERtcAudioStreamSub  = 1,  /**音频流辅流*/
+}
+
 export interface NERtcEngineAPI {
     initialize(context: NERtcEngineContext): number;
     release(): void;
@@ -553,6 +559,14 @@ export interface NERtcEngineAPI {
     setVoiceBeautifierPreset(type: NERtcVoiceBeautifierType): number;
     setLocalVoicePitch(pitch: number): number;
     setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
+
+    // 4.1.110
+    setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
+    subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
+    enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
+    enableLoopbackRecording(enable: boolean, deviceName: String): number;
+    adjustLoopbackRecordingSignalVolume(volume: number): number;
+    adjustUserPlaybackSignalVolume(volume: number, uid: number, streamType: NERtcAudioStreamType): number;
 
     //TODO
     // setMixedAudioFrameParameters(samplerate: number): number;

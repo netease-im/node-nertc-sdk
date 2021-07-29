@@ -1350,6 +1350,7 @@ class NERtcEngine extends events_1.EventEmitter {
     }
     /**
      * 开启声音共享。
+     * @deprecated 该接口已经在 4.1.x 版本后废弃
      * <pre>
      * <b>NOTE:</b>
      * - 该方法仅适用于 Windows。
@@ -1366,6 +1367,7 @@ class NERtcEngine extends events_1.EventEmitter {
     }
     /**
      * 关闭声音共享。
+     * @deprecated 该接口已经在 4.1.x 版本后废弃
      * <pre>
      * <b>NOTE:</b>
      * - 该方法仅适用于 Windows。
@@ -1382,6 +1384,7 @@ class NERtcEngine extends events_1.EventEmitter {
     }
     /**
      * 设置声音共享音量。
+     * @deprecated 该接口已经在 4.1.x 版本后废弃
      * <pre>
      * <b>NOTE:</b>
      * - 该方法仅适用于 Windows。
@@ -2159,6 +2162,132 @@ class NERtcEngine extends events_1.EventEmitter {
      */
     setLocalVoiceEqualization(bandFrequency, bandGain) {
         return this.nertcEngine.setLocalVoiceEqualization(bandFrequency, bandGain);
+    }
+    /**
+     * 设置远端用户音频流高优先级
+     * <pre>
+     * - 支持在音频自动订阅的情况下，设置某一个远端用户的音频为最高优先级，可以优先听到该用户的音频
+     * </pre>
+     * @param  {boolean} enable 开启或关闭
+     * @param  {number} uid 用户 ID
+     * @param  {NERtcAudioStreamType} streamType 音频类型：主流、辅流
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setRemoteHighPriorityAudioStream(enable, uid, streamType) {
+        return this.nertcEngine.setRemoteHighPriorityAudioStream(enable, uid, streamType);
+    }
+    /**
+     * 取消或恢复订阅指定远端用户的音频辅流
+     * <pre>
+     * - 加入房间时，默认不订阅所有远端用户的音频辅流流，您可以通过此方法取消或恢复订阅指定远端用户的音频辅流。
+     * <b>NOTE:</b>
+     * - 该方法需要在加入房间，远端用户开启音频后调用。
+     * </pre>
+     * @param  {number} uid 指定用户的 ID
+     * @param  {boolean} subscribe
+     * <pre>
+     * - true: 订阅指定音频流
+     * - false: 取消订阅指定音频流（默认）
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    subscribeRemoteAudioSubStream(uid, subscribe) {
+        return this.nertcEngine.subscribeRemoteAudioSubStream(uid, subscribe);
+    }
+    /**
+     * 开关本地音频发送。
+     * <pre>
+     * - 该方法用于允许或禁止向网络发送本地音频流。
+     * <b>NOTE:</b>
+     * - 该方法不影响音频采集状态，功能与enableLocalAudio（audioDevice + enableLocalAudioStream）类似，但不会主动打开音频采集设备，适用于需要发送音频流但是不需要开启麦克风的场景。
+     * - 静音状态会在通话结束后被重置为非静音。
+     * </pre>
+     * @param  {boolean} enable 是否开启本地音频发送。
+     * @param  {NERtcAudioStreamType} streamType 音频类型：主流、辅流
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    enableLocalAudioStream(enable, streamType) {
+        return this.nertcEngine.enableLocalAudioStream(enable, streamType);
+    }
+    /**
+     * 开启声卡采集
+     * <pre>
+     * - 启用声卡采集功能后，声卡播放的声音会被合到本地音频流中，从而可以发送到远端。
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 macOS 和 Windows 平台。
+     * - macOS 系统默认声卡不支持采集功能，如需开启此功能需要 App 自己启用一个虚拟声卡，并将该虚拟声卡的名字作为 deviceName 传入 SDK。
+     * - 该方法在加入频道前后都能调用。
+     * </pre>
+     * @param  {boolean} enable
+     * <pre>
+     * - true: 开启声卡采集
+     * - false: 关闭声卡采集（默认）
+     * </pre>
+     * @param  {String=''} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “Soundflower”，可以将虚拟声卡名称 “Soundflower” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集 。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    enableLoopbackRecording(enable, deviceName = '') {
+        return this.nertcEngine.enableLoopbackRecording(enable, deviceName);
+    }
+    /**
+     * 调节声卡采集信号音量。
+     * <pre>
+     * - 调用 {@link nertc::IRtcEngineEx::enableLoopbackRecording} "enableLoopbackRecording" 开启声卡采集后，你可以调用该方法调节声卡采集的信号音量。
+     * </pre>
+     * @param  {number} volume 声卡采集信号音量。取值范围为 [0,100]。默认值为 100，表示原始音量 。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    adjustLoopbackRecordingSignalVolume(volume) {
+        return this.nertcEngine.adjustLoopbackRecordingSignalVolume(volume);
+    }
+    /**
+     * 调节本地播放的指定远端用户的指定流类型的信号音量
+     * <pre>
+     * - 加入房间后，您可以多次调用该方法设置本地播放的不同远端用户的音量；也可以反复调节本地播放的某个远端用户的音量。
+     * <b>NOTE:</b>
+     * - 请在成功加入房间后调用该方法。
+     * - 该方法在本次通话中有效。如果远端用户中途退出房间，则再次加入此房间时仍旧维持该设置，通话结束后设置失效。
+     * - 该方法调节的是本地播放的指定远端用户混音后的音量，且每次只能调整一位远端用户。若需调整多位远端用户在本地播放的音量，则需多次调用该方法。
+     * </pre>
+     * @param  {number} volume volume 播放音量，取值范围为 [0,100]。
+     * <pre>
+     * - 0：静音。
+     * - 100：原始音量。
+     * </pre>
+     * @param  {number} uid 远端用户 ID。
+     * @param  {number} streamType 音频类型：主流、辅流
+     * <pre>
+     * - 0: 音频流主流
+     * - 1: 音频流辅流
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    adjustUserPlaybackSignalVolume(volume, uid, streamType) {
+        return this.nertcEngine.adjustUserPlaybackSignalVolume(volume, uid, streamType);
     }
     // setMixedAudioFrameParameters(samplerate: number): number {
     //     return this.nertcEngine.setMixedAudioFrameParameters(samplerate);      

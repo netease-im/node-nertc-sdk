@@ -267,6 +267,12 @@ var NERtcStreamChannelType;
     NERtcStreamChannelType[NERtcStreamChannelType["kNERtcStreamChannelTypeMainStream"] = 0] = "kNERtcStreamChannelTypeMainStream";
     NERtcStreamChannelType[NERtcStreamChannelType["kNERtcStreamChannelTypeSubStream"] = 1] = "kNERtcStreamChannelTypeSubStream";
 })(NERtcStreamChannelType = exports.NERtcStreamChannelType || (exports.NERtcStreamChannelType = {}));
+/** 音频流类型，目前同时支持音频两路流：主流和辅流 */
+var NERtcAudioStreamType;
+(function (NERtcAudioStreamType) {
+    NERtcAudioStreamType[NERtcAudioStreamType["kNERtcAudioStreamMain"] = 0] = "kNERtcAudioStreamMain";
+    NERtcAudioStreamType[NERtcAudioStreamType["kNERtcAudioStreamSub"] = 1] = "kNERtcAudioStreamSub";
+})(NERtcAudioStreamType = exports.NERtcAudioStreamType || (exports.NERtcAudioStreamType = {}));
 /** @enum NERtcNetworkQualityType 网络质量类型。*/
 var NERtcNetworkQualityType;
 (function (NERtcNetworkQualityType) {

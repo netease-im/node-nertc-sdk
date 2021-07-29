@@ -58,6 +58,14 @@ public:
     NIM_SDK_NODE_API(setLocalVoicePitch);
     NIM_SDK_NODE_API(setLocalVoiceEqualization);
 
+    // 4.1.110
+    NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);
+    NIM_SDK_NODE_API(subscribeRemoteAudioSubStream);
+    NIM_SDK_NODE_API(enableLocalAudioStream);
+    NIM_SDK_NODE_API(enableLoopbackRecording);
+    NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);
+    NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);
+
     // ex
     NIM_SDK_NODE_API(getConnectionState);
     NIM_SDK_NODE_API(muteLocalAudioStream);
