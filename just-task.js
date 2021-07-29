@@ -13,6 +13,7 @@ option('target_arch', { default: process.arch, choices: ['ia32', 'x64'] })
 option('runtime', { default: 'electron', choices: ['electron', 'node'] })
 option('debug', { default: false, boolean: true })
 option('silent', { default: false, boolean: true })
+option('download_url')
 
 const includePath = 'nertc_sdk'
 const tempPath = 'temporary'
@@ -25,10 +26,17 @@ task('fetch-wrapper', () => {
   const arch = argv().target_arch
   const temporaryPath = path.join(__dirname, tempPath)
   const extractPath = path.join(__dirname, includePath)
+  const downloadUrl = argv().download_url
+  let fetchUrl
+  if (platform === 'win32') {
+    fetchUrl = downloadUrl || nativeWinUrl
+  } else if (platform === 'darwin') {
+    fetchUrl = downloadUrl || nativeMacUrl
+  }
   return fetchWrapper({
     platform,
     arch,
-    fetchUrl: process.platform === 'win32' ? nativeWinUrl : nativeMacUrl,
+    fetchUrl,
     temporaryPath,
     extractPath
   })
@@ -91,6 +99,7 @@ task('install', () => {
   let runtime = 'electron'
   const targetPlatform = process.env.npm_config_target_platform || process.platform
   const targetArch = process.env.npm_config_target_arch || process.arch
+  const downloadUrl = process.env.npm_config_download_url
   const curPkgMeta = require(path.join(__dirname, 'package.json'))
   const rootPkgMeta = require(path.join(process.env.INIT_CWD, 'package.json'))
   logger.info('------------------ just install --------------------')
@@ -115,11 +124,17 @@ task('install', () => {
       logger.info(`[install] Download prebuilt binaries from ${host}/${remotePath}/${packageName}`)
       resolve()
     }).catch(err => {
+      let fetchUrl
+      if (targetPlatform === 'win32') {
+        fetchUrl = downloadUrl || nativeWinUrl
+      } else if (targetPlatform === 'darwin') {
+        fetchUrl = downloadUrl || nativeMacUrl
+      }
       logger.warn(`[install] Failed to download package from: ${host}/${remotePath}/${packageName}, error code: ${err.statusCode}`)
       logger.info('[install] Start build from local source file.')
       const extractPath = path.join(__dirname, includePath)
       fetchWrapper({
-        fetchUrl: targetPlatform === 'win32' ? nativeWinUrl : nativeMacUrl,
+        fetchUrl,
         extractPath
       }).then(() => {
         return buildAddon({

@@ -2212,8 +2212,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setRemoteHighPriorityAudioStream)
         GET_ARGS_VALUE(isolate, 2, int32, stream_type)
         if (status != napi_ok)
             break;
-        // ret = instance->rtc_engine_->setRemoteHighPriorityAudioStream(enable, uid, 
-        //     static_cast<nertc::NERtcAudioStreamType>(stream_type));
+        ret = instance->rtc_engine_->setRemoteHighPriorityAudioStream(enable, uid, 
+            static_cast<nertc::NERtcAudioStreamType>(stream_type));
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
@@ -2234,7 +2234,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, subscribeRemoteAudioSubStream)
         GET_ARGS_VALUE(isolate, 1, bool, subscribe)
         if (status != napi_ok)
             break;
-        // ret = instance->rtc_engine_->subscribeRemoteAudioSubStream(uid, subscribe);
+        ret = instance->rtc_engine_->subscribeRemoteAudioSubStream(uid, subscribe);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
@@ -2255,7 +2255,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableLocalAudioStream)
         GET_ARGS_VALUE(isolate, 1, int32, stream_type)
         if (status != napi_ok)
             break;
-        // ret = instance->rtc_engine_->enableLocalAudioStream(enable, static_cast<nertc::NERtcAudioStreamType>(stream_type));
+        ret = instance->rtc_engine_->enableLocalAudioStream(enable, static_cast<nertc::NERtcAudioStreamType>(stream_type));
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
@@ -2276,9 +2276,9 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableLoopbackRecording)
         GET_ARGS_VALUE(isolate, 1, utf8string, device_name)
         if (status != napi_ok)
             break;
-        // ret = instance->rtc_engine_->enableLoopbackRecording(enable, 
-        //     device_name.length() > 0 ? device_name.toUtf8String().c_str() : nullptr
-        // );
+        ret = instance->rtc_engine_->enableLoopbackRecording(enable, 
+            device_name.length() > 0 ? device_name.toUtf8String().c_str() : nullptr
+        );
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
@@ -2295,7 +2295,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, adjustLoopbackRecordingSignalVolume)
         GET_ARGS_VALUE(isolate, 0, uint32, volume)
         if (status != napi_ok)
             break;
-        // ret = instance->rtc_engine_->adjustLoopbackRecordingSignalVolume(volume);
+        ret = instance->rtc_engine_->adjustLoopbackRecordingSignalVolume(volume);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
@@ -2321,8 +2321,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, adjustUserPlaybackSignalVolume)
         GET_ARGS_VALUE(isolate, 2, int32, stream_type)
         if (status != napi_ok)
             break;
-        // ret = instance->rtc_engine_->adjustUserPlaybackSignalVolume(volume, uid,
-        //     static_cast<nertc::NERtcAudioStreamType>(stream_type));
+        ret = instance->rtc_engine_->adjustUserPlaybackSignalVolume(volume, uid,
+            static_cast<nertc::NERtcAudioStreamType>(stream_type));
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
