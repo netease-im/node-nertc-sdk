@@ -73,30 +73,28 @@ module.exports = ({
       } else if (platform === 'darwin') {
         let frameworkDirectory = ''
         const marchFramework = new RegExp(/.+\.framework$/g)
+        const exceptRegex = new RegExp('/.+sdk\/demo/')
         function readDirectory(rootDir, arch) {
           const dirs = fs.readdirSync(rootDir)
           dirs.map(dir => {
             const newPath = path.join(rootDir, dir)
             const stats = fs.lstatSync(newPath)
-            if (marchFramework.test(dir) &&
-                newPath.indexOf('demo/') === -1 &&
-                newPath.indexOf('.app/Contents') === -1 &&
-                frameworkDirectory === '') {
+            if (marchFramework.test(dir) && !exceptRegex.test(newPath) && frameworkDirectory === '') {
               frameworkDirectory = rootDir
-            } else if (stats.isDirectory()) {
+            } else if (stats.isDirectory() && !exceptRegex.test(newPath)) {
               readDirectory(path.join(rootDir, dir), arch)
             }
           })
         }
+        logger.info('[fetch] framework directory: ', frameworkDirectory)
         readDirectory(temporaryPath, arch)
         const list = fs.readdirSync(frameworkDirectory)
-        logger.info('==== ', frameworkDirectory)
         list.map(framework => {
-          logger.info('- ', framework)
           if (framework.indexOf('.framework') !== -1) {
             const copied = path.join(frameworkDirectory, framework)
-            logger.info(`[fetch] copy file: ${copied}`)
-            fsExtra.copySync(copied, path.join(extractPath, framework))
+            const dst = path.join(extractPath, framework)
+            logger.info(`[fetch] copy file: ${copied} to ${dst}`)
+            fsExtra.copySync(copied, dst)
           }
         })
       } else {
