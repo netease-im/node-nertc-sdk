@@ -2224,7 +2224,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, subscribeRemoteAudioSubStream)
     int ret = -1;
     do
     {
-        CHECK_NATIVE_THIS(instance);
+        CHECK_NATIVE_ADM_THIS(instance);
         auto status = napi_ok;
         uint64_t uid = 0;
         bool subscribe = false;
