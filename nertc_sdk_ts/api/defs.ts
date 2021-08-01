@@ -566,7 +566,7 @@ export interface NERtcEngineAPI {
     enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
     enableLoopbackRecording(enable: boolean, deviceName: String): number;
     adjustLoopbackRecordingSignalVolume(volume: number): number;
-    adjustUserPlaybackSignalVolume(volume: number, uid: number, streamType: NERtcAudioStreamType): number;
+    adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
 
     //TODO
     // setMixedAudioFrameParameters(samplerate: number): number;

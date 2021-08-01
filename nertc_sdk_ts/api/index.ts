@@ -2445,12 +2445,12 @@ class NERtcEngine extends EventEmitter {
      * - 该方法在本次通话中有效。如果远端用户中途退出房间，则再次加入此房间时仍旧维持该设置，通话结束后设置失效。
      * - 该方法调节的是本地播放的指定远端用户混音后的音量，且每次只能调整一位远端用户。若需调整多位远端用户在本地播放的音量，则需多次调用该方法。
      * </pre>
+     * @param  {number} uid 远端用户 ID。
      * @param  {number} volume volume 播放音量，取值范围为 [0,100]。
      * <pre>
      * - 0：静音。
      * - 100：原始音量。
      * </pre>
-     * @param  {number} uid 远端用户 ID。
      * @param  {number} streamType 音频类型：主流、辅流
      * <pre>
      * - 0: 音频流主流
@@ -2462,8 +2462,8 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    adjustUserPlaybackSignalVolume(volume: number, uid: number, streamType: NERtcAudioStreamType): number {
-        return this.nertcEngine.adjustUserPlaybackSignalVolume(volume, uid, streamType)
+    adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number {
+        return this.nertcEngine.adjustUserPlaybackSignalVolume(uid, volume, streamType)
     }
 
     // setMixedAudioFrameParameters(samplerate: number): number {

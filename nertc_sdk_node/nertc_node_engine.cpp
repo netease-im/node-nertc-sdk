@@ -2312,16 +2312,16 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, adjustUserPlaybackSignalVolume)
         uint32_t volume = 0;
         uint64_t uid = 0;
         int32_t stream_type;
-        GET_ARGS_VALUE(isolate, 0, uint32, volume)
+        GET_ARGS_VALUE(isolate, 0, uint64, uid)
         if (status != napi_ok)
             break;
-        GET_ARGS_VALUE(isolate, 1, uint64, uid)
+        GET_ARGS_VALUE(isolate, 1, uint32, volume)
         if (status != napi_ok)
             break;
         GET_ARGS_VALUE(isolate, 2, int32, stream_type)
         if (status != napi_ok)
             break;
-        ret = instance->rtc_engine_->adjustUserPlaybackSignalVolume(volume, uid,
+        ret = instance->rtc_engine_->adjustUserPlaybackSignalVolume(uid, volume,
             static_cast<nertc::NERtcAudioStreamType>(stream_type));
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
