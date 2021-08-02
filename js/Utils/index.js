@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.deprecate = exports.Config = exports.config = void 0;
 const deprecate = (replaceApi) => {
     console.warn('This method will be deprecated soon. ', replaceApi ? `Please use ${replaceApi} instead` : '');
 };

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NERtcVoiceEqualizationBand = exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcAudioStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcLogLevel = void 0;
 /** 日志级别。 */
 var NERtcLogLevel;
 (function (NERtcLogLevel) {
@@ -131,6 +132,7 @@ var NERtcVideoProfileType;
     NERtcVideoProfileType[NERtcVideoProfileType["kNERtcVideoProfileHD1080P"] = 4] = "kNERtcVideoProfileHD1080P";
     NERtcVideoProfileType[NERtcVideoProfileType["kNERtcVideoProfileNone"] = 5] = "kNERtcVideoProfileNone";
     NERtcVideoProfileType[NERtcVideoProfileType["kNERtcVideoProfileMAX"] = 4] = "kNERtcVideoProfileMAX";
+    NERtcVideoProfileType[NERtcVideoProfileType["kNERtcVideoProfileFake"] = 6] = "kNERtcVideoProfileFake";
 })(NERtcVideoProfileType = exports.NERtcVideoProfileType || (exports.NERtcVideoProfileType = {}));
 var NERtcVideoScalingMode;
 (function (NERtcVideoScalingMode) {
@@ -149,10 +151,11 @@ var NERtcAudioProfileType;
 (function (NERtcAudioProfileType) {
     NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileDefault"] = 0] = "kNERtcAudioProfileDefault";
     NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileStandard"] = 1] = "kNERtcAudioProfileStandard";
-    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileMiddleQuality"] = 2] = "kNERtcAudioProfileMiddleQuality";
-    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileMiddleQualityStereo"] = 3] = "kNERtcAudioProfileMiddleQualityStereo";
-    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileHighQuality"] = 4] = "kNERtcAudioProfileHighQuality";
-    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileHighQualityStereo"] = 5] = "kNERtcAudioProfileHighQualityStereo";
+    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileStandardExtend"] = 2] = "kNERtcAudioProfileStandardExtend";
+    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileMiddleQuality"] = 3] = "kNERtcAudioProfileMiddleQuality";
+    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileMiddleQualityStereo"] = 4] = "kNERtcAudioProfileMiddleQualityStereo";
+    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileHighQuality"] = 5] = "kNERtcAudioProfileHighQuality";
+    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileHighQualityStereo"] = 6] = "kNERtcAudioProfileHighQualityStereo";
 })(NERtcAudioProfileType = exports.NERtcAudioProfileType || (exports.NERtcAudioProfileType = {}));
 var NERtcAudioScenarioType;
 (function (NERtcAudioScenarioType) {
@@ -177,6 +180,7 @@ var NERtcVideoFramerateType;
     NERtcVideoFramerateType[NERtcVideoFramerateType["kNERtcVideoFramerateFps_15"] = 15] = "kNERtcVideoFramerateFps_15";
     NERtcVideoFramerateType[NERtcVideoFramerateType["kNERtcVideoFramerateFps_24"] = 24] = "kNERtcVideoFramerateFps_24";
     NERtcVideoFramerateType[NERtcVideoFramerateType["kNERtcVideoFramerateFps_30"] = 30] = "kNERtcVideoFramerateFps_30";
+    NERtcVideoFramerateType[NERtcVideoFramerateType["kNERtcVideoFramerateFps_60"] = 60] = "kNERtcVideoFramerateFps_60";
 })(NERtcVideoFramerateType = exports.NERtcVideoFramerateType || (exports.NERtcVideoFramerateType = {}));
 /** @enum NERtcDegradationPreference 视频编码策略。*/
 var NERtcDegradationPreference;

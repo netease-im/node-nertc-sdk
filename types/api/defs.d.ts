@@ -126,7 +126,8 @@ export declare enum NERtcVideoProfileType {
     kNERtcVideoProfileHD720P = 3,
     kNERtcVideoProfileHD1080P = 4,
     kNERtcVideoProfileNone = 5,
-    kNERtcVideoProfileMAX = 4
+    kNERtcVideoProfileMAX = 4,
+    kNERtcVideoProfileFake = 6
 }
 export declare enum NERtcVideoScalingMode {
     kNERtcVideoScaleFit = 0,
@@ -146,10 +147,11 @@ export interface NERtcVideoCanvas {
 export declare enum NERtcAudioProfileType {
     kNERtcAudioProfileDefault = 0,
     kNERtcAudioProfileStandard = 1,
-    kNERtcAudioProfileMiddleQuality = 2,
-    kNERtcAudioProfileMiddleQualityStereo = 3,
-    kNERtcAudioProfileHighQuality = 4,
-    kNERtcAudioProfileHighQualityStereo = 5
+    kNERtcAudioProfileStandardExtend = 2,
+    kNERtcAudioProfileMiddleQuality = 3,
+    kNERtcAudioProfileMiddleQualityStereo = 4,
+    kNERtcAudioProfileHighQuality = 5,
+    kNERtcAudioProfileHighQualityStereo = 6
 }
 export declare enum NERtcAudioScenarioType {
     kNERtcAudioScenarioDefault = 0,
@@ -170,7 +172,8 @@ export declare enum NERtcVideoFramerateType {
     kNERtcVideoFramerateFps_10 = 10,
     kNERtcVideoFramerateFps_15 = 15,
     kNERtcVideoFramerateFps_24 = 24,
-    kNERtcVideoFramerateFps_30 = 30
+    kNERtcVideoFramerateFps_30 = 30,
+    kNERtcVideoFramerateFps_60 = 60
 }
 /** @enum NERtcDegradationPreference 视频编码策略。*/
 export declare enum NERtcDegradationPreference {

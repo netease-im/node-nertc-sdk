@@ -154,6 +154,7 @@ export enum NERtcVideoProfileType
     kNERtcVideoProfileHD1080P = 4,      /**< 1920x1080, 30fps */
     kNERtcVideoProfileNone = 5,
     kNERtcVideoProfileMAX = kNERtcVideoProfileHD1080P,
+    kNERtcVideoProfileFake = 6, /**< FakeVideo标识，仅在回调中显示。请勿主动设置，否则 SDK 会按照STANDARD处理。 当远端在纯音频状态发送 SEI 时，本端将会收到远端的onUserVideoStart回调，其中 max_profile 参数为kNERtcVideoProfileFake ， 表示对端发送 16*16 的FakeVideo，此时如果本端需要接收远端的SEI信息，只需要订阅一下远端的视频即可，无须设置远端画布。*/
 }
 
 export enum NERtcVideoScalingMode {
@@ -176,12 +177,13 @@ export interface NERtcVideoCanvas {
 }
 
 export enum NERtcAudioProfileType {
-    kNERtcAudioProfileDefault = 0,			    /**< 0: 默认设置。Speech场景下为 kNERtcAudioProfileStandard，Music场景下为 kNERtcAudioProfileHighQuality */
+    kNERtcAudioProfileDefault = 0,			    /**< 0: 默认设置。Speech场景下为 kNERtcAudioProfileStandardExtend，Music场景下为 kNERtcAudioProfileHighQuality */
     kNERtcAudioProfileStandard = 1,			    /**< 1: 普通质量的音频编码，16000Hz，20Kbps */
-    kNERtcAudioProfileMiddleQuality = 2,		/**< 2: 中等质量的音频编码，48000Hz，32Kbps */
-    kNERtcAudioProfileMiddleQualityStereo = 3,  /**< 3: 中等质量的立体声编码，48000Hz * 2，64Kbps  */
-    kNERtcAudioProfileHighQuality = 4,          /**< 4: 高质量的音频编码，48000Hz，64Kbps  */
-    kNERtcAudioProfileHighQualityStereo = 5,    /**< 5: 高质量的立体声编码，48000Hz * 2，128Kbps  */
+    kNERtcAudioProfileStandardExtend = 2,       /**< 2: 普通质量的音频编码，16000Hz，32Kbps */
+    kNERtcAudioProfileMiddleQuality = 3,		/**< 3: 中等质量的音频编码，48000Hz，32Kbps */
+    kNERtcAudioProfileMiddleQualityStereo = 4,  /**< 4: 中等质量的立体声编码，48000Hz * 2，64Kbps  */
+    kNERtcAudioProfileHighQuality = 5,          /**< 5: 高质量的音频编码，48000Hz，64Kbps  */
+    kNERtcAudioProfileHighQualityStereo = 6,    /**< 6: 高质量的立体声编码，48000Hz * 2，128Kbps  */
 }
 
 export enum NERtcAudioScenarioType {
@@ -206,6 +208,7 @@ export enum NERtcVideoFramerateType {
     kNERtcVideoFramerateFps_15      = 15,   /**< 15帧每秒 */
     kNERtcVideoFramerateFps_24      = 24,   /**< 24帧每秒 */
     kNERtcVideoFramerateFps_30      = 30,   /**< 30帧每秒 */
+    kNERtcVideoFramerateFps_60      = 60,   /**< 60帧每秒 */
 }
 
 /** @enum NERtcDegradationPreference 视频编码策略。*/
