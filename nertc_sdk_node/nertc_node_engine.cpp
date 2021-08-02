@@ -1396,7 +1396,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, addLiveStreamTask)
         if (status == napi_ok)
         {
             memset(info.extraInfo, 0, kNERtcMacSEIBufferLength);
-            info.config = {0};
+            // info.config = {0};
             ret = instance->rtc_engine_->addLiveStreamTask(info);
             if (info.layout.users)
             {

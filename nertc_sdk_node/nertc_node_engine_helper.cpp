@@ -333,6 +333,10 @@ static napi_status nertc_ls_users_obj_to_struct(Isolate* isolate, const Local<Ob
     {
         user.audio_push = out_b;
     }
+    if (nim_napi_get_object_value_int32(isolate, obj, "z_order", out_i) == napi_ok)
+    {
+        user.z_order = out_i;
+    }
     return napi_ok;
 }
 
