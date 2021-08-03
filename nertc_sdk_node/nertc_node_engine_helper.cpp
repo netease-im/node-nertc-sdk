@@ -399,7 +399,9 @@ static napi_status nertc_ls_layout_obj_to_struct(Isolate* isolate, const Local<O
         if (nim_napi_get_object_value(isolate, obj, "bg_image", so1) == napi_ok)
         {
             layout.bg_image = new nertc::NERtcLiveStreamImageInfo;
-            nertc_ls_img_info_obj_to_struct(isolate, so1.As<Object>(), layout.bg_image);
+            auto status = nertc_ls_img_info_obj_to_struct(isolate, so1.As<Object>(), layout.bg_image);
+            if (status != napi_ok)
+                return status;
         }
     }
     return napi_ok;
