@@ -94,7 +94,10 @@ napi_status nertc_audio_mixing_option_obj_to_struct(Isolate* isolate, const Loca
     bool out_b;
     if (nim_napi_get_object_value_utf8string(isolate, obj, "path", out) == napi_ok)
     {
-        strcpy(option.path, out.toUtf8String().c_str());
+        if (out.toUtf8String().length() >= kNERtcMaxURILength)
+            return napi_invalid_arg;
+        memset(option.path, 0, kNERtcMaxURILength);
+        strncpy(option.path, out.toUtf8String().c_str(), kNERtcMaxURILength);
     }
     if (nim_napi_get_object_value_int32(isolate, obj, "loop_count", out_i) == napi_ok)
     {
@@ -131,7 +134,11 @@ napi_status nertc_audio_effect_option_obj_to_struct(Isolate* isolate, const Loca
         auto o = objs->Get(isolate->GetCurrentContext(), i).ToLocalChecked().As<Object>();
         if (nim_napi_get_object_value_utf8string(isolate, o, "path", out) == napi_ok)
         {
-            strcpy(option[i].path, out.toUtf8String().c_str());
+            // 实际内容长度超出了可以容纳的缓冲区长度，缓冲区要包含 \0 结尾字符串，实际内容需要小于缓冲区大小
+            if (out.toUtf8String().length() >= kNERtcMaxURILength)
+                return napi_invalid_arg;
+            memset(option[i].path, 0, kNERtcMaxURILength);
+            strncpy(option[i].path, out.toUtf8String().c_str(), kNERtcMaxURILength);
         }
         if (nim_napi_get_object_value_int32(isolate, o, "loop_count", out_i) == napi_ok)
         {
@@ -274,7 +281,10 @@ static napi_status nertc_ls_img_info_obj_to_struct(Isolate* isolate, const Local
     int32_t out_i;
     if (nim_napi_get_object_value_utf8string(isolate, obj, "url", out) == napi_ok)
     {
-        strcpy(info->url, out.toUtf8String().c_str());
+        if (out.toUtf8String().length() >= kNERtcMaxURILength)
+            return napi_invalid_arg;
+        memset(info->url, 0, kNERtcMaxURILength);
+        strncpy(info->url, out.toUtf8String().c_str(), kNERtcMaxURILength);
     }
     if (nim_napi_get_object_value_int32(isolate, obj, "x", out_i) == napi_ok)
     {
@@ -430,11 +440,17 @@ napi_status nertc_ls_task_info_obj_to_struct(Isolate* isolate, const Local<Objec
 
     if (nim_napi_get_object_value_utf8string(isolate, obj, "task_id", out) == napi_ok)
     {
-        strcpy(info.task_id, out.toUtf8String().c_str());
+        if (out.toUtf8String().length() >= kNERtcMaxTaskIDLength)
+            return napi_invalid_arg;
+        memset(info.task_id, 0, kNERtcMaxTaskIDLength);
+        strncpy(info.task_id, out.toUtf8String().c_str(), kNERtcMaxTaskIDLength);
     }
     if (nim_napi_get_object_value_utf8string(isolate, obj, "stream_url", out) == napi_ok)
     {
-        strcpy(info.stream_url, out.toUtf8String().c_str());
+        if (out.toUtf8String().length() >= kNERtcMaxURILength)
+            return napi_invalid_arg;
+        memset(info.stream_url, 0, kNERtcMaxURILength);
+        strncpy(info.stream_url, out.toUtf8String().c_str(), kNERtcMaxURILength);
     }
     if (nim_napi_get_object_value_bool(isolate, obj, "server_record_enabled", out_b) == napi_ok)
     {
