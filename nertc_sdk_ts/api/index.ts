@@ -452,6 +452,7 @@ class NERtcEngine extends EventEmitter {
      * - 15 15帧每秒
      * - 24 24帧每秒
      * - 30 30帧每秒
+     * - 60 60帧每秒
      * </pre>
      * @param {number} config.min_framerate 视频最小帧率:
      * <pre>
@@ -2737,6 +2738,8 @@ class NERtcEngine extends EventEmitter {
          * - 2 640x360/480, 30fps
          * - 3 1280x720, 30fps
          * - 4 1920x1080, 30fps
+         * - 5 none
+         * - 6 FakeVideo 标识，仅在回调中显示。请勿主动设置，否则 SDK 会按照STANDARD处理。
          * </pre>
          */
         this.nertcEngine.onEvent('onUserVideoStart', function (
