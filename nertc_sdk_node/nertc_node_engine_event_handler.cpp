@@ -697,6 +697,7 @@ void NertcNodeEventHandler::onAudioHowling(bool howling)
 void NertcNodeEventHandler::onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize)
 {
     auto copied = new char[dataSize];
+    memset(copied, 0, dataSize);
     memcpy(copied, data, dataSize);
 	nim_node::node_async_call::async_call([=]() {
 		NertcNodeEventHandler::GetInstance()->Node_onRecvSEIMsg(uid, copied, dataSize);
@@ -1027,10 +1028,12 @@ void NertcNodeEventHandler::Node_onRecvSEIMsg(nertc::uid_t uid, const char* data
 	HandleScope scope(isolate);
 	const unsigned argc = 2;
 
-    Local<v8::ArrayBuffer> message_buffer = ArrayBuffer::New(isolate, (void*)data, length);
-
-    if (data)
-        delete[] data;
+    Local<v8::ArrayBuffer> message_buffer = ArrayBuffer::New(
+        isolate, 
+        (void*)data, 
+        length, 
+        v8::ArrayBufferCreationMode::kInternalized
+    );
     
 	Local<Value> argv[argc] = { nim_napi_new_uint64(isolate, uid), message_buffer };
 	auto it = callbacks_.find("onReceSEIMsg");
