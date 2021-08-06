@@ -2158,8 +2158,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalVoicePitch)
     {
         CHECK_NATIVE_THIS(instance);
         auto status = napi_ok;
-        int64_t pitch;
-        GET_ARGS_VALUE(isolate, 0, int64, pitch)
+        double pitch;
+        GET_ARGS_VALUE(isolate, 0, double, pitch)
         if (status != napi_ok)
         {
             break;
