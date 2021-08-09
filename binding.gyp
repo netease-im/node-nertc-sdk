@@ -26,6 +26,7 @@
         './shared/sdk_helper/nim_node_async_queue.cpp',
         './shared/sdk_helper/nim_event_handler.h',
         './shared/sdk_helper/nim_event_handler.cpp',
+        './shared/sdk_helper/superfasthash.cpp',
         './shared/libyuv/source/compare_common.cc',
         './shared/libyuv/source/compare.cc',
         './shared/libyuv/source/convert_argb.cc',

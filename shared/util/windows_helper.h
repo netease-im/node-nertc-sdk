@@ -6,6 +6,8 @@
 #include <vector>
 #include <map>
 
+uint32_t SuperFastHash(const char* data, int len);
+
 namespace nertc_electron_util
 {
 
@@ -14,12 +16,13 @@ class WindowsHelpers
 {
 public:
     struct CaptureTargetInfo {
-        HWND              id = 0;
-        std::wstring      title;
-        std::string app;
-        int type; //0:none 1:screen 2:window 3:webcontents(non-support) 4:currenttab(non-support)
-        bool isMinimizeWindow=false;
-        RECT rc{0, 0, 0, 0};
+        HWND            id = 0;
+        std::wstring    title;
+        std::string     app;
+        std::string     display_id;
+        int type; // 0:none 1:screen 2:window 3:webcontents(non-support) 4:currenttab(non-support)
+        bool isMinimizeWindow = false;
+        RECT rc{ 0, 0, 0, 0 };
     };
     typedef std::vector<CaptureTargetInfo> CaptureTargetInfoList;
 
@@ -50,8 +53,8 @@ public:
     bool static getFileVersion(const wchar_t *file_path, WORD *major_version, WORD *minor_version, WORD *build_number, WORD *revision_number);
     int static getNTDLLVersion();
     std::wstring static getCurrentExe();
-    void updateCachedInfos(int32_t id, RECT rect) { cached_infos[id] = rect; }
-    RECT getCachedRect(int32_t id) { return cached_infos[id]; }
+    void updateCachedInfos(int64_t id, RECT rect) { cached_infos[id] = rect; }
+    RECT getCachedRect(int64_t id) { return cached_infos[id]; }
 
 private:
     //根据屏幕上指定的坐标点，获取坐标点窗口对应的pid
@@ -65,7 +68,7 @@ private:
 
 private:
     std::wstring static m_strCurrentExe;
-    std::map<int32_t, RECT> cached_infos;
+    std::map<int64_t, RECT> cached_infos;
 };
 
 class ScreenCaptureHelper

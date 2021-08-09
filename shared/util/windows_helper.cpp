@@ -353,7 +353,11 @@ bool WindowsHelpers::getCaptureWindowList(CaptureTargetInfoList *windows, int ty
                 // swprintf_s(buf, L"screen:%s-(%d,%d,%d,%d)-(%d,%d,%d,%d)", infoEx.szDevice, pRC->left, pRC->top, pRC->right, pRC->bottom, x, y, cx, cy);
                 swprintf_s(buf, L"screen: %d", monitors.size() + 1);
                 // }
-                monitors.push_back({(HWND)hmon, buf, "", 1, false, *pRC});
+                MONITORINFOEXA monInfo;
+                monInfo.cbSize = sizeof(MONITORINFOEXA);
+                GetMonitorInfoA(hmon, &monInfo);
+                auto display_id = std::to_string(static_cast<int64_t>(SuperFastHash(monInfo.szDevice, strlen(monInfo.szDevice))));
+                monitors.push_back({(HWND)hmon, buf, "", display_id, 1, false, *pRC});
 
                 return TRUE;
             },

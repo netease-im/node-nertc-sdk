@@ -1178,10 +1178,10 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByDisplayId)
     {
         CHECK_NATIVE_THIS(instance);
         auto status = napi_ok;
-        uint32_t display;
+        int64_t display;
         nertc::NERtcRectangle region_rect = {};
         nertc::NERtcScreenCaptureParameters param = {};
-        GET_ARGS_VALUE(isolate, 0, uint32, display)
+        GET_ARGS_VALUE(isolate, 0, int64, display)
         status = nertc_rectangle_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), region_rect);
         if (status != napi_ok) break;
         status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param);
@@ -1189,17 +1189,17 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByDisplayId)
         if (status == napi_ok)
         {
 #ifdef WIN32
-            RECT rc = instance->_windows_helper->getCachedRect((int32_t)display);
+            RECT rc = instance->_windows_helper->getCachedRect(display);
             if (rc.bottom == 0 && rc.left == 0 && rc.right == 0 && rc.top == 0)
             {
                 WindowsHelpers::CaptureTargetInfoList list;
                 instance->_windows_helper->getCaptureWindowList(&list, 1);
                 for (auto w : list)
                 {
-                    if ((int32_t)display == reinterpret_cast<int32_t>(w.id))
+                    if (std::to_string(display) == w.display_id)
                     {
                         rc = w.rc;
-                        instance->_windows_helper->updateCachedInfos((int32_t)display, rc);
+                        instance->_windows_helper->updateCachedInfos(display, rc);
                         break;
                     }
                 }
