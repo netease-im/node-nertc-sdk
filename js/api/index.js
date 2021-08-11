@@ -1176,7 +1176,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * @param {number} [param.frame_rate=5] 共享视频的帧率，param.profile=3时生效，单位为 fps；默认值为 5，建议不要超过 15
      * @param {number} [param.bitrate=0] 共享视频的码率，单位为 bps；默认值为 0，表示 SDK 根据当前共享屏幕的分辨率计算出一个合理的值
      * @param {boolean} param.capture_mouse_cursor 是否采集鼠标用于屏幕共享
-     * @param {boolean} param.window_focus 调用 {@link NERtcEngine#startScreenCaptureByWindowId} 方法共享窗口时，是否将该窗口前置
+     * @param {boolean} param.window_focus （暂不支持）调用 {@link NERtcEngine#startScreenCaptureByWindowId} 方法共享窗口时，是否将该窗口前置
      * @param {number[]} param.excluded_window_list 待屏蔽窗口的 ID 列表
      * @param {number} param.excluded_window_count 待屏蔽窗口的数量
      * @param {number} param.prefer 编码策略倾向:
