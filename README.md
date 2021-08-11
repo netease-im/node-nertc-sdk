@@ -1,5 +1,9 @@
-# node-nertc-sdk
+# nertc-electron-sdk
 
-3.9.0-rc-924
+## Installation
+
+```bash
+npm install nertc-electron-sdk
+```
 
 based on 网易云信 https://netease.im/
