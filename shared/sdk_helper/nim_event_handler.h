@@ -20,6 +20,7 @@ public:
 
     void AddEventHandler(const utf8_string &eventName, Persistent<Object> &obj, Persistent<Function> &callback);
     int RemoveEventHandler(const utf8_string &eventName);
+    int RemoveAll();
 
 protected:
     std::unordered_map<utf8_string, BaseCallbackPtr> callbacks_;

@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { IRenderer } from '../renderer';
-import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode } from './defs';
+import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcAudioStreamType } from './defs';
 import { EventEmitter } from 'events';
 /**
  * @class NERtcEngine
@@ -16,32 +16,6 @@ declare class NERtcEngine extends EventEmitter {
      * @returns {NERtcEngine}
      */
     constructor();
-    /**
-     * Enumerates windows(windows only).
-     * <pre>
-     * This method returns windowsInfo[] that includes all windows&monitors in the system
-     * <b>NOTE:</b>
-     * You should call {@link NERtcEngine#startScreenCaptureByScreenRect} for 'Monitor' type
-     * </pre>
-     * @returns {windowsInfo[]}
-     * <pre>
-     * - Returns windowsInfo[] that includes all windows&monitors in the system: Success.
-     * <table style="width:100%;">
-     * <tr><th>Name</th><th>Type</th><th>Description</th></tr>
-     * <tr><td>windowsInfo.id</td><td>number</td><td>窗口id</td></tr>
-     * <tr><td>windowsInfo.name</td><td>String</td><td>窗口title</td></tr>
-     * <tr><td>windowsInfo.left</td><td>number</td><td>窗口左边缘坐标</td></tr>
-     * <tr><td>windowsInfo.top</td><td>number</td><td>窗口上边缘坐标</td></tr>
-     * <tr><td>windowsInfo.right</td><td>number</td><td>窗口右边缘坐标</td></tr>
-     * <tr><td>windowsInfo.bottom</td><td>number</td><td>窗口下边缘坐标</td></tr>
-     * </table>
-     * - null: 调用失败。
-     * </pre>
-     */
-    enumerateWindows(): {
-        id: number;
-        name: String;
-    }[];
     /**
      * 初始化 NERTC SDK 服务。
      * <pre>
@@ -356,6 +330,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 15 15帧每秒
      * - 24 24帧每秒
      * - 30 30帧每秒
+     * - 60 60帧每秒
      * </pre>
      * @param {number} config.min_framerate 视频最小帧率:
      * <pre>
@@ -1016,7 +991,7 @@ declare class NERtcEngine extends EventEmitter {
      * 通过屏幕 ID 共享屏幕。共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕 ID。
      * <pre>
      * <b>NOTE:</b>
-     * - 该方法仅适用于 macOS。
+     * - 该方法仅适用于 Windows 和 macOS。
      * - 该方法打开视频辅流。
      * </pre>
      * @param {number} displayId 指定待共享的屏幕 ID。开发者需要通过该参数指定你要共享的那个屏幕。
@@ -1050,6 +1025,7 @@ declare class NERtcEngine extends EventEmitter {
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功；
+     * - -100: 需要先调用 {@link NERtcEngine#enumerateScreenCaptureSourceInfo} 缓存桌面信息
      * - 其他: 方法调用失败。
      * </pre>
      */
@@ -1154,6 +1130,138 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     resumeScreenCapture(): number;
+    /**
+     * 开启声音共享。
+     * @deprecated 该接口已经在 4.1.x 版本后废弃
+     * <pre>
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows。
+     * - 请在频道内调用该方法，该方法会捕获系统声音发送，开启本地语音后工作。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    startSystemAudioLoopbackCapture(): number;
+    /**
+     * 关闭声音共享。
+     * @deprecated 该接口已经在 4.1.x 版本后废弃
+     * <pre>
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows。
+     * - 请在频道内调用该方法，通话结束后自动关闭。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    stopSystemAudioLoopbackCapture(): number;
+    /**
+     * 设置声音共享音量。
+     * @deprecated 该接口已经在 4.1.x 版本后废弃
+     * <pre>
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows。
+     * - 请在频道内调用该方法。
+     * </pre>
+     * @param {number} volume 音效音量范围为 0~100。默认 100 为原始音量。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setSystemAudioLoopbackCaptureVolume(volume: number): number;
+    /**
+     * 发送媒体补充增强信息（SEI）。
+     * <pre>
+     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onRecvSEIMsg 的回调获取 SEI 内容。
+     * - 调用时机：视频流（主流）开启后，可调用此函数。
+     * - 数据长度限制： SEI 最大数据长度为 4096 字节，超限会发送失败。如果频繁发送大量数据会导致视频码率增大，可能会导致视频画质下降甚至卡顿。
+     * - 发送频率限制：最高为视频发送的帧率，建议不超过 10 次/秒。
+     * - 生效时间：调用本接口之后，最快在下一帧视频数据帧之后发送 SEI 数据，最慢在接下来的 5 帧视频之后发送。
+     * <b>NOTE:</b>
+     * - SEI 数据跟随视频帧发送，由于在弱网环境下可能丢帧，SEI 数据也可能随之丢失，所以建议在发送频率限制之内多次发送，保证接收端收到的概率。
+     * - 调用本接口时，默认使用主流通道发送 SEI。
+     * </pre>
+     * @param {ArrayBuffer} data 自定义 SEI 数据
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    sendSEIMsg(data: ArrayBuffer): number;
+    /**
+     * 发送媒体补充增强信息（SEI）。
+     * <pre>
+     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onRecvSEIMsg 的回调获取 SEI 内容。
+     * - 调用时机：视频流（主流）开启后，可调用此函数。
+     * - 数据长度限制： SEI 最大数据长度为 4096 字节，超限会发送失败。如果频繁发送大量数据会导致视频码率增大，可能会导致视频画质下降甚至卡顿。
+     * - 发送频率限制：最高为视频发送的帧率，建议不超过 10 次/秒。
+     * - 生效时间：调用本接口之后，最快在下一帧视频数据帧之后发送 SEI 数据，最慢在接下来的 5 帧视频之后发送。
+     * <b>NOTE:</b>
+     * - SEI 数据跟随视频帧发送，由于在弱网环境下可能丢帧，SEI 数据也可能随之丢失，所以建议在发送频率限制之内多次发送，保证接收端收到的概率。
+     * - 调用本接口时，默认使用主流通道发送 SEI。
+     * </pre>
+     * @param {ArrayBuffer} data 自定义 SEI 数据
+     * @param {number} type 发送 SEI 时，使用的流通道类型：
+     * <pre>
+     * - 0: 主流通道
+     * - 1: 辅流通道
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType): number;
+    /**
+     * 拉取外部音频数据。
+     * <pre>
+     * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
+     * <b>NOTE:</b>
+     * - 该方法需要在加入房间后调用。
+     * - 数据帧时长建议匹配 10ms 周期。
+     * - 该方法在音频渲染设备关闭后不再生效，此时会返回空数据。例如通话结束、通话前扬声器设备测试关闭等情况下，该设置不再生效。
+     * </pre>
+     * @param {boolean} enable 是否外部数据输出
+     * <pre>
+     * - true: 开启外部数据渲染
+     * - false: 关闭外部数据渲染 (默认)
+     * </pre>
+     * @param {number} sampleRate 数据采样率，后续数据按该格式返回。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效
+     * @param {number} channels channels 数据声道数，后续数据按该格式返回。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number;
+    /**
+     * 拉取外部音频数据。
+     * <pre>
+     * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
+     * <b>NOTE:</b>
+     * - 该方法需要在加入房间后调用。
+     * - 数据帧时长建议匹配 10ms 周期。
+     * - 该方法在音频渲染设备关闭后不再生效，此时会返回空数据。例如通话结束、通话前扬声器设备测试关闭等情况下，该设置不再生效。
+     * </pre>
+     * @param {number} pullLength 待拉取音频数据的字节数，单位为 byte
+     * @param {function} cb 拉取数据的回调函数
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number;
     /**
      * 查询 SDK 版本号。
      * @returns {String} 当前的 SDK 版本号，格式为字符串，如1.0.0.
@@ -1620,6 +1728,36 @@ declare class NERtcEngine extends EventEmitter {
      */
     enumerateVideoCaptureDevices(): Array<NERtcDevice>;
     /**
+     * 枚举屏幕分享源信息。
+     * @param {number} thumbWidth 缩略图宽度 px。
+     * @param {number} thumbHeight 缩略图高度 px。
+     * @param {number} iconWidth 图标宽度 px。
+     * @param {number} iconHeight 图标高度 px。
+     * @returns {Object[]}
+     * <pre>
+     * - Object[] : 调用成功；
+     * <table style="width:100%;">
+     * <tr><th>Name</th><th>Type</th><th>Description</th></tr>
+     * <tr><td>Object.sourceId</td><td>number</td><td>信息源ID</td></tr>
+     * <tr><td>Object.sourceName</td><td>String</td><td>信息源名称</td></tr>
+     * <tr><td>Object.type</td><td>int</td><td>信息源类型:1-屏幕 2-窗口</td></tr>
+     * <tr><td>Object.isMinimizeWindow</td><td>boolean</td><td>窗口是否最小化状态</td></tr>
+     * <tr><td>Object.thumbBGRA</td><td>object</td><td>缩略图信息,使用前需要判断是否undefined:
+     * - buffer - BGRA二进制数据
+     * - length - 数据大小 byte
+     * - width - 图片宽度 px
+     * - height - 图片高度 px</td></tr>
+     * <tr><td>Object.iconBGRA</td><td>object</td><td>图标信息,使用前需要判断是否undefined:
+     * - buffer - BGRA二进制数据
+     * - length - 数据大小 byte
+     * - width - 图片宽度 px
+     * - height - 图片高度 px</td></tr>
+     * </table>
+     * - NULL: 调用失败。
+     * </pre>
+     */
+    enumerateScreenCaptureSourceInfo(thumbWidth: number, thumbHeight: number, iconWidth: number, iconHeight: number): Array<Object>;
+    /**
      * 指定视频采集设备。
      * @param {string} id 视频采集设备的设备 ID。可以通过 {@link NERtcEngine#enumerateCaptureDevices}获取。
      * @returns {number}
@@ -1634,6 +1772,211 @@ declare class NERtcEngine extends EventEmitter {
      * @returns {String} 设备ID
      */
     getVideoDevice(): String;
+    /**
+     * 设置 SDK 预设的人声的变声音效。
+     * @param {number} type 预设的变声音效。默认关闭变声音效：
+     * <pre>
+     * - 0: 默认关闭
+     * - 1: 机器人
+     * - 2: 巨人
+     * - 3: 恐怖
+     * - 4: 成熟
+     * - 5: 男变女
+     * - 6: 女变男
+     * - 7: 男变萝莉
+     * - 8: 女变萝莉
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setAudioEffectPreset(type: NERtcVoiceChangerType): number;
+    /**
+     * 设置 SDK 预设的美声效果。调用该方法可以为本地发流用户设置 SDK 预设的人声美声效果。
+     * <pre>
+     * <b>NOTE:</b>
+     * - 通话结束后重置为默认关闭
+     * </pre>
+     * @param {number} type 预设的美声效果模式。默认关闭美声效果：
+     * <pre>
+     * - 0: 默认关闭
+     * - 1: 低沉
+     * - 2: 圆润
+     * - 3: 清澈
+     * - 4: 磁性
+     * - 5: 录音棚
+     * - 6: 天籁
+     * - 7: KTV
+     * - 8: 悠远
+     * - 9: 教堂
+     * - 10: 卧室
+     * - 11: Live
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setVoiceBeautifierPreset(type: NERtcVoiceBeautifierType): number;
+    /**
+     * 设置本地语音音调。该方法改变本地说话人声音的音调。
+     * <pre>
+     * <b>NOTE:</b>
+     * - 通话结束后该设置会重置，默认为 1.0。
+     * - 此方法与 setAudioEffectPreset 互斥，调用此方法后，已设置的变声效果会被取消。
+     * </pre>
+     * @param {number} pitch 语音频率。可以在 [0.5, 2.0] 范围内设置。取值越小，则音调越低。默认值为 1.0，表示不需要修改音调。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setLocalVoicePitch(pitch: number): number;
+    /**
+     * 设置本地语音音效均衡，即自定义设置本地人声均衡波段的中心频率。
+     * <pre>
+     * <b>NOTE:</b>
+     * - 该方法在加入房间前后都能调用，通话结束后重置为默认关闭状态。
+     * </pre>
+     * @param {number} bandFrequency 频谱子带索引，取值范围是 [0-9]，分别代表 10 个频带，对应的中心频率是 [31，62，125，250，500，1k，2k，4k，8k，16k] Hz：
+     * <pre>
+     * - 0: 31Hz
+     * - 1: 62Hz
+     * - 2: 125Hz
+     * - 3: 250Hz
+     * - 4: 500Hz
+     * - 5: 1kHz
+     * - 6: 2kHz
+     * - 7: 4kHz
+     * - 8: 8kHz
+     * - 9: 16kHz
+     * </pre>
+     * @param {number} bandGain 每个 band 的增益，单位是 dB，每一个值的范围是 [-15，15]，默认值为 0。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
+    /**
+     * 设置远端用户音频流高优先级
+     * <pre>
+     * - 支持在音频自动订阅的情况下，设置某一个远端用户的音频为最高优先级，可以优先听到该用户的音频
+     * </pre>
+     * @param  {boolean} enable 开启或关闭
+     * @param  {number} uid 用户 ID
+     * @param  {NERtcAudioStreamType} streamType 音频类型：主流、辅流
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
+    /**
+     * 取消或恢复订阅指定远端用户的音频辅流
+     * <pre>
+     * - 加入房间时，默认不订阅所有远端用户的音频辅流流，您可以通过此方法取消或恢复订阅指定远端用户的音频辅流。
+     * <b>NOTE:</b>
+     * - 该方法需要在加入房间，远端用户开启音频后调用。
+     * </pre>
+     * @param  {number} uid 指定用户的 ID
+     * @param  {boolean} subscribe
+     * <pre>
+     * - true: 订阅指定音频流
+     * - false: 取消订阅指定音频流（默认）
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
+    /**
+     * 开关本地音频发送。
+     * <pre>
+     * - 该方法用于允许或禁止向网络发送本地音频流。
+     * <b>NOTE:</b>
+     * - 该方法不影响音频采集状态，功能与enableLocalAudio（audioDevice + enableLocalAudioStream）类似，但不会主动打开音频采集设备，适用于需要发送音频流但是不需要开启麦克风的场景。
+     * - 静音状态会在通话结束后被重置为非静音。
+     * </pre>
+     * @param  {boolean} enable 是否开启本地音频发送。
+     * @param  {NERtcAudioStreamType} streamType 音频类型：主流、辅流
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
+    /**
+     * 开启声卡采集
+     * <pre>
+     * - 启用声卡采集功能后，声卡播放的声音会被合到本地音频流中，从而可以发送到远端。
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 macOS 和 Windows 平台。
+     * - macOS 系统默认声卡不支持采集功能，如需开启此功能需要 App 自己启用一个虚拟声卡，并将该虚拟声卡的名字作为 deviceName 传入 SDK。
+     * - 该方法在加入频道前后都能调用。
+     * </pre>
+     * @param  {boolean} enable
+     * <pre>
+     * - true: 开启声卡采集
+     * - false: 关闭声卡采集（默认）
+     * </pre>
+     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “Soundflower”，可以将虚拟声卡名称 “Soundflower” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集 。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    enableLoopbackRecording(enable: boolean, deviceName?: String): number;
+    /**
+     * 调节声卡采集信号音量。
+     * <pre>
+     * - 调用 {@link nertc::IRtcEngineEx::enableLoopbackRecording} "enableLoopbackRecording" 开启声卡采集后，你可以调用该方法调节声卡采集的信号音量。
+     * </pre>
+     * @param  {number} volume 声卡采集信号音量。取值范围为 [0,100]。默认值为 100，表示原始音量 。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    adjustLoopbackRecordingSignalVolume(volume: number): number;
+    /**
+     * 调节本地播放的指定远端用户的指定流类型的信号音量
+     * <pre>
+     * - 加入房间后，您可以多次调用该方法设置本地播放的不同远端用户的音量；也可以反复调节本地播放的某个远端用户的音量。
+     * <b>NOTE:</b>
+     * - 请在成功加入房间后调用该方法。
+     * - 该方法在本次通话中有效。如果远端用户中途退出房间，则再次加入此房间时仍旧维持该设置，通话结束后设置失效。
+     * - 该方法调节的是本地播放的指定远端用户混音后的音量，且每次只能调整一位远端用户。若需调整多位远端用户在本地播放的音量，则需多次调用该方法。
+     * </pre>
+     * @param  {number} uid 远端用户 ID。
+     * @param  {number} volume volume 播放音量，取值范围为 [0,100]。
+     * <pre>
+     * - 0：静音。
+     * - 100：原始音量。
+     * </pre>
+     * @param  {number} streamType 音频类型：主流、辅流
+     * <pre>
+     * - 0: 音频流主流
+     * - 1: 音频流辅流
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
     /**
      * init event handler
      * @private
@@ -2050,5 +2393,11 @@ declare interface NERtcEngine {
      - false: 正常；。
      */
     on(event: 'onAudioHowling', cb: (howling: boolean) => void): this;
+    /** 收到远端流的 SEI 内容回调。
+
+     * @param uid 发送该 sei 的用户 id
+     * @param data 接收到的 sei 数据
+     */
+    on(event: 'onReceSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
 }
 export default NERtcEngine;

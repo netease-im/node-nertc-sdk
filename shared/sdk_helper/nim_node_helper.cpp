@@ -76,6 +76,14 @@ napi_status nim_napi_get_value_uint64(Isolate* isolate, const Local<Value>& valu
     return status;   
 }
 
+napi_status nim_napi_get_value_double(Isolate* isolate, const Local<Value>& value, double& out)
+{
+    if (!value->IsNumber())
+        return napi_invalid_arg;
+    out = value->NumberValue(isolate->GetCurrentContext()).ToChecked();
+    return napi_ok;
+}
+
 static napi_status get_object_value(Isolate* isolate, const Local<Object>& obj, const utf8_string& keyName, Local<Value> &out)
 {
     auto name = nim_napi_new_utf8string(isolate, keyName.c_str());

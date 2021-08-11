@@ -19,4 +19,10 @@ int EventHandler::RemoveEventHandler(const utf8_string &eventName)
     }
     return callbacks_.size();
 }
+
+int EventHandler::RemoveAll()
+{
+    callbacks_.clear();
+    return 0;
+}
 }

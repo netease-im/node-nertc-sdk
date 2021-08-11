@@ -94,7 +94,10 @@ napi_status nertc_audio_mixing_option_obj_to_struct(Isolate* isolate, const Loca
     bool out_b;
     if (nim_napi_get_object_value_utf8string(isolate, obj, "path", out) == napi_ok)
     {
-        strcpy(option.path, out.toUtf8String().c_str());
+        if (out.toUtf8String().length() >= kNERtcMaxURILength)
+            return napi_invalid_arg;
+        memset(option.path, 0, kNERtcMaxURILength);
+        strncpy(option.path, out.toUtf8String().c_str(), kNERtcMaxURILength);
     }
     if (nim_napi_get_object_value_int32(isolate, obj, "loop_count", out_i) == napi_ok)
     {
@@ -131,7 +134,11 @@ napi_status nertc_audio_effect_option_obj_to_struct(Isolate* isolate, const Loca
         auto o = objs->Get(isolate->GetCurrentContext(), i).ToLocalChecked().As<Object>();
         if (nim_napi_get_object_value_utf8string(isolate, o, "path", out) == napi_ok)
         {
-            strcpy(option[i].path, out.toUtf8String().c_str());
+            // 实际内容长度超出了可以容纳的缓冲区长度，缓冲区要包含 \0 结尾字符串，实际内容需要小于缓冲区大小
+            if (out.toUtf8String().length() >= kNERtcMaxURILength)
+                return napi_invalid_arg;
+            memset(option[i].path, 0, kNERtcMaxURILength);
+            strncpy(option[i].path, out.toUtf8String().c_str(), kNERtcMaxURILength);
         }
         if (nim_napi_get_object_value_int32(isolate, o, "loop_count", out_i) == napi_ok)
         {
@@ -274,7 +281,10 @@ static napi_status nertc_ls_img_info_obj_to_struct(Isolate* isolate, const Local
     int32_t out_i;
     if (nim_napi_get_object_value_utf8string(isolate, obj, "url", out) == napi_ok)
     {
-        strcpy(info->url, out.toUtf8String().c_str());
+        if (out.toUtf8String().length() >= kNERtcMaxURILength)
+            return napi_invalid_arg;
+        memset(info->url, 0, kNERtcMaxURILength);
+        strncpy(info->url, out.toUtf8String().c_str(), kNERtcMaxURILength);
     }
     if (nim_napi_get_object_value_int32(isolate, obj, "x", out_i) == napi_ok)
     {
@@ -333,6 +343,10 @@ static napi_status nertc_ls_users_obj_to_struct(Isolate* isolate, const Local<Ob
     {
         user.audio_push = out_b;
     }
+    if (nim_napi_get_object_value_int32(isolate, obj, "z_order", out_i) == napi_ok)
+    {
+        user.z_order = out_i;
+    }
     return napi_ok;
 }
 
@@ -385,8 +399,37 @@ static napi_status nertc_ls_layout_obj_to_struct(Isolate* isolate, const Local<O
         if (nim_napi_get_object_value(isolate, obj, "bg_image", so1) == napi_ok)
         {
             layout.bg_image = new nertc::NERtcLiveStreamImageInfo;
-            nertc_ls_img_info_obj_to_struct(isolate, so1.As<Object>(), layout.bg_image);
+            auto status = nertc_ls_img_info_obj_to_struct(isolate, so1.As<Object>(), layout.bg_image);
+            if (status != napi_ok)
+                return status;
         }
+    }
+    return napi_ok;
+}
+
+napi_status nertc_ls_config_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcLiveConfig& config)
+{
+	int32_t out_i;
+	bool out_b;
+    if (nim_napi_get_object_value_bool(isolate, obj, "single_video_passthrough", out_b) == napi_ok)
+    {
+        config.single_video_passthrough = out_b;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "audio_bitrate", out_i) == napi_ok)
+    {
+        config.audio_bitrate = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "sample_rate", out_i) == napi_ok)
+    {
+        config.sampleRate = (nertc::NERtcLiveStreamAudioSampleRate)out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "channels", out_i) == napi_ok)
+    {
+        config.channels = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "audio_codec_profile", out_i) == napi_ok)
+    {
+        config.audioCodecProfile = (nertc::NERtcLiveStreamAudioCodecProfile)out_i;
     }
     return napi_ok;
 }
@@ -396,13 +439,20 @@ napi_status nertc_ls_task_info_obj_to_struct(Isolate* isolate, const Local<Objec
     UTF8String out;
     int32_t out_i;
     bool out_b;
+
     if (nim_napi_get_object_value_utf8string(isolate, obj, "task_id", out) == napi_ok)
     {
-        strcpy(info.task_id, out.toUtf8String().c_str());
+        if (out.toUtf8String().length() >= kNERtcMaxTaskIDLength)
+            return napi_invalid_arg;
+        memset(info.task_id, 0, kNERtcMaxTaskIDLength);
+        strncpy(info.task_id, out.toUtf8String().c_str(), kNERtcMaxTaskIDLength);
     }
     if (nim_napi_get_object_value_utf8string(isolate, obj, "stream_url", out) == napi_ok)
     {
-        strcpy(info.stream_url, out.toUtf8String().c_str());
+        if (out.toUtf8String().length() >= kNERtcMaxURILength)
+            return napi_invalid_arg;
+        memset(info.stream_url, 0, kNERtcMaxURILength);
+        strncpy(info.stream_url, out.toUtf8String().c_str(), kNERtcMaxURILength);
     }
     if (nim_napi_get_object_value_bool(isolate, obj, "server_record_enabled", out_b) == napi_ok)
     {
@@ -413,11 +463,18 @@ napi_status nertc_ls_task_info_obj_to_struct(Isolate* isolate, const Local<Objec
         info.ls_mode = (nertc::NERtcLiveStreamMode)out_i;
     }
     Local<Value> so;
-    if ((nim_napi_get_object_value(isolate, obj, "layout", so) == napi_ok) && (nertc_ls_layout_obj_to_struct(isolate, so.As<Object>(), info.layout) == napi_ok))
+    if (nim_napi_get_object_value(isolate, obj, "layout", so) == napi_ok)
     {
-        return napi_ok;
+        if (nertc_ls_layout_obj_to_struct(isolate, so.As<Object>(), info.layout) != napi_ok)
+            return napi_invalid_arg;
     }
-    return napi_invalid_arg;
+    Local<Value> config;
+    if (nim_napi_get_object_value(isolate, obj, "config", config) == napi_ok)
+    {
+        if (nertc_ls_config_obj_to_struct(isolate, config.As<Object>(), info.config) != napi_ok)
+            return napi_invalid_arg;
+    }
+    return napi_ok;
 }
 
 napi_status nertc_stats_to_obj(Isolate* isolate, const nertc::NERtcStats& config, Local<Object>& obj)
