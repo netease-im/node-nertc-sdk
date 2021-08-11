@@ -2367,6 +2367,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
                 nim_napi_set_object_value_int32(isolate, obj, "top", w.rc.top);
                 nim_napi_set_object_value_int32(isolate, obj, "right", w.rc.right);
                 nim_napi_set_object_value_int32(isolate, obj, "bottom", w.rc.bottom);
+                nim_napi_set_object_value_utf8string(isolate, obj, "displayId", w.display_id);
                 instance->_windows_helper->updateCachedInfos(sid, w.rc);
                 int left = w.rc.left - vx;
                 int top = w.rc.top - vy;
