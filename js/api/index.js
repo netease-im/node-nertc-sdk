@@ -385,6 +385,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * - 15 15帧每秒
      * - 24 24帧每秒
      * - 30 30帧每秒
+     * - 60 60帧每秒
      * </pre>
      * @param {number} config.min_framerate 视频最小帧率:
      * <pre>
@@ -1176,7 +1177,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * @param {number} [param.frame_rate=5] 共享视频的帧率，param.profile=3时生效，单位为 fps；默认值为 5，建议不要超过 15
      * @param {number} [param.bitrate=0] 共享视频的码率，单位为 bps；默认值为 0，表示 SDK 根据当前共享屏幕的分辨率计算出一个合理的值
      * @param {boolean} param.capture_mouse_cursor 是否采集鼠标用于屏幕共享
-     * @param {boolean} param.window_focus （暂不支持）调用 {@link NERtcEngine#startScreenCaptureByWindowId} 方法共享窗口时，是否将该窗口前置
+     * @param {boolean} param.window_focus 调用 {@link NERtcEngine#startScreenCaptureByWindowId} 方法共享窗口时，是否将该窗口前置
      * @param {number[]} param.excluded_window_list 待屏蔽窗口的 ID 列表
      * @param {number} param.excluded_window_count 待屏蔽窗口的数量
      * @param {number} param.prefer 编码策略倾向:
@@ -1485,7 +1486,11 @@ class NERtcEngine extends events_1.EventEmitter {
      * </pre>
      * @param {number} pullLength 待拉取音频数据的字节数，单位为 byte
      * @param {function} cb 拉取数据的回调函数
-     * @returns
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
      */
     pullExternalAudioFrame(pullLength, cb) {
         return this.nertcEngine.pullExternalAudioFrame(pullLength, cb);
@@ -2235,7 +2240,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * - true: 开启声卡采集
      * - false: 关闭声卡采集（默认）
      * </pre>
-     * @param  {String=''} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “Soundflower”，可以将虚拟声卡名称 “Soundflower” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集 。
+     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “Soundflower”，可以将虚拟声卡名称 “Soundflower” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集 。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功
@@ -2501,6 +2506,8 @@ class NERtcEngine extends events_1.EventEmitter {
          * - 2 640x360/480, 30fps
          * - 3 1280x720, 30fps
          * - 4 1920x1080, 30fps
+         * - 5 none
+         * - 6 FakeVideo 标识，仅在回调中显示。请勿主动设置，否则 SDK 会按照STANDARD处理。
          * </pre>
          */
         this.nertcEngine.onEvent('onUserVideoStart', function (uid, maxProfile) {

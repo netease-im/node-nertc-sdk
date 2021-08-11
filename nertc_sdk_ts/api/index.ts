@@ -1486,8 +1486,7 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    startSystemAudioLoopbackCapture(): number
-    {
+    startSystemAudioLoopbackCapture(): number {
         return this.nertcEngine.startSystemAudioLoopbackCapture();
     }
 
@@ -1621,7 +1620,11 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      * @param {number} pullLength 待拉取音频数据的字节数，单位为 byte
      * @param {function} cb 拉取数据的回调函数
-     * @returns 
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
      */
     pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number
     {
@@ -2411,7 +2414,7 @@ class NERtcEngine extends EventEmitter {
      * - true: 开启声卡采集
      * - false: 关闭声卡采集（默认）
      * </pre>
-     * @param  {String=''} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “Soundflower”，可以将虚拟声卡名称 “Soundflower” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集 。
+     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “Soundflower”，可以将虚拟声卡名称 “Soundflower” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集 。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功
