@@ -1528,6 +1528,16 @@ class NERtcEngine extends events_1.EventEmitter {
      * - 0 推流带视频
      * - 1 推流纯音频
      * </pre>
+     * @param {Object} info.config 音视频流编码参数等设置:
+     * @param {boolean} info.config.singleVideoPassThrough 音频编码规格。默认值为 NERtcLiveStreamAudioCodecProfileLCAAC 普通编码规格。
+     * @param {boolean} info.config.audioBitrate 音频推流码率。单位为 kbps，取值范围为 10~192。语音场景建议设置为 64 及以上码率，音乐场景建议设置为 128 及以上码率。
+     * @param {boolean} info.config.sampleRate 音频推流采样率。默认值为 NERtcLiveStreamAudioSampleRate48000 48K。
+     * @param {boolean} info.config.channels 音频推流声道数。1：单声道。2：（默认）双声道。
+     * @param {boolean} info.config.audioCodecProfile 音频编码规格。默认值为 NERtcLiveStreamAudioCodecProfileLCAAC 普通编码规格。
+     * <pre>
+     * - 0 HE-AAC 规格，表示高效音频编码规格。
+     * - 1 （默认）LC-AAC 规格，表示基本音频编码规格。
+     * </pre>
      * @param {Object} info.layout 视频布局:
      * @param {number} info.layout.width 视频推流宽度
      * @param {number} info.layout.height 视频推流高度
@@ -2030,6 +2040,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * <table style="width:100%;">
      * <tr><th>Name</th><th>Type</th><th>Description</th></tr>
      * <tr><td>Object.sourceId</td><td>number</td><td>信息源ID</td></tr>
+     * <tr><td>Object.displayId</td><td>String</td><td>如果是屏幕设备则为屏幕 ID</td></tr>
      * <tr><td>Object.sourceName</td><td>String</td><td>信息源名称</td></tr>
      * <tr><td>Object.type</td><td>int</td><td>信息源类型:1-屏幕 2-窗口</td></tr>
      * <tr><td>Object.isMinimizeWindow</td><td>boolean</td><td>窗口是否最小化状态</td></tr>
