@@ -1531,6 +1531,7 @@ class NERtcEngine extends EventEmitter {
 
     /**
      * 发送媒体补充增强信息（SEI）。
+     * @since 4.1.110
      * <pre>
      * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onReceSEIMsg 的回调获取 SEI 内容。
      * - 调用时机：视频流（主流）开启后，可调用此函数。
@@ -1555,6 +1556,7 @@ class NERtcEngine extends EventEmitter {
 
     /**
      * 发送媒体补充增强信息（SEI）。
+     * @since 4.1.110
      * <pre>
      * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onReceSEIMsg 的回调获取 SEI 内容。
      * - 调用时机：视频流（主流）开启后，可调用此函数。
@@ -1584,6 +1586,7 @@ class NERtcEngine extends EventEmitter {
 
     /**
      * 拉取外部音频数据。
+     * @since 4.1.110
      * <pre>
      * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
      * <b>NOTE:</b>
@@ -1611,6 +1614,7 @@ class NERtcEngine extends EventEmitter {
 
     /**
      * 拉取外部音频数据。
+     * @since 4.1.110
      * <pre>
      * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
      * <b>NOTE:</b>
@@ -2196,6 +2200,7 @@ class NERtcEngine extends EventEmitter {
 
     /** 
      * 枚举屏幕分享源信息。
+     * @since 4.1.110
      * @param {number} thumbWidth 缩略图宽度 px。
      * @param {number} thumbHeight 缩略图高度 px。
      * @param {number} iconWidth 图标宽度 px。
@@ -2251,6 +2256,7 @@ class NERtcEngine extends EventEmitter {
 
     /**
      * 设置 SDK 预设的人声的变声音效。
+     * @since 4.1.110
      * @param {number} type 预设的变声音效。默认关闭变声音效：
      * <pre>
      * - 0: 默认关闭
@@ -2275,6 +2281,7 @@ class NERtcEngine extends EventEmitter {
 
     /**
      * 设置 SDK 预设的美声效果。调用该方法可以为本地发流用户设置 SDK 预设的人声美声效果。
+     * @since 4.1.110
      * <pre>
      * <b>NOTE:</b>
      * - 通话结束后重置为默认关闭
@@ -2306,6 +2313,7 @@ class NERtcEngine extends EventEmitter {
 
     /**
      * 设置本地语音音调。该方法改变本地说话人声音的音调。
+     * @since 4.1.110
      * <pre>
      * <b>NOTE:</b>
      * - 通话结束后该设置会重置，默认为 1.0。
@@ -2324,6 +2332,7 @@ class NERtcEngine extends EventEmitter {
 
     /**
      * 设置本地语音音效均衡，即自定义设置本地人声均衡波段的中心频率。
+     * @since 4.1.110
      * <pre>
      * <b>NOTE:</b>
      * - 该方法在加入房间前后都能调用，通话结束后重置为默认关闭状态。
@@ -2354,6 +2363,7 @@ class NERtcEngine extends EventEmitter {
 
     /**
      * 设置远端用户音频流高优先级
+     * @since 4.1.110
      * <pre>
      * - 支持在音频自动订阅的情况下，设置某一个远端用户的音频为最高优先级，可以优先听到该用户的音频
      * </pre>
@@ -2371,6 +2381,7 @@ class NERtcEngine extends EventEmitter {
     }
     /**
      * 取消或恢复订阅指定远端用户的音频辅流
+     * @since 4.1.110
      * <pre>
      * - 加入房间时，默认不订阅所有远端用户的音频辅流流，您可以通过此方法取消或恢复订阅指定远端用户的音频辅流。
      * <b>NOTE:</b>
@@ -2394,6 +2405,7 @@ class NERtcEngine extends EventEmitter {
 
     /**
      * 开关本地音频发送。
+     * @since 4.1.110
      * <pre>
      * - 该方法用于允许或禁止向网络发送本地音频流。
      * <b>NOTE:</b>
@@ -2413,6 +2425,7 @@ class NERtcEngine extends EventEmitter {
     }
     /**
      * 开启声卡采集
+     * @since 4.1.110
      * <pre>
      * - 启用声卡采集功能后，声卡播放的声音会被合到本地音频流中，从而可以发送到远端。
      * <b>NOTE:</b>
@@ -2437,6 +2450,7 @@ class NERtcEngine extends EventEmitter {
     }
     /**
      * 调节声卡采集信号音量。
+     * @since 4.1.110
      * <pre>
      * - 调用 {@link nertc::IRtcEngineEx::enableLoopbackRecording} "enableLoopbackRecording" 开启声卡采集后，你可以调用该方法调节声卡采集的信号音量。
      * </pre>
@@ -2453,6 +2467,7 @@ class NERtcEngine extends EventEmitter {
     
     /**
      * 调节本地播放的指定远端用户的指定流类型的信号音量
+     * @since 4.1.110
      * <pre>
      * - 加入房间后，您可以多次调用该方法设置本地播放的不同远端用户的音量；也可以反复调节本地播放的某个远端用户的音量。
      * <b>NOTE:</b>
@@ -3151,6 +3166,7 @@ class NERtcEngine extends EventEmitter {
 
         /**
          * 监听 SEI 数据回调
+         * @since 4.1.110
          * @event NERtcEngine#onReceSEIMsg
          * @param {number} uid 发送该 sei 的用户 id
          * @param {ArrayBuffer} data 接收到的 sei 数据
