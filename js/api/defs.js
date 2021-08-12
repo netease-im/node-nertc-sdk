@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NERtcVoiceEqualizationBand = exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcAudioStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcLogLevel = void 0;
 /** 日志级别。 */
 var NERtcLogLevel;
 (function (NERtcLogLevel) {
@@ -131,6 +132,7 @@ var NERtcVideoProfileType;
     NERtcVideoProfileType[NERtcVideoProfileType["kNERtcVideoProfileHD1080P"] = 4] = "kNERtcVideoProfileHD1080P";
     NERtcVideoProfileType[NERtcVideoProfileType["kNERtcVideoProfileNone"] = 5] = "kNERtcVideoProfileNone";
     NERtcVideoProfileType[NERtcVideoProfileType["kNERtcVideoProfileMAX"] = 4] = "kNERtcVideoProfileMAX";
+    NERtcVideoProfileType[NERtcVideoProfileType["kNERtcVideoProfileFake"] = 6] = "kNERtcVideoProfileFake";
 })(NERtcVideoProfileType = exports.NERtcVideoProfileType || (exports.NERtcVideoProfileType = {}));
 var NERtcVideoScalingMode;
 (function (NERtcVideoScalingMode) {
@@ -149,10 +151,11 @@ var NERtcAudioProfileType;
 (function (NERtcAudioProfileType) {
     NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileDefault"] = 0] = "kNERtcAudioProfileDefault";
     NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileStandard"] = 1] = "kNERtcAudioProfileStandard";
-    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileMiddleQuality"] = 2] = "kNERtcAudioProfileMiddleQuality";
-    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileMiddleQualityStereo"] = 3] = "kNERtcAudioProfileMiddleQualityStereo";
-    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileHighQuality"] = 4] = "kNERtcAudioProfileHighQuality";
-    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileHighQualityStereo"] = 5] = "kNERtcAudioProfileHighQualityStereo";
+    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileStandardExtend"] = 2] = "kNERtcAudioProfileStandardExtend";
+    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileMiddleQuality"] = 3] = "kNERtcAudioProfileMiddleQuality";
+    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileMiddleQualityStereo"] = 4] = "kNERtcAudioProfileMiddleQualityStereo";
+    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileHighQuality"] = 5] = "kNERtcAudioProfileHighQuality";
+    NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileHighQualityStereo"] = 6] = "kNERtcAudioProfileHighQualityStereo";
 })(NERtcAudioProfileType = exports.NERtcAudioProfileType || (exports.NERtcAudioProfileType = {}));
 var NERtcAudioScenarioType;
 (function (NERtcAudioScenarioType) {
@@ -177,6 +180,7 @@ var NERtcVideoFramerateType;
     NERtcVideoFramerateType[NERtcVideoFramerateType["kNERtcVideoFramerateFps_15"] = 15] = "kNERtcVideoFramerateFps_15";
     NERtcVideoFramerateType[NERtcVideoFramerateType["kNERtcVideoFramerateFps_24"] = 24] = "kNERtcVideoFramerateFps_24";
     NERtcVideoFramerateType[NERtcVideoFramerateType["kNERtcVideoFramerateFps_30"] = 30] = "kNERtcVideoFramerateFps_30";
+    NERtcVideoFramerateType[NERtcVideoFramerateType["kNERtcVideoFramerateFps_60"] = 60] = "kNERtcVideoFramerateFps_60";
 })(NERtcVideoFramerateType = exports.NERtcVideoFramerateType || (exports.NERtcVideoFramerateType = {}));
 /** @enum NERtcDegradationPreference 视频编码策略。*/
 var NERtcDegradationPreference;
@@ -219,6 +223,19 @@ var NERtcLiveStreamVideoScaleMode;
     NERtcLiveStreamVideoScaleMode[NERtcLiveStreamVideoScaleMode["kNERtcLsModeVideoScaleFit"] = 0] = "kNERtcLsModeVideoScaleFit";
     NERtcLiveStreamVideoScaleMode[NERtcLiveStreamVideoScaleMode["kNERtcLsModeVideoScaleCropFill"] = 1] = "kNERtcLsModeVideoScaleCropFill";
 })(NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamVideoScaleMode || (exports.NERtcLiveStreamVideoScaleMode = {}));
+/** 直播推流音频采样率 */
+var NERtcLiveStreamAudioSampleRate;
+(function (NERtcLiveStreamAudioSampleRate) {
+    NERtcLiveStreamAudioSampleRate[NERtcLiveStreamAudioSampleRate["kNERtcLiveStreamAudioSampleRate32000"] = 32000] = "kNERtcLiveStreamAudioSampleRate32000";
+    NERtcLiveStreamAudioSampleRate[NERtcLiveStreamAudioSampleRate["kNERtcLiveStreamAudioSampleRate44100"] = 44100] = "kNERtcLiveStreamAudioSampleRate44100";
+    NERtcLiveStreamAudioSampleRate[NERtcLiveStreamAudioSampleRate["kNERtcLiveStreamAudioSampleRate48000"] = 48000] = "kNERtcLiveStreamAudioSampleRate48000"; /**< （默认）采样率为 48 kHz。*/
+})(NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamAudioSampleRate || (exports.NERtcLiveStreamAudioSampleRate = {}));
+/** 直播推流音频编码规格 */
+var NERtcLiveStreamAudioCodecProfile;
+(function (NERtcLiveStreamAudioCodecProfile) {
+    NERtcLiveStreamAudioCodecProfile[NERtcLiveStreamAudioCodecProfile["kNERtcLiveStreamAudioCodecProfileLCAAC"] = 0] = "kNERtcLiveStreamAudioCodecProfileLCAAC";
+    NERtcLiveStreamAudioCodecProfile[NERtcLiveStreamAudioCodecProfile["kNERtcLiveStreamAudioCodecProfileHEAAC"] = 1] = "kNERtcLiveStreamAudioCodecProfileHEAAC"; /**< HE-AAC 规格，表示高效音频编码规格。*/
+})(NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioCodecProfile || (exports.NERtcLiveStreamAudioCodecProfile = {}));
 /** 音频设备链接类型。*/
 var NERtcAudioDeviceTransportType;
 (function (NERtcAudioDeviceTransportType) {
@@ -248,6 +265,18 @@ var NERtcClientRole;
     NERtcClientRole[NERtcClientRole["kNERtcClientRoleBroadcaster"] = 0] = "kNERtcClientRoleBroadcaster";
     NERtcClientRole[NERtcClientRole["kNERtcClientRoleAudience"] = 1] = "kNERtcClientRoleAudience";
 })(NERtcClientRole = exports.NERtcClientRole || (exports.NERtcClientRole = {}));
+/** SEI发送的流通道类型 */
+var NERtcStreamChannelType;
+(function (NERtcStreamChannelType) {
+    NERtcStreamChannelType[NERtcStreamChannelType["kNERtcStreamChannelTypeMainStream"] = 0] = "kNERtcStreamChannelTypeMainStream";
+    NERtcStreamChannelType[NERtcStreamChannelType["kNERtcStreamChannelTypeSubStream"] = 1] = "kNERtcStreamChannelTypeSubStream";
+})(NERtcStreamChannelType = exports.NERtcStreamChannelType || (exports.NERtcStreamChannelType = {}));
+/** 音频流类型，目前同时支持音频两路流：主流和辅流 */
+var NERtcAudioStreamType;
+(function (NERtcAudioStreamType) {
+    NERtcAudioStreamType[NERtcAudioStreamType["kNERtcAudioStreamMain"] = 0] = "kNERtcAudioStreamMain";
+    NERtcAudioStreamType[NERtcAudioStreamType["kNERtcAudioStreamSub"] = 1] = "kNERtcAudioStreamSub";
+})(NERtcAudioStreamType = exports.NERtcAudioStreamType || (exports.NERtcAudioStreamType = {}));
 /** @enum NERtcNetworkQualityType 网络质量类型。*/
 var NERtcNetworkQualityType;
 (function (NERtcNetworkQualityType) {
@@ -309,9 +338,22 @@ var NERtcAudioMixingErrorCode;
 (function (NERtcAudioMixingErrorCode) {
     NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorOK"] = 0] = "kNERtcAudioMixingErrorOK";
     NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorFatal"] = 1] = "kNERtcAudioMixingErrorFatal";
-    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorCanNotOpen"] = 100] = "kNERtcAudioMixingErrorCanNotOpen";
-    //kNERtcAudioMixingErrorTooFrequentCall = 101,      	/**< 音乐文件打开太频繁。*/
-    //kNERtcAudioMixingErrorInterruptedEOF= 102,      		/**< 音乐文件播放中断。*/
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorCanNotOpen"] = 2] = "kNERtcAudioMixingErrorCanNotOpen";
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorDecode"] = 3] = "kNERtcAudioMixingErrorDecode";
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorInterrupt"] = 4] = "kNERtcAudioMixingErrorInterrupt";
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorHttpNotFound"] = 5] = "kNERtcAudioMixingErrorHttpNotFound";
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorOpen"] = 6] = "kNERtcAudioMixingErrorOpen";
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorNInfo"] = 7] = "kNERtcAudioMixingErrorNInfo";
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorNStream"] = 8] = "kNERtcAudioMixingErrorNStream";
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorNCodec"] = 9] = "kNERtcAudioMixingErrorNCodec";
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorNMem"] = 10] = "kNERtcAudioMixingErrorNMem";
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorCodecOpen"] = 11] = "kNERtcAudioMixingErrorCodecOpen";
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorInvalidInfo"] = 12] = "kNERtcAudioMixingErrorInvalidInfo";
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorOpenTimeout"] = 13] = "kNERtcAudioMixingErrorOpenTimeout";
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorIoTimeout"] = 14] = "kNERtcAudioMixingErrorIoTimeout";
+    NERtcAudioMixingErrorCode[NERtcAudioMixingErrorCode["kNERtcAudioMixingErrorIo"] = 15] = "kNERtcAudioMixingErrorIo";
+    //kNERtcAudioMixingErrorTooFrequentCall = 101,  /**< 音乐文件打开太频繁。*/
+    //kNERtcAudioMixingErrorInterruptedEOF= 102,    /**< 音乐文件播放中断。*/
 })(NERtcAudioMixingErrorCode = exports.NERtcAudioMixingErrorCode || (exports.NERtcAudioMixingErrorCode = {}));
 /** 直播推流状态。*/
 var NERtcLiveStreamStateCode;
@@ -331,3 +373,47 @@ var NERtcMediaStatsEventName;
     NERtcMediaStatsEventName["RemoteVideoStats"] = "onRemoteVideoStats";
     NERtcMediaStatsEventName["NetworkQuality"] = "onNetworkQuality";
 })(NERtcMediaStatsEventName = exports.NERtcMediaStatsEventName || (exports.NERtcMediaStatsEventName = {}));
+/** 4.1.1 */
+/** 变声 预设值 */
+var NERtcVoiceChangerType;
+(function (NERtcVoiceChangerType) {
+    NERtcVoiceChangerType[NERtcVoiceChangerType["kNERtcVoiceChangerOff"] = 0] = "kNERtcVoiceChangerOff";
+    NERtcVoiceChangerType[NERtcVoiceChangerType["kNERtcVoiceChangerRobot"] = 1] = "kNERtcVoiceChangerRobot";
+    NERtcVoiceChangerType[NERtcVoiceChangerType["kNERtcVoiceChangerGaint"] = 2] = "kNERtcVoiceChangerGaint";
+    NERtcVoiceChangerType[NERtcVoiceChangerType["kNERtcVoiceChangerHorror"] = 3] = "kNERtcVoiceChangerHorror";
+    NERtcVoiceChangerType[NERtcVoiceChangerType["kNERtcVoiceChangerMature"] = 4] = "kNERtcVoiceChangerMature";
+    NERtcVoiceChangerType[NERtcVoiceChangerType["kNERtcVoiceChangerManToWoman"] = 5] = "kNERtcVoiceChangerManToWoman";
+    NERtcVoiceChangerType[NERtcVoiceChangerType["kNERtcVoiceChangerWomanToMan"] = 6] = "kNERtcVoiceChangerWomanToMan";
+    NERtcVoiceChangerType[NERtcVoiceChangerType["kNERtcVoiceChangerManToLoli"] = 7] = "kNERtcVoiceChangerManToLoli";
+    NERtcVoiceChangerType[NERtcVoiceChangerType["kNERtcVoiceChangerWomanToLoli"] = 8] = "kNERtcVoiceChangerWomanToLoli"; /**< 女变萝莉 */
+})(NERtcVoiceChangerType = exports.NERtcVoiceChangerType || (exports.NERtcVoiceChangerType = {}));
+/** 预设的美声效果 */
+var NERtcVoiceBeautifierType;
+(function (NERtcVoiceBeautifierType) {
+    NERtcVoiceBeautifierType[NERtcVoiceBeautifierType["kNERtcVoiceBeautifierOff"] = 0] = "kNERtcVoiceBeautifierOff";
+    NERtcVoiceBeautifierType[NERtcVoiceBeautifierType["kNERtcVoiceBeautifierMuffled"] = 1] = "kNERtcVoiceBeautifierMuffled";
+    NERtcVoiceBeautifierType[NERtcVoiceBeautifierType["kNERtcVoiceBeautifierMellow"] = 2] = "kNERtcVoiceBeautifierMellow";
+    NERtcVoiceBeautifierType[NERtcVoiceBeautifierType["kNERtcVoiceBeautifierClear"] = 3] = "kNERtcVoiceBeautifierClear";
+    NERtcVoiceBeautifierType[NERtcVoiceBeautifierType["kNERtcVoiceBeautifierMagnetic"] = 4] = "kNERtcVoiceBeautifierMagnetic";
+    NERtcVoiceBeautifierType[NERtcVoiceBeautifierType["kNERtcVoiceBeautifierRecordingstudio"] = 5] = "kNERtcVoiceBeautifierRecordingstudio";
+    NERtcVoiceBeautifierType[NERtcVoiceBeautifierType["kNERtcVoiceBeautifierNature"] = 6] = "kNERtcVoiceBeautifierNature";
+    NERtcVoiceBeautifierType[NERtcVoiceBeautifierType["kNERtcVoiceBeautifierKTV"] = 7] = "kNERtcVoiceBeautifierKTV";
+    NERtcVoiceBeautifierType[NERtcVoiceBeautifierType["kNERtcVoiceBeautifierRemote"] = 8] = "kNERtcVoiceBeautifierRemote";
+    NERtcVoiceBeautifierType[NERtcVoiceBeautifierType["kNERtcVoiceBeautifierChurch"] = 9] = "kNERtcVoiceBeautifierChurch";
+    NERtcVoiceBeautifierType[NERtcVoiceBeautifierType["kNERtcVoiceBeautifierBedroom"] = 10] = "kNERtcVoiceBeautifierBedroom";
+    NERtcVoiceBeautifierType[NERtcVoiceBeautifierType["kNERtcVoiceBeautifierLive"] = 11] = "kNERtcVoiceBeautifierLive";
+})(NERtcVoiceBeautifierType = exports.NERtcVoiceBeautifierType || (exports.NERtcVoiceBeautifierType = {}));
+/** 音效均衡波段的中心频率 */
+var NERtcVoiceEqualizationBand;
+(function (NERtcVoiceEqualizationBand) {
+    NERtcVoiceEqualizationBand[NERtcVoiceEqualizationBand["kNERtcVoiceEqualizationBand_31"] = 0] = "kNERtcVoiceEqualizationBand_31";
+    NERtcVoiceEqualizationBand[NERtcVoiceEqualizationBand["kNERtcVoiceEqualizationBand_62"] = 1] = "kNERtcVoiceEqualizationBand_62";
+    NERtcVoiceEqualizationBand[NERtcVoiceEqualizationBand["kNERtcVoiceEqualizationBand_125"] = 2] = "kNERtcVoiceEqualizationBand_125";
+    NERtcVoiceEqualizationBand[NERtcVoiceEqualizationBand["kNERtcVoiceEqualizationBand_250"] = 3] = "kNERtcVoiceEqualizationBand_250";
+    NERtcVoiceEqualizationBand[NERtcVoiceEqualizationBand["kNERtcVoiceEqualizationBand_500"] = 4] = "kNERtcVoiceEqualizationBand_500";
+    NERtcVoiceEqualizationBand[NERtcVoiceEqualizationBand["kNERtcVoiceEqualizationBand_1K"] = 5] = "kNERtcVoiceEqualizationBand_1K";
+    NERtcVoiceEqualizationBand[NERtcVoiceEqualizationBand["kNERtcVoiceEqualizationBand_2K"] = 6] = "kNERtcVoiceEqualizationBand_2K";
+    NERtcVoiceEqualizationBand[NERtcVoiceEqualizationBand["kNERtcVoiceEqualizationBand_4K"] = 7] = "kNERtcVoiceEqualizationBand_4K";
+    NERtcVoiceEqualizationBand[NERtcVoiceEqualizationBand["kNERtcVoiceEqualizationBand_8K"] = 8] = "kNERtcVoiceEqualizationBand_8K";
+    NERtcVoiceEqualizationBand[NERtcVoiceEqualizationBand["kNERtcVoiceEqualizationBand_16K"] = 9] = "kNERtcVoiceEqualizationBand_16K";
+})(NERtcVoiceEqualizationBand = exports.NERtcVoiceEqualizationBand || (exports.NERtcVoiceEqualizationBand = {}));

@@ -28,6 +28,7 @@ using v8::Exception;
 using v8::Array;
 using v8::Number;
 using v8::Map;
+using v8::ArrayBuffer;
 
 using std::string;
 
@@ -215,6 +216,7 @@ napi_status nim_napi_get_value_int32(Isolate* isolate, const Local<Value>& value
 napi_status nim_napi_get_value_bool(Isolate* isolate, const Local<Value>& value, bool& out);
 napi_status nim_napi_get_value_int64(Isolate* isolate, const Local<Value>& value, int64_t& out);
 napi_status nim_napi_get_value_uint64(Isolate* isolate, const Local<Value>& value, uint64_t& out);
+napi_status nim_napi_get_value_double(Isolate* isolate, const Local<Value>& value, double& out);
 
 napi_status nim_napi_get_object_value(Isolate* isolate, const Local<Object>& obj, const utf8_string& keyName, Local<Value>& out);
 napi_status nim_napi_get_object_value_utf8string(Isolate* isolate, const Local<Object>& obj, const utf8_string& keyName, UTF8String& out);

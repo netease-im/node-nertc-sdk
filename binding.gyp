@@ -1,7 +1,7 @@
 {
   "targets": [
     {
-      'target_name': 'nertc-sdk',
+      'target_name': 'nertc-electron-sdk',
       'include_dirs': [
       './shared',
       './shared/libyuv/include',
@@ -26,6 +26,7 @@
         './shared/sdk_helper/nim_node_async_queue.cpp',
         './shared/sdk_helper/nim_event_handler.h',
         './shared/sdk_helper/nim_event_handler.cpp',
+        './shared/sdk_helper/superfasthash.cpp',
         './shared/libyuv/source/compare_common.cc',
         './shared/libyuv/source/compare.cc',
         './shared/libyuv/source/convert_argb.cc',
@@ -58,17 +59,9 @@
             'copies': [{
               'destination': '<(PRODUCT_DIR)',
               'files': [
-                './nertc_sdk/dll/libfreetype-6.dll',
-                './nertc_sdk/dll/libjpeg-9.dll',
-                './nertc_sdk/dll/libpng16-16.dll',
-                './nertc_sdk/dll/libtiff-5.dll',
-                './nertc_sdk/dll/libwebp-7.dll',
                 './nertc_sdk/dll/nertc_sdk.dll',
-                './nertc_sdk/dll/protoopp.dll',
-                './nertc_sdk/dll/SDL2_image.dll',
-                './nertc_sdk/dll/SDL2_ttf.dll',
-                './nertc_sdk/dll/SDL2.dll',
-                './nertc_sdk/dll/zlib1.dll'
+				'./nertc_sdk/dll/protoopp.dll',
+				'./nertc_sdk/dll/SDL2.dll',
               ]
             }],
             'defines': [
@@ -76,7 +69,7 @@
               'WIN32_LEAN_AND_MEAN'
             ],
             'library_dirs': [
-              './nertc_sdk/libs/'
+              './nertc_sdk/lib/'
             ],
             'link_settings': {
               'libraries': [
@@ -99,7 +92,13 @@
               './shared/libyuv/source/compare_win.cc',
               './shared/libyuv/source/rotate_win.cc',
               './shared/libyuv/source/row_win.cc',
-              './shared/libyuv/source/scale_win.cc'
+              './shared/libyuv/source/scale_win.cc',
+              './shared/util/windows_helper.h',
+              './shared/util/windows_helper.cpp',   
+              './shared/util/string_util.h',
+              './shared/util/string_util.cpp',    
+              './shared/util/ConvertUTF.c',
+              './shared/util/ConvertUTF.h'
             ],
             'configurations': {
               'Release': {
@@ -149,7 +148,7 @@
                 'Foundation.framework',
                 'nertc_sdk_Mac.framework',
                 'NEFundation_Mac.framework',
-                '-rpath ./macsdk/',
+                '-rpath ./nertc_sdk/',
                 '-Wl,-rpath,@loader_path'
                 ]
             }, 
@@ -164,6 +163,7 @@
               'MACOSX_DEPLOYMENT_TARGET': '10.14',
               'EXCUTABLE_EXTENSION': 'node',
               'FRAMEWORK_SEARCH_PATHS': [
+                './nertc_sdk/bin/darwin'
               ],
               'DEBUG_INFORMATION_FORMAT': 'dwarf-with-dsym',
               'OTHER_CFLAGS': [

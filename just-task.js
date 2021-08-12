@@ -13,22 +13,30 @@ option('target_arch', { default: process.arch, choices: ['ia32', 'x64'] })
 option('runtime', { default: 'electron', choices: ['electron', 'node'] })
 option('debug', { default: false, boolean: true })
 option('silent', { default: false, boolean: true })
+option('download_url')
 
 const includePath = 'nertc_sdk'
 const tempPath = 'temporary'
 const packageMeta = require(path.join(__dirname, 'package.json'))
-const nativeWinUrl = `http://yx-web.nos.netease.com/package/1625460456/NERtc_Windows_SDK_v3.9.0e.zip`
-const nativeMacUrl = `http://yx-web.nos.netease.com/package/1612231040/NERTC_Mac_SDK_v3.9.0.zip`
+const nativeWinUrl = `https://yx-web-nosdn.netease.im/package/1628698699/NERtc_Windows_SDK_v4.1.110.zip?download=NERtc_Windows_SDK_v4.1.110.zip`
+const nativeMacUrl = `https://yx-web-nosdn.netease.im/package/1628698786/NERTC_Mac_SDK_v4.1.110.zip?download=NERTC_Mac_SDK_v4.1.110.zip`
 
 task('fetch-wrapper', () => {
   const platform = argv().target_platform
   const arch = argv().target_arch
   const temporaryPath = path.join(__dirname, tempPath)
   const extractPath = path.join(__dirname, includePath)
+  const downloadUrl = argv().download_url
+  let fetchUrl
+  if (platform === 'win32') {
+    fetchUrl = downloadUrl || nativeWinUrl
+  } else if (platform === 'darwin') {
+    fetchUrl = downloadUrl || nativeMacUrl
+  }
   return fetchWrapper({
     platform,
     arch,
-    fetchUrl: process.platform === 'win32' ? nativeWinUrl : nativeMacUrl,
+    fetchUrl,
     temporaryPath,
     extractPath
   })
@@ -83,15 +91,18 @@ task('package', () => {
 })
 
 task('install', () => {
+  if ((process.env.npm_config_skip_install || false)) {
+    logger.info('[install] Skip downlaod prebuilt libraries.')
+    return
+  }
   let target = '5.0.8'
   let runtime = 'electron'
-  const targetPlatform = process.platform
-  const targetArch = process.arch
+  const targetPlatform = process.env.npm_config_target_platform || process.platform
+  const targetArch = process.env.npm_config_target_arch || process.arch
+  const downloadUrl = process.env.npm_config_download_url
   const curPkgMeta = require(path.join(__dirname, 'package.json'))
   const rootPkgMeta = require(path.join(process.env.INIT_CWD, 'package.json'))
-
   logger.info('------------------ just install --------------------')
-
   if (rootPkgMeta.devDependencies && rootPkgMeta.devDependencies.electron) {
     // v13.1.2 => 13.1.2, remove prefix 'v'
     target = rootPkgMeta.devDependencies.electron.replace(/^.*?(\d+.+\d).*/, '$1')
@@ -108,26 +119,31 @@ task('install', () => {
     const localPath = 'build/Release'
     fs.rmdirSync(path.join(__dirname, localPath), { recursive: true })
     download(`${host}/${remotePath}/${packageName}`, path.join(__dirname, localPath), {
-      strip: 1,
       extract: true
     }).then(() => {
       logger.info(`[install] Download prebuilt binaries from ${host}/${remotePath}/${packageName}`)
       resolve()
     }).catch(err => {
+      let fetchUrl
+      if (targetPlatform === 'win32') {
+        fetchUrl = downloadUrl || nativeWinUrl
+      } else if (targetPlatform === 'darwin') {
+        fetchUrl = downloadUrl || nativeMacUrl
+      }
       logger.warn(`[install] Failed to download package from: ${host}/${remotePath}/${packageName}, error code: ${err.statusCode}`)
       logger.info('[install] Start build from local source file.')
-      const temporaryPath = path.join(__dirname, tempPath)
       const extractPath = path.join(__dirname, includePath)
       fetchWrapper({
-        fetchUrl: process.platform === 'win32' ? nativeWinUrl : nativeMacUrl,
-        temporaryPath,
+        fetchUrl,
         extractPath
       }).then(() => {
         return buildAddon({
           target,
           runtime
         })
-      }).then(() => resolve())
+      }).then(() => resolve()).catch((err) => {
+        reject(err)
+      })
     })
   })
 })

@@ -375,9 +375,22 @@ public:
      */
     virtual void onAudioHowling(bool howling);
 
+    /** 收到远端流的 SEI 内容回调。
+
+     当远端成功发送 SEI 后，本端会收到此回调。
+
+     * @param[in] uid 发送该 sei 的用户 id
+     * @param[in] data 接收到的 sei 数据
+     * @param[in] dataSize 接收到 sei 数据的大小
+     */
+    void onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize) override;
+
+public:
+    void onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
+
 private:
-    void Node_onError(int error_code, const char* msg);
-    void Node_onWarning(int warn_code, const char* msg);
+    void Node_onError(int error_code, const utf8_string& msg);
+    void Node_onWarning(int warn_code, const utf8_string& msg);
     void Node_onReleasedHwResources(nertc::NERtcErrorCode result);
     void Node_onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed);
     void Node_onConnectionStateChange(nertc::NERtcConnectionStateType state, nertc::NERtcReasonConnectionChangedType reason);
@@ -386,7 +399,7 @@ private:
     void Node_onLeaveChannel(nertc::NERtcErrorCode result);
     void Node_onDisconnect(nertc::NERtcErrorCode reason);
     void Node_onClientRoleChanged(nertc::NERtcClientRole oldRole, nertc::NERtcClientRole newRole);
-    void Node_onUserJoined(nertc::uid_t uid, const char * user_name);
+    void Node_onUserJoined(nertc::uid_t uid, const utf8_string& user_name);
     void Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason);
     void Node_onUserAudioStart(nertc::uid_t uid);
     void Node_onUserAudioStop(nertc::uid_t uid);
@@ -399,12 +412,12 @@ private:
     void Node_onUserVideoProfileUpdate(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile);
     void Node_onUserAudioMute(nertc::uid_t uid, bool mute);
     void Node_onUserVideoMute(nertc::uid_t uid, bool mute);
-    void Node_onAudioDeviceStateChanged(const char device_id[kNERtcMaxDeviceIDLength],
+    void Node_onAudioDeviceStateChanged(const utf8_string& device_id,
         nertc::NERtcAudioDeviceType device_type,
         nertc::NERtcAudioDeviceState device_state);
-    void Node_onAudioDefaultDeviceChanged(const char device_id[kNERtcMaxDeviceIDLength],
+    void Node_onAudioDefaultDeviceChanged(const utf8_string& device_id,
         nertc::NERtcAudioDeviceType device_type);
-    void Node_onVideoDeviceStateChanged(const char device_id[kNERtcMaxDeviceIDLength],
+    void Node_onVideoDeviceStateChanged(const utf8_string& device_id,
         nertc::NERtcVideoDeviceType device_type,
         nertc::NERtcVideoDeviceState device_state);
     void Node_onFirstAudioDataReceived(nertc::uid_t uid);
@@ -424,11 +437,13 @@ private:
     void Node_onAudioEffectFinished(uint32_t effect_id);
     void Node_onLocalAudioVolumeIndication(int volume);
     void Node_onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume);
-    void Node_onAddLiveStreamTask(const char* task_id, const char* url, int error_code);
-    void Node_onUpdateLiveStreamTask(const char* task_id, const char* url, int error_code);
-    void Node_onRemoveLiveStreamTask(const char* task_id, int error_code);
-    void Node_onLiveStreamState(const char* task_id, const char* url, nertc::NERtcLiveStreamStateCode state); 
+    void Node_onAddLiveStreamTask(const utf8_string& task_id, const utf8_string& url, int error_code);
+    void Node_onUpdateLiveStreamTask(const utf8_string& task_id, const utf8_string& url, int error_code);
+    void Node_onRemoveLiveStreamTask(const utf8_string& task_id, int error_code);
+    void Node_onLiveStreamState(const utf8_string& task_id, const utf8_string& url, nertc::NERtcLiveStreamStateCode state); 
     void Node_onAudioHowling(bool howling);
+    void Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize);
+    void Node_onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
 };
 
 class NertcNodeRtcMediaStatsHandler : public nim_node::EventHandler, public nertc::IRtcMediaStatsObserver

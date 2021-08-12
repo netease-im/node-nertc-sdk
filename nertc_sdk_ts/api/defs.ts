@@ -154,6 +154,7 @@ export enum NERtcVideoProfileType
     kNERtcVideoProfileHD1080P = 4,      /**< 1920x1080, 30fps */
     kNERtcVideoProfileNone = 5,
     kNERtcVideoProfileMAX = kNERtcVideoProfileHD1080P,
+    kNERtcVideoProfileFake = 6, /**< FakeVideo标识，仅在回调中显示。请勿主动设置，否则 SDK 会按照STANDARD处理。 当远端在纯音频状态发送 SEI 时，本端将会收到远端的onUserVideoStart回调，其中 max_profile 参数为kNERtcVideoProfileFake ， 表示对端发送 16*16 的FakeVideo，此时如果本端需要接收远端的SEI信息，只需要订阅一下远端的视频即可，无须设置远端画布。*/
 }
 
 export enum NERtcVideoScalingMode {
@@ -176,12 +177,13 @@ export interface NERtcVideoCanvas {
 }
 
 export enum NERtcAudioProfileType {
-    kNERtcAudioProfileDefault = 0,			    /**< 0: 默认设置。Speech场景下为 kNERtcAudioProfileStandard，Music场景下为 kNERtcAudioProfileHighQuality */
+    kNERtcAudioProfileDefault = 0,			    /**< 0: 默认设置。Speech场景下为 kNERtcAudioProfileStandardExtend，Music场景下为 kNERtcAudioProfileHighQuality */
     kNERtcAudioProfileStandard = 1,			    /**< 1: 普通质量的音频编码，16000Hz，20Kbps */
-    kNERtcAudioProfileMiddleQuality = 2,		/**< 2: 中等质量的音频编码，48000Hz，32Kbps */
-    kNERtcAudioProfileMiddleQualityStereo = 3,  /**< 3: 中等质量的立体声编码，48000Hz * 2，64Kbps  */
-    kNERtcAudioProfileHighQuality = 4,          /**< 4: 高质量的音频编码，48000Hz，64Kbps  */
-    kNERtcAudioProfileHighQualityStereo = 5,    /**< 5: 高质量的立体声编码，48000Hz * 2，128Kbps  */
+    kNERtcAudioProfileStandardExtend = 2,       /**< 2: 普通质量的音频编码，16000Hz，32Kbps */
+    kNERtcAudioProfileMiddleQuality = 3,		/**< 3: 中等质量的音频编码，48000Hz，32Kbps */
+    kNERtcAudioProfileMiddleQualityStereo = 4,  /**< 4: 中等质量的立体声编码，48000Hz * 2，64Kbps  */
+    kNERtcAudioProfileHighQuality = 5,          /**< 5: 高质量的音频编码，48000Hz，64Kbps  */
+    kNERtcAudioProfileHighQualityStereo = 6,    /**< 6: 高质量的立体声编码，48000Hz * 2，128Kbps  */
 }
 
 export enum NERtcAudioScenarioType {
@@ -206,6 +208,7 @@ export enum NERtcVideoFramerateType {
     kNERtcVideoFramerateFps_15      = 15,   /**< 15帧每秒 */
     kNERtcVideoFramerateFps_24      = 24,   /**< 24帧每秒 */
     kNERtcVideoFramerateFps_30      = 30,   /**< 30帧每秒 */
+    kNERtcVideoFramerateFps_60      = 60,   /**< 60帧每秒 */
 }
 
 /** @enum NERtcDegradationPreference 视频编码策略。*/
@@ -321,6 +324,21 @@ export enum NERtcLiveStreamVideoScaleMode
     kNERtcLsModeVideoScaleCropFill = 1, /**< 1: 视频尺寸等比缩放。优先保证视窗被填满。因视频尺寸与显示视窗尺寸不一致而多出的视频将被截掉。*/
 }
 
+/** 直播推流音频采样率 */
+export enum NERtcLiveStreamAudioSampleRate
+{
+    kNERtcLiveStreamAudioSampleRate32000 = 32000, /**< 采样率为 32 kHz。*/
+    kNERtcLiveStreamAudioSampleRate44100 = 44100, /**< 采样率为 44.1 kHz。*/
+    kNERtcLiveStreamAudioSampleRate48000 = 48000  /**< （默认）采样率为 48 kHz。*/
+}
+
+/** 直播推流音频编码规格 */
+export enum NERtcLiveStreamAudioCodecProfile
+{
+    kNERtcLiveStreamAudioCodecProfileLCAAC = 0, /**< （默认）LC-AAC 规格，表示基本音频编码规格。*/
+    kNERtcLiveStreamAudioCodecProfileHEAAC = 1  /**< HE-AAC 规格，表示高效音频编码规格。*/
+}
+
 /** 直播成员布局 */
 export interface NERtcLiveStreamUserTranscoding {
     uid: number;                      /**< 用户id */
@@ -352,14 +370,23 @@ export interface NERtcLiveStreamLayout {
     bg_image: NERtcLiveStreamImageInfo;     /**< 背景图信息 */
 }
 
+export interface NERtcLiveConfig {
+    single_video_passthrough: boolean;  /**< 单路视频透传开关，默认为关闭状态，开启后，如果房间中只有一路视频流输入， 则不对输入视频流进行转码，不遵循转码布局，直接推流 CDN，如果有多个房间成员视频流混合为一路流，则该设置失效，并在恢复为一个成员画面（单路流）时也不会恢复。*/
+    audio_bitrate: number;              /**< 音频推流码率，单位为 kbps，取值范围为 10~192，语音场景建议设置为 64 及以上码率，音乐场景建议设置为 128 及以上码率。 */
+    sample_rate: NERtcLiveStreamAudioSampleRate; /**< 音频推流采样率。单位为Hz。默认为 kNERtcLiveStreamAudioSampleRate48000，即采样率为 48 kHz。 */
+    channels: number;                   /**< 音频推流声道数，默认值为 2 双声道。 */
+    audio_codec_profile: NERtcLiveStreamAudioCodecProfile /**< 音频编码规格。默认值 NERtcLiveStreamAudioCodecProfileLCAAC，普通编码规格，0: LC-AAC 规格，表示基本音频编码规格，1: HE-AAC 规格，表示高效音频编码规格 */
+}
+
 /** 直播推流任务的配置项。*/
 export interface NERtcLiveStreamTaskInfo
 {
-    task_id: String;    /**< 推流任务ID，为推流任务的唯一标识，用于过程中增删任务操作 < 64 chars*/
-    stream_url: String;    /**< 直播推流地址 <256 chars */
-    server_record_enabled: Boolean;             /**< 服务器录制功能是否开启 */
-    ls_mode: NERtcLiveStreamMode;            /**< 直播推流模式，NERtcLiveStreamMode */
-    layout: NERtcLiveStreamLayout;           /**< 视频布局 */
+    task_id: String;                /**< 推流任务ID，为推流任务的唯一标识，用于过程中增删任务操作 < 64 chars*/
+    stream_url: String;             /**< 直播推流地址 <256 chars */
+    server_record_enabled: Boolean; /**< 服务器录制功能是否开启 */
+    ls_mode: NERtcLiveStreamMode;   /**< 直播推流模式，NERtcLiveStreamMode */
+    layout: NERtcLiveStreamLayout;  /**< 视频布局 */
+    config: NERtcLiveConfig;        /**< 音视频流编码参数等设置。详细信息请参考 NERtcLiveConfig */
 }
 
 /** 音频设备链接类型。*/
@@ -401,6 +428,23 @@ export enum NERtcClientRole
 {
     kNERtcClientRoleBroadcaster     = 0,            /**< 主播 */
     kNERtcClientRoleAudience        = 1,            /**< 观众 */
+}
+
+/** SEI发送的流通道类型 */
+export enum NERtcStreamChannelType {
+    kNERtcStreamChannelTypeMainStream   = 0, /**< 主流通道 */
+    kNERtcStreamChannelTypeSubStream    = 1, /**< 辅流通道 */
+}
+
+export interface NERtcPullExternalAudioFrameCb
+{
+    (data: ArrayBuffer): void
+}
+
+/** 音频流类型，目前同时支持音频两路流：主流和辅流 */
+export enum NERtcAudioStreamType {
+    kNERtcAudioStreamMain = 0,  /**音频流主流*/
+    kNERtcAudioStreamSub  = 1,  /**音频流辅流*/
 }
 
 export interface NERtcEngineAPI {
@@ -501,15 +545,38 @@ export interface NERtcEngineAPI {
     setupSubStreamVideoCanvas(uid: number, enabled: Boolean): number;
     subscribeRemoteVideoSubStream(uid: number, sub: boolean): number;
 
+    //sc
+    enumerateScreenCaptureSourceInfo(thumbWidth: number, thumbHeight: number, iconWidth: number, iconHeight: number): Array<Object>;
+    startSystemAudioLoopbackCapture(): number;
+    stopSystemAudioLoopbackCapture(): number;
+    setSystemAudioLoopbackCaptureVolume(volume: number): number;
+
+    // 4.0.x
+    sendSEIMsg(data: ArrayBuffer): number;
+    sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType): number;
+    setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number;
+    pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number;
+
+    // 4.1.1
+    setAudioEffectPreset(type: NERtcVoiceChangerType): number;
+    setVoiceBeautifierPreset(type: NERtcVoiceBeautifierType): number;
+    setLocalVoicePitch(pitch: number): number;
+    setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
+
+    // 4.1.110
+    setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
+    subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
+    enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
+    enableLoopbackRecording(enable: boolean, deviceName: String): number;
+    adjustLoopbackRecordingSignalVolume(volume: number): number;
+    adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
+
     //TODO
     // setMixedAudioFrameParameters(samplerate: number): number;
     // setExternalVideoSource(enabled: boolean): number;
     //pushExternalVideoFrame
     // setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
     //pushExternalAudioFrame
-
-    //
-    enumerateWindows(): Array<{id: number, name: String}>;
 }
 
 /** 通话相关的统计信息。*/
@@ -670,11 +737,24 @@ export enum NERtcAudioMixingState
 */
 export enum NERtcAudioMixingErrorCode
 {
-    kNERtcAudioMixingErrorOK            = 0,      			/**< 没有错误。*/
-    kNERtcAudioMixingErrorFatal         = 1,      			/**< 通用错误。*/
-    kNERtcAudioMixingErrorCanNotOpen    = 100,      		/**< 音乐文件打开出错。*/
-    //kNERtcAudioMixingErrorTooFrequentCall = 101,      	/**< 音乐文件打开太频繁。*/
-    //kNERtcAudioMixingErrorInterruptedEOF= 102,      		/**< 音乐文件播放中断。*/
+    kNERtcAudioMixingErrorOK            = 0,        /**< 没有错误。*/
+    kNERtcAudioMixingErrorFatal         = 1,        /**< 通用错误。*/
+	kNERtcAudioMixingErrorCanNotOpen,               /**< 伴音不能正常打开*/
+	kNERtcAudioMixingErrorDecode,                   /**<音频解码错误*/
+	kNERtcAudioMixingErrorInterrupt,                /**<操作中断码*/
+	kNERtcAudioMixingErrorHttpNotFound,             /**<404 file not found，only for http / https*/
+	kNERtcAudioMixingErrorOpen,                     /**<打开流 / 文件失败*/
+	kNERtcAudioMixingErrorNInfo,                    /**<获取解码信息失败 / 超时*/
+	kNERtcAudioMixingErrorNStream,                  /**<无音频流*/
+	kNERtcAudioMixingErrorNCodec,                   /**<无解码器*/
+	kNERtcAudioMixingErrorNMem,                     /**<无内存*/
+	kNERtcAudioMixingErrorCodecOpen,                /**<解码器打开失败 / 超时*/
+	kNERtcAudioMixingErrorInvalidInfo,              /**<无效音频参数（声道、采样率）*/
+	kNERtcAudioMixingErrorOpenTimeout,              /**<打开流 / 文件超时*/
+	kNERtcAudioMixingErrorIoTimeout,                /**<网络io超时*/
+	kNERtcAudioMixingErrorIo,                       /**<网络io错误*/
+    //kNERtcAudioMixingErrorTooFrequentCall = 101,  /**< 音乐文件打开太频繁。*/
+    //kNERtcAudioMixingErrorInterruptedEOF= 102,    /**< 音乐文件播放中断。*/
 }
 
 /** 声音音量信息。一个数组，包含每个说话者的用户 ID 和音量信息。*/
@@ -701,4 +781,49 @@ export enum NERtcMediaStatsEventName {
 	LocalVideoStats = "onLocalVideoStats",	/**< 本地视频流统计信息回调, 每 2 秒触发一次 */
 	RemoteVideoStats = "onRemoteVideoStats",	/**< 通话中远端视频流的统计信息回调, 每 2 秒触发一次 */
 	NetworkQuality = "onNetworkQuality",	/**< 通话中每个用户的网络上下行质量报告回调, 每 2 秒触发一次, 只上报状态有变更的成员 */
+}
+
+/** 4.1.1 */
+
+/** 变声 预设值 */
+export enum NERtcVoiceChangerType {
+    kNERtcVoiceChangerOff           = 0,    /**< 默认关闭 */
+    kNERtcVoiceChangerRobot         = 1,    /**< 机器人 */
+    kNERtcVoiceChangerGaint         = 2,    /**< 巨人 */
+    kNERtcVoiceChangerHorror        = 3,    /**< 恐怖 */
+    kNERtcVoiceChangerMature        = 4,    /**< 成熟 */
+    kNERtcVoiceChangerManToWoman    = 5,    /**< 男变女 */
+    kNERtcVoiceChangerWomanToMan    = 6,    /**< 女变男 */
+    kNERtcVoiceChangerManToLoli     = 7,    /**< 男变萝莉 */
+    kNERtcVoiceChangerWomanToLoli   = 8     /**< 女变萝莉 */
+}
+
+/** 预设的美声效果 */
+export enum NERtcVoiceBeautifierType {
+    kNERtcVoiceBeautifierOff = 0,             /**< 默认关闭 */
+    kNERtcVoiceBeautifierMuffled = 1,         /**< 低沉 */
+    kNERtcVoiceBeautifierMellow = 2,          /**< 圆润 */
+    kNERtcVoiceBeautifierClear = 3,           /**< 清澈 */
+    kNERtcVoiceBeautifierMagnetic = 4,        /**< 磁性 */
+    kNERtcVoiceBeautifierRecordingstudio = 5, /**< 录音棚 */
+    kNERtcVoiceBeautifierNature = 6,          /**< 天籁 */
+    kNERtcVoiceBeautifierKTV = 7,             /**< KTV */
+    kNERtcVoiceBeautifierRemote = 8,          /**< 悠远 */
+    kNERtcVoiceBeautifierChurch = 9,          /**< 教堂 */
+    kNERtcVoiceBeautifierBedroom = 10,        /**< 卧室 */
+    kNERtcVoiceBeautifierLive = 11,           /**< Live */
+}
+
+/** 音效均衡波段的中心频率 */
+export enum NERtcVoiceEqualizationBand {
+    kNERtcVoiceEqualizationBand_31  = 0, /**<  31 Hz */
+    kNERtcVoiceEqualizationBand_62  = 1, /**<  62 Hz */
+    kNERtcVoiceEqualizationBand_125 = 2, /**<  125 Hz */
+    kNERtcVoiceEqualizationBand_250 = 3, /**<  250 Hz */
+    kNERtcVoiceEqualizationBand_500 = 4, /**<  500 Hz */
+    kNERtcVoiceEqualizationBand_1K  = 5, /**<  1 kHz */
+    kNERtcVoiceEqualizationBand_2K  = 6, /**<  2 kHz */
+    kNERtcVoiceEqualizationBand_4K  = 7, /**<  4 kHz */
+    kNERtcVoiceEqualizationBand_8K  = 8, /**<  8 kHz */
+    kNERtcVoiceEqualizationBand_16K = 9, /**<  16 kHz */
 }

@@ -6,15 +6,17 @@ namespace nertc_node
 {
 void NertcNodeEventHandler::onError(int error_code, const char* msg)
 {
+    utf8_string str_msg = msg;
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeEventHandler::GetInstance()->Node_onError(error_code, msg);
+        NertcNodeEventHandler::GetInstance()->Node_onError(error_code, str_msg);
     });
 }
 
 void NertcNodeEventHandler::onWarning(int warn_code, const char* msg)
 {
+    utf8_string str_msg = msg;
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeEventHandler::GetInstance()->Node_onWarning(warn_code, msg);
+        NertcNodeEventHandler::GetInstance()->Node_onWarning(warn_code, str_msg);
     });    
 }
 
@@ -76,8 +78,9 @@ void NertcNodeEventHandler::onClientRoleChanged(nertc::NERtcClientRole oldRole, 
 
 void NertcNodeEventHandler::onUserJoined(nertc::uid_t uid, const char * user_name)
 {
+    utf8_string str_user_name = user_name;
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeEventHandler::GetInstance()->Node_onUserJoined(uid, user_name);
+        NertcNodeEventHandler::GetInstance()->Node_onUserJoined(uid, str_user_name);
     });         
 }
 
@@ -116,12 +119,12 @@ void NertcNodeEventHandler::onUserVideoStop(nertc::uid_t uid)
     });     
 }
 
-void NertcNodeEventHandler::Node_onError(int error_code, const char* msg)
+void NertcNodeEventHandler::Node_onError(int error_code, const utf8_string& msg)
 {
     Isolate *isolate = Isolate::GetCurrent();
     HandleScope scope(isolate);
     const unsigned argc = 2;
-    Local<Value> argv[argc] = { nim_napi_new_int32(isolate, error_code), nim_napi_new_utf8string(isolate, msg) };
+    Local<Value> argv[argc] = { nim_napi_new_int32(isolate, error_code), nim_napi_new_utf8string(isolate, msg.c_str()) };
     auto it = callbacks_.find("onError");
     if (it != callbacks_.end())
     {
@@ -129,12 +132,12 @@ void NertcNodeEventHandler::Node_onError(int error_code, const char* msg)
     }   
 }
 
-void NertcNodeEventHandler::Node_onWarning(int warn_code, const char* msg)
+void NertcNodeEventHandler::Node_onWarning(int warn_code, const utf8_string& msg)
 {
     Isolate *isolate = Isolate::GetCurrent();
     HandleScope scope(isolate);
     const unsigned argc = 2;
-    Local<Value> argv[argc] = { nim_napi_new_int32(isolate, warn_code), nim_napi_new_utf8string(isolate, msg) };
+    Local<Value> argv[argc] = { nim_napi_new_int32(isolate, warn_code), nim_napi_new_utf8string(isolate, msg.c_str()) };
     auto it = callbacks_.find("onWarning");
     if (it != callbacks_.end())
     {
@@ -254,12 +257,15 @@ void NertcNodeEventHandler::Node_onClientRoleChanged(nertc::NERtcClientRole oldR
     }       
 }
 
-void NertcNodeEventHandler::Node_onUserJoined(nertc::uid_t uid, const char * user_name)
+void NertcNodeEventHandler::Node_onUserJoined(nertc::uid_t uid, const utf8_string& user_name)
 {
     Isolate *isolate = Isolate::GetCurrent();
     HandleScope scope(isolate);
     const unsigned argc = 2;
-    Local<Value> argv[argc] = { nim_napi_new_int64(isolate, uid), nim_napi_new_utf8string(isolate, user_name) };
+    Local<Value> argv[argc] = {
+        nim_napi_new_int64(isolate, uid),
+        nim_napi_new_utf8string(isolate, user_name.c_str())
+    };
     auto it = callbacks_.find("onUserJoined");
     if (it != callbacks_.end())
     {
@@ -562,16 +568,18 @@ void NertcNodeEventHandler::onAudioDeviceStateChanged(const char device_id[kNERt
         nertc::NERtcAudioDeviceType device_type,
         nertc::NERtcAudioDeviceState device_state)
 {
+    utf8_string str_device_id = device_id;
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeEventHandler::GetInstance()->Node_onAudioDeviceStateChanged(device_id, device_type, device_state);
+        NertcNodeEventHandler::GetInstance()->Node_onAudioDeviceStateChanged(str_device_id, device_type, device_state);
     });
 }
 
 void NertcNodeEventHandler::onAudioDefaultDeviceChanged(const char device_id[kNERtcMaxDeviceIDLength],
         nertc::NERtcAudioDeviceType device_type)
 {
+    utf8_string str_device_id = device_id;
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeEventHandler::GetInstance()->Node_onAudioDefaultDeviceChanged(device_id, device_type);
+        NertcNodeEventHandler::GetInstance()->Node_onAudioDefaultDeviceChanged(str_device_id, device_type);
     });
 }
 
@@ -579,8 +587,9 @@ void NertcNodeEventHandler::onVideoDeviceStateChanged(const char device_id[kNERt
         nertc::NERtcVideoDeviceType device_type,
         nertc::NERtcVideoDeviceState device_state)
 {
+    utf8_string str_device_id = device_id;
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeEventHandler::GetInstance()->Node_onVideoDeviceStateChanged(device_id, device_type, device_state);
+        NertcNodeEventHandler::GetInstance()->Node_onVideoDeviceStateChanged(str_device_id, device_type, device_state);
     });
 }
 
@@ -668,22 +677,27 @@ void NertcNodeEventHandler::onAddLiveStreamTask(const char* task_id, const char*
 
 void NertcNodeEventHandler::onUpdateLiveStreamTask(const char* task_id, const char* url, int error_code)
 {
+    utf8_string str_task_id = task_id;
+    utf8_string str_url = url;
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeEventHandler::GetInstance()->Node_onUpdateLiveStreamTask(task_id, url, error_code);
+        NertcNodeEventHandler::GetInstance()->Node_onUpdateLiveStreamTask(str_task_id, str_url, error_code);
     });
 }
 
 void NertcNodeEventHandler::onRemoveLiveStreamTask(const char* task_id, int error_code)
 {
+    utf8_string str_task_id = task_id;
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeEventHandler::GetInstance()->Node_onRemoveLiveStreamTask(task_id, error_code);
+        NertcNodeEventHandler::GetInstance()->Node_onRemoveLiveStreamTask(str_task_id, error_code);
     });
 }
 
 void NertcNodeEventHandler::onLiveStreamState(const char* task_id, const char* url, nertc::NERtcLiveStreamStateCode state)
 {
+    utf8_string str_task_id = task_id;
+    utf8_string str_url = url;
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeEventHandler::GetInstance()->Node_onLiveStreamState(task_id, url, state);
+        NertcNodeEventHandler::GetInstance()->Node_onLiveStreamState(str_task_id, str_url, state);
     });
 }
  
@@ -691,6 +705,23 @@ void NertcNodeEventHandler::onAudioHowling(bool howling)
 {
     nim_node::node_async_call::async_call([=]() {
         NertcNodeEventHandler::GetInstance()->Node_onAudioHowling(howling);
+    });
+}
+
+void NertcNodeEventHandler::onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize)
+{
+    auto* copied = new char[dataSize];
+    memset(copied, 0, dataSize);
+    memcpy(copied, data, dataSize);
+	nim_node::node_async_call::async_call([=]() {
+		NertcNodeEventHandler::GetInstance()->Node_onRecvSEIMsg(uid, copied, dataSize);
+	});
+}
+
+void NertcNodeEventHandler::onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length)
+{
+    nim_node::node_async_call::async_call([=]() {
+        NertcNodeEventHandler::GetInstance()->Node_onPullExternalAudioFrame(bcb, data, length);
     });
 }
 
@@ -759,14 +790,18 @@ void NertcNodeEventHandler::Node_onUserVideoMute(nertc::uid_t uid, bool mute)
     }
 }
 
-void NertcNodeEventHandler::Node_onAudioDeviceStateChanged(const char device_id[kNERtcMaxDeviceIDLength],
+void NertcNodeEventHandler::Node_onAudioDeviceStateChanged(const utf8_string& device_id,
         nertc::NERtcAudioDeviceType device_type,
         nertc::NERtcAudioDeviceState device_state)
 {
     Isolate *isolate = Isolate::GetCurrent();
     HandleScope scope(isolate);
     const unsigned argc = 3;
-    Local<Value> argv[argc] = { nim_napi_new_utf8string(isolate, (const char*)device_id), nim_napi_new_uint32(isolate, device_type), nim_napi_new_uint32(isolate, device_state) };
+    Local<Value> argv[argc] = {
+        nim_napi_new_utf8string(isolate, device_id.c_str()),
+        nim_napi_new_uint32(isolate, device_type),
+        nim_napi_new_uint32(isolate, device_state)
+    };
     auto it = callbacks_.find("onAudioDeviceStateChanged");
     if (it != callbacks_.end())
     {
@@ -774,13 +809,16 @@ void NertcNodeEventHandler::Node_onAudioDeviceStateChanged(const char device_id[
     }
 }
 
-void NertcNodeEventHandler::Node_onAudioDefaultDeviceChanged(const char device_id[kNERtcMaxDeviceIDLength],
+void NertcNodeEventHandler::Node_onAudioDefaultDeviceChanged(const utf8_string& device_id,
         nertc::NERtcAudioDeviceType device_type)
 {
     Isolate *isolate = Isolate::GetCurrent();
     HandleScope scope(isolate);
     const unsigned argc = 2;
-    Local<Value> argv[argc] = { nim_napi_new_utf8string(isolate, (const char*)device_id), nim_napi_new_uint32(isolate, device_type) };
+    Local<Value> argv[argc] = {
+        nim_napi_new_utf8string(isolate, device_id.c_str()),
+        nim_napi_new_uint32(isolate, device_type)
+    };
     auto it = callbacks_.find("onAudioDefaultDeviceChanged");
     if (it != callbacks_.end())
     {
@@ -788,14 +826,17 @@ void NertcNodeEventHandler::Node_onAudioDefaultDeviceChanged(const char device_i
     }
 }
 
-void NertcNodeEventHandler::Node_onVideoDeviceStateChanged(const char device_id[kNERtcMaxDeviceIDLength],
+void NertcNodeEventHandler::Node_onVideoDeviceStateChanged(const utf8_string& device_id,
         nertc::NERtcVideoDeviceType device_type,
         nertc::NERtcVideoDeviceState device_state)
 {
     Isolate *isolate = Isolate::GetCurrent();
     HandleScope scope(isolate);
     const unsigned argc = 3;
-    Local<Value> argv[argc] = { nim_napi_new_utf8string(isolate, (const char*)device_id), nim_napi_new_uint32(isolate, device_type), nim_napi_new_uint32(isolate, device_state) };
+    Local<Value> argv[argc] = {
+        nim_napi_new_utf8string(isolate, device_id.c_str()),
+        nim_napi_new_uint32(isolate, device_type), nim_napi_new_uint32(isolate, device_state)
+    };
     auto it = callbacks_.find("onVideoDeviceStateChanged");
     if (it != callbacks_.end())
     {
@@ -939,12 +980,15 @@ void NertcNodeEventHandler::Node_onRemoteAudioVolumeIndication(const nertc::NERt
     }
 }
 
-void NertcNodeEventHandler::Node_onAddLiveStreamTask(const char* task_id, const char* url, int error_code)
+void NertcNodeEventHandler::Node_onAddLiveStreamTask(const utf8_string& task_id, const utf8_string& url, int error_code)
 {
     Isolate *isolate = Isolate::GetCurrent();
     HandleScope scope(isolate);
     const unsigned argc = 3;
-    Local<Value> argv[argc] = { nim_napi_new_utf8string(isolate, task_id), nim_napi_new_utf8string(isolate, url), nim_napi_new_int32(isolate, error_code) };
+    Local<Value> argv[argc] = {
+        nim_napi_new_utf8string(isolate, task_id.c_str()),
+        nim_napi_new_utf8string(isolate, url.c_str()), nim_napi_new_int32(isolate, error_code)
+    };
     auto it = callbacks_.find("onAddLiveStreamTask");
     if (it != callbacks_.end())
     {
@@ -952,12 +996,16 @@ void NertcNodeEventHandler::Node_onAddLiveStreamTask(const char* task_id, const 
     }
 }
 
-void NertcNodeEventHandler::Node_onUpdateLiveStreamTask(const char* task_id, const char* url, int error_code)
+void NertcNodeEventHandler::Node_onUpdateLiveStreamTask(const utf8_string& task_id, const utf8_string& url, int error_code)
 {
     Isolate *isolate = Isolate::GetCurrent();
     HandleScope scope(isolate);
     const unsigned argc = 3;
-    Local<Value> argv[argc] = { nim_napi_new_utf8string(isolate, task_id), nim_napi_new_utf8string(isolate, url), nim_napi_new_int32(isolate, error_code) };
+    Local<Value> argv[argc] = {
+        nim_napi_new_utf8string(isolate, task_id.c_str()),
+        nim_napi_new_utf8string(isolate, url.c_str()),
+        nim_napi_new_int32(isolate, error_code)
+    };
     auto it = callbacks_.find("onUpdateLiveStreamTask");
     if (it != callbacks_.end())
     {
@@ -965,12 +1013,15 @@ void NertcNodeEventHandler::Node_onUpdateLiveStreamTask(const char* task_id, con
     }
 }
 
-void NertcNodeEventHandler::Node_onRemoveLiveStreamTask(const char* task_id, int error_code)
+void NertcNodeEventHandler::Node_onRemoveLiveStreamTask(const utf8_string& task_id, int error_code)
 {
     Isolate *isolate = Isolate::GetCurrent();
     HandleScope scope(isolate);
     const unsigned argc = 2;
-    Local<Value> argv[argc] = { nim_napi_new_utf8string(isolate, task_id), nim_napi_new_int32(isolate, error_code) };
+    Local<Value> argv[argc] = {
+        nim_napi_new_utf8string(isolate, task_id.c_str()),
+        nim_napi_new_int32(isolate, error_code)
+    };
     auto it = callbacks_.find("onRemoveLiveStreamTask");
     if (it != callbacks_.end())
     {
@@ -978,12 +1029,16 @@ void NertcNodeEventHandler::Node_onRemoveLiveStreamTask(const char* task_id, int
     }
 }
 
-void NertcNodeEventHandler::Node_onLiveStreamState(const char* task_id, const char* url, nertc::NERtcLiveStreamStateCode state)
+void NertcNodeEventHandler::Node_onLiveStreamState(const utf8_string& task_id, const utf8_string& url, nertc::NERtcLiveStreamStateCode state)
 {
     Isolate *isolate = Isolate::GetCurrent();
     HandleScope scope(isolate);
     const unsigned argc = 3;
-    Local<Value> argv[argc] = { nim_napi_new_utf8string(isolate, task_id), nim_napi_new_utf8string(isolate, url), nim_napi_new_uint32(isolate, state) };
+    Local<Value> argv[argc] = {
+        nim_napi_new_utf8string(isolate, task_id.c_str()),
+        nim_napi_new_utf8string(isolate, url.c_str()),
+        nim_napi_new_uint32(isolate, state)
+    };
     auto it = callbacks_.find("onLiveStreamState");
     if (it != callbacks_.end())
     {
@@ -1004,5 +1059,49 @@ void NertcNodeEventHandler::Node_onAudioHowling(bool howling)
     }
 }
 
+
+void NertcNodeEventHandler::Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t length)
+{
+	Isolate* isolate = Isolate::GetCurrent();
+	HandleScope scope(isolate);
+	const unsigned argc = 2;
+
+#if 0
+    std::unique_ptr<v8::BackingStore> backing = v8::ArrayBuffer::NewBackingStore(
+        (void*)data, length, [](void* data, size_t length, void* deleter_data) {
+            delete[] data;
+        }, nullptr);
+
+    Local<v8::ArrayBuffer> message_buffer = ArrayBuffer::New(
+        isolate, 
+        std::move(backing)
+    );
+#else
+    Local<ArrayBuffer> buffer = ArrayBuffer::New(isolate, length);
+    memcpy(buffer->GetContents().Data(), data, length);
+    if (data)
+    {
+        delete[] data;
+        data = nullptr;
+    }
+#endif
+    
+	Local<Value> argv[argc] = { nim_napi_new_uint64(isolate, uid), buffer };
+	auto it = callbacks_.find("onReceSEIMsg");
+	if (it != callbacks_.end())
+	{
+		it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
+	}
+}
+
+void NertcNodeEventHandler::Node_onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length)
+{
+    Isolate* isolate = Isolate::GetCurrent();
+    const unsigned argc = 1;
+    Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, data.get(), length);
+    Local<Value> argv[argc] = { buffer };
+    bcb->callback_.Get(isolate)->Call(isolate->GetCurrentContext(),
+        bcb->data_.Get(isolate), argc, argv);
+}
 
 }

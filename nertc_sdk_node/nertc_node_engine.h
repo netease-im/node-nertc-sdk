@@ -8,6 +8,9 @@
 #include <node_object_wrap.h>
 #include "../shared/sdk_helper/nim_node_helper.h"
 #include "nertc_node_engine_event_handler.h"
+#ifdef WIN32
+#include "../shared/util/windows_helper.h"
+#endif
 
 namespace nertc_node
 {
@@ -35,7 +38,7 @@ public:
     NIM_SDK_NODE_API(onVideoFrame);
     NIM_SDK_NODE_API(onEvent);
 
-    //3.9
+    // 3.9
     NIM_SDK_NODE_API(setClientRole);
     NIM_SDK_NODE_API(setupSubStreamVideoCanvas);
     NIM_SDK_NODE_API(subscribeRemoteVideoSubStream);
@@ -43,7 +46,27 @@ public:
     NIM_SDK_NODE_API(setExternalAudioSource);
     NIM_SDK_NODE_API(pushExternalAudioFrame);
 
-    //ex
+    // 4.0
+    NIM_SDK_NODE_API(sendSEIMsg);
+    NIM_SDK_NODE_API(sendSEIMsgEx);
+    NIM_SDK_NODE_API(setExternalAudioRender);
+    NIM_SDK_NODE_API(pullExternalAudioFrame);
+
+    // 4.1.1
+    NIM_SDK_NODE_API(setAudioEffectPreset);
+    NIM_SDK_NODE_API(setVoiceBeautifierPreset);
+    NIM_SDK_NODE_API(setLocalVoicePitch);
+    NIM_SDK_NODE_API(setLocalVoiceEqualization);
+
+    // 4.1.110
+    NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);
+    NIM_SDK_NODE_API(subscribeRemoteAudioSubStream);
+    NIM_SDK_NODE_API(enableLocalAudioStream);
+    NIM_SDK_NODE_API(enableLoopbackRecording);
+    NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);
+    NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);
+
+    // ex
     NIM_SDK_NODE_API(getConnectionState);
     NIM_SDK_NODE_API(muteLocalAudioStream);
     NIM_SDK_NODE_API(setAudioProfile);
@@ -101,7 +124,7 @@ public:
     NIM_SDK_NODE_API(updateLiveStreamTask);
     NIM_SDK_NODE_API(removeLiveStreamTask);
 
-    //adm
+    // adm
     NIM_SDK_NODE_API(enumerateRecordDevices);
     NIM_SDK_NODE_API(setRecordDevice);
     NIM_SDK_NODE_API(getRecordDevice);
@@ -125,10 +148,18 @@ public:
     NIM_SDK_NODE_API(startAudioDeviceLoopbackTest);
     NIM_SDK_NODE_API(stopAudioDeviceLoopbackTest);
 
-    //vdm
+    // vdm
     NIM_SDK_NODE_API(enumerateCaptureDevices);
     NIM_SDK_NODE_API(setDevice);
     NIM_SDK_NODE_API(getDevice);
+
+    // CUSTOM
+    NIM_SDK_NODE_API(enumerateScreenCaptureSourceInfo);
+
+    // screenshare with audio
+    NIM_SDK_NODE_API(startSystemAudioLoopbackCapture);
+    NIM_SDK_NODE_API(stopSystemAudioLoopbackCapture);
+    NIM_SDK_NODE_API(setSystemAudioLoopbackCaptureVolume);
 
 protected:
     NertcNodeEngine(Isolate *isolate);
@@ -140,6 +171,11 @@ private:
     nertc::IAudioDeviceManager *_adm = nullptr;
     nertc::IVideoDeviceManager *_vdm = nullptr;
     Isolate *isolate_;
+#ifdef WIN32
+    nertc_electron_util::WindowsHelpers *_windows_helper = nullptr;
+    std::unique_ptr<nertc_electron_util::WindowCaptureHelper> window_capture_helper_;
+    std::unique_ptr<nertc_electron_util::ScreenCaptureHelper> screen_capture_helper_;
+#endif
 };
 
 #define napi_get_native_this(args, native) \
