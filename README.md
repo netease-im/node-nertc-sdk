@@ -21,16 +21,17 @@
 
 |方法|功能描述|起始版本|
 |---|---|---|
-[onClientRoleChanged](NERtcEngine.html#onClientRoleChanged__anchor)|用户角色已切换回调。|V3.9.0
-[onJoinChannel](NERtcEngine.html#onJoinChannel__anchor)|加入房间回调。|V3.9.0
-[onRejoinChannel](NERtcEngine.html#onRejoinChannel__anchor)|重新加入房间回调。|V3.9.0
-[onLeaveChannel](NERtcEngine.html#onLeaveChannel__anchor)|离开房间回调。|V3.9.0
-[onUserJoined](NERtcEngine.html#onUserJoined__anchor)|远端用户加入当前房间回调。|V3.9.0
-[onUserLeft](NERtcEngine.html#onUserLeft__anchor)|远端用户离开当前房间回调。|V3.9.0
-[onDisconnect](NERtcEngine.html#onDisconnect__anchor)|服务器连接断开回调。|V3.9.0
-[onReconnectingStart](NERtcEngine.html#onReconnectingStart__anchor)|开始重连回调。|V3.9.0
-[onConnectionStateChange](NERtcEngine.html#onConnectionStateChange__anchor)|网络连接状态已改变回调。|V3.9.0
-[onReleasedHwResources](NERtcEngine.html#onReleasedHwResources__anchor)|通话结束设备资源释放回调。|V3.9.0
+[onClientRoleChanged](NERtcEngine.html#event:onClientRoleChanged__anchor)|用户角色已切换回调。|V3.9.0
+[onJoinChannel](NERtcEngine.html#event:onJoinChannel__anchor)|加入房间回调。|V3.9.0
+[onRejoinChannel](NERtcEngine.html#event:onRejoinChannel__anchor)|重新加入房间回调。|V3.9.0
+[onLeaveChannel](NERtcEngine.html#event:onLeaveChannel__anchor)|离开房间回调。|V3.9.0
+[onUserJoined](NERtcEngine.html#event:onUserJoined__anchor)|远端用户加入当前房间回调。|V3.9.0
+[onUserLeft](NERtcEngine.html#event:onUserLeft__anchor)|远端用户离开当前房间回调。|V3.9.0
+[onDisconnect](NERtcEngine.html#event:onDisconnect__anchor)|服务器连接断开回调。|V3.9.0
+[onReconnectingStart](NERtcEngine.html#event:onReconnectingStart__anchor)|开始重连回调。|V3.9.0
+[onConnectionStateChange](NERtcEngine.html#event:onConnectionStateChange__anchor)|网络连接状态已改变回调。|V3.9.0
+[onReleasedHwResources](NERtcEngine.html#event:onReleasedHwResources__anchor)|通话结束设备资源释放回调。|V3.9.0
+[onReceSEIMsg](NERtcEngine.html#event:onReceSEIMsg__anchor)|监听 SEI 数据回调|V4.1.110
 
 ### 音频管理
 
@@ -116,6 +117,7 @@
 [setupRemoteSubStreamVideoCanvas](NERtcEngine.html#setupRemoteSubStreamVideoCanvas__anchor)|设置远端的辅流视频回放画布|V3.9.0
 [subscribeRemoteVideoSubStream](NERtcEngine.html#subscribeRemoteVideoSubStream__anchor)|订阅或取消订阅远端的屏幕共享辅流视频，订阅之后才能接收远端的辅流视频数据|V3.9.0
 [setSubStreamRenderMode](NERtcEngine.html#setSubStreamRenderMode__anchor)|设置屏幕共享辅流视频渲染缩放模式|V3.9.0
+[enumerateScreenCaptureSourceInfo](NERtcEngine.html#enumerateScreenCaptureSourceInfo__anchor)|枚举屏幕分享源信息。|V4.1.110
 
 |事件|描述|起始版本|
 |---|---|---|
