@@ -1178,8 +1178,9 @@ declare class NERtcEngine extends EventEmitter {
     setSystemAudioLoopbackCaptureVolume(volume: number): number;
     /**
      * 发送媒体补充增强信息（SEI）。
+     * @since 4.1.110
      * <pre>
-     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onRecvSEIMsg 的回调获取 SEI 内容。
+     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onReceSEIMsg 的回调获取 SEI 内容。
      * - 调用时机：视频流（主流）开启后，可调用此函数。
      * - 数据长度限制： SEI 最大数据长度为 4096 字节，超限会发送失败。如果频繁发送大量数据会导致视频码率增大，可能会导致视频画质下降甚至卡顿。
      * - 发送频率限制：最高为视频发送的帧率，建议不超过 10 次/秒。
@@ -1198,8 +1199,9 @@ declare class NERtcEngine extends EventEmitter {
     sendSEIMsg(data: ArrayBuffer): number;
     /**
      * 发送媒体补充增强信息（SEI）。
+     * @since 4.1.110
      * <pre>
-     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onRecvSEIMsg 的回调获取 SEI 内容。
+     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onReceSEIMsg 的回调获取 SEI 内容。
      * - 调用时机：视频流（主流）开启后，可调用此函数。
      * - 数据长度限制： SEI 最大数据长度为 4096 字节，超限会发送失败。如果频繁发送大量数据会导致视频码率增大，可能会导致视频画质下降甚至卡顿。
      * - 发送频率限制：最高为视频发送的帧率，建议不超过 10 次/秒。
@@ -1223,6 +1225,7 @@ declare class NERtcEngine extends EventEmitter {
     sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType): number;
     /**
      * 拉取外部音频数据。
+     * @since 4.1.110
      * <pre>
      * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
      * <b>NOTE:</b>
@@ -1246,6 +1249,7 @@ declare class NERtcEngine extends EventEmitter {
     setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number;
     /**
      * 拉取外部音频数据。
+     * @since 4.1.110
      * <pre>
      * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
      * <b>NOTE:</b>
@@ -1288,6 +1292,16 @@ declare class NERtcEngine extends EventEmitter {
      * <pre>
      * - 0 推流带视频
      * - 1 推流纯音频
+     * </pre>
+     * @param {Object} info.config 音视频流编码参数等设置:
+     * @param {boolean} info.config.singleVideoPassThrough 音频编码规格。默认值为 NERtcLiveStreamAudioCodecProfileLCAAC 普通编码规格。
+     * @param {boolean} info.config.audioBitrate 音频推流码率。单位为 kbps，取值范围为 10~192。语音场景建议设置为 64 及以上码率，音乐场景建议设置为 128 及以上码率。
+     * @param {boolean} info.config.sampleRate 音频推流采样率。默认值为 NERtcLiveStreamAudioSampleRate48000 48K。
+     * @param {boolean} info.config.channels 音频推流声道数。1：单声道。2：（默认）双声道。
+     * @param {boolean} info.config.audioCodecProfile 音频编码规格。默认值为 NERtcLiveStreamAudioCodecProfileLCAAC 普通编码规格。
+     * <pre>
+     * - 0 HE-AAC 规格，表示高效音频编码规格。
+     * - 1 （默认）LC-AAC 规格，表示基本音频编码规格。
      * </pre>
      * @param {Object} info.layout 视频布局:
      * @param {number} info.layout.width 视频推流宽度
@@ -1729,6 +1743,7 @@ declare class NERtcEngine extends EventEmitter {
     enumerateVideoCaptureDevices(): Array<NERtcDevice>;
     /**
      * 枚举屏幕分享源信息。
+     * @since 4.1.110
      * @param {number} thumbWidth 缩略图宽度 px。
      * @param {number} thumbHeight 缩略图高度 px。
      * @param {number} iconWidth 图标宽度 px。
@@ -1739,6 +1754,7 @@ declare class NERtcEngine extends EventEmitter {
      * <table style="width:100%;">
      * <tr><th>Name</th><th>Type</th><th>Description</th></tr>
      * <tr><td>Object.sourceId</td><td>number</td><td>信息源ID</td></tr>
+     * <tr><td>Object.displayId</td><td>String</td><td>如果是屏幕设备则为屏幕 ID</td></tr>
      * <tr><td>Object.sourceName</td><td>String</td><td>信息源名称</td></tr>
      * <tr><td>Object.type</td><td>int</td><td>信息源类型:1-屏幕 2-窗口</td></tr>
      * <tr><td>Object.isMinimizeWindow</td><td>boolean</td><td>窗口是否最小化状态</td></tr>
@@ -1774,6 +1790,7 @@ declare class NERtcEngine extends EventEmitter {
     getVideoDevice(): String;
     /**
      * 设置 SDK 预设的人声的变声音效。
+     * @since 4.1.110
      * @param {number} type 预设的变声音效。默认关闭变声音效：
      * <pre>
      * - 0: 默认关闭
@@ -1795,6 +1812,7 @@ declare class NERtcEngine extends EventEmitter {
     setAudioEffectPreset(type: NERtcVoiceChangerType): number;
     /**
      * 设置 SDK 预设的美声效果。调用该方法可以为本地发流用户设置 SDK 预设的人声美声效果。
+     * @since 4.1.110
      * <pre>
      * <b>NOTE:</b>
      * - 通话结束后重置为默认关闭
@@ -1823,6 +1841,7 @@ declare class NERtcEngine extends EventEmitter {
     setVoiceBeautifierPreset(type: NERtcVoiceBeautifierType): number;
     /**
      * 设置本地语音音调。该方法改变本地说话人声音的音调。
+     * @since 4.1.110
      * <pre>
      * <b>NOTE:</b>
      * - 通话结束后该设置会重置，默认为 1.0。
@@ -1838,6 +1857,7 @@ declare class NERtcEngine extends EventEmitter {
     setLocalVoicePitch(pitch: number): number;
     /**
      * 设置本地语音音效均衡，即自定义设置本地人声均衡波段的中心频率。
+     * @since 4.1.110
      * <pre>
      * <b>NOTE:</b>
      * - 该方法在加入房间前后都能调用，通话结束后重置为默认关闭状态。
@@ -1865,6 +1885,7 @@ declare class NERtcEngine extends EventEmitter {
     setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
     /**
      * 设置远端用户音频流高优先级
+     * @since 4.1.110
      * <pre>
      * - 支持在音频自动订阅的情况下，设置某一个远端用户的音频为最高优先级，可以优先听到该用户的音频
      * </pre>
@@ -1880,6 +1901,7 @@ declare class NERtcEngine extends EventEmitter {
     setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
     /**
      * 取消或恢复订阅指定远端用户的音频辅流
+     * @since 4.1.110
      * <pre>
      * - 加入房间时，默认不订阅所有远端用户的音频辅流流，您可以通过此方法取消或恢复订阅指定远端用户的音频辅流。
      * <b>NOTE:</b>
@@ -1900,6 +1922,7 @@ declare class NERtcEngine extends EventEmitter {
     subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
     /**
      * 开关本地音频发送。
+     * @since 4.1.110
      * <pre>
      * - 该方法用于允许或禁止向网络发送本地音频流。
      * <b>NOTE:</b>
@@ -1917,6 +1940,7 @@ declare class NERtcEngine extends EventEmitter {
     enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
     /**
      * 开启声卡采集
+     * @since 4.1.110
      * <pre>
      * - 启用声卡采集功能后，声卡播放的声音会被合到本地音频流中，从而可以发送到远端。
      * <b>NOTE:</b>
@@ -1939,6 +1963,7 @@ declare class NERtcEngine extends EventEmitter {
     enableLoopbackRecording(enable: boolean, deviceName?: String): number;
     /**
      * 调节声卡采集信号音量。
+     * @since 4.1.110
      * <pre>
      * - 调用 {@link nertc::IRtcEngineEx::enableLoopbackRecording} "enableLoopbackRecording" 开启声卡采集后，你可以调用该方法调节声卡采集的信号音量。
      * </pre>
@@ -1952,6 +1977,7 @@ declare class NERtcEngine extends EventEmitter {
     adjustLoopbackRecordingSignalVolume(volume: number): number;
     /**
      * 调节本地播放的指定远端用户的指定流类型的信号音量
+     * @since 4.1.110
      * <pre>
      * - 加入房间后，您可以多次调用该方法设置本地播放的不同远端用户的音量；也可以反复调节本地播放的某个远端用户的音量。
      * <b>NOTE:</b>
