@@ -30,6 +30,9 @@ class GlRenderer {
     refreshCanvas() {
         return this.self.refreshCanvas();
     }
+    captureImage() {
+        return this.self.captureImage();
+    }
 }
 exports.GlRenderer = GlRenderer;
 class CustomRenderer {
@@ -53,6 +56,9 @@ class CustomRenderer {
         throw new Error('You have to declare your own custom render');
     }
     refreshCanvas() {
+        throw new Error('You have to declare your own custom render');
+    }
+    captureImage() {
         throw new Error('You have to declare your own custom render');
     }
 }

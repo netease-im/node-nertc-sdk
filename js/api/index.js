@@ -231,6 +231,14 @@ class NERtcEngine extends events_1.EventEmitter {
         }
     }
     /**
+     * 在指定画布上截图
+     * @param  {'local'|number} uid 要截图的 uid，本地视频为 local，远端用户为远端 uid
+     * @returns string 返回 base64 截图数据
+     */
+    captureImageByUid(uid) {
+        return this.captureRender(uid);
+    }
+    /**
      * 开启或关闭本地视频采集和渲染
      * <pre>
      * 该方法启用本地视频采集功能。
@@ -3236,6 +3244,21 @@ class NERtcEngine extends events_1.EventEmitter {
         }
         renderer.bind(view);
         this.substreamRenderers.set(String(key), renderer);
+    }
+    captureRender(key) {
+        if (!this.renderers.has(String(key))) {
+            return '';
+        }
+        let exception = null;
+        let renderer = this.renderers.get(String(key));
+        try {
+            return renderer.captureImage();
+        }
+        catch (err) {
+            exception = err;
+            console.error(`${err.stack}`);
+            return '';
+        }
     }
     /**
      * Destroys the renderer.

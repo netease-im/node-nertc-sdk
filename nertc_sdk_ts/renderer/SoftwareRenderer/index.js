@@ -81,6 +81,12 @@ class Renderer {
   refreshCanvas() {
     // Not implemented for software renderer
   }
+
+  captureImage() {
+    // Not implemented for software renderer
+    return ''
+  }
+
   updateCanvas(options = {
     width: 0,
     height: 0,
