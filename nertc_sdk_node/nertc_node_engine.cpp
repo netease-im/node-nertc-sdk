@@ -2401,9 +2401,9 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
             nim_napi_set_object_value_utf8string(isolate, obj, "sourceName", UTF16ToUTF8(w.title));
             nim_napi_set_object_value_int32(isolate, obj, "type", w.type);
             nim_napi_set_object_value_bool(isolate, obj, "isMinimizeWindow", w.isMinimizeWindow);
-            if (!w.isMinimizeWindow && instance->window_capture_helper_->CaptureWindow(w.id))
+            if (!w.isMinimizeWindow)
             {
-                if (instance->window_capture_helper_->Zoom(thumbWidth, thumbHeight))
+                if (instance->window_capture_helper_->CaptureWindow(w.id) && instance->window_capture_helper_->Zoom(thumbWidth, thumbHeight))
                 {
                     int size = GetRGBASize(thumbWidth, thumbHeight);
                     uint8_t *data = RGBAToBGRA(instance->window_capture_helper_->GetData(), size);
@@ -2417,6 +2417,25 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enumerateScreenCaptureSourceInfo)
                     thumb->Set(isolate->GetCurrentContext(), propName, dataarray);
                     Local<Value> thumbKey = String::NewFromUtf8(isolate, "thumbBGRA", NewStringType::kInternalized).ToLocalChecked();
                     obj->Set(isolate->GetCurrentContext(), thumbKey, thumb);
+                } else {
+                    int iconSize = 0;
+                    uint8_t *rgba = GetWindowsIconRGBA(w.id, &thumbWidth, &thumbHeight, &iconSize);
+                    if (rgba != NULL)
+                    {
+                        uint8_t *data = RGBAToBGRA((void *)rgba, iconSize);
+                        free(rgba);
+                        rgba = nullptr;
+                        Local<v8::Object> icon = Object::New(isolate);
+                        nim_napi_set_object_value_int32(isolate, icon, "length", iconSize);
+                        nim_napi_set_object_value_int32(isolate, icon, "width", thumbWidth);
+                        nim_napi_set_object_value_int32(isolate, icon, "height", thumbHeight);
+                        Local<v8::ArrayBuffer> buff = v8::ArrayBuffer::New(isolate, data, iconSize);
+                        Local<v8::Uint8Array> dataarray = v8::Uint8Array::New(buff, 0, iconSize);
+                        Local<Value> propName = String::NewFromUtf8(isolate, "buffer", NewStringType::kInternalized).ToLocalChecked();
+                        icon->Set(isolate->GetCurrentContext(), propName, dataarray);
+                        Local<Value> thumbKey = String::NewFromUtf8(isolate, "thumbBGRA", NewStringType::kInternalized).ToLocalChecked();
+                        obj->Set(isolate->GetCurrentContext(), thumbKey, icon);
+                    }
                 }
             }
             int iconSize = 0;
