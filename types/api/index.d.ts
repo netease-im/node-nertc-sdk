@@ -188,6 +188,12 @@ declare class NERtcEngine extends EventEmitter {
      */
     setupRemoteVideoCanvas(uid: number, canvas: NERtcVideoCanvas): number;
     /**
+     * 在指定画布上截图
+     * @param  {'local'|number} uid 要截图的 uid，本地视频为 local，远端用户为远端 uid
+     * @returns string 返回 base64 截图数据
+     */
+    captureImageByUid(uid: 'local' | number): string;
+    /**
      * 开启或关闭本地视频采集和渲染
      * <pre>
      * 该方法启用本地视频采集功能。
@@ -2057,6 +2063,7 @@ declare class NERtcEngine extends EventEmitter {
      * @param view The Dom elements to render the substream video.
      */
     initSubStreamRender(key: 'local' | number, view: Element): void;
+    captureRender(key: 'local' | number): string;
     /**
      * Destroys the renderer.
      * @private

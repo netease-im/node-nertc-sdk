@@ -178,6 +178,9 @@ const GlRender = function () {
         var now32 = (Date.now() & 0xffffffff) >>> 0;
         var latency = now32 - ts;
     };
+    that.captureImage = function () {
+        return that.canvas.toDataURL();
+    };
     function uploadYuv(width, height, yplane, uplane, vplane) {
         var e;
         gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
