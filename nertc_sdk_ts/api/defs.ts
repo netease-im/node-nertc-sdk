@@ -447,6 +447,11 @@ export enum NERtcAudioStreamType {
     kNERtcAudioStreamSub  = 1,  /**音频流辅流*/
 }
 
+export enum NERtcVideoStreamType {
+    kNERtcVideoStreamMain = 0,  /** 视频流主流 */
+    kNERtcVideoStreamSub  = 1   /** 视频流副流 */
+}
+
 export interface NERtcEngineAPI {
     initialize(context: NERtcEngineContext): number;
     release(): void;

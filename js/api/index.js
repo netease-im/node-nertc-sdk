@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const renderer_1 = require("../renderer");
+const defs_1 = require("./defs");
 const events_1 = require("events");
 // const nertc = require('bindings')('nertc-electron-sdk');
 const nertc = require('../../build/Release/nertc-electron-sdk.node');
@@ -232,11 +233,16 @@ class NERtcEngine extends events_1.EventEmitter {
     }
     /**
      * 在指定画布上截图
-     * @param  {'local'|number} uid 要截图的 uid，本地视频为 local，远端用户为远端 uid
+     * @param {'local'|number} uid 要截图的 uid，本地视频为 local，远端用户为远端 uid
+     * @param {NERtcVideoStreamType} streamType 流类型：
+     * <pre>
+     * 0 - 视频流主流
+     * 1 - 视频流副流
+     * </pre>
      * @returns string 返回 base64 截图数据
      */
-    captureImageByUid(uid) {
-        return this.captureRender(uid);
+    captureImageByUid(uid, streamType = defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
+        return this.captureRender(uid, streamType);
     }
     /**
      * 开启或关闭本地视频采集和渲染
@@ -3245,17 +3251,28 @@ class NERtcEngine extends events_1.EventEmitter {
         renderer.bind(view);
         this.substreamRenderers.set(String(key), renderer);
     }
-    captureRender(key) {
-        if (!this.renderers.has(String(key))) {
-            return '';
+    captureRender(key, streamType = defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
+        if (streamType === defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
+            if (!this.renderers.has(String(key))) {
+                return '';
+            }
         }
-        let exception = null;
-        let renderer = this.renderers.get(String(key));
+        else {
+            if (!this.substreamRenderers.has(String(key))) {
+                return '';
+            }
+        }
+        let renderer = null;
+        if (streamType === defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
+            renderer = this.renderers.get(String(key));
+        }
+        else {
+            renderer = this.substreamRenderers.get(String(key));
+        }
         try {
             return renderer.captureImage();
         }
         catch (err) {
-            exception = err;
             console.error(`${err.stack}`);
             return '';
         }

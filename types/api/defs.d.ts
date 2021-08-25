@@ -371,6 +371,10 @@ export declare enum NERtcAudioStreamType {
     kNERtcAudioStreamMain = 0,
     kNERtcAudioStreamSub = 1
 }
+export declare enum NERtcVideoStreamType {
+    kNERtcVideoStreamMain = 0,
+    kNERtcVideoStreamSub = 1 /** 视频流副流 */
+}
 export interface NERtcEngineAPI {
     initialize(context: NERtcEngineContext): number;
     release(): void;

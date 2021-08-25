@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { IRenderer } from '../renderer';
-import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcAudioStreamType } from './defs';
+import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcAudioStreamType, NERtcVideoStreamType } from './defs';
 import { EventEmitter } from 'events';
 /**
  * @class NERtcEngine
@@ -189,10 +189,15 @@ declare class NERtcEngine extends EventEmitter {
     setupRemoteVideoCanvas(uid: number, canvas: NERtcVideoCanvas): number;
     /**
      * 在指定画布上截图
-     * @param  {'local'|number} uid 要截图的 uid，本地视频为 local，远端用户为远端 uid
+     * @param {'local'|number} uid 要截图的 uid，本地视频为 local，远端用户为远端 uid
+     * @param {NERtcVideoStreamType} streamType 流类型：
+     * <pre>
+     * 0 - 视频流主流
+     * 1 - 视频流副流
+     * </pre>
      * @returns string 返回 base64 截图数据
      */
-    captureImageByUid(uid: 'local' | number): string;
+    captureImageByUid(uid: 'local' | number, streamType?: NERtcVideoStreamType): string;
     /**
      * 开启或关闭本地视频采集和渲染
      * <pre>
@@ -2063,7 +2068,7 @@ declare class NERtcEngine extends EventEmitter {
      * @param view The Dom elements to render the substream video.
      */
     initSubStreamRender(key: 'local' | number, view: Element): void;
-    captureRender(key: 'local' | number): string;
+    captureRender(key: 'local' | number, streamType?: NERtcVideoStreamType): string;
     /**
      * Destroys the renderer.
      * @private

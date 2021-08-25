@@ -45,7 +45,8 @@ import {
     NERtcVoiceEqualizationBand,
     NERtcStreamChannelType,
     NERtcPullExternalAudioFrameCb,
-    NERtcAudioStreamType
+    NERtcAudioStreamType,
+    NERtcVideoStreamType
 } from './defs'
 import { EventEmitter } from 'events'
 // const nertc = require('bindings')('nertc-electron-sdk');
@@ -293,11 +294,16 @@ class NERtcEngine extends EventEmitter {
 
     /**
      * 在指定画布上截图
-     * @param  {'local'|number} uid 要截图的 uid，本地视频为 local，远端用户为远端 uid
+     * @param {'local'|number} uid 要截图的 uid，本地视频为 local，远端用户为远端 uid
+     * @param {NERtcVideoStreamType} streamType 流类型：
+     * <pre>
+     * 0 - 视频流主流
+     * 1 - 视频流副流
+     * </pre>
      * @returns string 返回 base64 截图数据
      */
-    captureImageByUid(uid: 'local' | number): string {
-        return this.captureRender(uid)
+    captureImageByUid(uid: 'local' | number, streamType: NERtcVideoStreamType = NERtcVideoStreamType.kNERtcVideoStreamMain): string {
+        return this.captureRender(uid, streamType)
     }
 
     /** 
@@ -3603,17 +3609,27 @@ class NERtcEngine extends EventEmitter {
     }
 
     captureRender(
-        key: 'local' | number
+        key: 'local' | number,
+        streamType: NERtcVideoStreamType = NERtcVideoStreamType.kNERtcVideoStreamMain
     ): string {
-        if (!this.renderers.has(String(key))) {
-            return '';
+        if (streamType === NERtcVideoStreamType.kNERtcVideoStreamMain) {
+            if (!this.renderers.has(String(key))) {
+                return '';
+            }
+        } else {
+            if (!this.substreamRenderers.has(String(key))) {
+                return '';
+            }
         }
-        let exception = null
-        let renderer = this.renderers.get(String(key));
+        let renderer = null
+        if (streamType === NERtcVideoStreamType.kNERtcVideoStreamMain) {
+            renderer = this.renderers.get(String(key));
+        } else {
+            renderer = this.substreamRenderers.get(String(key));
+        }
         try {
             return (renderer as IRenderer).captureImage()
         } catch (err) {
-            exception = err
             console.error(`${err.stack}`)
             return '';
         }
