@@ -1,4 +1,4 @@
-const { task, option, logger, argv } = require('just-scripts')
+const { task, option, logger, argv } = require('just-task')
 const fs = require('fs')
 const download = require('download')
 const path = require('path')
