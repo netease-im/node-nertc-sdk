@@ -34,6 +34,12 @@
     "type": "git",
     "url": "git+https://github.com/surebeli/node-nertc-sdk.git#feat/3.9.0/screencapture"
   },
+  "files": [
+    "js",
+    "types",
+    "scripts",
+    "just-task.js"
+  ],
   "keywords": [
     "nim",
     "macos",
