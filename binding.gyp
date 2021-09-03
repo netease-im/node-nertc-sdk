@@ -60,8 +60,8 @@
               'destination': '<(PRODUCT_DIR)',
               'files': [
                 './nertc_sdk/dll/nertc_sdk.dll',
-				'./nertc_sdk/dll/protoopp.dll',
-				'./nertc_sdk/dll/SDL2.dll',
+                './nertc_sdk/dll/protoopp.dll',
+                './nertc_sdk/dll/SDL2.dll',
               ]
             }],
             'defines': [
@@ -132,7 +132,8 @@
               'destination': '<(PRODUCT_DIR)',
               'files': [
                 './nertc_sdk/nertc_sdk_Mac.framework',
-                './nertc_sdk/NEFundation_Mac.framework'
+                './nertc_sdk/NEFundation_Mac.framework',
+                './nertc_sdk/NeCastAuido.driver'
               ]
             }],
             'defines': [
@@ -148,11 +149,13 @@
                 'Foundation.framework',
                 'nertc_sdk_Mac.framework',
                 'NEFundation_Mac.framework',
-                '-rpath ./nertc_sdk/',
-                '-Wl,-rpath,@loader_path'
-                ]
-            }, 
+                'libNERTCPrivilegedTask.a',
+                '-Wl,-rpath,@loader_path',
+                '-ObjC'
+              ]
+            },
             'sources': [
+              './nertc_sdk_node/NERTCPrivilegedTask.h',
               './shared/libyuv/source/compare_gcc.cc',
               './shared/libyuv/source/rotate_gcc.cc',
               './shared/libyuv/source/row_gcc.cc',

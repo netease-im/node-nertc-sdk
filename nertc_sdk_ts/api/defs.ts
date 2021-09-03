@@ -576,6 +576,9 @@ export interface NERtcEngineAPI {
     adjustLoopbackRecordingSignalVolume(volume: number): number;
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
 
+    // 4.1.112
+    checkNECastAudioDriver(): number;
+
     //TODO
     // setMixedAudioFrameParameters(samplerate: number): number;
     // setExternalVideoSource(enabled: boolean): number;

@@ -487,6 +487,7 @@ export interface NERtcEngineAPI {
     enableLoopbackRecording(enable: boolean, deviceName: String): number;
     adjustLoopbackRecordingSignalVolume(volume: number): number;
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
+    checkNECastAudioDriver(): number;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {

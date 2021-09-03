@@ -83,6 +83,9 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(adjustLoopbackRecordingSignalVolume);
     SET_PROTOTYPE(adjustUserPlaybackSignalVolume);
 
+    // 4.1.112
+    SET_PROTOTYPE(checkNECastAudioDriver);
+
     SET_PROTOTYPE(getConnectionState)
     SET_PROTOTYPE(muteLocalAudioStream)
     SET_PROTOTYPE(setAudioProfile)
@@ -2323,6 +2326,18 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, adjustUserPlaybackSignalVolume)
             break;
         ret = instance->rtc_engine_->adjustUserPlaybackSignalVolume(uid, volume,
             static_cast<nertc::NERtcAudioStreamType>(stream_type));
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, checkNECastAudioDriver)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 0)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        ret = instance->rtc_engine_->checkNECastAudioDriver();
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }

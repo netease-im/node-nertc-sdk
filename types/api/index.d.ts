@@ -2014,6 +2014,7 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
+    checkNECastAudioDriver(): number;
     /**
      * init event handler
      * @private

@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CustomRenderer = exports.GlRenderer = exports.SoftwareRenderer = void 0;
 const SoftwareRenderer_1 = __importDefault(require("./SoftwareRenderer"));
 exports.SoftwareRenderer = SoftwareRenderer_1.default;
 const GlRenderer_1 = __importDefault(require("./GlRenderer"));

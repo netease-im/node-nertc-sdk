@@ -2519,6 +2519,10 @@ class NERtcEngine extends EventEmitter {
     //     return this.nertcEngine.setExternalAudioSource(enabled, samplerate, channel);      
     // }
 
+    checkNECastAudioDriver(): number {
+        return  this.nertcEngine.checkNECastAudioDriver();
+    }
+
     /**
      * init event handler
      * @private
