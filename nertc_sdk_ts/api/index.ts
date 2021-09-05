@@ -49,6 +49,7 @@ import {
     NERtcVideoStreamType
 } from './defs'
 import { EventEmitter } from 'events'
+import process from 'process';
 // const nertc = require('bindings')('nertc-electron-sdk');
 const nertc = require('../../build/Release/nertc-electron-sdk.node');
 
@@ -138,7 +139,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setClientRole(role: NERtcClientRole): number {
-        return this.nertcEngine.setClientRole(role);      
+        return this.nertcEngine.setClientRole(role);
     }
 
     /**
@@ -494,7 +495,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setVideoConfig(config: NERtcVideoConfig): number {
-        return this.nertcEngine.setVideoConfig(config);      
+        return this.nertcEngine.setVideoConfig(config);
     }
 
     /** 
@@ -514,7 +515,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     enableDualStreamMode(enabled: Boolean): number {
-        return this.nertcEngine.enableDualStreamMode(enabled);      
+        return this.nertcEngine.enableDualStreamMode(enabled);
     }
 
     /** 
@@ -571,7 +572,7 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-     setRenderMode(uid: 'local' | number, mode: NERtcVideoScalingMode): number {
+    setRenderMode(uid: 'local' | number, mode: NERtcVideoScalingMode): number {
         if (this.renderers.has(String(uid))) {
             let renderer = this.renderers.get(String(uid));
             (renderer as IRenderer).setContentMode(mode);
@@ -604,7 +605,7 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-     setSubStreamRenderMode(uid: 'local' | number, mode: NERtcVideoScalingMode): number {
+    setSubStreamRenderMode(uid: 'local' | number, mode: NERtcVideoScalingMode): number {
         if (this.substreamRenderers.has(String(uid))) {
             let renderer = this.substreamRenderers.get(String(uid));
             (renderer as IRenderer).setContentMode(mode);
@@ -633,7 +634,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setLocalVideoMirrorMode(mode: NERtcVideoMirrorMode) {
-        return this.nertcEngine.setLocalVideoMirrorMode(mode);            
+        return this.nertcEngine.setLocalVideoMirrorMode(mode);
     }
 
     /** 
@@ -693,7 +694,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     subscribeRemoteVideoSubStream(uid: number, sub: boolean): number {
-        return this.nertcEngine.subscribeRemoteVideoSubStream(uid, sub);      
+        return this.nertcEngine.subscribeRemoteVideoSubStream(uid, sub);
     }
 
     /** 
@@ -710,7 +711,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     startVideoPreview(): number {
-        return this.nertcEngine.startVideoPreview();      
+        return this.nertcEngine.startVideoPreview();
     }
 
     /** 
@@ -722,7 +723,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     stopVideoPreview(): number {
-        return this.nertcEngine.stopVideoPreview();      
+        return this.nertcEngine.stopVideoPreview();
     }
 
     /** 
@@ -742,7 +743,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     muteLocalVideoStream(enabled: Boolean): number {
-        return this.nertcEngine.muteLocalVideoStream(enabled);      
+        return this.nertcEngine.muteLocalVideoStream(enabled);
     }
 
     /** 
@@ -798,12 +799,12 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setParameters(parameters: String): number {
-        return this.nertcEngine.setParameters(parameters);      
+        return this.nertcEngine.setParameters(parameters);
     }
 
     // /** 设置录制的声音格式。该方法设置 \ref nertc::INERtcAudioFrameObserver::onAudioFrameDidRecord "onAudioFrameDidRecord" 回调的录制声音格式。
 
-     
+
     //  - joinChannel 前/后都允许更改设置。
     //  - 取消监听，重置为空。
 
@@ -846,7 +847,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     startAudioDump(): number {
-        return this.nertcEngine.startAudioDump();      
+        return this.nertcEngine.startAudioDump();
     }
 
     /** 
@@ -858,7 +859,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     stopAudioDump(): number {
-        return this.nertcEngine.stopAudioDump();      
+        return this.nertcEngine.stopAudioDump();
     }
 
     /** 
@@ -881,7 +882,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     startAudioMixing(opt: NERtcCreateAudioMixingOption): number {
-        return this.nertcEngine.startAudioMixing(opt);      
+        return this.nertcEngine.startAudioMixing(opt);
     }
 
     /** 
@@ -942,7 +943,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setAudioMixingSendVolume(volume: number): number {
-        return this.nertcEngine.setAudioMixingSendVolume(volume);   
+        return this.nertcEngine.setAudioMixingSendVolume(volume);
     }
 
     /** 
@@ -957,7 +958,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     getAudioMixingSendVolume(): number {
-        return this.nertcEngine.getAudioMixingSendVolume();   
+        return this.nertcEngine.getAudioMixingSendVolume();
     }
 
     /** 
@@ -973,7 +974,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setAudioMixingPlaybackVolume(volume: number): number {
-        return this.nertcEngine.setAudioMixingPlaybackVolume(volume);      
+        return this.nertcEngine.setAudioMixingPlaybackVolume(volume);
     }
 
     /** 
@@ -1018,7 +1019,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     getAudioMixingCurrentPosition(): number {
-        return this.nertcEngine.getAudioMixingCurrentPosition();       
+        return this.nertcEngine.getAudioMixingCurrentPosition();
     }
 
     /** 
@@ -1034,7 +1035,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setAudioMixingPosition(pos: number): number {
-        return this.nertcEngine.setAudioMixingPosition(pos);      
+        return this.nertcEngine.setAudioMixingPosition(pos);
     }
 
     /** 
@@ -1058,7 +1059,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     playEffect(effectId: number, opt: Array<NERtcCreateAudioEffectOption>): number {
-        return this.nertcEngine.playEffect(effectId, opt);      
+        return this.nertcEngine.playEffect(effectId, opt);
     }
 
     /** 
@@ -1074,7 +1075,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     stopEffect(effectId: number): number {
-        return this.nertcEngine.stopEffect(effectId);      
+        return this.nertcEngine.stopEffect(effectId);
     }
 
     /** 
@@ -1086,7 +1087,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     stopAllEffects(): number {
-        return this.nertcEngine.stopAllEffects();      
+        return this.nertcEngine.stopAllEffects();
     }
 
     /** 
@@ -1102,7 +1103,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     pauseEffect(effectId: number): number {
-        return this.nertcEngine.pauseEffect(effectId);         
+        return this.nertcEngine.pauseEffect(effectId);
     }
 
     /** 
@@ -1118,7 +1119,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     resumeEffect(effectId: number): number {
-        return this.nertcEngine.resumeEffect(effectId);         
+        return this.nertcEngine.resumeEffect(effectId);
     }
 
     /** 
@@ -1133,7 +1134,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     pauseAllEffects(): number {
-        return this.nertcEngine.pauseAllEffects();      
+        return this.nertcEngine.pauseAllEffects();
     }
 
     /** 
@@ -1148,7 +1149,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     resumeAllEffects(): number {
-        return this.nertcEngine.resumeAllEffects();       
+        return this.nertcEngine.resumeAllEffects();
     }
 
     /** 
@@ -1165,7 +1166,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setEffectSendVolume(effectId: number, volume: number): number {
-        return this.nertcEngine.setEffectSendVolume(effectId, volume);         
+        return this.nertcEngine.setEffectSendVolume(effectId, volume);
     }
 
     /** 
@@ -1179,7 +1180,7 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      */
     getEffectSendVolume(effectId: number): number {
-        return this.nertcEngine.getEffectSendVolume(effectId);         
+        return this.nertcEngine.getEffectSendVolume(effectId);
     }
 
     /** 
@@ -1196,7 +1197,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setEffectPlaybackVolume(effectId: number, volume: number): number {
-        return this.nertcEngine.setEffectPlaybackVolume(effectId, volume);         
+        return this.nertcEngine.setEffectPlaybackVolume(effectId, volume);
     }
 
     /** 
@@ -1210,7 +1211,7 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      */
     getEffectPlaybackVolume(effectId: number): number {
-        return this.nertcEngine.getEffectPlaybackVolume(effectId);         
+        return this.nertcEngine.getEffectPlaybackVolume(effectId);
     }
 
     /** 
@@ -1227,7 +1228,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     enableEarback(enabled: boolean, volume: number): number {
-        return this.nertcEngine.enableEarback(enabled, volume);         
+        return this.nertcEngine.enableEarback(enabled, volume);
     }
 
     /** 
@@ -1243,7 +1244,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setEarbackVolume(volume: number): number {
-        return this.nertcEngine.setEarbackVolume(volume);         
+        return this.nertcEngine.setEarbackVolume(volume);
     }
 
     // /** 注册统计信息观测器。
@@ -1274,7 +1275,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     enableAudioVolumeIndication(enabled: boolean, interval: number): number {
-        return this.nertcEngine.enableAudioVolumeIndication(enabled, interval);         
+        return this.nertcEngine.enableAudioVolumeIndication(enabled, interval);
     }
 
     /** 
@@ -1323,7 +1324,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     startScreenCaptureByScreenRect(screenRect: NERtcRectangle, regionRect: NERtcRectangle, param: NERtcScreenCaptureParameters): number {
-        return this.nertcEngine.startScreenCaptureByScreenRect(screenRect, regionRect, param);         
+        return this.nertcEngine.startScreenCaptureByScreenRect(screenRect, regionRect, param);
     }
 
     /** 
@@ -1369,7 +1370,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     startScreenCaptureByDisplayId(displayId: number, regionRect: NERtcRectangle, param: NERtcScreenCaptureParameters): number {
-        return this.nertcEngine.startScreenCaptureByDisplayId(displayId, regionRect, param);         
+        return this.nertcEngine.startScreenCaptureByDisplayId(displayId, regionRect, param);
     }
 
     /** 
@@ -1414,7 +1415,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     startScreenCaptureByWindowId(windowid: number, regionRect: NERtcRectangle, param: NERtcScreenCaptureParameters): number {
-        return this.nertcEngine.startScreenCaptureByWindowId(windowid, regionRect, param);         
+        return this.nertcEngine.startScreenCaptureByWindowId(windowid, regionRect, param);
     }
 
     /** 
@@ -1448,7 +1449,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     updateScreenCaptureRegion(regionRect: NERtcRectangle): number {
-        return this.nertcEngine.updateScreenCaptureRegion( regionRect);         
+        return this.nertcEngine.updateScreenCaptureRegion(regionRect);
     }
 
     /** 
@@ -1460,7 +1461,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     stopScreenCapture(): number {
-        return this.nertcEngine.stopScreenCapture();      
+        return this.nertcEngine.stopScreenCapture();
     }
 
     /** 
@@ -1472,7 +1473,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     pauseScreenCapture(): number {
-        return this.nertcEngine.pauseScreenCapture();      
+        return this.nertcEngine.pauseScreenCapture();
     }
 
     /** 
@@ -1484,7 +1485,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     resumeScreenCapture(): number {
-        return this.nertcEngine.resumeScreenCapture();      
+        return this.nertcEngine.resumeScreenCapture();
     }
 
     /** 
@@ -1519,8 +1520,7 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    stopSystemAudioLoopbackCapture(): number
-    {
+    stopSystemAudioLoopbackCapture(): number {
         return this.nertcEngine.stopSystemAudioLoopbackCapture();
     }
 
@@ -1539,8 +1539,7 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setSystemAudioLoopbackCaptureVolume(volume: number): number
-    {
+    setSystemAudioLoopbackCaptureVolume(volume: number): number {
         return this.nertcEngine.setSystemAudioLoopbackCaptureVolume(volume);
     }
 
@@ -1564,8 +1563,7 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    sendSEIMsg(data: ArrayBuffer): number
-    {
+    sendSEIMsg(data: ArrayBuffer): number {
         return this.nertcEngine.sendSEIMsg(data);
     }
 
@@ -1594,8 +1592,7 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType)
-    {
+    sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType) {
         return this.nertcEngine.sendSEIMsgEx(data, type);
     }
 
@@ -1622,8 +1619,7 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number
-    {
+    setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number {
         return this.nertcEngine.setExternalAudioRender(enable, sampleRate, channels);
     }
 
@@ -1645,8 +1641,7 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number
-    {
+    pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number {
         return this.nertcEngine.pullExternalAudioFrame(pullLength, cb);
     }
 
@@ -1655,23 +1650,23 @@ class NERtcEngine extends EventEmitter {
      * @returns {String} 当前的 SDK 版本号，格式为字符串，如1.0.0.
      */
     getVersion(): String {
-        return this.nertcEngine.getVersion();      
+        return this.nertcEngine.getVersion();
     }
 
     /** 
      * 获取错误描述。
-	 * @param {number} errorCode 错误码
+     * @param {number} errorCode 错误码
      * @returns {number} 详细错误码描述
      */
     getErrorDescription(errorCode: number): String {
-        return this.nertcEngine.getErrorDescription(errorCode);      
+        return this.nertcEngine.getErrorDescription(errorCode);
     }
 
     /** 
      * 上传SDK 信息（如log文件和Audio dump文件）。
      */
     uploadSdkInfo(): void {
-        return this.nertcEngine.uploadSdkInfo();      
+        return this.nertcEngine.uploadSdkInfo();
     }
 
     /** 
@@ -1827,7 +1822,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     enumerateRecordDevices(): Array<NERtcDevice> {
-        return this.nertcEngine.enumerateRecordDevices();      
+        return this.nertcEngine.enumerateRecordDevices();
     }
 
     /** 
@@ -1840,7 +1835,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setRecordDevice(id: String): number {
-        return this.nertcEngine.setRecordDevice(id);      
+        return this.nertcEngine.setRecordDevice(id);
     }
 
     /** 
@@ -1852,7 +1847,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     getRecordDevice(): String {
-        return this.nertcEngine.getRecordDevice();      
+        return this.nertcEngine.getRecordDevice();
     }
 
     /** 
@@ -1892,7 +1887,7 @@ class NERtcEngine extends EventEmitter {
      - null: 调用失败。
      */
     enumeratePlayoutDevices(): Array<NERtcDevice> {
-        return this.nertcEngine.enumeratePlayoutDevices();      
+        return this.nertcEngine.enumeratePlayoutDevices();
     }
 
     /** 
@@ -1905,7 +1900,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setPlayoutDevice(id: String): number {
-        return this.nertcEngine.setPlayoutDevice(id);      
+        return this.nertcEngine.setPlayoutDevice(id);
     }
 
     /** 
@@ -1913,7 +1908,7 @@ class NERtcEngine extends EventEmitter {
      * @returns {String} deviceID
      */
     getPlayoutDevice(): String {
-        return this.nertcEngine.getPlayoutDevice();      
+        return this.nertcEngine.getPlayoutDevice();
     }
 
     /** 
@@ -1926,7 +1921,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setRecordDeviceVolume(volume: number): number {
-        return this.nertcEngine.setRecordDeviceVolume(volume);      
+        return this.nertcEngine.setRecordDeviceVolume(volume);
     }
 
     /** 
@@ -1938,7 +1933,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     getRecordDeviceVolume(): number {
-        return this.nertcEngine.getRecordDeviceVolume();      
+        return this.nertcEngine.getRecordDeviceVolume();
     }
 
     /** 
@@ -1951,7 +1946,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setPlayoutDeviceVolume(volume: number): number {
-        return this.nertcEngine.setPlayoutDeviceVolume(volume);      
+        return this.nertcEngine.setPlayoutDeviceVolume(volume);
     }
 
     /** 
@@ -1963,7 +1958,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     getPlayoutDeviceVolume(): number {
-        return this.nertcEngine.getPlayoutDeviceVolume();      
+        return this.nertcEngine.getPlayoutDeviceVolume();
     }
 
     /** 
@@ -1980,7 +1975,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setPlayoutDeviceMute(mute: boolean): number {
-        return this.nertcEngine.setPlayoutDeviceMute(mute);      
+        return this.nertcEngine.setPlayoutDeviceMute(mute);
     }
 
     /** 
@@ -1992,7 +1987,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     getPlayoutDeviceMute(): boolean {
-        return this.nertcEngine.getPlayoutDeviceMute();      
+        return this.nertcEngine.getPlayoutDeviceMute();
     }
 
     /** 
@@ -2009,7 +2004,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setRecordDeviceMute(mute: boolean): number {
-        return this.nertcEngine.setRecordDeviceMute(mute);      
+        return this.nertcEngine.setRecordDeviceMute(mute);
     }
 
     /** 
@@ -2021,7 +2016,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     getRecordDeviceMute(): boolean {
-        return this.nertcEngine.getRecordDeviceMute();      
+        return this.nertcEngine.getRecordDeviceMute();
     }
 
     /** 
@@ -2039,7 +2034,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     adjustRecordingSignalVolume(volume: number): number {
-        return this.nertcEngine.adjustRecordingSignalVolume(volume);      
+        return this.nertcEngine.adjustRecordingSignalVolume(volume);
     }
 
     /** 
@@ -2057,7 +2052,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     adjustPlaybackSignalVolume(volume: number): number {
-        return this.nertcEngine.adjustPlaybackSignalVolume(volume);      
+        return this.nertcEngine.adjustPlaybackSignalVolume(volume);
     }
 
     /** 
@@ -2077,7 +2072,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     startRecordDeviceTest(interval: number): number {
-        return this.nertcEngine.startRecordDeviceTest(interval);      
+        return this.nertcEngine.startRecordDeviceTest(interval);
     }
 
     /** 
@@ -2095,7 +2090,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     stopRecordDeviceTest(): number {
-        return this.nertcEngine.stopRecordDeviceTest();      
+        return this.nertcEngine.stopRecordDeviceTest();
     }
 
     /** 
@@ -2116,7 +2111,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     startPlayoutDeviceTest(path: String): number {
-        return this.nertcEngine.startPlayoutDeviceTest(path);      
+        return this.nertcEngine.startPlayoutDeviceTest(path);
     }
 
     /** 
@@ -2132,7 +2127,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     stopPlayoutDeviceTest(): number {
-        return this.nertcEngine.stopPlayoutDeviceTest();      
+        return this.nertcEngine.stopPlayoutDeviceTest();
     }
 
     /** 
@@ -2153,7 +2148,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     startAudioDeviceLoopbackTest(interval: number): number {
-        return this.nertcEngine.startAudioDeviceLoopbackTest(interval);      
+        return this.nertcEngine.startAudioDeviceLoopbackTest(interval);
     }
 
     /** 
@@ -2169,7 +2164,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     stopAudioDeviceLoopbackTest(): number {
-        return this.nertcEngine.stopAudioDeviceLoopbackTest();      
+        return this.nertcEngine.stopAudioDeviceLoopbackTest();
     }
 
     /** 
@@ -2209,7 +2204,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     enumerateVideoCaptureDevices(): Array<NERtcDevice> {
-        return this.nertcEngine.enumerateCaptureDevices();      
+        return this.nertcEngine.enumerateCaptureDevices();
     }
 
 
@@ -2258,7 +2253,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setVideoDevice(id: String): number {
-        return this.nertcEngine.setDevice(id);      
+        return this.nertcEngine.setDevice(id);
     }
 
     /** 
@@ -2266,7 +2261,7 @@ class NERtcEngine extends EventEmitter {
      * @returns {String} 设备ID
      */
     getVideoDevice(): String {
-        return this.nertcEngine.getDevice();      
+        return this.nertcEngine.getDevice();
     }
 
     /**
@@ -2453,14 +2448,17 @@ class NERtcEngine extends EventEmitter {
      * - true: 开启声卡采集
      * - false: 关闭声卡采集（默认）
      * </pre>
-     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “Soundflower”，可以将虚拟声卡名称 “Soundflower” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集 。
+     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “NeCastAudio 2ch”，可以将虚拟声卡名称 “NeCastAudio 2ch” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集，若参数为空则在 macOS 下默认使用 NeCastAudio 2ch 设备名称 。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功
      * - 其他: 方法调用失败。
      * </pre>
      */
-    enableLoopbackRecording(enable: boolean, deviceName: String = ''): number {
+    enableLoopbackRecording(enable: boolean, deviceName: String = 'NeCastAudio 2ch'): number {
+        if (deviceName === '' && process.platform === 'darwin') {
+            deviceName = 'NeCastAudio 2ch'
+        }
         return this.nertcEngine.enableLoopbackRecording(enable, deviceName)
     }
     /**
@@ -2479,7 +2477,7 @@ class NERtcEngine extends EventEmitter {
     adjustLoopbackRecordingSignalVolume(volume: number): number {
         return this.nertcEngine.adjustLoopbackRecordingSignalVolume(volume)
     }
-    
+
     /**
      * 调节本地播放的指定远端用户的指定流类型的信号音量
      * @since 4.1.110
@@ -2520,7 +2518,7 @@ class NERtcEngine extends EventEmitter {
     // }
 
     checkNECastAudioDriver(): number {
-        return  this.nertcEngine.checkNECastAudioDriver();
+        return this.nertcEngine.checkNECastAudioDriver();
     }
 
     /**
@@ -2531,9 +2529,9 @@ class NERtcEngine extends EventEmitter {
         const self = this;
 
         const fire = (event: string, ...args: Array<any>) => {
-          setImmediate(() => {
-            this.emit(event, ...args);
-          });
+            setImmediate(() => {
+                this.emit(event, ...args);
+            });
         };
 
         /**
@@ -2636,7 +2634,7 @@ class NERtcEngine extends EventEmitter {
           * </pre>
           */
         this.nertcEngine.onEvent('onConnectionStateChange', function (
-            state: NERtcConnectionStateType, 
+            state: NERtcConnectionStateType,
             reason: NERtcReasonConnectionChangedType
         ) {
             fire('onConnectionStateChange', state, reason);
@@ -2708,7 +2706,7 @@ class NERtcEngine extends EventEmitter {
          * </pre>
          */
         this.nertcEngine.onEvent('onClientRoleChanged', function (
-            oldRole: NERtcClientRole, 
+            oldRole: NERtcClientRole,
             newRole: NERtcClientRole
         ) {
             fire('onClientRoleChanged', oldRole, newRole);
@@ -3190,14 +3188,14 @@ class NERtcEngine extends EventEmitter {
          * @param {number} uid 发送该 sei 的用户 id
          * @param {ArrayBuffer} data 接收到的 sei 数据
          */
-         this.nertcEngine.onEvent('onReceSEIMsg', function (
+        this.nertcEngine.onEvent('onReceSEIMsg', function (
             uid: number,
             data: ArrayBuffer,
         ) {
             fire('onReceSEIMsg', uid, data);
         });
 
-        this.nertcEngine.onVideoFrame(function(infos: any) {
+        this.nertcEngine.onVideoFrame(function (infos: any) {
             self.doVideoFrameReceived(infos);
         });
 
@@ -3277,7 +3275,7 @@ class NERtcEngine extends EventEmitter {
          * @param {number} stats[].audio_loss_rate 特定时间内的音频丢包率 (%)。
          * @param {number} stats[].volume 音量，范围为 0（最低）- 100（最高）。
          */
-        this.nertcEngine.onStatsObserver('onRemoteAudioStats', true, function (uc: number,stats: Array<NERtcAudioRecvStats>) {
+        this.nertcEngine.onStatsObserver('onRemoteAudioStats', true, function (uc: number, stats: Array<NERtcAudioRecvStats>) {
             fire('onRemoteAudioStats', uc, stats);
         });
 
@@ -3592,7 +3590,7 @@ class NERtcEngine extends EventEmitter {
      * e.g, uid or `local`
      * @param view The Dom elements to render the substream video.
      */
-     initSubStreamRender(key: 'local' | number, view: Element) {
+    initSubStreamRender(key: 'local' | number, view: Element) {
 
         if (this.substreamRenderers.has(String(key))) {
             this.destroySubStreamRender(key);
@@ -3677,7 +3675,7 @@ class NERtcEngine extends EventEmitter {
      * @param onFailure The error callback for the {@link destroySubStreamRender} 
      * method.
      */
-     destroySubStreamRender(
+    destroySubStreamRender(
         key: 'local' | number, onFailure?: (err: Error) => void
     ) {
         if (!this.substreamRenderers.has(String(key))) {
@@ -3755,7 +3753,7 @@ declare interface NERtcEngine {
 
     /** 重新加入频道回调。
 
-	  有时候由于网络原因，客户端可能会和服务器失去连接，SDK会进行自动重连，自动重连后触发此回调方法。
+      有时候由于网络原因，客户端可能会和服务器失去连接，SDK会进行自动重连，自动重连后触发此回调方法。
 
      @param cid  频道 ID。
      @param uid  用户 ID。
@@ -3774,7 +3772,7 @@ declare interface NERtcEngine {
 
     /** 掉线回调。
 
-	  由于非网络原因，客户端可能会和服务器失去连接，此时SDK无需自动重连，直接触发此回调方法。
+      由于非网络原因，客户端可能会和服务器失去连接，此时SDK无需自动重连，直接触发此回调方法。
 
      @param reason  返回结果。
      */
@@ -4086,7 +4084,7 @@ declare interface NERtcEngine {
     /** 收到远端流的 SEI 内容回调。
 
      * @param uid 发送该 sei 的用户 id
-	 * @param data 接收到的 sei 数据
+     * @param data 接收到的 sei 数据
      */
     on(event: 'onReceSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
 }
