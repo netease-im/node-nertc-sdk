@@ -2291,7 +2291,20 @@ class NERtcEngine extends events_1.EventEmitter {
      */
     enableLoopbackRecording(enable, deviceName = 'NeCastAudio 2ch') {
         if (deviceName === '' && process_1.default.platform === 'darwin') {
-            deviceName = 'NeCastAudio 2ch';
+            const playoutDevices = this.nertcEngine.enumeratePlayoutDevices();
+            let foundDevice = false;
+            for (let i = 0; i < playoutDevices.length; i++) {
+                if (playoutDevices[i].device_name === 'NeCastAudio 2ch') {
+                    foundDevice = true;
+                    break;
+                }
+            }
+            if (foundDevice) {
+                deviceName = 'NeCastAudio 2ch';
+            }
+            else {
+                return -1;
+            }
         }
         return this.nertcEngine.enableLoopbackRecording(enable, deviceName);
     }
