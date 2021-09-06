@@ -15,6 +15,7 @@ interface IRenderer {
   }): void;
   setContentMode(mode: number): void;
   refreshCanvas(): void;
+  captureImage(): string;
 }
 
 class GlRenderer implements IRenderer {
@@ -45,7 +46,10 @@ class GlRenderer implements IRenderer {
     return this.self.setContentMode(mode);
   }
   refreshCanvas() {
-      return this.self.refreshCanvas();
+    return this.self.refreshCanvas();
+  }
+  captureImage(): string {
+    return this.self.captureImage()
   }
 }
 
@@ -86,7 +90,9 @@ class CustomRenderer implements IRenderer {
     throw new Error('You have to declare your own custom render');
   }
 
-
+  captureImage(): string {
+    throw new Error('You have to declare your own custom render');
+  }
 }
 
 export {

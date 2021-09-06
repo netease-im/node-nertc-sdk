@@ -447,6 +447,11 @@ export enum NERtcAudioStreamType {
     kNERtcAudioStreamSub  = 1,  /**音频流辅流*/
 }
 
+export enum NERtcVideoStreamType {
+    kNERtcVideoStreamMain = 0,  /** 视频流主流 */
+    kNERtcVideoStreamSub  = 1   /** 视频流副流 */
+}
+
 export interface NERtcEngineAPI {
     initialize(context: NERtcEngineContext): number;
     release(): void;
@@ -570,6 +575,9 @@ export interface NERtcEngineAPI {
     enableLoopbackRecording(enable: boolean, deviceName: String): number;
     adjustLoopbackRecordingSignalVolume(volume: number): number;
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
+
+    // 4.1.112
+    checkNECastAudioDriver(): number;
 
     //TODO
     // setMixedAudioFrameParameters(samplerate: number): number;

@@ -8,6 +8,7 @@
 #include <processthreadsapi.h>
 #include <shlobj.h> // SHGetFolderPathW
 #include <shlwapi.h>
+#include <commoncontrols.h>
 #include <shellapi.h>
 #include <wingdi.h>
 
@@ -1104,19 +1105,33 @@ uint8_t *GetWindowsIconRGBA(HWND hWnd, int *width, int *height, int *size)
 
     SHFILEINFOW sfiTemp;
     ZeroMemory(&sfiTemp, sizeof(sfiTemp));
-    SHGetFileInfoW(strTemp.c_str(), FILE_ATTRIBUTE_NORMAL, &sfiTemp, sizeof(SHFILEINFOW), SHGFI_USEFILEATTRIBUTES | SHGFI_ICON | SHGFI_LARGEICON);
-    if (NULL == sfiTemp.hIcon)
+    // Get the image list index of the icon
+    if (!SHGetFileInfoW(strTemp.c_str(), FILE_ATTRIBUTE_NORMAL, &sfiTemp, sizeof(SHFILEINFOW), SHGFI_SYSICONINDEX))
+    // SHGetFileInfoW(strTemp.c_str(), FILE_ATTRIBUTE_NORMAL, &sfiTemp, sizeof(SHFILEINFOW), SHGFI_USEFILEATTRIBUTES | SHGFI_ICON);
+    // if (NULL == sfiTemp.hIcon)
     {
         return nullptr;
     }
 
+    // Get the jumbo image list
+    IImageList *piml;
+    if (FAILED(SHGetImageList(SHIL_JUMBO, IID_PPV_ARGS(&piml))))
+        return nullptr;
+
+    // Extract an icon
+    HICON iconEx;
+    piml->GetIcon(sfiTemp.iIcon, ILD_TRANSPARENT, &iconEx);
+
     ICONINFO info;
-    if (!GetIconInfo(sfiTemp.hIcon, &info) || !info.fIcon)
+    // if (!GetIconInfo(sfiTemp.hIcon, &info) || !info.fIcon)
+    if (!GetIconInfo(iconEx, &info) || !iconEx)
     {
         *width = 1;
         *height = 1;
         *size = 1;
-        DestroyIcon(sfiTemp.hIcon);
+        // DestroyIcon(sfiTemp.hIcon);
+        piml->Release();
+        DestroyIcon(iconEx);
         return nullptr;
     }
 
@@ -1153,7 +1168,9 @@ uint8_t *GetWindowsIconRGBA(HWND hWnd, int *width, int *height, int *size)
 
     if (nWidth <= 0 || nHeight <= 0)
     {
-        DestroyIcon(sfiTemp.hIcon);
+        piml->Release();
+        DestroyIcon(iconEx);
+        // DestroyIcon(sfiTemp.hIcon);
         return NULL;
     }
 
@@ -1189,7 +1206,8 @@ uint8_t *GetWindowsIconRGBA(HWND hWnd, int *width, int *height, int *size)
             break;
 
         hBmpOld = (HBITMAP)SelectObject(dcMem, dib);
-        ::DrawIconEx(dcMem, 0, 0, sfiTemp.hIcon, nWidth, nHeight, 0, NULL, DI_MASK);
+        // ::DrawIconEx(dcMem, 0, 0, sfiTemp.hIcon, nWidth, nHeight, 0, NULL, DI_MASK);
+        ::DrawIconEx(dcMem, 0, 0, iconEx, nWidth, nHeight, 0, NULL, DI_MASK);
 
         pOpaque = new (std::nothrow) bool[nPixelCount];
         if (pOpaque == NULL)
@@ -1200,7 +1218,8 @@ uint8_t *GetWindowsIconRGBA(HWND hWnd, int *width, int *height, int *size)
         }
 
         memset(pData, 0, nPixelCount * 4);
-        ::DrawIconEx(dcMem, 0, 0, sfiTemp.hIcon, nWidth, nHeight, 0, NULL, DI_NORMAL);
+        // ::DrawIconEx(dcMem, 0, 0, sfiTemp.hIcon, nWidth, nHeight, 0, NULL, DI_NORMAL);
+        ::DrawIconEx(dcMem, 0, 0, iconEx, nWidth, nHeight, 0, NULL, DI_NORMAL);
 
         BOOL bPixelHasAlpha = FALSE;
         UINT *pPixel = (UINT *)pData;
@@ -1259,7 +1278,9 @@ uint8_t *GetWindowsIconRGBA(HWND hWnd, int *width, int *height, int *size)
         }
     }
 
-    DestroyIcon(sfiTemp.hIcon);
+    // DestroyIcon(sfiTemp.hIcon);
+    piml->Release();
+    DestroyIcon(iconEx);
     return reinterpret_cast<uint8_t*>(pOut);
 }
 }

@@ -371,6 +371,10 @@ export declare enum NERtcAudioStreamType {
     kNERtcAudioStreamMain = 0,
     kNERtcAudioStreamSub = 1
 }
+export declare enum NERtcVideoStreamType {
+    kNERtcVideoStreamMain = 0,
+    kNERtcVideoStreamSub = 1 /** 视频流副流 */
+}
 export interface NERtcEngineAPI {
     initialize(context: NERtcEngineContext): number;
     release(): void;
@@ -483,6 +487,7 @@ export interface NERtcEngineAPI {
     enableLoopbackRecording(enable: boolean, deviceName: String): number;
     adjustLoopbackRecordingSignalVolume(volume: number): number;
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
+    checkNECastAudioDriver(): number;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {

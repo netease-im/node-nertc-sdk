@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { IRenderer } from '../renderer';
-import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcAudioStreamType } from './defs';
+import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcAudioStreamType, NERtcVideoStreamType } from './defs';
 import { EventEmitter } from 'events';
 /**
  * @class NERtcEngine
@@ -187,6 +187,17 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setupRemoteVideoCanvas(uid: number, canvas: NERtcVideoCanvas): number;
+    /**
+     * 在指定画布上截图
+     * @param {'local'|number} uid 要截图的 uid，本地视频为 local，远端用户为远端 uid
+     * @param {NERtcVideoStreamType} streamType 流类型：
+     * <pre>
+     * 0 - 视频流主流
+     * 1 - 视频流副流
+     * </pre>
+     * @returns string 返回 base64 截图数据
+     */
+    captureImageByUid(uid: 'local' | number, streamType?: NERtcVideoStreamType): string;
     /**
      * 开启或关闭本地视频采集和渲染
      * <pre>
@@ -1953,7 +1964,7 @@ declare class NERtcEngine extends EventEmitter {
      * - true: 开启声卡采集
      * - false: 关闭声卡采集（默认）
      * </pre>
-     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “Soundflower”，可以将虚拟声卡名称 “Soundflower” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集 。
+     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “NeCastAudio 2ch”，可以将虚拟声卡名称 “NeCastAudio 2ch” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集，若参数为空则在 macOS 下默认使用 NeCastAudio 2ch 设备名称 。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功
@@ -2003,6 +2014,7 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
+    checkNECastAudioDriver(): number;
     /**
      * init event handler
      * @private
@@ -2057,6 +2069,7 @@ declare class NERtcEngine extends EventEmitter {
      * @param view The Dom elements to render the substream video.
      */
     initSubStreamRender(key: 'local' | number, view: Element): void;
+    captureRender(key: 'local' | number, streamType?: NERtcVideoStreamType): string;
     /**
      * Destroys the renderer.
      * @private

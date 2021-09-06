@@ -1,7 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const renderer_1 = require("../renderer");
+const defs_1 = require("./defs");
 const events_1 = require("events");
+const process_1 = __importDefault(require("process"));
 // const nertc = require('bindings')('nertc-electron-sdk');
 const nertc = require('../../build/Release/nertc-electron-sdk.node');
 /**
@@ -229,6 +234,19 @@ class NERtcEngine extends events_1.EventEmitter {
             this.destroyRender(uid);
             return this.nertcEngine.setupVideoCanvas(uid, false);
         }
+    }
+    /**
+     * 在指定画布上截图
+     * @param {'local'|number} uid 要截图的 uid，本地视频为 local，远端用户为远端 uid
+     * @param {NERtcVideoStreamType} streamType 流类型：
+     * <pre>
+     * 0 - 视频流主流
+     * 1 - 视频流副流
+     * </pre>
+     * @returns string 返回 base64 截图数据
+     */
+    captureImageByUid(uid, streamType = defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
+        return this.captureRender(uid, streamType);
     }
     /**
      * 开启或关闭本地视频采集和渲染
@@ -2264,14 +2282,30 @@ class NERtcEngine extends events_1.EventEmitter {
      * - true: 开启声卡采集
      * - false: 关闭声卡采集（默认）
      * </pre>
-     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “Soundflower”，可以将虚拟声卡名称 “Soundflower” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集 。
+     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “NeCastAudio 2ch”，可以将虚拟声卡名称 “NeCastAudio 2ch” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集，若参数为空则在 macOS 下默认使用 NeCastAudio 2ch 设备名称 。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功
      * - 其他: 方法调用失败。
      * </pre>
      */
-    enableLoopbackRecording(enable, deviceName = '') {
+    enableLoopbackRecording(enable, deviceName = 'NeCastAudio 2ch') {
+        if (deviceName === '' && process_1.default.platform === 'darwin') {
+            const playoutDevices = this.nertcEngine.enumeratePlayoutDevices();
+            let foundDevice = false;
+            for (let i = 0; i < playoutDevices.length; i++) {
+                if (playoutDevices[i].device_name === 'NeCastAudio 2ch') {
+                    foundDevice = true;
+                    break;
+                }
+            }
+            if (foundDevice) {
+                deviceName = 'NeCastAudio 2ch';
+            }
+            else {
+                return -1;
+            }
+        }
         return this.nertcEngine.enableLoopbackRecording(enable, deviceName);
     }
     /**
@@ -2326,6 +2360,9 @@ class NERtcEngine extends events_1.EventEmitter {
     // setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number {
     //     return this.nertcEngine.setExternalAudioSource(enabled, samplerate, channel);      
     // }
+    checkNECastAudioDriver() {
+        return this.nertcEngine.checkNECastAudioDriver();
+    }
     /**
      * init event handler
      * @private
@@ -3236,6 +3273,32 @@ class NERtcEngine extends events_1.EventEmitter {
         }
         renderer.bind(view);
         this.substreamRenderers.set(String(key), renderer);
+    }
+    captureRender(key, streamType = defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
+        if (streamType === defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
+            if (!this.renderers.has(String(key))) {
+                return '';
+            }
+        }
+        else {
+            if (!this.substreamRenderers.has(String(key))) {
+                return '';
+            }
+        }
+        let renderer = null;
+        if (streamType === defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
+            renderer = this.renderers.get(String(key));
+        }
+        else {
+            renderer = this.substreamRenderers.get(String(key));
+        }
+        try {
+            return renderer.captureImage();
+        }
+        catch (err) {
+            console.error(`${err.stack}`);
+            return '';
+        }
     }
     /**
      * Destroys the renderer.

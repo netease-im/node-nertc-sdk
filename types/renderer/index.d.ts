@@ -14,6 +14,7 @@ interface IRenderer {
     }): void;
     setContentMode(mode: number): void;
     refreshCanvas(): void;
+    captureImage(): string;
 }
 declare class GlRenderer implements IRenderer {
     self: any;
@@ -30,6 +31,7 @@ declare class GlRenderer implements IRenderer {
     }): void;
     setContentMode(mode: number): void;
     refreshCanvas(): any;
+    captureImage(): string;
 }
 declare class CustomRenderer implements IRenderer {
     constructor();
@@ -45,5 +47,6 @@ declare class CustomRenderer implements IRenderer {
     }): void;
     setContentMode(mode: number): void;
     refreshCanvas(): void;
+    captureImage(): string;
 }
 export { SoftwareRenderer, GlRenderer, IRenderer, CustomRenderer };

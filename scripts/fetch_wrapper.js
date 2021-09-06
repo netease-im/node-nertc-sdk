@@ -72,7 +72,7 @@ module.exports = ({
         copyFiles(headersDirectory, path.join(extractPath, 'api'), '.h')
       } else if (platform === 'darwin') {
         let frameworkDirectory = ''
-        const marchFramework = new RegExp(/.+\.framework$/g)
+        const marchFramework = new RegExp(/.+\.framework|\.driver|\.a|\.sh$/)
         const exceptRegex = new RegExp('/.+sdk\/demo/')
         function readDirectory(rootDir, arch) {
           const dirs = fs.readdirSync(rootDir)
@@ -86,11 +86,11 @@ module.exports = ({
             }
           })
         }
-        logger.info('[fetch] framework directory: ', frameworkDirectory)
         readDirectory(temporaryPath, arch)
+        logger.info('[fetch] framework directory: ', frameworkDirectory)
         const list = fs.readdirSync(frameworkDirectory)
         list.map(framework => {
-          if (framework.indexOf('.framework') !== -1) {
+          if (marchFramework.test(framework)) {
             const copied = path.join(frameworkDirectory, framework)
             const dst = path.join(extractPath, framework)
             logger.info(`[fetch] copy file: ${copied} to ${dst}`)
