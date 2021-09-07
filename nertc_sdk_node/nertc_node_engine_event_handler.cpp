@@ -1116,7 +1116,7 @@ void NertcNodeEventHandler::Node_onCheckNECastAudioDriverResult(nertc::NERtcInst
     Isolate* isolate = Isolate::GetCurrent();
     const unsigned argc = 1;
     Local<Value> argv[argc] = { nim_napi_new_int32(isolate, (int32_t)result) };
-    auto it = callbacks_.find("onCheckNECastAudioDriverResul");
+    auto it = callbacks_.find("onCheckNECastAudioDriverResult");
 	if (it != callbacks_.end())
 	{
 		it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
