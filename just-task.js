@@ -122,13 +122,13 @@ task('install', () => {
       extract: true
     }).then(() => {
       logger.info(`[install] Download prebuilt binaries from ${host}/${remotePath}/${packageName}`)
-     /* if(process.platform == 'darwin'){
+      if(process.platform == 'darwin'){
         let release = path.join(__dirname, localPath)
         let srcDriverPath = path.join(release, "NeCastAudio.driver")
         let distDriverPath =  "/private/tmp/NeCastAudio/NeCastAudio.driver"
         logger.info('------------------srcdriverpath--------------------srcDriverPath'+ srcDriverPath)
         fsExtra.copySync(srcDriverPath, distDriverPath)
-      }*/
+      }
       resolve()
     }).catch(err => {
       let fetchUrl
