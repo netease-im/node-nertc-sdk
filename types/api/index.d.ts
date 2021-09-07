@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { IRenderer } from '../renderer';
-import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcAudioStreamType, NERtcVideoStreamType } from './defs';
+import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcAudioStreamType, NERtcVideoStreamType, NERtcInstallCastAudioDriverResult } from './defs';
 import { EventEmitter } from 'events';
 /**
  * @class NERtcEngine
@@ -1932,6 +1932,18 @@ declare class NERtcEngine extends EventEmitter {
      */
     subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
     /**
+     * 检查mac虚拟声卡是否安装。
+     * <pre>
+     * only for macOS。
+     * </pre>
+     * @returns {Boolean}
+     * <pre>
+     * - false: 虚拟声卡未安装
+     * - true: 虚拟声卡已安装
+     * </pre>
+     */
+    checkNeCastAudio(): boolean;
+    /**
      * 开关本地音频发送。
      * @since 4.1.110
      * <pre>
@@ -2438,5 +2450,10 @@ declare interface NERtcEngine {
      * @param data 接收到的 sei 数据
      */
     on(event: 'onReceSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
+    /** 安装声卡回调。
+
+     @param result  返回结果。
+     */
+    on(event: 'onCheckNECastAudioDriverResult', cb: (result: NERtcInstallCastAudioDriverResult) => void): this;
 }
 export default NERtcEngine;

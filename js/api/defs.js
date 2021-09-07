@@ -302,6 +302,13 @@ var NERtcConnectionStateType;
     NERtcConnectionStateType[NERtcConnectionStateType["kNERtcConnectionStateReconnecting"] = 4] = "kNERtcConnectionStateReconnecting";
     NERtcConnectionStateType[NERtcConnectionStateType["kNERtcConnectionStateFailed"] = 5] = "kNERtcConnectionStateFailed";
 })(NERtcConnectionStateType = exports.NERtcConnectionStateType || (exports.NERtcConnectionStateType = {}));
+/** 驱动安装状态 */
+var NERtcInstallCastAudioDriverResult;
+(function (NERtcInstallCastAudioDriverResult) {
+    NERtcInstallCastAudioDriverResult[NERtcInstallCastAudioDriverResult["kNERtcInstallCastAudioDriverSuccess"] = 0] = "kNERtcInstallCastAudioDriverSuccess";
+    NERtcInstallCastAudioDriverResult[NERtcInstallCastAudioDriverResult["kNERtcInstallCastAudioDriverNotAuthorized"] = 1] = "kNERtcInstallCastAudioDriverNotAuthorized";
+    NERtcInstallCastAudioDriverResult[NERtcInstallCastAudioDriverResult["kNERtcInstallCastAudioDriverFailed"] = 2] = "kNERtcInstallCastAudioDriverFailed";
+})(NERtcInstallCastAudioDriverResult = exports.NERtcInstallCastAudioDriverResult || (exports.NERtcInstallCastAudioDriverResult = {}));
 /** 连接状态变更原因 */
 var NERtcReasonConnectionChangedType;
 (function (NERtcReasonConnectionChangedType) {

@@ -46,7 +46,8 @@ import {
     NERtcStreamChannelType,
     NERtcPullExternalAudioFrameCb,
     NERtcAudioStreamType,
-    NERtcVideoStreamType
+    NERtcVideoStreamType,
+    NERtcInstallCastAudioDriverResult
 } from './defs'
 import { EventEmitter } from 'events'
 import process from 'process';
@@ -3399,6 +3400,19 @@ class NERtcEngine extends EventEmitter {
         this.nertcEngine.onStatsObserver('onNetworkQuality', true, function (uc: number, stats: Array<NERtcNetworkQualityInfo>) {
             fire('onNetworkQuality', uc, stats);
         });
+
+ /**
+         * 安装声卡回调
+         * @event NERtcEngine#onCheckNECastAudioDriverResult
+         * @param {NERtcErrorCode} result 安装结果
+         */
+        this.nertcEngine.onEvent('onCheckNECastAudioDriverResult', function (
+            result: NERtcInstallCastAudioDriverResult
+        ) {
+            fire('onCheckNECastAudioDriverResult', result);
+        });
+
+    
     }
 
 
@@ -4122,6 +4136,12 @@ declare interface NERtcEngine {
      * @param data 接收到的 sei 数据
      */
     on(event: 'onReceSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
+
+    /** 安装声卡回调。
+
+     @param result  返回结果。
+     */
+     on(event: 'onCheckNECastAudioDriverResult', cb: (result: NERtcInstallCastAudioDriverResult) => void): this;
 }
 
 export default NERtcEngine;

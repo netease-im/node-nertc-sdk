@@ -2248,6 +2248,28 @@ class NERtcEngine extends events_1.EventEmitter {
         return this.nertcEngine.subscribeRemoteAudioSubStream(uid, subscribe);
     }
     /**
+     * 检查mac虚拟声卡是否安装。
+     * <pre>
+     * only for macOS。
+     * </pre>
+     * @returns {Boolean}
+     * <pre>
+     * - false: 虚拟声卡未安装
+     * - true: 虚拟声卡已安装
+     * </pre>
+     */
+    checkNeCastAudio() {
+        let ret = false;
+        let devices = this.nertcEngine.enumeratePlayoutDevices();
+        for (let i = 0; i < devices.length; ++i) {
+            let item = devices[i];
+            if (item.device_name === "NeCastAudio 2ch") {
+                ret = true;
+            }
+        }
+        return ret;
+    }
+    /**
      * 开关本地音频发送。
      * @since 4.1.110
      * <pre>
@@ -3044,6 +3066,14 @@ class NERtcEngine extends events_1.EventEmitter {
          */
         this.nertcEngine.onStatsObserver('onNetworkQuality', true, function (uc, stats) {
             fire('onNetworkQuality', uc, stats);
+        });
+        /**
+                * 安装声卡回调
+                * @event NERtcEngine#onCheckNECastAudioDriverResult
+                * @param {NERtcErrorCode} result 安装结果
+                */
+        this.nertcEngine.onEvent('onCheckNECastAudioDriverResult', function (result) {
+            fire('onCheckNECastAudioDriverResult', result);
         });
     }
     // /**

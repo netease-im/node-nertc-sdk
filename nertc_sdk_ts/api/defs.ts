@@ -578,6 +578,7 @@ export interface NERtcEngineAPI {
 
     // 4.1.112
     checkNECastAudioDriver(): number;
+    checkNeCastAudio(): number;
 
     //TODO
     // setMixedAudioFrameParameters(samplerate: number): number;
@@ -701,6 +702,13 @@ export enum NERtcConnectionStateType
     kNERtcConnectionStateFailed         = 5, /**< 加入频道失败。*/
 }
 
+/** 驱动安装状态 */
+export enum NERtcInstallCastAudioDriverResult
+{
+    kNERtcInstallCastAudioDriverSuccess = 0,              /**< 安装音频驱动插件成功*/
+    kNERtcInstallCastAudioDriverNotAuthorized = 1,        /**< 安装音频驱动插件未授权。*/
+    kNERtcInstallCastAudioDriverFailed = 2,               /**< 安装音频驱动插件失败。*/
+}
 
 /** 连接状态变更原因 */
 export enum NERtcReasonConnectionChangedType
