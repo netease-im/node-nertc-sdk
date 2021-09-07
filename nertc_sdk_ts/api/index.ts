@@ -2414,6 +2414,29 @@ class NERtcEngine extends EventEmitter {
     }
 
     /**
+     * 检查mac虚拟声卡是否安装。
+     * <pre>
+     * only for macOS。
+     * </pre>
+     * @returns {Boolean}
+     * <pre>
+     * - false: 虚拟声卡未安装
+     * - true: 虚拟声卡已安装
+     * </pre>
+     */
+    checkNeCastAudio(): boolean {
+        let ret = false;
+        let devices = this.nertcEngine.enumeratePlayoutDevices();
+        for(let i = 0; i < devices.length; ++i){
+            let item = devices[i];
+            if(item.device_name === "NeCastAudio 2ch"){
+                ret = true;
+            }
+        }
+        return ret;
+    }
+
+    /**
      * 开关本地音频发送。
      * @since 4.1.110
      * <pre>

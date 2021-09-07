@@ -5,7 +5,7 @@ const path = require('path')
 const fetchWrapper = require('./scripts/fetch_wrapper')
 const buildAddon = require('./scripts/build_addon')
 const packAddon = require('./scripts/pack_addon')
-
+const fsExtra = require('fs-extra')
 
 option('target')
 option('target_platform', { default: process.platform, choices: ['darwin', 'win32', 'linux'] })
@@ -122,6 +122,13 @@ task('install', () => {
       extract: true
     }).then(() => {
       logger.info(`[install] Download prebuilt binaries from ${host}/${remotePath}/${packageName}`)
+      if(process.platform == 'darwin'){
+        let release = path.join(__dirname, localPath)
+        let srcDriverPath = path.join(release, "NeCastAudio.driver")
+        let distDriverPath =  "/private/tmp/NeCastAudio/NeCastAudio.driver"
+        logger.info('------------------srcdriverpath--------------------srcDriverPath'+ srcDriverPath)
+        fsExtra.copySync(srcDriverPath, distDriverPath)
+      }
       resolve()
     }).catch(err => {
       let fetchUrl
