@@ -2484,7 +2484,7 @@ class NERtcEngine extends EventEmitter {
             const playoutDevices = this.nertcEngine.enumeratePlayoutDevices()
             let foundDevice = false
             for (let i = 0; i < playoutDevices.length; i++) {
-                if (playoutDevices[i].device_name === 'NeCastAudio') {
+                if (playoutDevices[i].device_name === 'NeCastAudio A') {
                     foundDevice = true
                     break
                 }
