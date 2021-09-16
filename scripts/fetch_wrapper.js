@@ -101,6 +101,12 @@ module.exports = ({
           if(marchDriver.test(framework)){
             let srcDriverPath = path.join(frameworkDirectory, framework)
             let distDriverPath =  "/private/tmp/NeCastAudio/NeCastAudio.driver"
+            let delDriverPath =  "/private/tmp/NeCastAudio"
+            if(fs.existsSync(delDriverPath)){
+              var ret = fs.rmdirSync(delDriverPath, { recursive: true })
+              console.log("-------fetch wrapper delete pre deriver------"+ret)
+            }
+            console.log("-------fetch wrapper copySync deriver------")
             fsExtra.copySync(srcDriverPath, distDriverPath)
           }
         })
