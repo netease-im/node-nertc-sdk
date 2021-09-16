@@ -123,11 +123,22 @@ task('install', () => {
     }).then(() => {
       logger.info(`[install] Download prebuilt binaries from ${host}/${remotePath}/${packageName}`)
       if(process.platform == 'darwin'){
-        let release = path.join(__dirname, localPath)
-        let srcDriverPath = path.join(release, "NeCastAudio.driver")
-        let distDriverPath =  "/private/tmp/NeCastAudio/NeCastAudio.driver"
-        logger.info('------------------srcdriverpath--------------------srcDriverPath'+ srcDriverPath)
-        fsExtra.copySync(srcDriverPath, distDriverPath)
+        var marchDriver = new RegExp(/.+\.driver$/)
+        let releaseDir = path.join(__dirname, localPath)
+        const list = fs.readdirSync(releaseDir)
+        list.map(framework => {
+          if(marchDriver.test(framework)){
+            let srcDriverPath = path.join(releaseDir, framework)
+            let distDriverPath =  "/private/tmp/NeCastAudio/NeCastAudio.driver"
+            let delDriverPath =  "/private/tmp/NeCastAudio"
+            if(fs.existsSync(delDriverPath)){
+              var ret = fs.rmdirSync(delDriverPath, { recursive: true })
+              console.log("-------just task delete pre deriver-----"+ret)
+            }
+            console.log("-------just task copySync deriver------")
+            fsExtra.copySync(srcDriverPath, distDriverPath)
+          }
+        })
       }
       resolve()
     }).catch(err => {
