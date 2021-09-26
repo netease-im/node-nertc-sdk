@@ -385,13 +385,13 @@ public:
      */
     void onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize) override;
 
-    /**
-     * 收到检测安装声卡的内容回调（仅适用于 Mac 系统）
-     *
-     * 在 Mac 系统上，您可以通过调用 {@link checkNECastAudioDriver} 为当前系统安装一个音频驱动，并让 SDK 通过该音频驱动捕获当前 Mac 系统播放出的声音。
-     * SDK 会将安装虚拟声卡的结果，通过本事件回调抛出，需要您关注参数中的错误码。
-     */
-    virtual void onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result) override;
+    // /**
+    //  * 收到检测安装声卡的内容回调（仅适用于 Mac 系统）
+    //  *
+    //  * 在 Mac 系统上，您可以通过调用 {@link checkNECastAudioDriver} 为当前系统安装一个音频驱动，并让 SDK 通过该音频驱动捕获当前 Mac 系统播放出的声音。
+    //  * SDK 会将安装虚拟声卡的结果，通过本事件回调抛出，需要您关注参数中的错误码。
+    //  */
+    // virtual void onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result) override;
 
 public:
     void onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
@@ -452,7 +452,7 @@ private:
     void Node_onAudioHowling(bool howling);
     void Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize);
     void Node_onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
-    void Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result);
+    //void Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result);//modify by lyq
 };
 
 class NertcNodeRtcMediaStatsHandler : public nim_node::EventHandler, public nertc::IRtcMediaStatsObserver

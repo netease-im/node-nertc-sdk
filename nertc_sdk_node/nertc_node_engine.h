@@ -59,15 +59,15 @@ public:
     NIM_SDK_NODE_API(setLocalVoiceEqualization);
 
     // 4.1.110
-    NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);
-    NIM_SDK_NODE_API(subscribeRemoteAudioSubStream);
-    NIM_SDK_NODE_API(enableLocalAudioStream);
-    NIM_SDK_NODE_API(enableLoopbackRecording);
-    NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);
-    NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);
+    //NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);//modify by lyq
+    //NIM_SDK_NODE_API(subscribeRemoteAudioSubStream);//modify by lyq
+    //NIM_SDK_NODE_API(enableLocalAudioStream);//modify by lyq
+    //NIM_SDK_NODE_API(enableLoopbackRecording);//modify by lyq
+    //NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);//modify by lyq
+    NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);//modify by lyq 删除NERtcAudioStreamType参数
 
-    // 4.1.112
-    NIM_SDK_NODE_API(checkNECastAudioDriver);
+    // // 4.1.112
+    // NIM_SDK_NODE_API(checkNECastAudioDriver);//modify by lyq
 
     // ex
     NIM_SDK_NODE_API(getConnectionState);
@@ -111,9 +111,9 @@ public:
     NIM_SDK_NODE_API(setEarbackVolume);
     NIM_SDK_NODE_API(onStatsObserver);
     NIM_SDK_NODE_API(enableAudioVolumeIndication);
-    NIM_SDK_NODE_API(startScreenCaptureByScreenRect);
-    NIM_SDK_NODE_API(startScreenCaptureByDisplayId);
-    NIM_SDK_NODE_API(startScreenCaptureByWindowId);
+    //NIM_SDK_NODE_API(startScreenCaptureByScreenRect);//modify by lyq 参数不一致，先注释
+    // NIM_SDK_NODE_API(startScreenCaptureByDisplayId);//同上
+    // NIM_SDK_NODE_API(startScreenCaptureByWindowId);//同上
     NIM_SDK_NODE_API(updateScreenCaptureRegion);
     NIM_SDK_NODE_API(stopScreenCapture);
     NIM_SDK_NODE_API(pauseScreenCapture);

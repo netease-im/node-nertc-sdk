@@ -725,12 +725,12 @@ void NertcNodeEventHandler::onPullExternalAudioFrame(const BaseCallbackPtr& bcb,
     });
 }
 
-void NertcNodeEventHandler::onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result)
-{
-    nim_node::node_async_call::async_call([=]() {
-        NertcNodeEventHandler::GetInstance()->Node_onCheckNECastAudioDriverResult(result);
-    });
-}
+// void NertcNodeEventHandler::onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result)
+// {
+//     nim_node::node_async_call::async_call([=]() {
+//         NertcNodeEventHandler::GetInstance()->Node_onCheckNECastAudioDriverResult(result);
+//     });
+// }
 
 void NertcNodeEventHandler::Node_onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile)
 {
@@ -1111,16 +1111,16 @@ void NertcNodeEventHandler::Node_onPullExternalAudioFrame(const BaseCallbackPtr&
         bcb->data_.Get(isolate), argc, argv);
 }
 
-void NertcNodeEventHandler::Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result)
-{
-    Isolate* isolate = Isolate::GetCurrent();
-    const unsigned argc = 1;
-    Local<Value> argv[argc] = { nim_napi_new_int32(isolate, (int32_t)result) };
-    auto it = callbacks_.find("onCheckNECastAudioDriverResult");
-	if (it != callbacks_.end())
-	{
-		it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
-	}
-}
+// void NertcNodeEventHandler::Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result)
+// {
+//     Isolate* isolate = Isolate::GetCurrent();
+//     const unsigned argc = 1;
+//     Local<Value> argv[argc] = { nim_napi_new_int32(isolate, (int32_t)result) };
+//     auto it = callbacks_.find("onCheckNECastAudioDriverResult");
+// 	if (it != callbacks_.end())
+// 	{
+// 		it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
+// 	}
+// }
 
 }

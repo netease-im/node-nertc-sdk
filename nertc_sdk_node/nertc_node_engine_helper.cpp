@@ -201,79 +201,79 @@ napi_status nertc_video_dimensions_obj_to_struct(Isolate* isolate, const Local<O
     return napi_ok;        
 }
 
-napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcScreenCaptureParameters& params)
-{
-    int32_t out_i;
-    bool out_b;
-    params.excluded_window_list = nullptr;
-    if (nim_napi_get_object_value_int32(isolate, obj, "profile", out_i) == napi_ok)
-    {
-        params.profile = (nertc::NERtcScreenProfileType)out_i;
-    }
-    Local<Value> so;
-    if (nim_napi_get_object_value(isolate, obj, "dimensions", so) == napi_ok)
-    {
-        if (nim_napi_get_object_value_int32(isolate, so.As<Object>(), "width", out_i) == napi_ok)
-        {
-            params.dimensions.width = out_i;
-        }
-        if (nim_napi_get_object_value_int32(isolate, so.As<Object>(), "height", out_i) == napi_ok)
-        {
-            params.dimensions.height = out_i;
-        }
-    }
-    if (nim_napi_get_object_value_int32(isolate, obj, "frame_rate", out_i) == napi_ok)
-    {
-        params.frame_rate = out_i;
-    }
-    if (nim_napi_get_object_value_int32(isolate, obj, "bitrate", out_i) == napi_ok)
-    {
-        params.bitrate = out_i;
-    }
-    if (nim_napi_get_object_value_bool(isolate, obj, "capture_mouse_cursor", out_b) == napi_ok)
-    {
-        params.capture_mouse_cursor = out_b;
-    }
-    if (nim_napi_get_object_value_bool(isolate, obj, "window_focus", out_b) == napi_ok)
-    {
-        params.window_focus = out_b;
-    }
-    if (nim_napi_get_object_value_int32(isolate, obj, "prefer", out_i) == napi_ok)
-    {
-        params.prefer = (nertc::NERtcSubStreamContentPrefer)out_i;
-    }
-    if (nim_napi_get_object_value_int32(isolate, obj, "excluded_window_count", out_i) == napi_ok)
-    {
-        params.excluded_window_count = out_i;
-    }
-    if (params.excluded_window_count > 0)
-    {
-        if (nim_napi_get_object_value(isolate, obj, "excluded_window_list", so) == napi_ok)
-        {
-            Local<Array> wl = so.As<Array>();
-            if (wl->IsArray()) {
-                intptr_t *wi = new intptr_t[params.excluded_window_count];
-                if (wl->Length() == params.excluded_window_count)
-                {
-                    for (auto i = 0; i < params.excluded_window_count; i++)
-                    {
-                        wi[i] = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
-                    }
-                    params.excluded_window_list = (void *)wi;
-                }
-                else
-                {
-                    delete[] wi;
-                    wi = nullptr;
-                    return napi_invalid_arg;
-                }
-            } else {
-                return napi_invalid_arg;
-            }
-        }
-    }
-    return napi_ok;      
-}
+// napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcScreenCaptureParameters& params)
+// {
+//     int32_t out_i;
+//     bool out_b;
+//     params.excluded_window_list = nullptr;
+//     if (nim_napi_get_object_value_int32(isolate, obj, "profile", out_i) == napi_ok)
+//     {
+//         params.profile = (nertc::NERtcScreenProfileType)out_i;
+//     }
+//     Local<Value> so;
+//     if (nim_napi_get_object_value(isolate, obj, "dimensions", so) == napi_ok)
+//     {
+//         if (nim_napi_get_object_value_int32(isolate, so.As<Object>(), "width", out_i) == napi_ok)
+//         {
+//             params.dimensions.width = out_i;
+//         }
+//         if (nim_napi_get_object_value_int32(isolate, so.As<Object>(), "height", out_i) == napi_ok)
+//         {
+//             params.dimensions.height = out_i;
+//         }
+//     }
+//     if (nim_napi_get_object_value_int32(isolate, obj, "frame_rate", out_i) == napi_ok)
+//     {
+//         params.frame_rate = out_i;
+//     }
+//     if (nim_napi_get_object_value_int32(isolate, obj, "bitrate", out_i) == napi_ok)
+//     {
+//         params.bitrate = out_i;
+//     }
+//     if (nim_napi_get_object_value_bool(isolate, obj, "capture_mouse_cursor", out_b) == napi_ok)
+//     {
+//         params.capture_mouse_cursor = out_b;
+//     }
+//     if (nim_napi_get_object_value_bool(isolate, obj, "window_focus", out_b) == napi_ok)
+//     {
+//         params.window_focus = out_b;
+//     }
+//     if (nim_napi_get_object_value_int32(isolate, obj, "prefer", out_i) == napi_ok)
+//     {
+//         params.prefer = (nertc::NERtcSubStreamContentPrefer)out_i;
+//     }
+//     if (nim_napi_get_object_value_int32(isolate, obj, "excluded_window_count", out_i) == napi_ok)
+//     {
+//         params.excluded_window_count = out_i;
+//     }
+//     if (params.excluded_window_count > 0)
+//     {
+//         if (nim_napi_get_object_value(isolate, obj, "excluded_window_list", so) == napi_ok)
+//         {
+//             Local<Array> wl = so.As<Array>();
+//             if (wl->IsArray()) {
+//                 intptr_t *wi = new intptr_t[params.excluded_window_count];
+//                 if (wl->Length() == params.excluded_window_count)
+//                 {
+//                     for (auto i = 0; i < params.excluded_window_count; i++)
+//                     {
+//                         wi[i] = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
+//                     }
+//                     params.excluded_window_list = (void *)wi;
+//                 }
+//                 else
+//                 {
+//                     delete[] wi;
+//                     wi = nullptr;
+//                     return napi_invalid_arg;
+//                 }
+//             } else {
+//                 return napi_invalid_arg;
+//             }
+//         }
+//     }
+//     return napi_ok;      
+// }
 
 static napi_status nertc_ls_img_info_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcLiveStreamImageInfo* info)
 {
