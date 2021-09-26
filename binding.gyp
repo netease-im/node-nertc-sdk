@@ -133,7 +133,7 @@
               'files': [
                 './nertc_sdk/nertc_sdk_Mac.framework',
                 './nertc_sdk/NEFundation_Mac.framework',
-                './nertc_sdk/NeCastAuido.driver'
+                './nertc_sdk/NeCastAudio.driver'
               ]
             }],
             'defines': [

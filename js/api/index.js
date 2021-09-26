@@ -2248,6 +2248,28 @@ class NERtcEngine extends events_1.EventEmitter {
         return this.nertcEngine.subscribeRemoteAudioSubStream(uid, subscribe);
     }
     /**
+     * 检查mac虚拟声卡是否安装。
+     * <pre>
+     * only for macOS。
+     * </pre>
+     * @returns {Boolean}
+     * <pre>
+     * - false: 虚拟声卡未安装
+     * - true: 虚拟声卡已安装
+     * </pre>
+     */
+    checkNeCastAudio() {
+        let ret = false;
+        let devices = this.nertcEngine.enumeratePlayoutDevices();
+        for (let i = 0; i < devices.length; ++i) {
+            let item = devices[i];
+            if (item.device_name === "NeCastAudio A") {
+                ret = true;
+            }
+        }
+        return ret;
+    }
+    /**
      * 开关本地音频发送。
      * @since 4.1.110
      * <pre>
@@ -2282,25 +2304,25 @@ class NERtcEngine extends events_1.EventEmitter {
      * - true: 开启声卡采集
      * - false: 关闭声卡采集（默认）
      * </pre>
-     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “NeCastAudio 2ch”，可以将虚拟声卡名称 “NeCastAudio 2ch” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集，若参数为空则在 macOS 下默认使用 NeCastAudio 2ch 设备名称 。
+     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “NeCastAudio”，可以将虚拟声卡名称 “NeCastAudio” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集，若参数为空则在 macOS 下默认使用 NeCastAudio设备名称 。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功
      * - 其他: 方法调用失败。
      * </pre>
      */
-    enableLoopbackRecording(enable, deviceName = 'NeCastAudio 2ch') {
+    enableLoopbackRecording(enable, deviceName = 'NeCastAudio') {
         if (deviceName === '' && process_1.default.platform === 'darwin') {
             const playoutDevices = this.nertcEngine.enumeratePlayoutDevices();
             let foundDevice = false;
             for (let i = 0; i < playoutDevices.length; i++) {
-                if (playoutDevices[i].device_name === 'NeCastAudio 2ch') {
+                if (playoutDevices[i].device_name === 'NeCastAudio A') {
                     foundDevice = true;
                     break;
                 }
             }
             if (foundDevice) {
-                deviceName = 'NeCastAudio 2ch';
+                deviceName = 'NeCastAudio';
             }
             else {
                 return -1;
@@ -3044,6 +3066,14 @@ class NERtcEngine extends events_1.EventEmitter {
          */
         this.nertcEngine.onStatsObserver('onNetworkQuality', true, function (uc, stats) {
             fire('onNetworkQuality', uc, stats);
+        });
+        /**
+                * 安装声卡回调
+                * @event NERtcEngine#onCheckNECastAudioDriverResult
+                * @param {NERtcErrorCode} result 安装结果
+                */
+        this.nertcEngine.onEvent('onCheckNECastAudioDriverResult', function (result) {
+            fire('onCheckNECastAudioDriverResult', result);
         });
     }
     // /**

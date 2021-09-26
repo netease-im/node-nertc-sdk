@@ -27,7 +27,7 @@ module.exports = ({
       file: targetFile,
       cwd: artifactsDirectory,
       filter: (path, stat) => {
-        const regex = new RegExp(/\.dll$|\.framework|\.node$$/)
+        const regex = new RegExp(/\.dll|\.framework|\.node$|\.driver/)
         if (regex.test(path)) {
           logger.info(`[package] ${path}`)
           return true

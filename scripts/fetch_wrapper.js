@@ -86,6 +86,8 @@ module.exports = ({
             }
           })
         }
+        //copy driver
+        var marchDriver = new RegExp(/.+\.driver$/)
         readDirectory(temporaryPath, arch)
         logger.info('[fetch] framework directory: ', frameworkDirectory)
         const list = fs.readdirSync(frameworkDirectory)
@@ -95,6 +97,17 @@ module.exports = ({
             const dst = path.join(extractPath, framework)
             logger.info(`[fetch] copy file: ${copied} to ${dst}`)
             fsExtra.copySync(copied, dst)
+          }
+          if(marchDriver.test(framework)){
+            let srcDriverPath = path.join(frameworkDirectory, framework)
+            let distDriverPath =  "/private/tmp/NeCastAudio/NeCastAudio.driver"
+            let delDriverPath =  "/private/tmp/NeCastAudio"
+            if(fs.existsSync(delDriverPath)){
+              var ret = fs.rmdirSync(delDriverPath, { recursive: true })
+              console.log("-------fetch wrapper delete pre deriver------"+ret)
+            }
+            console.log("-------fetch wrapper copySync deriver------")
+            fsExtra.copySync(srcDriverPath, distDriverPath)
           }
         })
       } else {
