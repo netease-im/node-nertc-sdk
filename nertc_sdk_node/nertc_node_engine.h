@@ -48,8 +48,8 @@ public:
     NIM_SDK_NODE_API(pushExternalAudioFrame);
 
     // 4.0
-    NIM_SDK_NODE_API(sendSEIMsg);
-    NIM_SDK_NODE_API(sendSEIMsgEx);
+    NIM_SDK_NODE_API(sendSEIMsg);//modify by lyq 修改参数名
+    NIM_SDK_NODE_API(sendSEIMsgEx);//modify by lyq
     NIM_SDK_NODE_API(setExternalAudioRender);
     NIM_SDK_NODE_API(pullExternalAudioFrame);
 
@@ -128,7 +128,7 @@ public:
     NIM_SDK_NODE_API(setEarbackVolume);
     NIM_SDK_NODE_API(onStatsObserver);
     NIM_SDK_NODE_API(enableAudioVolumeIndication);
-    NIM_SDK_NODE_API(startScreenCaptureByScreenRect);
+    NIM_SDK_NODE_API(startScreenCaptureByScreenRect);//modify by lyq modify param 
     NIM_SDK_NODE_API(startScreenCaptureByDisplayId);
     NIM_SDK_NODE_API(startScreenCaptureByWindowId);
     NIM_SDK_NODE_API(updateScreenCaptureRegion);

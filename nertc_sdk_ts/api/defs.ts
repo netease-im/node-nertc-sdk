@@ -569,16 +569,16 @@ export interface NERtcEngineAPI {
     setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
 
     // 4.1.110
-    setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
-    subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
-    enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
-    enableLoopbackRecording(enable: boolean, deviceName: String): number;
-    adjustLoopbackRecordingSignalVolume(volume: number): number;
-    adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
+    //setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
+    //subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
+    //enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
+    //enableLoopbackRecording(enable: boolean, deviceName: String): number;
+    //adjustLoopbackRecordingSignalVolume(volume: number): number;
+    adjustUserPlaybackSignalVolume(uid: number, volume: number): number;
 
     // 4.1.112
-    checkNECastAudioDriver(): number;
-    checkNeCastAudio(): number;
+    // checkNECastAudioDriver(): number;
+    //checkNeCastAudio(): number;
 
     //TODO
     // setMixedAudioFrameParameters(samplerate: number): number;

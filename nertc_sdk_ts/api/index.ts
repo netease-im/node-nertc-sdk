@@ -2387,9 +2387,9 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number {
-        return this.nertcEngine.setRemoteHighPriorityAudioStream(enable, uid, streamType)
-    }
+    // setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number {
+    //     return this.nertcEngine.setRemoteHighPriorityAudioStream(enable, uid, streamType)
+    // }
     /**
      * 取消或恢复订阅指定远端用户的音频辅流
      * @since 4.1.110
@@ -2410,9 +2410,9 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number {
-        return this.nertcEngine.subscribeRemoteAudioSubStream(uid, subscribe)
-    }
+    // subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number {
+    //     return this.nertcEngine.subscribeRemoteAudioSubStream(uid, subscribe)
+    // }
 
     /**
      * 检查mac虚拟声卡是否安装。
@@ -2425,17 +2425,17 @@ class NERtcEngine extends EventEmitter {
      * - true: 虚拟声卡已安装
      * </pre>
      */
-    checkNeCastAudio(): boolean {
-        let ret = false;
-        let devices = this.nertcEngine.enumeratePlayoutDevices();
-        for(let i = 0; i < devices.length; ++i){
-            let item = devices[i];
-            if(item.device_name === "NeCastAudio A"){
-                ret = true;
-            }
-        }
-        return ret;
-    }
+    // checkNeCastAudio(): boolean {
+    //     let ret = false;
+    //     let devices = this.nertcEngine.enumeratePlayoutDevices();
+    //     for(let i = 0; i < devices.length; ++i){
+    //         let item = devices[i];
+    //         if(item.device_name === "NeCastAudio A"){
+    //             ret = true;
+    //         }
+    //     }
+    //     return ret;
+    // }
 
     /**
      * 开关本地音频发送。
@@ -2454,9 +2454,9 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number {
-        return this.nertcEngine.enableLocalAudioStream(enable, streamType)
-    }
+    // enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number {
+    //     return this.nertcEngine.enableLocalAudioStream(enable, streamType)
+    // }
     /**
      * 开启声卡采集
      * @since 4.1.110
@@ -2479,24 +2479,24 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    enableLoopbackRecording(enable: boolean, deviceName: String = 'NeCastAudio'): number {
-        if (deviceName === '' && process.platform === 'darwin') {
-            const playoutDevices = this.nertcEngine.enumeratePlayoutDevices()
-            let foundDevice = false
-            for (let i = 0; i < playoutDevices.length; i++) {
-                if (playoutDevices[i].device_name === 'NeCastAudio A') {
-                    foundDevice = true
-                    break
-                }
-            }
-            if (foundDevice) {
-                deviceName = 'NeCastAudio'
-            } else {
-                return -1
-            }
-        }
-        return this.nertcEngine.enableLoopbackRecording(enable, deviceName)
-    }
+    // enableLoopbackRecording(enable: boolean, deviceName: String = 'NeCastAudio'): number {
+    //     if (deviceName === '' && process.platform === 'darwin') {
+    //         const playoutDevices = this.nertcEngine.enumeratePlayoutDevices()
+    //         let foundDevice = false
+    //         for (let i = 0; i < playoutDevices.length; i++) {
+    //             if (playoutDevices[i].device_name === 'NeCastAudio A') {
+    //                 foundDevice = true
+    //                 break
+    //             }
+    //         }
+    //         if (foundDevice) {
+    //             deviceName = 'NeCastAudio'
+    //         } else {
+    //             return -1
+    //         }
+    //     }
+    //     return this.nertcEngine.enableLoopbackRecording(enable, deviceName)
+    // }
     /**
      * 调节声卡采集信号音量。
      * @since 4.1.110
@@ -2510,9 +2510,9 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    adjustLoopbackRecordingSignalVolume(volume: number): number {
-        return this.nertcEngine.adjustLoopbackRecordingSignalVolume(volume)
-    }
+    // adjustLoopbackRecordingSignalVolume(volume: number): number {
+    //     return this.nertcEngine.adjustLoopbackRecordingSignalVolume(volume)
+    // }
 
     /**
      * 调节本地播放的指定远端用户的指定流类型的信号音量
@@ -2541,8 +2541,8 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number {
-        return this.nertcEngine.adjustUserPlaybackSignalVolume(uid, volume, streamType)
+    adjustUserPlaybackSignalVolume(uid: number, volume: number): number {
+        return this.nertcEngine.adjustUserPlaybackSignalVolume(uid, volume)
     }
 
     // setMixedAudioFrameParameters(samplerate: number): number {
@@ -2553,9 +2553,9 @@ class NERtcEngine extends EventEmitter {
     //     return this.nertcEngine.setExternalAudioSource(enabled, samplerate, channel);      
     // }
 
-    checkNECastAudioDriver(): number {
-        return this.nertcEngine.checkNECastAudioDriver();
-    }
+    // checkNECastAudioDriver(): number {
+    //     return this.nertcEngine.checkNECastAudioDriver();
+    // }
 
     /**
      * init event handler
@@ -3401,16 +3401,16 @@ class NERtcEngine extends EventEmitter {
             fire('onNetworkQuality', uc, stats);
         });
 
- /**
-         * 安装声卡回调
-         * @event NERtcEngine#onCheckNECastAudioDriverResult
-         * @param {NERtcErrorCode} result 安装结果
-         */
-        this.nertcEngine.onEvent('onCheckNECastAudioDriverResult', function (
-            result: NERtcInstallCastAudioDriverResult
-        ) {
-            fire('onCheckNECastAudioDriverResult', result);
-        });
+//  /**
+//          * 安装声卡回调
+//          * @event NERtcEngine#onCheckNECastAudioDriverResult
+//          * @param {NERtcErrorCode} result 安装结果
+//          */
+//         this.nertcEngine.onEvent('onCheckNECastAudioDriverResult', function (
+//             result: NERtcInstallCastAudioDriverResult
+//         ) {
+//             fire('onCheckNECastAudioDriverResult', result);
+//         });
 
     
     }

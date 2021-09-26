@@ -481,14 +481,14 @@ export interface NERtcEngineAPI {
     setVoiceBeautifierPreset(type: NERtcVoiceBeautifierType): number;
     setLocalVoicePitch(pitch: number): number;
     setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
-    setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
-    subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
-    enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
-    enableLoopbackRecording(enable: boolean, deviceName: String): number;
-    adjustLoopbackRecordingSignalVolume(volume: number): number;
-    adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
-    checkNECastAudioDriver(): number;
-    checkNeCastAudio(): boolean;
+    //setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
+    //subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
+    //enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
+    //enableLoopbackRecording(enable: boolean, deviceName: String): number;
+    //adjustLoopbackRecordingSignalVolume(volume: number): number;
+    adjustUserPlaybackSignalVolume(uid: number, volume: number): number;
+    //checkNECastAudioDriver(): number;
+    //checkNeCastAudio(): boolean;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {

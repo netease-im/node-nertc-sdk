@@ -1909,7 +1909,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
+    //setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
     /**
      * 取消或恢复订阅指定远端用户的音频辅流
      * @since 4.1.110
@@ -1930,7 +1930,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
+    //subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
     /**
      * 检查mac虚拟声卡是否安装。
      * <pre>
@@ -1942,7 +1942,7 @@ declare class NERtcEngine extends EventEmitter {
      * - true: 虚拟声卡已安装
      * </pre>
      */
-    checkNeCastAudio(): boolean;
+    //checkNeCastAudio(): boolean;
     /**
      * 开关本地音频发送。
      * @since 4.1.110
@@ -1960,7 +1960,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
+    //enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
     /**
      * 开启声卡采集
      * @since 4.1.110
@@ -1983,7 +1983,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    enableLoopbackRecording(enable: boolean, deviceName?: String): number;
+    //enableLoopbackRecording(enable: boolean, deviceName?: String): number;
     /**
      * 调节声卡采集信号音量。
      * @since 4.1.110
@@ -1997,7 +1997,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    adjustLoopbackRecordingSignalVolume(volume: number): number;
+    //adjustLoopbackRecordingSignalVolume(volume: number): number;
     /**
      * 调节本地播放的指定远端用户的指定流类型的信号音量
      * @since 4.1.110
@@ -2025,8 +2025,8 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
-    checkNECastAudioDriver(): number;
+    adjustUserPlaybackSignalVolume(uid: number, volume: number): number;
+    //checkNECastAudioDriver(): number;
     /**
      * init event handler
      * @private
@@ -2450,10 +2450,10 @@ declare interface NERtcEngine {
      * @param data 接收到的 sei 数据
      */
     on(event: 'onReceSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
-    /** 安装声卡回调。
+    // /** 安装声卡回调。
 
-     @param result  返回结果。
-     */
-    on(event: 'onCheckNECastAudioDriverResult', cb: (result: NERtcInstallCastAudioDriverResult) => void): this;
+    //  @param result  返回结果。
+    //  */
+    // on(event: 'onCheckNECastAudioDriverResult', cb: (result: NERtcInstallCastAudioDriverResult) => void): this;
 }
 export default NERtcEngine;
