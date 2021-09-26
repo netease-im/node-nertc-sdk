@@ -81,6 +81,7 @@ public:
     NIM_SDK_NODE_API(setRemoteCanvasWatermarkConfigs); 
     NIM_SDK_NODE_API(startAudioRecording);
     NIM_SDK_NODE_API(stopAudioRecording);
+    NIM_SDK_NODE_API(setRemoteSubSteamRenderMode);
     //todo
     // NIM_SDK_NODE_API(takeLocalSnapshot); 
     // NIM_SDK_NODE_API(takeRemoteSnapshot); 

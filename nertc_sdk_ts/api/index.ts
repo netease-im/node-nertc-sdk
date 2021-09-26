@@ -9,6 +9,9 @@ import {
     NERtcEngineContext,
     NERtcChannelProfileType,
     NERtcRemoteVideoStreamType,
+    NERtcCanvasWatermarkConfig,
+    NERtcMediaPriorityType,
+    NERtcAudioRecordingQuality,
     NERtcVideoCanvas,
     NERtcErrorCode,
     NERtcSessionLeaveReason,
@@ -47,7 +50,8 @@ import {
     NERtcPullExternalAudioFrameCb,
     NERtcAudioStreamType,
     NERtcVideoStreamType,
-    NERtcInstallCastAudioDriverResult
+    NERtcInstallCastAudioDriverResult,
+    NERtcScreenCaptureWindowParam
 } from './defs'
 import { EventEmitter } from 'events'
 import process from 'process';
@@ -2545,6 +2549,247 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.adjustUserPlaybackSignalVolume(uid, volume)
     }
 
+   /** 
+    * 快速切换音视频房间。
+    * @since 4.2.5
+    * <pre>
+    * - 房间场景为直播场景时，房间中角色为观众的成员可以调用该方法从当前房间快速切换至另一个房间。
+    * - 成功调用该方切换房间后，本端会先收到离开房间的回调 onLeaveChannel，再收到成功加入新房间的回调 onJoinChannel。远端用户会收到 onUserLeave 和 onUserJoined 的回调。
+    * <b>NOTE:</b>
+    * - 快速切换房间功能默认关闭。如需使用，请联系技术支持免费开通。
+    * - 该方法仅适用于直播场景中，角色为观众的音视频房间成员。即已通过接口 setchannelprofile 设置房间场景为直播，通过 setClientRole 设置房间成员的角色为观众。
+    * - 房间成员成功切换房间后，默认订阅房间内所有其他成员的音频流，因此产生用量并影响计费。如果想取消订阅，可以通过调用相应的 subscribeRemoteAudio 方法传入 false 实现。
+    * </pre>
+    * @param[in] token 安全认证签名（NERTC Token）。
+    * <pre>
+    * - null。非安全模式下可设置为 null。安全性不高，建议在产品正式上线前联系对应商务经理转为安全模式。
+    * - 已获取的NERTC Token。安全模式下必须设置为获取到的 Token 。若未传入正确的 Token 将无法进入房间。推荐使用安全模式。
+    * </pre>
+    * @param[in] channel_name 期望切换到的目标房间名称。
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    switchChannel(token: String, channelName: String): number {
+        return this.nertcEngine.switchChannel(token, channelName);
+    }
+
+    /** 
+    * 设置本地视图显示模式。
+    * @since 4.2.5
+    * <pre>
+    * - 该方法设置本地视图显示模式。 App 可以多次调用此方法更改显示模式。
+    * <b>NOTE:</b>
+    * - 在打开屏幕共享前必须设置本地辅流画布。
+    * </pre>
+    * @param[in] scaling_mode  视频显示模式: #NERtcVideoScalingMode
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setLocalRenderMode(scalingMode: NERtcVideoScalingMode): number {
+        return this.nertcEngine.setLocalRenderMode(scalingMode);
+    }
+
+    /** 
+    * 设置本地视频镜像模式。
+    * @since 4.2.5
+    * <pre>
+    * - 该方法设置本地视频镜像模式。 App 可以多次调用此方法更改镜像模式。
+    * <b>NOTE:</b>
+    * - 必须先通过 setupLocalSubStreamVideoCanvas 设置本地辅流画布。
+    * </pre>
+    * @param[in] scaling_mode  视频显示模式: #NERtcVideoScalingMode
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setLocalSubStreamRenderMode(scalingMode: NERtcVideoScalingMode): number {
+        return this.nertcEngine.setLocalSubStreamRenderMode(scalingMode);
+    }
+
+    /** 
+    * 设置远端视图显示模式。
+    * @since 4.2.5
+    * <pre>
+    * - 该方法设置远端视图显示模式。App 可以多次调用此方法更改显示模式。
+    * </pre>
+    * @param[in] uid 远端用户 ID
+    * @param[in] scaling_mode  视频显示模式: #NERtcVideoScalingMode
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setRemoteRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number{
+        return this.nertcEngine.setRemoteRenderMode(uid, scalingMode);
+    }
+       
+    /** 
+    * 设置本地用户的媒体流优先级。
+    * @since 4.2.5
+    * <pre>
+    * - 如果某个用户的优先级为高，那么该用户媒体流的优先级就会高于其他用户，弱网环境下 SDK 会优先保证其他用户收到的、高优先级用户的媒体流的质量。
+    * <b>NOTE:</b>
+    * - 请在加入房间（joinChannel）前调用此方法。
+    * - 快速切换房间 （switchChannel） 后，媒体优先级会恢复为默认值，即普通优先级。
+    * - 一个音视频房间中只有一个高优先级的用户。建议房间中只有一位用户调用 setLocalMediaPriority 将本端媒体流设为高优先级，否则需要开启抢占模式，保证本地用户的高优先级设置生效。
+    * </pre>
+    * @param[in] priority 本地用户的媒体流优先级
+    * <pre>
+    * - 默认为 #kNERtcMediaPriorityNormal。详细信息请参考 #NERtcMediaPriorityType。
+    * </pre>
+    * @param[in] preemptive 是否开启抢占模式。默认为 false，即不开启。
+    * <pre>
+    * - 抢占模式开启后，本地用户可以抢占其他用户的高优先级，被抢占的用户的媒体优先级变为普通优先级，在抢占者退出房间后，其他用户的优先级仍旧维持普通优先级。
+    * - 抢占模式关闭时，如果房间中已有高优先级用户，则本地用户的高优先级设置不生效，仍旧为普通优先级。
+    * </pre
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setLocalMediaPriority(priority: NERtcMediaPriorityType, preemptive: boolean): number{
+        return this.nertcEngine.setLocalMediaPriority(priority, preemptive);
+    }
+
+    /** 
+    * 设置屏幕捕捉时需屏蔽的窗口列表, 该方法在捕捉过程中可动态调用。
+    * @since 4.2.5
+    * @param[in] window_list 需屏蔽的窗口ID列表
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setExcludeWindowList(param: NERtcScreenCaptureWindowParam): number{
+        return this.nertcEngine.setExcludeWindowList(param);
+    }
+
+    /** 
+    * 添加本地视频画布水印。
+    * @since 4.2.5
+    * <pre>
+    * <b>NOTE:</b>
+    * - setLocalCanvasWatermarkConfigs 方法作用于本地视频画布，不影响视频流。画布被移除时，水印也会自动移除。
+    * - 设置水印之前，需要先通过画布相关方法设置画布。
+    * - macOS 暂不支持水印相关方法。
+    * </pre>
+    * @param[in] type 视频流类型。支持设置为主流或辅流。详细信息请参考 #NERtcVideoStreamType。
+    * @param[in] config 画布水印设置。支持设置文字水印、图片水印和时间戳水印，设置为 null 表示清除水印。
+    * <pre>
+    * - 详细信息请参考 \ref NERtcCanvasWatermarkConfig。
+    * </pre>
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setLocalCanvasWatermarkConfigs(type: NERtcVideoStreamType, param: NERtcCanvasWatermarkConfig): number{
+        return this.nertcEngine.setLocalCanvasWatermarkConfigs(type, param);
+    }
+
+    /** 
+    * 添加远端视频画布水印。
+    * @since 4.2.5
+    * <pre>
+    * <b>NOTE:</b>
+    * - setRemoteCanvasWatermarkConfigs 方法作用于远端视频画布，不影响视频流。画布被移除时，水印也会自动移除。
+    * - 设置水印之前，需要先通过画布相关方法设置画布。
+    * - macOS 暂不支持水印相关方法。
+    * </pre>
+    * @param uid 远端用户 ID。
+    * @param[in] type 视频流类型。支持设置为主流或辅流。详细信息请参考 #NERtcVideoStreamType。
+    * @param[in] config 画布水印设置。支持设置文字水印、图片水印和时间戳水印，设置为 null 表示清除水印。
+    * <pre>
+    * - 详细信息请参考 \ref NERtcCanvasWatermarkConfig。
+    * </pre>
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setRemoteCanvasWatermarkConfigs(uid: number, type: NERtcVideoStreamType, param: NERtcCanvasWatermarkConfig): number{
+        return this.nertcEngine.setRemoteCanvasWatermarkConfigs(uid, type, param);
+    }
+
+    /** 
+    * 开始客户端录音。
+    * @since 4.2.5
+    * <pre>
+    * - 调用该方法后，客户端会录制房间内所有用户混音后的音频流，并将其保存在本地一个录音文件中。录制开始或结束时，自动触发 onAudioRecording() 回调。
+    * - 指定的录音音质不同，录音文件会保存为不同格式：
+    * - WAV：音质保真度高，文件大。
+    * - AAC：音质保真度低，文件小。
+    * <b>NOTE:</b>
+    * - 请在加入房间后调用此方法。
+    * - 客户端只能同时运行一个录音任务，正在录音时，如果重复调用 startAudioRecording，会结束当前录制任务，并重新开始新的录音任务。
+    * - 当前用户离开房间时，自动停止录音。您也可以在通话中随时调用 stopAudioRecording 手动停止录音。
+    * </pre>
+    * @param[in] filePath 录音文件在本地保存的绝对路径，需要精确到文件名及格式。例如：sdcard/xxx/audio.aac。
+    * <pre>
+    * - 请确保指定的路径存在并且可写。
+    * - 目前仅支持 WAV 或 AAC 文件格式。
+    * </pre>
+    * @param[in] sampleRate 录音采样率（Hz），可以设为 16000、32000（默认）、44100 或 48000。
+    * @param[in] quality 录音音质，只在 AAC 格式下有效。详细说明请参考 NERtcAudioRecordingQuality。
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number{
+        return this.nertcEngine.startAudioRecording(filePath, sampleRate, quality);
+    }
+
+    /** 
+    * 停止客户端录音。
+    * @since 4.2.5
+    * <pre>
+    * - 本端离开房间时自动停止录音，您也可以在通话中随时调用 stopAudioRecording 手动停止录音。
+    * <b>NOTE:</b>
+    * - 该接口需要在 leaveChannel 之前调用。
+    * </pre>
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    stopAudioRecording(): number{
+        return this.nertcEngine.stopAudioRecording();
+    }
+
+    /** 
+    * 设置远端的屏幕共享辅流视频显示模式。
+    * @since 4.2.5
+    * <pre>
+    * - 在远端开启辅流形式的屏幕共享时使用。App 可以多次调用此方法更改显示模式。
+    * </pre>
+    * @param[in] uid 远端用户 ID
+    * @param[in] scaling_mode  视频显示模式: #NERtcVideoScalingMode
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setRemoteSubSteamRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number{
+        return this.nertcEngine.setRemoteSubSteamRenderMode(uid, scalingMode);
+    }
+
     // setMixedAudioFrameParameters(samplerate: number): number {
     //     return this.nertcEngine.setMixedAudioFrameParameters(samplerate);      
     // }
@@ -3410,9 +3655,7 @@ class NERtcEngine extends EventEmitter {
 //             result: NERtcInstallCastAudioDriverResult
 //         ) {
 //             fire('onCheckNECastAudioDriverResult', result);
-//         });
-
-    
+//         });    
     }
 
 

@@ -86,7 +86,7 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     // // 4.1.112
     // SET_PROTOTYPE(checkNECastAudioDriver);
 
-    //4.2.105
+    //4.2.5
     SET_PROTOTYPE(switchChannel);
     SET_PROTOTYPE(setLocalRenderMode);
     SET_PROTOTYPE(setLocalSubStreamRenderMode);
@@ -96,6 +96,7 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(setLocalCanvasWatermarkConfigs); 
     SET_PROTOTYPE(startAudioRecording);
     SET_PROTOTYPE(stopAudioRecording);
+    SET_PROTOTYPE(setRemoteSubSteamRenderMode);
     //SET_PROTOTYPE(takeLocalSnapshot); 
     //SET_PROTOTYPE(takeRemoteSnapshot); 
 
@@ -668,6 +669,27 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, stopAudioRecording)
     {
         CHECK_NATIVE_THIS(instance);
         ret = instance->rtc_engine_->stopAudioRecording();
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setRemoteSubSteamRenderMode)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        uint64_t uid;
+        GET_ARGS_VALUE(isolate, 0, uint64, uid)
+        if (status != napi_ok)
+            break;
+        uint32_t scaling_mode;
+        GET_ARGS_VALUE(isolate, 1, uint32, scaling_mode)
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->setRemoteSubSteamRenderMode(uid, (nertc::NERtcVideoScalingMode)scaling_mode);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
