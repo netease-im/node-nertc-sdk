@@ -86,6 +86,19 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     // // 4.1.112
     // SET_PROTOTYPE(checkNECastAudioDriver);
 
+    //4.2.105
+    SET_PROTOTYPE(switchChannel);
+    SET_PROTOTYPE(setLocalRenderMode);
+    SET_PROTOTYPE(setLocalSubStreamRenderMode);
+    SET_PROTOTYPE(setRemoteRenderMode); 
+    SET_PROTOTYPE(setLocalMediaPriority);
+    SET_PROTOTYPE(setExcludeWindowList);
+    SET_PROTOTYPE(setLocalCanvasWatermarkConfigs); 
+    SET_PROTOTYPE(startAudioRecording);
+    SET_PROTOTYPE(stopAudioRecording);
+    //SET_PROTOTYPE(takeLocalSnapshot); 
+    //SET_PROTOTYPE(takeRemoteSnapshot); 
+
     SET_PROTOTYPE(getConnectionState)
     SET_PROTOTYPE(muteLocalAudioStream)
     SET_PROTOTYPE(setAudioProfile)
@@ -127,9 +140,9 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(setEarbackVolume)
     SET_PROTOTYPE(onStatsObserver)
     SET_PROTOTYPE(enableAudioVolumeIndication)
-    //SET_PROTOTYPE(startScreenCaptureByScreenRect)
-    // SET_PROTOTYPE(startScreenCaptureByDisplayId)
-    // SET_PROTOTYPE(startScreenCaptureByWindowId)
+    SET_PROTOTYPE(startScreenCaptureByScreenRect)
+    SET_PROTOTYPE(startScreenCaptureByDisplayId)
+    SET_PROTOTYPE(startScreenCaptureByWindowId)
     SET_PROTOTYPE(updateScreenCaptureRegion)
     SET_PROTOTYPE(stopScreenCapture)
     SET_PROTOTYPE(pauseScreenCapture)
@@ -457,6 +470,244 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, onEvent)
         ASSEMBLE_REG_CALLBACK(1, NertcNodeEventHandler, eventName.toUtf8String())
     } while (false);
 }
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, switchChannel)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        UTF8String token, channel_name;
+        GET_ARGS_VALUE(isolate, 0, utf8string, token)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 1, utf8string, channel_name)
+        if (status != napi_ok)
+            break;
+        if(channel_name.length() == 0){
+            break;
+        }
+        ret = instance->rtc_engine_->switchChannel(token.get(), channel_name.get());
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalRenderMode)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        uint32_t mode;
+        GET_ARGS_VALUE(isolate, 0, uint32, mode)
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->setLocalRenderMode((nertc::NERtcVideoScalingMode)mode);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalSubStreamRenderMode)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        uint32_t scaling_mode;
+        GET_ARGS_VALUE(isolate, 0, uint32, scaling_mode)
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->setLocalSubStreamRenderMode((nertc::NERtcVideoScalingMode)scaling_mode);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setRemoteRenderMode)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        uint64_t uid;
+        uint32_t mode;
+        GET_ARGS_VALUE(isolate, 0, uint64, uid)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 1, uint32, mode)
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->setRemoteRenderMode(uid, (nertc::NERtcVideoScalingMode)mode);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalMediaPriority)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        uint32_t priority;
+        bool is_preemptive = false;
+        GET_ARGS_VALUE(isolate, 0, uint32, priority)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 1, bool, is_preemptive)
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->setLocalMediaPriority((nertc::NERtcMediaPriorityType)priority, is_preemptive);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setExcludeWindowList)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        nertc::source_id_t *window_list = nullptr;
+        uint32_t count;
+        status = nertc_window_id_list_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), window_list, count);
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->setExcludeWindowList(window_list, count);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalCanvasWatermarkConfigs)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        int32_t type;
+        GET_ARGS_VALUE(isolate, 0, int32, type)
+        if (status != napi_ok)
+            break;
+        nertc::NERtcCanvasWatermarkConfig config = {0};
+        status = nertc_canvas_water_mark_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), config);
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->setLocalCanvasWatermarkConfigs((nertc::NERtcVideoStreamType)type, config);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setRemoteCanvasWatermarkConfigs)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 3)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        uint64_t uid;
+        int32_t type;
+        GET_ARGS_VALUE(isolate, 0, uint64, uid)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 1, int32, type)
+        if (status != napi_ok)
+            break;
+        nertc::NERtcCanvasWatermarkConfig config = {0};
+        status = nertc_canvas_water_mark_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), config);
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->setRemoteCanvasWatermarkConfigs(uid, (nertc::NERtcVideoStreamType)type, config);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, startAudioRecording)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 3)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        UTF8String file_path;
+        int32_t sample_rate;
+        int32_t quality;
+
+        GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 1, int32, sample_rate)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 2, int32, quality)
+        if (status != napi_ok)
+            break;
+        ret = instance->rtc_engine_->startAudioRecording(file_path.get(), sample_rate, (nertc::NERtcAudioRecordingQuality)quality);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, stopAudioRecording)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 0)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        ret = instance->rtc_engine_->stopAudioRecording();
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+// NIM_SDK_NODE_API_DEF(NertcNodeEngine, takeLocalSnapshot)
+// {
+//     CHECK_API_FUNC(NertcNodeEngine, 2)
+//     int ret = -1;
+//     do
+//     {
+//         CHECK_NATIVE_THIS(instance);
+//         auto status = napi_ok;
+//         int32_t stream_type_;
+//         int32_t call_back_;
+//         GET_ARGS_VALUE(isolate, 0, int32, stream_type_)
+//         if (status != napi_ok)
+//             break;
+//         GET_ARGS_VALUE(isolate, 1, int32, call_back_)
+//         ret = instance->rtc_engine_->takeLocalSnapshot((nertc::NERtcVideoStreamType)stream_type_, reinterpret_cast<nertc::NERtcTakeSnapshotCallback*>(call_back_));
+//     } while (false);
+//     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+// }
+
+// NIM_SDK_NODE_API_DEF(NertcNodeEngine, takeRemoteSnapshot)
+// {
+//     CHECK_API_FUNC(NertcNodeEngine, 3)
+//     int ret = -1;
+//     do
+//     {
+//         CHECK_NATIVE_THIS(instance);
+//         uint64_t uid_;
+//         int32_t stream_type_;
+//         int32_t call_back_;
+//         GET_ARGS_VALUE(isolate, 1, uint64, uid_)
+//         GET_ARGS_VALUE(isolate, 1, int32, stream_type_)
+//         GET_ARGS_VALUE(isolate, 2, int32, call_back_)
+//         ret = instance->rtc_engine_->takeRemoteSnapshot(uid_, (nertc::NERtcVideoStreamType)stream_type_, reinterpret_cast<nertc::NERtcTakeSnapshotCallback*>(call_back_));
+//     } while (false);
+//     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+// }
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, getConnectionState)
 {
@@ -1144,129 +1395,129 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableAudioVolumeIndication)
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
-// NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByScreenRect)
-// {
-//     CHECK_API_FUNC(NertcNodeEngine, 3)
-//     int ret = -1;
-//     do
-//     {
-//         CHECK_NATIVE_THIS(instance);
-//         auto status = napi_ok;
-//         nertc::NERtcRectangle screen_rect = {}, region_rect = {};
-//         nertc::NERtcScreenCaptureParameters param = {};
-//         status = nertc_rectangle_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), screen_rect);
-//         if (status != napi_ok) break;
-//         status = nertc_rectangle_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), region_rect);
-//         if (status != napi_ok) break;
-//         status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param);
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByScreenRect)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 3)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        nertc::NERtcRectangle screen_rect = {}, region_rect = {};
+        nertc::NERtcScreenCaptureParameters param = {};
+        status = nertc_rectangle_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), screen_rect);
+        if (status != napi_ok) break;
+        status = nertc_rectangle_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), region_rect);
+        if (status != napi_ok) break;
+        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param);
 
-//         if (status == napi_ok)
-//         {
-//             ret = instance->rtc_engine_->startScreenCaptureByScreenRect(screen_rect, region_rect, param);
-//             if (param.excluded_window_list != nullptr)
-//             {
-//                 delete[] param.excluded_window_list;
-//                 param.excluded_window_list = nullptr;
-//             }
-//         }
-//     } while (false);
-//     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-// }
+        if (status == napi_ok)
+        {
+            ret = instance->rtc_engine_->startScreenCaptureByScreenRect(screen_rect, region_rect, param);
+            if (param.excluded_window_list != nullptr)
+            {
+                delete[] param.excluded_window_list;
+                param.excluded_window_list = nullptr;
+            }
+        }
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
 
-// NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByDisplayId)
-// {
-//     CHECK_API_FUNC(NertcNodeEngine, 3)
-//     int ret = -1;
-//     do
-//     {
-//         CHECK_NATIVE_THIS(instance);
-//         auto status = napi_ok;
-//         int64_t display;
-//         nertc::NERtcRectangle region_rect = {};
-//         nertc::NERtcScreenCaptureParameters param = {};
-//         GET_ARGS_VALUE(isolate, 0, int64, display)
-//         status = nertc_rectangle_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), region_rect);
-//         if (status != napi_ok) break;
-//         status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param);
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByDisplayId)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 3)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        int64_t display;
+        nertc::NERtcRectangle region_rect = {};
+        nertc::NERtcScreenCaptureParameters param = {};
+        GET_ARGS_VALUE(isolate, 0, int64, display)
+        status = nertc_rectangle_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), region_rect);
+        if (status != napi_ok) break;
+        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param);
 
-//         if (status == napi_ok)
-//         {
-// #ifdef WIN32
-//             RECT rc = instance->_windows_helper->getCachedRect(display);
-//             if (rc.bottom == 0 && rc.left == 0 && rc.right == 0 && rc.top == 0)
-//             {
-//                 WindowsHelpers::CaptureTargetInfoList list;
-//                 instance->_windows_helper->getCaptureWindowList(&list, 1);
-//                 for (auto w : list)
-//                 {
-//                     if (std::to_string(display) == w.display_id)
-//                     {
-//                         rc = w.rc;
-//                         instance->_windows_helper->updateCachedInfos(display, rc);
-//                         break;
-//                     }
-//                 }
-//             }
-//             if (rc.bottom != 0 || rc.left != 0 || rc.right != 0 || rc.top != 0)
-//             {
-//                 nertc::NERtcRectangle screen_rect = {};
-//                 screen_rect.x = rc.left;
-//                 screen_rect.y = rc.top;
-//                 screen_rect.width = rc.right - rc.left;
-//                 screen_rect.height = rc.bottom - rc.top;
-//                 ret = instance->rtc_engine_->startScreenCaptureByScreenRect(screen_rect, region_rect, param);
-//             }
-//             else
-//             {
-//                 ret = -100;
-//             }
-// #else
-//             ret = instance->rtc_engine_->startScreenCaptureByDisplayId(display, region_rect, param);
-// #endif
-//             if (param.excluded_window_list != nullptr)
-//             {
-//                 delete[] param.excluded_window_list;
-//                 param.excluded_window_list = nullptr;
-//             }
-//         }
+        if (status == napi_ok)
+        {
+#ifdef WIN32
+            RECT rc = instance->_windows_helper->getCachedRect(display);
+            if (rc.bottom == 0 && rc.left == 0 && rc.right == 0 && rc.top == 0)
+            {
+                WindowsHelpers::CaptureTargetInfoList list;
+                instance->_windows_helper->getCaptureWindowList(&list, 1);
+                for (auto w : list)
+                {
+                    if (std::to_string(display) == w.display_id)
+                    {
+                        rc = w.rc;
+                        instance->_windows_helper->updateCachedInfos(display, rc);
+                        break;
+                    }
+                }
+            }
+            if (rc.bottom != 0 || rc.left != 0 || rc.right != 0 || rc.top != 0)
+            {
+                nertc::NERtcRectangle screen_rect = {};
+                screen_rect.x = rc.left;
+                screen_rect.y = rc.top;
+                screen_rect.width = rc.right - rc.left;
+                screen_rect.height = rc.bottom - rc.top;
+                ret = instance->rtc_engine_->startScreenCaptureByScreenRect(screen_rect, region_rect, param);
+            }
+            else
+            {
+                ret = -100;
+            }
+#else
+            ret = instance->rtc_engine_->startScreenCaptureByDisplayId(display, region_rect, param);
+#endif
+            if (param.excluded_window_list != nullptr)
+            {
+                delete[] param.excluded_window_list;
+                param.excluded_window_list = nullptr;
+            }
+        }
 
-//     } while (false);
-//     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-// }
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
 
-// NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByWindowId)
-// {
-//     CHECK_API_FUNC(NertcNodeEngine, 3)
-//     int ret = -1;
-//     do
-//     {
-//         CHECK_NATIVE_THIS(instance);
-//         auto status = napi_ok;
-//         int32_t windowid;
-//         nertc::NERtcRectangle region_rect = {};
-//         nertc::NERtcScreenCaptureParameters param = {};
-//         GET_ARGS_VALUE(isolate, 0, int32, windowid)
-//         status = nertc_rectangle_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), region_rect);
-//         if (status != napi_ok) break;
-//         status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param);
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByWindowId)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 3)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        int32_t windowid;
+        nertc::NERtcRectangle region_rect = {};
+        nertc::NERtcScreenCaptureParameters param = {};
+        GET_ARGS_VALUE(isolate, 0, int32, windowid)
+        status = nertc_rectangle_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), region_rect);
+        if (status != napi_ok) break;
+        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param);
 
-//         if (status == napi_ok)
-//         {
-// #ifdef WIN32
-//             ret = instance->rtc_engine_->startScreenCaptureByWindowId(reinterpret_cast<void *>(windowid), region_rect, param);
-// #else
-//             ret = instance->rtc_engine_->startScreenCaptureByWindowId(reinterpret_cast<void *>(&windowid), region_rect, param);
-// #endif
-//             if (param.excluded_window_list != nullptr)
-//             {
-//                 delete[] param.excluded_window_list;
-//                 param.excluded_window_list = nullptr;
-//             }
-//         }
+        if (status == napi_ok)
+        {
+#ifdef WIN32
+            ret = instance->rtc_engine_->startScreenCaptureByWindowId(reinterpret_cast<void *>(windowid), region_rect, param);
+#else
+            ret = instance->rtc_engine_->startScreenCaptureByWindowId(reinterpret_cast<void *>(&windowid), region_rect, param);
+#endif
+            if (param.excluded_window_list != nullptr)
+            {
+                delete[] param.excluded_window_list;
+                param.excluded_window_list = nullptr;
+            }
+        }
 
-//     } while (false);
-//     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-// }
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, updateScreenCaptureRegion)
 {
@@ -2324,8 +2575,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, adjustUserPlaybackSignalVolume)
         // GET_ARGS_VALUE(isolate, 2, int32, stream_type)
         // if (status != napi_ok)
         //     break;
-        ret = instance->rtc_engine_->adjustUserPlaybackSignalVolume(uid, volume//,static_cast<nertc::NERtcAudioStreamType>(stream_type)
-            );
+        ret = instance->rtc_engine_->adjustUserPlaybackSignalVolume(uid, volume);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }

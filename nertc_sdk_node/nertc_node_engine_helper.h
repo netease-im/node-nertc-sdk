@@ -26,7 +26,7 @@ napi_status nertc_audio_mixing_option_obj_to_struct(Isolate* isolate, const Loca
 napi_status nertc_audio_effect_option_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcCreateAudioEffectOption* option);
 napi_status nertc_rectangle_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcRectangle& rect);
 napi_status nertc_video_dimensions_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcVideoDimensions& dimen);
-//napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcScreenCaptureParameters& params);//modify by lyq 参数不一致，先注释
+napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcScreenCaptureParameters& params);
 napi_status nertc_ls_task_info_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcLiveStreamTaskInfo& info);
 
 napi_status nertc_stats_to_obj(Isolate* isolate, const nertc::NERtcStats& config, Local<Object>& obj);
@@ -36,6 +36,10 @@ napi_status nertc_video_send_stats_to_obj(Isolate* isolate, const nertc::NERtcVi
 napi_status nertc_video_recv_stats_to_obj(Isolate* isolate, const nertc::NERtcVideoRecvStats& config, Local<Object>& obj);
 napi_status nertc_network_quality_to_obj(Isolate* isolate, const nertc::NERtcNetworkQualityInfo& config, Local<Object>& obj);
 napi_status nertc_audio_volume_info_to_obj(Isolate* isolate, const nertc::NERtcAudioVolumeInfo& config, Local<Object>& obj);
+
+//4.2.5
+napi_status nertc_window_id_list_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::source_id_t* window_list, uint32_t& count);
+napi_status nertc_canvas_water_mark_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcCanvasWatermarkConfig& info);
 
 }
 

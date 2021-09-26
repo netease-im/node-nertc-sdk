@@ -122,6 +122,7 @@ napi_status nertc_audio_mixing_option_obj_to_struct(Isolate* isolate, const Loca
     return napi_ok;
 }
 
+//option为指针，下面改成-?
 napi_status nertc_audio_effect_option_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcCreateAudioEffectOption* option)
 {
     UTF8String out;
@@ -201,79 +202,80 @@ napi_status nertc_video_dimensions_obj_to_struct(Isolate* isolate, const Local<O
     return napi_ok;        
 }
 
-// napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcScreenCaptureParameters& params)
-// {
-//     int32_t out_i;
-//     bool out_b;
-//     params.excluded_window_list = nullptr;
-//     if (nim_napi_get_object_value_int32(isolate, obj, "profile", out_i) == napi_ok)
-//     {
-//         params.profile = (nertc::NERtcScreenProfileType)out_i;
-//     }
-//     Local<Value> so;
-//     if (nim_napi_get_object_value(isolate, obj, "dimensions", so) == napi_ok)
-//     {
-//         if (nim_napi_get_object_value_int32(isolate, so.As<Object>(), "width", out_i) == napi_ok)
-//         {
-//             params.dimensions.width = out_i;
-//         }
-//         if (nim_napi_get_object_value_int32(isolate, so.As<Object>(), "height", out_i) == napi_ok)
-//         {
-//             params.dimensions.height = out_i;
-//         }
-//     }
-//     if (nim_napi_get_object_value_int32(isolate, obj, "frame_rate", out_i) == napi_ok)
-//     {
-//         params.frame_rate = out_i;
-//     }
-//     if (nim_napi_get_object_value_int32(isolate, obj, "bitrate", out_i) == napi_ok)
-//     {
-//         params.bitrate = out_i;
-//     }
-//     if (nim_napi_get_object_value_bool(isolate, obj, "capture_mouse_cursor", out_b) == napi_ok)
-//     {
-//         params.capture_mouse_cursor = out_b;
-//     }
-//     if (nim_napi_get_object_value_bool(isolate, obj, "window_focus", out_b) == napi_ok)
-//     {
-//         params.window_focus = out_b;
-//     }
-//     if (nim_napi_get_object_value_int32(isolate, obj, "prefer", out_i) == napi_ok)
-//     {
-//         params.prefer = (nertc::NERtcSubStreamContentPrefer)out_i;
-//     }
-//     if (nim_napi_get_object_value_int32(isolate, obj, "excluded_window_count", out_i) == napi_ok)
-//     {
-//         params.excluded_window_count = out_i;
-//     }
-//     if (params.excluded_window_count > 0)
-//     {
-//         if (nim_napi_get_object_value(isolate, obj, "excluded_window_list", so) == napi_ok)
-//         {
-//             Local<Array> wl = so.As<Array>();
-//             if (wl->IsArray()) {
-//                 intptr_t *wi = new intptr_t[params.excluded_window_count];
-//                 if (wl->Length() == params.excluded_window_count)
-//                 {
-//                     for (auto i = 0; i < params.excluded_window_count; i++)
-//                     {
-//                         wi[i] = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
-//                     }
-//                     params.excluded_window_list = (void *)wi;
-//                 }
-//                 else
-//                 {
-//                     delete[] wi;
-//                     wi = nullptr;
-//                     return napi_invalid_arg;
-//                 }
-//             } else {
-//                 return napi_invalid_arg;
-//             }
-//         }
-//     }
-//     return napi_ok;      
-// }
+napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcScreenCaptureParameters& params)
+{
+    int32_t out_i;
+    bool out_b;
+    params.excluded_window_list = nullptr;
+    if (nim_napi_get_object_value_int32(isolate, obj, "profile", out_i) == napi_ok)
+    {
+        params.profile = (nertc::NERtcScreenProfileType)out_i;
+    }
+    Local<Value> so;
+    if (nim_napi_get_object_value(isolate, obj, "dimensions", so) == napi_ok)
+    {
+        if (nim_napi_get_object_value_int32(isolate, so.As<Object>(), "width", out_i) == napi_ok)
+        {
+            params.dimensions.width = out_i;
+        }
+        if (nim_napi_get_object_value_int32(isolate, so.As<Object>(), "height", out_i) == napi_ok)
+        {
+            params.dimensions.height = out_i;
+        }
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "frame_rate", out_i) == napi_ok)
+    {
+        params.frame_rate = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "bitrate", out_i) == napi_ok)
+    {
+        params.bitrate = out_i;
+    }
+    if (nim_napi_get_object_value_bool(isolate, obj, "capture_mouse_cursor", out_b) == napi_ok)
+    {
+        params.capture_mouse_cursor = out_b;
+    }
+    if (nim_napi_get_object_value_bool(isolate, obj, "window_focus", out_b) == napi_ok)
+    {
+        params.window_focus = out_b;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "prefer", out_i) == napi_ok)
+    {
+        params.prefer = (nertc::NERtcSubStreamContentPrefer)out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "excluded_window_count", out_i) == napi_ok)
+    {
+        params.excluded_window_count = out_i;
+    }
+    if (params.excluded_window_count > 0)
+    {
+        if (nim_napi_get_object_value(isolate, obj, "excluded_window_list", so) == napi_ok)
+        {
+            Local<Array> wl = so.As<Array>();
+            if (wl->IsArray()) {
+                intptr_t *wi = new intptr_t[params.excluded_window_count];
+                if (wl->Length() == params.excluded_window_count)
+                {
+                    for (auto i = 0; i < params.excluded_window_count; i++)
+                    {
+                        wi[i] = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
+                    }
+                    void * window_list_v = (void *)wi;
+                    params.excluded_window_list = &window_list_v;
+                }
+                else
+                {
+                    delete[] wi;
+                    wi = nullptr;
+                    return napi_invalid_arg;
+                }
+            } else {
+                return napi_invalid_arg;
+            }
+        }
+    }
+    return napi_ok;      
+}
 
 static napi_status nertc_ls_img_info_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcLiveStreamImageInfo* info)
 {
@@ -599,4 +601,258 @@ napi_status nertc_audio_volume_info_to_obj(Isolate* isolate, const nertc::NERtcA
     nim_napi_set_object_value_uint32(isolate, obj, "volume", (uint32_t)config.volume);
     return napi_ok;
 }
+
+napi_status nertc_window_id_list_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::source_id_t* window_list, uint32_t& count)
+{
+    Local<Value> so;
+    if (nim_napi_get_object_value(isolate, obj, "window_list", so) == napi_ok)
+    {
+        Local<Array> wl = so.As<Array>();
+        if (wl->IsArray()) {
+            count = wl->Length();
+            intptr_t *wi = new intptr_t[count];
+            for (auto i = 0; i < count; i++)
+            {
+                wi[i] = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
+            }
+            void * window_list_v = (void *)wi;
+            window_list= &window_list_v;
+        }else{
+            return napi_invalid_arg;
+        }
+    }
+    return napi_ok;      
+}
+
+static napi_status nertc_image_water_mark_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcImageWatermarkConfig& info)
+{
+    Local<Value> value;
+    std::list<utf8_string> image_paths_ = {};
+    if (nim_napi_get_object_value(isolate, obj, "image_paths", value) == napi_ok)
+    {
+        nim_napi_get_value_utf8string_list(isolate, value, image_paths_);
+    }
+    for (int i = 0; i < 10; ++i)
+	{
+		std::list<std::string>::iterator it = image_paths_.begin();
+		while (it != image_paths_.end())
+		{
+			std::string path_ = *it++;
+			for (int j = 0; j < path_.size(); ++j)
+			{
+				info.image_paths[i][j];
+			}
+		}
+	}
+    int32_t out_i;
+    bool out_b;
+    if (nim_napi_get_object_value_int32(isolate, obj, "offset_x", out_i) == napi_ok)
+    {
+        info.offset_x = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "offset_y", out_i) == napi_ok)
+    {
+        info.offset_y = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "image_width", out_i) == napi_ok)
+    {
+        info.image_width = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "image_height", out_i) == napi_ok)
+    {
+        info.image_height = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "fps", out_i) == napi_ok)
+    {
+        info.fps = out_i;
+    }
+    if (nim_napi_get_object_value_bool(isolate, obj, "loop", out_b) == napi_ok)
+    {
+        info.loop = out_i;
+    }
+    return napi_ok;
+}
+
+
+static napi_status nertc_text_water_mark_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcTextWatermarkConfig& info)
+{
+    UTF8String out;
+    int32_t out_i;
+    if (nim_napi_get_object_value_utf8string(isolate, obj, "content", out) == napi_ok)
+    {
+        if (out.toUtf8String().length() >= kNERtcMaxBuffLength)
+            return napi_invalid_arg;
+        memset(info.content, 0, kNERtcMaxBuffLength);
+        strncpy(info.content, out.toUtf8String().c_str(), kNERtcMaxBuffLength);
+    }
+    if (nim_napi_get_object_value_utf8string(isolate, obj, "font_path", out) == napi_ok)
+    {
+        if (out.toUtf8String().length() >= kNERtcMaxURILength)
+            return napi_invalid_arg;
+        memset(info.font_path, 0, kNERtcMaxURILength);
+        strncpy(info.font_path, out.toUtf8String().c_str(), kNERtcMaxBuffLength);
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "font_size", out_i) == napi_ok)
+    {
+        info.font_size = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "font_color", out_i) == napi_ok)
+    {
+        info.font_color = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "offset_x", out_i) == napi_ok)
+    {
+        info.offset_x = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "offset_y", out_i) == napi_ok)
+    {
+        info.offset_y = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "wm_color", out_i) == napi_ok)
+    {
+        info.wm_color = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "wm_width", out_i) == napi_ok)
+    {
+        info.wm_width = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "wm_height", out_i) == napi_ok)
+    {
+        info.wm_height = out_i;
+    }
+    return napi_ok;
+}
+
+static napi_status nertc_time_water_mark_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcTimestampWatermarkConfig* info)
+{
+    UTF8String out;
+    int32_t out_i;
+    if (nim_napi_get_object_value_utf8string(isolate, obj, "font_path", out) == napi_ok)
+    {
+        if (out.toUtf8String().length() >= kNERtcMaxURILength)
+            return napi_invalid_arg;
+        memset(info->font_path, 0, kNERtcMaxURILength);
+        strncpy(info->font_path, out.toUtf8String().c_str(), kNERtcMaxURILength);
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "font_size", out_i) == napi_ok)
+    {
+        info->font_size = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "font_color", out_i) == napi_ok)
+    {
+        info->font_color = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "offset_x", out_i) == napi_ok)
+    {
+        info->offset_x = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "offset_y", out_i) == napi_ok)
+    {
+        info->offset_y = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "wm_color", out_i) == napi_ok)
+    {
+        info->wm_color = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "wm_width", out_i) == napi_ok)
+    {
+        info->wm_width = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "wm_height", out_i) == napi_ok)
+    {
+        info->wm_height = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "ts_type", out_i) == napi_ok)
+    {
+        info->ts_type = out_i;
+    }
+    return napi_ok;
+}
+
+
+napi_status nertc_canvas_water_mark_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcCanvasWatermarkConfig& info)
+{
+    auto status = napi_ok;
+    int32_t out_i;
+    if (nim_napi_get_object_value_int32(isolate, obj, "image_count_", out_i) == napi_ok)
+    {
+        info.image_count_ = out_i;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "text_count_", out_i) == napi_ok)
+    {
+        info.text_count_ = out_i;
+    }
+
+    info.image_watermarks = nullptr;
+    info.text_watermarks = nullptr;
+    info.timestamp_watermark = nullptr;
+    Local<Value> so, so1, so2;
+    if(info.image_count_ > 0)
+    {
+        //NERtcLiveStreamImageInfo* bg_image; 指针类型对象 nim_napi_get_object_value
+        if (nim_napi_get_object_value(isolate, obj, "image_watermarks", so) == napi_ok)
+        {
+            if (so->IsArray())
+            {
+                info.image_watermarks = new nertc::NERtcImageWatermarkConfig[info.image_count_];
+                Local<Array> wl = so.As<Array>();
+                if (wl->Length() != info.image_count_)
+                {
+                    delete[] info.image_watermarks;
+                    info.image_watermarks = nullptr;
+                    return napi_invalid_arg;
+                }
+
+                for (auto i = 0; i < info.image_count_; i++)
+                {
+                    nertc::NERtcImageWatermarkConfig config = {0};
+                    info.image_watermarks[i] = config;
+                    nertc_image_water_mark_obj_to_struct(isolate, wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked().As<Object>(), info.image_watermarks[i]);
+                }
+            }else
+            {
+                return napi_invalid_arg;
+            }
+        }
+    }
+
+    if(info.text_count_ > 0)
+    {
+         if (nim_napi_get_object_value(isolate, obj, "text_watermarks", so1) == napi_ok)
+         {
+            if (so1->IsArray())
+            {
+                info.text_watermarks = new nertc::NERtcTextWatermarkConfig[info.text_count_];
+                Local<Array> wl = so1.As<Array>();
+                if (wl->Length() != info.text_count_)
+                {
+                    delete[] info.text_watermarks;
+                    info.text_watermarks = nullptr;
+                    return napi_invalid_arg;
+                }
+
+                for (auto i = 0; i < info.text_count_; i++)
+                {
+                    nertc::NERtcTextWatermarkConfig config = {0};
+                    info.text_watermarks[i] = config;
+                    nertc_text_water_mark_obj_to_struct(isolate, wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked().As<Object>(), info.text_watermarks[i]);
+                }
+            }else
+            {
+                return napi_invalid_arg;
+            }
+         }
+    }
+
+    if (nim_napi_get_object_value(isolate, obj, "timestamp_watermark", so2) == napi_ok)
+    {
+        info.timestamp_watermark = new nertc::NERtcTimestampWatermarkConfig;
+        status = nertc_time_water_mark_obj_to_struct(isolate, so2.As<Object>(), info.timestamp_watermark);
+        if (status != napi_ok)
+            return status;
+
+    }
+    return napi_ok;
+}
+
 }

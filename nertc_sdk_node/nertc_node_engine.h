@@ -14,6 +14,7 @@
 
 namespace nertc_node
 {
+
 class NertcNodeEngine : public node::ObjectWrap
 {
 private:
@@ -69,6 +70,22 @@ public:
     // // 4.1.112
     // NIM_SDK_NODE_API(checkNECastAudioDriver);//modify by lyq
 
+    //4.2.5
+    NIM_SDK_NODE_API(switchChannel);
+    NIM_SDK_NODE_API(setLocalRenderMode);
+    NIM_SDK_NODE_API(setLocalSubStreamRenderMode);
+    NIM_SDK_NODE_API(setRemoteRenderMode); 
+    NIM_SDK_NODE_API(setLocalMediaPriority);
+    NIM_SDK_NODE_API(setExcludeWindowList);
+    NIM_SDK_NODE_API(setLocalCanvasWatermarkConfigs); 
+    NIM_SDK_NODE_API(setRemoteCanvasWatermarkConfigs); 
+    NIM_SDK_NODE_API(startAudioRecording);
+    NIM_SDK_NODE_API(stopAudioRecording);
+    //todo
+    // NIM_SDK_NODE_API(takeLocalSnapshot); 
+    // NIM_SDK_NODE_API(takeRemoteSnapshot); 
+
+
     // ex
     NIM_SDK_NODE_API(getConnectionState);
     NIM_SDK_NODE_API(muteLocalAudioStream);
@@ -111,9 +128,9 @@ public:
     NIM_SDK_NODE_API(setEarbackVolume);
     NIM_SDK_NODE_API(onStatsObserver);
     NIM_SDK_NODE_API(enableAudioVolumeIndication);
-    //NIM_SDK_NODE_API(startScreenCaptureByScreenRect);//modify by lyq 参数不一致，先注释
-    // NIM_SDK_NODE_API(startScreenCaptureByDisplayId);//同上
-    // NIM_SDK_NODE_API(startScreenCaptureByWindowId);//同上
+    NIM_SDK_NODE_API(startScreenCaptureByScreenRect);
+    NIM_SDK_NODE_API(startScreenCaptureByDisplayId);
+    NIM_SDK_NODE_API(startScreenCaptureByWindowId);
     NIM_SDK_NODE_API(updateScreenCaptureRegion);
     NIM_SDK_NODE_API(stopScreenCapture);
     NIM_SDK_NODE_API(pauseScreenCapture);
