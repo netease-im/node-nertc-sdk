@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { IRenderer } from '../renderer';
-import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcAudioStreamType, NERtcVideoStreamType, NERtcInstallCastAudioDriverResult } from './defs';
+import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcCanvasWatermarkConfig, NERtcMediaPriorityType, NERtcAudioRecordingQuality, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcVideoStreamType, NERtcInstallCastAudioDriverResult, NERtcScreenCaptureWindowParam } from './defs';
 import { EventEmitter } from 'events';
 /**
  * @class NERtcEngine
@@ -1895,110 +1895,6 @@ declare class NERtcEngine extends EventEmitter {
      */
     setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
     /**
-     * 设置远端用户音频流高优先级
-     * @since 4.1.110
-     * <pre>
-     * - 支持在音频自动订阅的情况下，设置某一个远端用户的音频为最高优先级，可以优先听到该用户的音频
-     * </pre>
-     * @param  {boolean} enable 开启或关闭
-     * @param  {number} uid 用户 ID
-     * @param  {NERtcAudioStreamType} streamType 音频类型：主流、辅流
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    //setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
-    /**
-     * 取消或恢复订阅指定远端用户的音频辅流
-     * @since 4.1.110
-     * <pre>
-     * - 加入房间时，默认不订阅所有远端用户的音频辅流流，您可以通过此方法取消或恢复订阅指定远端用户的音频辅流。
-     * <b>NOTE:</b>
-     * - 该方法需要在加入房间，远端用户开启音频后调用。
-     * </pre>
-     * @param  {number} uid 指定用户的 ID
-     * @param  {boolean} subscribe
-     * <pre>
-     * - true: 订阅指定音频流
-     * - false: 取消订阅指定音频流（默认）
-     * </pre>
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    //subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
-    /**
-     * 检查mac虚拟声卡是否安装。
-     * <pre>
-     * only for macOS。
-     * </pre>
-     * @returns {Boolean}
-     * <pre>
-     * - false: 虚拟声卡未安装
-     * - true: 虚拟声卡已安装
-     * </pre>
-     */
-    //checkNeCastAudio(): boolean;
-    /**
-     * 开关本地音频发送。
-     * @since 4.1.110
-     * <pre>
-     * - 该方法用于允许或禁止向网络发送本地音频流。
-     * <b>NOTE:</b>
-     * - 该方法不影响音频采集状态，功能与enableLocalAudio（audioDevice + enableLocalAudioStream）类似，但不会主动打开音频采集设备，适用于需要发送音频流但是不需要开启麦克风的场景。
-     * - 静音状态会在通话结束后被重置为非静音。
-     * </pre>
-     * @param  {boolean} enable 是否开启本地音频发送。
-     * @param  {NERtcAudioStreamType} streamType 音频类型：主流、辅流
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    //enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
-    /**
-     * 开启声卡采集
-     * @since 4.1.110
-     * <pre>
-     * - 启用声卡采集功能后，声卡播放的声音会被合到本地音频流中，从而可以发送到远端。
-     * <b>NOTE:</b>
-     * - 该方法仅适用于 macOS 和 Windows 平台。
-     * - macOS 系统默认声卡不支持采集功能，如需开启此功能需要 App 自己启用一个虚拟声卡，并将该虚拟声卡的名字作为 deviceName 传入 SDK。
-     * - 该方法在加入频道前后都能调用。
-     * </pre>
-     * @param  {boolean} enable
-     * <pre>
-     * - true: 开启声卡采集
-     * - false: 关闭声卡采集（默认）
-     * </pre>
-     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “NeCastAudio”，可以将虚拟声卡名称 “NeCastAudio” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集，若参数为空则在 macOS 下默认使用 NeCastAudio 设备名称 。
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    //enableLoopbackRecording(enable: boolean, deviceName?: String): number;
-    /**
-     * 调节声卡采集信号音量。
-     * @since 4.1.110
-     * <pre>
-     * - 调用 {@link nertc::IRtcEngineEx::enableLoopbackRecording} "enableLoopbackRecording" 开启声卡采集后，你可以调用该方法调节声卡采集的信号音量。
-     * </pre>
-     * @param  {number} volume 声卡采集信号音量。取值范围为 [0,100]。默认值为 100，表示原始音量 。
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    //adjustLoopbackRecordingSignalVolume(volume: number): number;
-    /**
      * 调节本地播放的指定远端用户的指定流类型的信号音量
      * @since 4.1.110
      * <pre>
@@ -2014,11 +1910,6 @@ declare class NERtcEngine extends EventEmitter {
      * - 0：静音。
      * - 100：原始音量。
      * </pre>
-     * @param  {number} streamType 音频类型：主流、辅流
-     * <pre>
-     * - 0: 音频流主流
-     * - 1: 音频流辅流
-     * </pre>
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功
@@ -2026,7 +1917,214 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     adjustUserPlaybackSignalVolume(uid: number, volume: number): number;
-    //checkNECastAudioDriver(): number;
+    /**
+     * 快速切换音视频房间。
+     * @since 4.2.5
+     * <pre>
+     * - 房间场景为直播场景时，房间中角色为观众的成员可以调用该方法从当前房间快速切换至另一个房间。
+     * - 成功调用该方切换房间后，本端会先收到离开房间的回调 onLeaveChannel，再收到成功加入新房间的回调 onJoinChannel。远端用户会收到 onUserLeave 和 onUserJoined 的回调。
+     * <b>NOTE:</b>
+     * - 快速切换房间功能默认关闭。如需使用，请联系技术支持免费开通。
+     * - 该方法仅适用于直播场景中，角色为观众的音视频房间成员。即已通过接口 setchannelprofile 设置房间场景为直播，通过 setClientRole 设置房间成员的角色为观众。
+     * - 房间成员成功切换房间后，默认订阅房间内所有其他成员的音频流，因此产生用量并影响计费。如果想取消订阅，可以通过调用相应的 subscribeRemoteAudio 方法传入 false 实现。
+     * </pre>
+     * @param[in] token 安全认证签名（NERTC Token）。
+     * <pre>
+     * - null。非安全模式下可设置为 null。安全性不高，建议在产品正式上线前联系对应商务经理转为安全模式。
+     * - 已获取的NERTC Token。安全模式下必须设置为获取到的 Token 。若未传入正确的 Token 将无法进入房间。推荐使用安全模式。
+     * </pre>
+     * @param[in] channel_name 期望切换到的目标房间名称。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他：方法调用失败
+     * </pre>
+     */
+    switchChannel(token: String, channelName: String): number;
+    /**
+    * 设置本地视图显示模式。
+    * @since 4.2.5
+    * <pre>
+    * - 该方法设置本地视图显示模式。 App 可以多次调用此方法更改显示模式。
+    * <b>NOTE:</b>
+    * - 在打开屏幕共享前必须设置本地辅流画布。
+    * </pre>
+    * @param[in] scaling_mode  视频显示模式: #NERtcVideoScalingMode
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setLocalRenderMode(scalingMode: NERtcVideoScalingMode): number;
+    /**
+    * 设置本地视频镜像模式。
+    * @since 4.2.5
+    * <pre>
+    * - 该方法设置本地视频镜像模式。 App 可以多次调用此方法更改镜像模式。
+    * <b>NOTE:</b>
+    * - 必须先通过 setupLocalSubStreamVideoCanvas 设置本地辅流画布。
+    * </pre>
+    * @param[in] scaling_mode  视频显示模式: #NERtcVideoScalingMode
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setLocalSubStreamRenderMode(scalingMode: NERtcVideoScalingMode): number;
+    /**
+    * 设置远端视图显示模式。
+    * @since 4.2.5
+    * <pre>
+    * - 该方法设置远端视图显示模式。App 可以多次调用此方法更改显示模式。
+    * </pre>
+    * @param[in] uid 远端用户 ID
+    * @param[in] scaling_mode  视频显示模式: #NERtcVideoScalingMode
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setRemoteRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number;
+    /**
+    * 设置本地用户的媒体流优先级。
+    * @since 4.2.5
+    * <pre>
+    * - 如果某个用户的优先级为高，那么该用户媒体流的优先级就会高于其他用户，弱网环境下 SDK 会优先保证其他用户收到的、高优先级用户的媒体流的质量。
+    * <b>NOTE:</b>
+    * - 请在加入房间（joinChannel）前调用此方法。
+    * - 快速切换房间 （switchChannel） 后，媒体优先级会恢复为默认值，即普通优先级。
+    * - 一个音视频房间中只有一个高优先级的用户。建议房间中只有一位用户调用 setLocalMediaPriority 将本端媒体流设为高优先级，否则需要开启抢占模式，保证本地用户的高优先级设置生效。
+    * </pre>
+    * @param[in] priority 本地用户的媒体流优先级
+    * <pre>
+    * - 默认为 #kNERtcMediaPriorityNormal。详细信息请参考 #NERtcMediaPriorityType。
+    * </pre>
+    * @param[in] preemptive 是否开启抢占模式。默认为 false，即不开启。
+    * <pre>
+    * - 抢占模式开启后，本地用户可以抢占其他用户的高优先级，被抢占的用户的媒体优先级变为普通优先级，在抢占者退出房间后，其他用户的优先级仍旧维持普通优先级。
+    * - 抢占模式关闭时，如果房间中已有高优先级用户，则本地用户的高优先级设置不生效，仍旧为普通优先级。
+    * </pre
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setLocalMediaPriority(priority: NERtcMediaPriorityType, preemptive: boolean): number;
+    /**
+    * 设置屏幕捕捉时需屏蔽的窗口列表, 该方法在捕捉过程中可动态调用。
+    * @since 4.2.5
+    * @param[in] window_list 需屏蔽的窗口ID列表
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setExcludeWindowList(param: NERtcScreenCaptureWindowParam): number;
+    /**
+    * 添加本地视频画布水印。
+    * @since 4.2.5
+    * <pre>
+    * <b>NOTE:</b>
+    * - setLocalCanvasWatermarkConfigs 方法作用于本地视频画布，不影响视频流。画布被移除时，水印也会自动移除。
+    * - 设置水印之前，需要先通过画布相关方法设置画布。
+    * - macOS 暂不支持水印相关方法。
+    * </pre>
+    * @param[in] type 视频流类型。支持设置为主流或辅流。详细信息请参考 #NERtcVideoStreamType。
+    * @param[in] config 画布水印设置。支持设置文字水印、图片水印和时间戳水印，设置为 null 表示清除水印。
+    * <pre>
+    * - 详细信息请参考 \ref NERtcCanvasWatermarkConfig。
+    * </pre>
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setLocalCanvasWatermarkConfigs(type: NERtcVideoStreamType, param: NERtcCanvasWatermarkConfig): number;
+    /**
+    * 添加远端视频画布水印。
+    * @since 4.2.5
+    * <pre>
+    * <b>NOTE:</b>
+    * - setRemoteCanvasWatermarkConfigs 方法作用于远端视频画布，不影响视频流。画布被移除时，水印也会自动移除。
+    * - 设置水印之前，需要先通过画布相关方法设置画布。
+    * - macOS 暂不支持水印相关方法。
+    * </pre>
+    * @param uid 远端用户 ID。
+    * @param[in] type 视频流类型。支持设置为主流或辅流。详细信息请参考 #NERtcVideoStreamType。
+    * @param[in] config 画布水印设置。支持设置文字水印、图片水印和时间戳水印，设置为 null 表示清除水印。
+    * <pre>
+    * - 详细信息请参考 \ref NERtcCanvasWatermarkConfig。
+    * </pre>
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setRemoteCanvasWatermarkConfigs(uid: number, type: NERtcVideoStreamType, param: NERtcCanvasWatermarkConfig): number;
+    /**
+    * 开始客户端录音。
+    * @since 4.2.5
+    * <pre>
+    * - 调用该方法后，客户端会录制房间内所有用户混音后的音频流，并将其保存在本地一个录音文件中。录制开始或结束时，自动触发 onAudioRecording() 回调。
+    * - 指定的录音音质不同，录音文件会保存为不同格式：
+    * - WAV：音质保真度高，文件大。
+    * - AAC：音质保真度低，文件小。
+    * <b>NOTE:</b>
+    * - 请在加入房间后调用此方法。
+    * - 客户端只能同时运行一个录音任务，正在录音时，如果重复调用 startAudioRecording，会结束当前录制任务，并重新开始新的录音任务。
+    * - 当前用户离开房间时，自动停止录音。您也可以在通话中随时调用 stopAudioRecording 手动停止录音。
+    * </pre>
+    * @param[in] filePath 录音文件在本地保存的绝对路径，需要精确到文件名及格式。例如：sdcard/xxx/audio.aac。
+    * <pre>
+    * - 请确保指定的路径存在并且可写。
+    * - 目前仅支持 WAV 或 AAC 文件格式。
+    * </pre>
+    * @param[in] sampleRate 录音采样率（Hz），可以设为 16000、32000（默认）、44100 或 48000。
+    * @param[in] quality 录音音质，只在 AAC 格式下有效。详细说明请参考 NERtcAudioRecordingQuality。
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number;
+    /**
+    * 停止客户端录音。
+    * @since 4.2.5
+    * <pre>
+    * - 本端离开房间时自动停止录音，您也可以在通话中随时调用 stopAudioRecording 手动停止录音。
+    * <b>NOTE:</b>
+    * - 该接口需要在 leaveChannel 之前调用。
+    * </pre>
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    stopAudioRecording(): number;
+    /**
+    * 设置远端的屏幕共享辅流视频显示模式。
+    * @since 4.2.5
+    * <pre>
+    * - 在远端开启辅流形式的屏幕共享时使用。App 可以多次调用此方法更改显示模式。
+    * </pre>
+    * @param[in] uid 远端用户 ID
+    * @param[in] scaling_mode  视频显示模式: #NERtcVideoScalingMode
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setRemoteSubSteamRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number;
     /**
      * init event handler
      * @private
@@ -2450,10 +2548,10 @@ declare interface NERtcEngine {
      * @param data 接收到的 sei 数据
      */
     on(event: 'onReceSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
-    // /** 安装声卡回调。
+    /** 安装声卡回调。
 
-    //  @param result  返回结果。
-    //  */
-    // on(event: 'onCheckNECastAudioDriverResult', cb: (result: NERtcInstallCastAudioDriverResult) => void): this;
+     @param result  返回结果。
+     */
+    on(event: 'onCheckNECastAudioDriverResult', cb: (result: NERtcInstallCastAudioDriverResult) => void): this;
 }
 export default NERtcEngine;

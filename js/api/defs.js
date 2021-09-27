@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NERtcVoiceEqualizationBand = exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcVideoStreamType = exports.NERtcAudioStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcLogLevel = void 0;
+exports.NERtcVoiceEqualizationBand =exports.NERtcMediaPriorityType =exports.NERtcAudioRecordingQuality= exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcVideoStreamType = exports.NERtcAudioStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcLogLevel = void 0;
 /** 日志级别。 */
 var NERtcLogLevel;
 (function (NERtcLogLevel) {
@@ -134,6 +134,7 @@ var NERtcVideoProfileType;
     NERtcVideoProfileType[NERtcVideoProfileType["kNERtcVideoProfileMAX"] = 4] = "kNERtcVideoProfileMAX";
     NERtcVideoProfileType[NERtcVideoProfileType["kNERtcVideoProfileFake"] = 6] = "kNERtcVideoProfileFake";
 })(NERtcVideoProfileType = exports.NERtcVideoProfileType || (exports.NERtcVideoProfileType = {}));
+/** 视频缩放类型。*/
 var NERtcVideoScalingMode;
 (function (NERtcVideoScalingMode) {
     NERtcVideoScalingMode[NERtcVideoScalingMode["kNERtcVideoScaleFit"] = 0] = "kNERtcVideoScaleFit";
@@ -211,6 +212,19 @@ var NERtcSubStreamContentPrefer;
     NERtcSubStreamContentPrefer[NERtcSubStreamContentPrefer["kNERtcSubStreamContentPreferMotion"] = 0] = "kNERtcSubStreamContentPreferMotion";
     NERtcSubStreamContentPrefer[NERtcSubStreamContentPrefer["kNERtcSubStreamContentPreferDetails"] = 1] = "kNERtcSubStreamContentPreferDetails";
 })(NERtcSubStreamContentPrefer = exports.NERtcSubStreamContentPrefer || (exports.NERtcSubStreamContentPrefer = {}));
+/** 录音音质 */
+var NERtcAudioRecordingQuality;
+(function (NERtcAudioRecordingQuality) {
+    NERtcAudioRecordingQuality[NERtcAudioRecordingQuality["kNERtcAudioRecordingQualityLow"] = 0] = "kNERtcAudioRecordingQualityLow";
+    NERtcAudioRecordingQuality[NERtcAudioRecordingQuality["kNERtcAudioRecordingQualityMedium"] = 1] = "kNERtcAudioRecordingQualityMedium";
+    NERtcAudioRecordingQuality[NERtcAudioRecordingQuality["kNERtcAudioRecordingQualityHigh"] = 2] = "kNERtcAudioRecordingQualityHigh";
+})(NERtcAudioRecordingQuality = exports.NERtcAudioRecordingQuality || (exports.NERtcAudioRecordingQuality = {}));
+/** 媒体优先级类型。*/
+var NERtcMediaPriorityType;
+(function (NERtcMediaPriorityType) {
+    NERtcMediaPriorityType[NERtcMediaPriorityType["kNERtcMediaPriorityHigh"] = 50] = "kNERtcMediaPriorityHigh";
+    NERtcMediaPriorityType[NERtcMediaPriorityType["kNERtcMediaPriorityNormal"] = 100] = "kNERtcMediaPriorityNormal";
+})(NERtcMediaPriorityType = exports.NERtcMediaPriorityType || (exports.NERtcMediaPriorityType = {}));
 /** 直播推流模式 */
 var NERtcLiveStreamMode;
 (function (NERtcLiveStreamMode) {
