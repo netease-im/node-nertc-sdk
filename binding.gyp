@@ -62,6 +62,14 @@
                 './nertc_sdk/dll/nertc_sdk.dll',
                 './nertc_sdk/dll/protoopp.dll',
                 './nertc_sdk/dll/SDL2.dll',
+                './nertc_sdk/dll/libfreetype-6.dll',
+                './nertc_sdk/dll/libjpeg-9.dll',
+                './nertc_sdk/dll/libpng16-16.dll',
+                './nertc_sdk/dll/libtiff-5.dll',
+                './nertc_sdk/dll/libwebp-7.dll',
+                './nertc_sdk/dll/SDL2_image.dll',
+                './nertc_sdk/dll/SDL2_ttf.dll',
+                './nertc_sdk/dll/zlib1.dll',
               ]
             }],
             'defines': [
