@@ -559,14 +559,10 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalMediaPriority)
         CHECK_NATIVE_THIS(instance);
         auto status = napi_ok;
         uint32_t priority;
-        bool is_preemptive = false;
+        uint32_t sub;
         GET_ARGS_VALUE(isolate, 0, uint32, priority)
-        if (status != napi_ok)
-            break;
-        GET_ARGS_VALUE(isolate, 1, bool, is_preemptive)
-        if (status != napi_ok)
-            break;
-        ret = instance->rtc_engine_->setLocalMediaPriority((nertc::NERtcMediaPriorityType)priority, is_preemptive);
+        GET_ARGS_VALUE(isolate, 1, uint32, sub)
+        ret = instance->rtc_engine_->setLocalMediaPriority((nertc::NERtcMediaPriorityType)priority, (bool)sub);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
@@ -584,6 +580,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setExcludeWindowList)
         status = nertc_window_id_list_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), window_list, count);
         if (status != napi_ok)
             break;
+            
         ret = instance->rtc_engine_->setExcludeWindowList(window_list, count);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -643,20 +640,12 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startAudioRecording)
     {
         CHECK_NATIVE_THIS(instance);
         auto status = napi_ok;
-        UTF8String file_path;
-        int32_t sample_rate;
-        int32_t quality;
-
-        GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
-        if (status != napi_ok)
-            break;
-        GET_ARGS_VALUE(isolate, 1, int32, sample_rate)
-        if (status != napi_ok)
-            break;
-        GET_ARGS_VALUE(isolate, 2, int32, quality)
-        if (status != napi_ok)
-            break;
-        ret = instance->rtc_engine_->startAudioRecording(file_path.get(), sample_rate, (nertc::NERtcAudioRecordingQuality)quality);
+        UTF8String path;
+        uint32_t profile, scenario;
+        GET_ARGS_VALUE(isolate, 0, utf8string, path)
+        GET_ARGS_VALUE(isolate, 1, uint32, profile)
+        GET_ARGS_VALUE(isolate, 2, uint32, scenario)
+        ret = instance->rtc_engine_->startAudioRecording(path.get(), profile, (nertc::NERtcAudioRecordingQuality)scenario);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }

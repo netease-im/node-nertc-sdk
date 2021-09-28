@@ -2475,6 +2475,11 @@ class NERtcEngine extends events_1.EventEmitter {
     * </pre>
     */
     setLocalMediaPriority(priority, preemptive) {
+        if(preemptive == true){
+            preemptive = 1;
+        }else{
+            preemptive = 0;
+        }
         return this.nertcEngine.setLocalMediaPriority(priority, preemptive);
     }
     /**
