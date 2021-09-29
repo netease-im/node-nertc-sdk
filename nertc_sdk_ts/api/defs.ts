@@ -658,11 +658,13 @@ export interface NERtcEngineAPI {
     setRemoteSubSteamRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number;
 
     //TODO 4.1.113是注释掉的，是否需要放开?
-    // setMixedAudioFrameParameters(samplerate: number): number;
-    // setExternalVideoSource(enabled: boolean): number;
+    setMixedAudioFrameParameters(samplerate: number): number;
+    setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
+    setExternalVideoSource(enabled: boolean): number;
     //pushExternalVideoFrame
-    // setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
     //pushExternalAudioFrame
+    //setAudioFrameObserver
+    //setStatsObserver
 }
 
 /** 通话相关的统计信息。*/

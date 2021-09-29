@@ -550,6 +550,9 @@ export interface NERtcEngineAPI {
     startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number;
     stopAudioRecording(): number;
     setRemoteSubSteamRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number;
+    setMixedAudioFrameParameters(samplerate: number): number;
+    setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
+    setExternalVideoSource(enabled: boolean): number;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {

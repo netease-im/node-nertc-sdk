@@ -2553,12 +2553,74 @@ class NERtcEngine extends events_1.EventEmitter {
     setRemoteSubSteamRenderMode(uid, scalingMode) {
         return this.nertcEngine.setRemoteSubSteamRenderMode(uid, scalingMode);
     }
-    // setMixedAudioFrameParameters(samplerate: number): number {
-    //     return this.nertcEngine.setMixedAudioFrameParameters(samplerate);      
-    // }
-    // setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number {
-    //     return this.nertcEngine.setExternalAudioSource(enabled, samplerate, channel);      
-    // }
+    /**
+    * 设置录制和播放声音混音后的采样率。
+    * @since 4.2.5
+    * <pre>
+    * - 该方法设置 \ref nertc::INERtcAudioFrameObserver::onMixedAudioFrame "onMixedAudioFrame" 回调的声音格式。
+    * <b>NOTE:</b>
+    * - 该方法在加入房间前后均可设置或修改。
+    * - 目前只支持设置采样率。
+    * - 未调用该接口设置数据格式时，回调中的采样率返回 SDK 默认值。
+    * </pre>
+    * @param sample_rate 指定 *onMixedAudioFrame* 中返回数据的采样率。仅支持 8000， 16000， 32000， 44100或48000。
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setMixedAudioFrameParameters(samplerate) {
+        return this.nertcEngine.setMixedAudioFrameParameters(samplerate);
+    }
+    /**
+    * 开启或关闭外部音频源数据输入。
+    * @since 4.2.5
+    * <pre>
+    * - 当该方法调用成功后，音频输入设备选择和异常重启会失效。调用成功后可以使用 pushExternalAudioFrame 接口发送音频 PCM 数据。
+    * <b>NOTE:</b>
+    * - 请在加入房间前调用该方法。
+    * - 该方法设置内部引擎为启用状态，启动时将用虚拟设备代替麦克风工作，在leaveChannel后仍然有效。如果需要关闭该功能，需要在下次通话前调用接口关闭外部音频数据输入功能。
+    * - 启用外部音频数据输入功能后，SDK 内部实现部分麦克风由外部输入数据代替，麦克风相关的设置会失败或不在通话中生效。例如进行 loopback 检测时，会听到输入的外部数据。
+    * </pre>
+    * @param[in] enabled 是否外部数据输入: true: 开启外部数据输入；false: 关闭外部数据输入 (默认)。
+    * @param[in] sample_rate 数据采样率，后续数据传入需要按该格式传入。 注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效。
+    * @param[in] channels 数据声道数，后续数据传入需要按该格式传入。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效。
+    * <pre>
+    * - 1：单声道。
+    * - 2：双声道。
+    * </pre>
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setExternalAudioSource(enabled, samplerate, channel) {
+        return this.nertcEngine.setExternalAudioSource(enabled, samplerate, channel);
+    }
+    /**
+    * 开启或关闭外部视频源数据输入。
+    * @since 4.2.5
+    * <pre>
+    * - 通过该方法启用外部视频数据输入功能时，需要通过 IVideoDeviceManager::setDevice 设置 kNERtcExternalVideoDeviceID 为外部视频输入源 ID。
+    * <b>NOTE:</b>
+    * - 该方法设置内部引擎为启用状态，在 \ref IRtcEngine::leaveChannel "leaveChannel" 后仍然有效。
+    * </pre>
+    * @param[in] enabled 是否外部视频源数据输入:。
+    * <pre>
+    * - true: 开启外部视频源数据输入；
+    * - false: 关闭外部视频源数据输入 (默认)。
+    * </pre>
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setExternalVideoSource(enabled) {
+        return this.nertcEngine.setExternalVideoSource(enabled);
+    }
     // checkNECastAudioDriver(): number {
     //     return this.nertcEngine.checkNECastAudioDriver();
     // }
