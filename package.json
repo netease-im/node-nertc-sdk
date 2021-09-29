@@ -32,7 +32,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/surebeli/node-nertc-sdk.git#feat/3.9.0/private_conf"
+    "url": "git+https://github.com/surebeli/node-nertc-sdk.git#feat/4.1.301/private"
   },
   "files": [
     "js",
