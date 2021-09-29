@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NERtcVoiceEqualizationBand =exports.NERtcMediaPriorityType =exports.NERtcAudioRecordingQuality= exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcVideoStreamType = exports.NERtcAudioStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcLogLevel = void 0;
+exports.NERtcVoiceEqualizationBand =exports.NERtcAudioRecordingCode =exports.NERtcScreenCaptureStatus =exports.NERtcMediaPriorityType =exports.NERtcAudioRecordingQuality= exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcVideoStreamType = exports.NERtcAudioStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcLogLevel = void 0;
 /** 日志级别。 */
 var NERtcLogLevel;
 (function (NERtcLogLevel) {
@@ -323,6 +323,24 @@ var NERtcInstallCastAudioDriverResult;
     NERtcInstallCastAudioDriverResult[NERtcInstallCastAudioDriverResult["kNERtcInstallCastAudioDriverNotAuthorized"] = 1] = "kNERtcInstallCastAudioDriverNotAuthorized";
     NERtcInstallCastAudioDriverResult[NERtcInstallCastAudioDriverResult["kNERtcInstallCastAudioDriverFailed"] = 2] = "kNERtcInstallCastAudioDriverFailed";
 })(NERtcInstallCastAudioDriverResult = exports.NERtcInstallCastAudioDriverResult || (exports.NERtcInstallCastAudioDriverResult = {}));
+/** 屏幕分享状态 */
+var NERtcScreenCaptureStatus;
+(function (NERtcScreenCaptureStatus) {
+    NERtcScreenCaptureStatus[NERtcScreenCaptureStatus["kScreenCaptureStatusStart"] = 1] = "kScreenCaptureStatusStart";
+    NERtcScreenCaptureStatus[NERtcScreenCaptureStatus["kScreenCaptureStatusPause"] = 2] = "kScreenCaptureStatusPause";
+    NERtcScreenCaptureStatus[NERtcScreenCaptureStatus["kScreenCaptureStatusResume"] = 3] = "kScreenCaptureStatusResume";
+    NERtcScreenCaptureStatus[NERtcScreenCaptureStatus["kScreenCaptureStatusStop"] = 4] = "kScreenCaptureStatusStop";
+    NERtcScreenCaptureStatus[NERtcScreenCaptureStatus["kScreenCaptureStatusCovered"] = 5] = "kScreenCaptureStatusCovered"; /**< 屏幕分享的目标窗口被覆盖*/
+})(NERtcScreenCaptureStatus = exports.NERtcScreenCaptureStatus || (exports.NERtcScreenCaptureStatus = {}));
+/** 录音回调事件错误码 */
+var NERtcAudioRecordingCode;
+(function (NERtcAudioRecordingCode) {
+    NERtcAudioRecordingCode[NERtcAudioRecordingCode["kNERtcAudioRecordErrorSuffix"] = 1] = "kNERtcAudioRecordErrorSuffix";
+    NERtcAudioRecordingCode[NERtcAudioRecordingCode["kNERtcAudioRecordOpenFileFailed"] = 2] = "kNERtcAudioRecordOpenFileFailed";
+    NERtcAudioRecordingCode[NERtcAudioRecordingCode["kNERtcAudioRecordStart"] = 3] = "kNERtcAudioRecordStart";
+    NERtcAudioRecordingCode[NERtcAudioRecordingCode["kNERtcAudioRecordError"] = 4] = "kNERtcAudioRecordError";
+    NERtcAudioRecordingCode[NERtcAudioRecordingCode["kNERtcAudioRecordFinish"] = 5] = "kNERtcAudioRecordFinish";
+})(NERtcAudioRecordingCode = exports.NERtcAudioRecordingCode || (exports.NERtcAudioRecordingCode = {}));
 /** 连接状态变更原因 */
 var NERtcReasonConnectionChangedType;
 (function (NERtcReasonConnectionChangedType) {

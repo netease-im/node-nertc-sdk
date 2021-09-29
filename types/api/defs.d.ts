@@ -655,6 +655,22 @@ export declare enum NERtcInstallCastAudioDriverResult {
     kNERtcInstallCastAudioDriverNotAuthorized = 1,
     kNERtcInstallCastAudioDriverFailed = 2
 }
+/** 屏幕分享状态 */
+export declare enum NERtcScreenCaptureStatus {
+    kScreenCaptureStatusStart = 1,
+    kScreenCaptureStatusPause = 2,
+    kScreenCaptureStatusResume = 3,
+    kScreenCaptureStatusStop = 4,
+    kScreenCaptureStatusCovered = 5 /**< 屏幕分享的目标窗口被覆盖*/
+}
+/** 录音回调事件错误码 */
+export declare enum NERtcAudioRecordingCode {
+    kNERtcAudioRecordErrorSuffix = 1,
+    kNERtcAudioRecordOpenFileFailed = 2,
+    kNERtcAudioRecordStart = 3,
+    kNERtcAudioRecordError = 4,
+    kNERtcAudioRecordFinish = 5
+}
 /** 连接状态变更原因 */
 export declare enum NERtcReasonConnectionChangedType {
     kNERtcReasonConnectionChangedLeaveChannel = 1,

@@ -51,7 +51,9 @@ import {
     NERtcAudioStreamType,
     NERtcVideoStreamType,
     NERtcInstallCastAudioDriverResult,
-    NERtcScreenCaptureWindowParam
+    NERtcScreenCaptureWindowParam,
+    NERtcScreenCaptureStatus,
+    NERtcAudioRecordingCode
 } from './defs'
 import { EventEmitter } from 'events'
 import process from 'process';
@@ -2669,7 +2671,7 @@ class NERtcEngine extends EventEmitter {
     setExcludeWindowList(param: NERtcScreenCaptureWindowParam): number{
         return this.nertcEngine.setExcludeWindowList(param);
     }
-    
+
     /** 
     * 开始客户端录音。
     * @since 4.2.5
@@ -3602,6 +3604,22 @@ class NERtcEngine extends EventEmitter {
 //         ) {
 //             fire('onCheckNECastAudioDriverResult', result);
 //         });    
+        /**
+         * 屏幕分享状态回调
+         * @event NERtcEngine#onScreenCaptureStatus
+         * @param {NERtcErrorCode} result 屏幕分享状态
+         */
+        this.nertcEngine.onEvent('onScreenCaptureStatus', function (status: NERtcScreenCaptureStatus) {
+            fire('onScreenCaptureStatus', status);
+        }); 
+        /**
+         * 屏幕分享状态回调
+         * @event NERtcEngine#onAudioRecording
+         * @param {NERtcErrorCode} result 音频录制状态回调。
+         */
+         this.nertcEngine.onEvent('onAudioRecording', function (status: NERtcAudioRecordingCode, file_path: string) {
+            fire('onAudioRecording', status, file_path);
+        });     
     }
 
 
@@ -4326,11 +4344,21 @@ declare interface NERtcEngine {
      */
     on(event: 'onReceSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
 
-    /** 安装声卡回调。
+    // /** 安装声卡回调。
 
-     @param result  返回结果。
+    //  @param result  返回结果。
+    //  */
+    // on(event: 'onCheckNECastAudioDriverResult', cb: (result: NERtcInstallCastAudioDriverResult) => void): this;
+
+    /** 安装声卡回调。
+     * @param result  返回结果。
      */
-     on(event: 'onCheckNECastAudioDriverResult', cb: (result: NERtcInstallCastAudioDriverResult) => void): this;
+     on(event: 'onScreenCaptureStatus', cb: (status: NERtcScreenCaptureStatus) => void): this;
+     /** 音频录制状态回调。
+     * @param code 音频录制状态码。详细信息请参考 NERtcAudioRecordingCode。
+     * @param file_path 音频录制文件保存路径。
+     */
+      on(event: 'onAudioRecording', cb: (status: NERtcAudioRecordingCode, file_path: string) => void): this;  
 }
 
 export default NERtcEngine;

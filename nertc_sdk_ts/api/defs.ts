@@ -787,6 +787,27 @@ export enum NERtcInstallCastAudioDriverResult
     kNERtcInstallCastAudioDriverFailed = 2,               /**< 安装音频驱动插件失败。*/
 }
 
+/** 屏幕分享状态 */
+export enum NERtcScreenCaptureStatus
+{
+    kScreenCaptureStatusStart   = 1,    /**< 开始屏幕分享*/
+    kScreenCaptureStatusPause   = 2,    /**< 暂停屏幕分享*/
+    kScreenCaptureStatusResume  = 3,    /**< 恢复屏幕分享*/
+    kScreenCaptureStatusStop    = 4,    /**< 停止屏幕分享*/
+    kScreenCaptureStatusCovered = 5     /**< 屏幕分享的目标窗口被覆盖*/
+}
+/** 录音回调事件错误码 */
+export enum NERtcAudioRecordingCode
+{
+    kNERtcAudioRecordErrorSuffix = 1,    /**< 不支持的录音文件格式。 */
+    kNERtcAudioRecordOpenFileFailed = 2, /**< 无法创建录音文件，原因通常包括：
+                                                - 应用没有磁盘写入权限。
+                                                - 文件路径不存在。 */
+    kNERtcAudioRecordStart = 3,          /**< 开始录制。 */
+    kNERtcAudioRecordError = 4,          /**< 录制错误。原因通常为磁盘空间已满，无法写入。 */
+    kNERtcAudioRecordFinish = 5,         /**< 完成录制。 */
+}
+
 /** 连接状态变更原因 */
 export enum NERtcReasonConnectionChangedType
 {

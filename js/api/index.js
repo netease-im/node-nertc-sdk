@@ -3254,6 +3254,22 @@ class NERtcEngine extends events_1.EventEmitter {
         //         ) {
         //             fire('onCheckNECastAudioDriverResult', result);
         //         });    
+        /**
+         * 屏幕分享状态回调
+         * @event NERtcEngine#onScreenCaptureStatus
+         * @param {NERtcErrorCode} result 屏幕分享状态
+         */
+        this.nertcEngine.onEvent('onScreenCaptureStatus', function (status) {
+            fire('onScreenCaptureStatus', status);
+        });
+        /**
+         * 屏幕分享状态回调
+         * @event NERtcEngine#onAudioRecording
+         * @param {NERtcErrorCode} result 音频录制状态回调。
+         */
+        this.nertcEngine.onEvent('onAudioRecording', function (status, file_path) {
+            fire('onAudioRecording', status, file_path);
+        });
     }
     // /**
     //  * Decide whether to use webgl/software/custom rendering.

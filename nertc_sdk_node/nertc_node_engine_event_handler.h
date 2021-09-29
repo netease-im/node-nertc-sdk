@@ -393,6 +393,17 @@ public:
     //  */
     // virtual void onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result) override;
 
+    /**
+     * 屏幕共享暂停/恢复/开始/结束等回调
+     */
+    virtual void onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status) override;
+
+    /** 音频录制状态回调。
+     * @param code 音频录制状态码。详细信息请参考 NERtcAudioRecordingCode。
+     * @param file_path 音频录制文件保存路径。
+     */
+    virtual void onAudioRecording(nertc::NERtcAudioRecordingCode code, const char* file_path) override;
+
 public:
     void onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
 
@@ -453,6 +464,8 @@ private:
     void Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize);
     void Node_onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
     //void Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result);//modify by lyq
+    void Node_onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status);
+    void Node_onAudioRecording(nertc::NERtcAudioRecordingCode code, const utf8_string& file_path);
 };
 
 class NertcNodeRtcMediaStatsHandler : public nim_node::EventHandler, public nertc::IRtcMediaStatsObserver
