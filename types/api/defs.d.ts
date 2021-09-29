@@ -547,8 +547,6 @@ export interface NERtcEngineAPI {
     setRemoteRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number;
     setLocalMediaPriority(priority: NERtcMediaPriorityType, preemptive: boolean): number;
     setExcludeWindowList(param: NERtcScreenCaptureWindowParam): number;
-    setLocalCanvasWatermarkConfigs(type: NERtcVideoStreamType, param: NERtcCanvasWatermarkConfig): number;
-    setRemoteCanvasWatermarkConfigs(uid: number, type: NERtcVideoStreamType, param: NERtcCanvasWatermarkConfig): number;
     startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number;
     stopAudioRecording(): number;
     setRemoteSubSteamRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number;

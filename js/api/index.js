@@ -2475,11 +2475,6 @@ class NERtcEngine extends events_1.EventEmitter {
     * </pre>
     */
     setLocalMediaPriority(priority, preemptive) {
-        if(preemptive == true){
-            preemptive = 1;
-        }else{
-            preemptive = 0;
-        }
         return this.nertcEngine.setLocalMediaPriority(priority, preemptive);
     }
     /**
@@ -2494,53 +2489,6 @@ class NERtcEngine extends events_1.EventEmitter {
     */
     setExcludeWindowList(param) {
         return this.nertcEngine.setExcludeWindowList(param);
-    }
-    /**
-    * 添加本地视频画布水印。
-    * @since 4.2.5
-    * <pre>
-    * <b>NOTE:</b>
-    * - setLocalCanvasWatermarkConfigs 方法作用于本地视频画布，不影响视频流。画布被移除时，水印也会自动移除。
-    * - 设置水印之前，需要先通过画布相关方法设置画布。
-    * - macOS 暂不支持水印相关方法。
-    * </pre>
-    * @param[in] type 视频流类型。支持设置为主流或辅流。详细信息请参考 #NERtcVideoStreamType。
-    * @param[in] config 画布水印设置。支持设置文字水印、图片水印和时间戳水印，设置为 null 表示清除水印。
-    * <pre>
-    * - 详细信息请参考 \ref NERtcCanvasWatermarkConfig。
-    * </pre>
-    * @return {number}
-    * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
-    * </pre>
-    */
-    setLocalCanvasWatermarkConfigs(type, param) {
-        return this.nertcEngine.setLocalCanvasWatermarkConfigs(type, param);
-    }
-    /**
-    * 添加远端视频画布水印。
-    * @since 4.2.5
-    * <pre>
-    * <b>NOTE:</b>
-    * - setRemoteCanvasWatermarkConfigs 方法作用于远端视频画布，不影响视频流。画布被移除时，水印也会自动移除。
-    * - 设置水印之前，需要先通过画布相关方法设置画布。
-    * - macOS 暂不支持水印相关方法。
-    * </pre>
-    * @param uid 远端用户 ID。
-    * @param[in] type 视频流类型。支持设置为主流或辅流。详细信息请参考 #NERtcVideoStreamType。
-    * @param[in] config 画布水印设置。支持设置文字水印、图片水印和时间戳水印，设置为 null 表示清除水印。
-    * <pre>
-    * - 详细信息请参考 \ref NERtcCanvasWatermarkConfig。
-    * </pre>
-    * @return {number}
-    * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
-    * </pre>
-    */
-    setRemoteCanvasWatermarkConfigs(uid, type, param) {
-        return this.nertcEngine.setRemoteCanvasWatermarkConfigs(uid, type, param);
     }
     /**
     * 开始客户端录音。
