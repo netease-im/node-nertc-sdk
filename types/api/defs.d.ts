@@ -12,11 +12,23 @@ export declare enum NERtcLogLevel {
     kNERtcLogLevelDebug = 6,
     kNERtcLogLevelOff = 7
 }
+/** 私有化服务器配置项 */
+export interface NERtcServerAddresses {
+    channel_server: string; /**< 获取通道信息服务器, <256chars */
+    statistics_server: string; /**< 统计上报服务器, <256chars */
+    room_server: string; /**< roomServer服务器, <256chars */
+    compat_server: string; /**< 兼容性配置服务器, <256chars */
+    nos_lbs_server: string; /**< nos 域名解析服务器, <256chars */
+    nos_upload_sever: string; /**< 默认nos 上传服务器, <256chars */
+    nos_token_server: string; /**< 获取NOS token 服务器, <256chars */
+    use_ipv6: Boolean; /**< 是否使用IPv6（默认false) */
+}
 export interface NERtcEngineContext {
     app_key: string; /**< 用户注册云信的APP Key。如果你的开发包里面缺少 APP Key，请申请注册一个新的 APP Key。*/
     log_dir_path: string; /**< 日志目录的完整路径，采用UTF-8 编码。*/
     log_level: NERtcLogLevel; /**< 日志级别，默认级别为 kNERtcLogLevelInfo。*/
     log_file_max_size_KBytes: number; /**< 指定 SDK 输出日志文件的大小上限，单位为 KB。如果设置为 0，则默认为 20 M。*/
+    server_config: NERtcServerAddresses; /**< 私有化服务器地址 */
 }
 /** 场景模式 */
 export declare enum NERtcChannelProfileType {
