@@ -118,9 +118,7 @@ task('install', () => {
     const packageName = `${curPkgMeta.name}-v${curPkgMeta.version}-${nodeAbi}-${targetPlatform}-${targetArch}.tar.gz`
     const localPath = 'build/Release'
     const buildReleasePath = path.join(__dirname, localPath)
-    console.log('[install] release dir' + buildReleasePath)
     if(fs.existsSync(buildReleasePath)){
-      console.log('[install] del release dir')
       fs.rmdirSync(buildReleasePath, { recursive: true })
     }
     download(`${host}/${remotePath}/${packageName}`, path.join(__dirname, localPath), {
