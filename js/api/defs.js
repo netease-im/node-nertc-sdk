@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NERtcVoiceEqualizationBand =exports.NERtcAudioRecordingCode =exports.NERtcScreenCaptureStatus =exports.NERtcMediaPriorityType =exports.NERtcAudioRecordingQuality= exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcVideoStreamType = exports.NERtcAudioStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcLogLevel = void 0;
+exports.NERtcVoiceEqualizationBand =exports.NERtcAudioType =exports.NERtcVideoRotation =exports.NERtcVideoType =exports.NERtcAudioRecordingCode =exports.NERtcScreenCaptureStatus =exports.NERtcMediaPriorityType =exports.NERtcAudioRecordingQuality= exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcVideoStreamType = exports.NERtcAudioStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcLogLevel = void 0;
 /** 日志级别。 */
 var NERtcLogLevel;
 (function (NERtcLogLevel) {
@@ -201,6 +201,28 @@ var NERtcScreenProfileType;
     NERtcScreenProfileType[NERtcScreenProfileType["kNERtcScreenProfileNone"] = 4] = "kNERtcScreenProfileNone";
     NERtcScreenProfileType[NERtcScreenProfileType["kNERtcScreenProfileMAX"] = 2] = "kNERtcScreenProfileMAX";
 })(NERtcScreenProfileType = exports.NERtcScreenProfileType || (exports.NERtcScreenProfileType = {}));
+/** 视频类型。*/
+var NERtcVideoType;
+(function (NERtcVideoType) {
+    NERtcVideoType[NERtcVideoType["kNERtcVideoTypeI420"] = 0] = "kNERtcVideoTypeI420";
+    NERtcVideoType[NERtcVideoType["kNERtcVideoTypeNV12"] = 1] = "kNERtcVideoTypeNV12";
+    NERtcVideoType[NERtcVideoType["kNERtcVideoTypeNV21"] = 2] = "kNERtcVideoTypeNV21";
+    NERtcVideoType[NERtcVideoType["kNERtcVideoTypeBGRA"] = 3] = "kNERtcVideoTypeBGRA";
+    NERtcVideoType[NERtcVideoType["kNERtcVideoTypeCVPixelBuffer"] = 4] = "kNERtcVideoTypeCVPixelBuffer";
+})(NERtcVideoType = exports.NERtcVideoType || (exports.NERtcVideoType = {}));
+/** 视频旋转角度。*/
+var NERtcVideoRotation;
+(function (NERtcVideoRotation) {
+    NERtcVideoRotation[NERtcVideoRotation["kNERtcVideoRotation_0"] = 0] = "kNERtcVideoRotation_0";
+    NERtcVideoRotation[NERtcVideoRotation["kNERtcVideoRotation_90"] = 90] = "kNERtcVideoRotation_90";
+    NERtcVideoRotation[NERtcVideoRotation["kNERtcVideoRotation_180"] = 180] = "kNERtcVideoRotation_180";
+    NERtcVideoRotation[NERtcVideoRotation["kNERtcVideoRotation_270"] = 270] = "kNERtcVideoRotation_270";
+})(NERtcVideoRotation = exports.NERtcVideoRotation || (exports.NERtcVideoRotation = {}));
+/** 音频类型。*/
+var NERtcAudioType;
+(function (NERtcAudioType) {
+    NERtcAudioType[NERtcAudioType["kNERtcAudioTypePCM16"] = 0] = "kNERtcAudioTypePCM16";
+})(NERtcAudioType = exports.NERtcAudioType || (exports.NERtcAudioType = {}));
 /** 屏幕共享功能的编码策略倾向
 - kNERtcSubStreamContentPreferMotion: 内容类型为动画;当共享的内容是视频、电影或游戏时，推荐选择该内容类型
 当用户设置内容类型为动画时，按用户设置的帧率处理

@@ -2621,6 +2621,12 @@ class NERtcEngine extends events_1.EventEmitter {
     setExternalVideoSource(enabled) {
         return this.nertcEngine.setExternalVideoSource(enabled);
     }
+    pushExternalVideoFrame(data) {
+        return this.nertcEngine.pushExternalVideoFrame(data);
+    }
+    pushExternalAudioFrame(data) {
+        return this.nertcEngine.pushExternalAudioFrame(data);
+    }
     // checkNECastAudioDriver(): number {
     //     return this.nertcEngine.checkNECastAudioDriver();
     // }

@@ -234,6 +234,47 @@ export declare enum NERtcScreenProfileType {
     kNERtcScreenProfileNone = 4,
     kNERtcScreenProfileMAX = 2
 }
+/** 视频类型。*/
+export declare enum NERtcVideoType {
+    kNERtcVideoTypeI420 = 0,
+    kNERtcVideoTypeNV12 = 1,
+    kNERtcVideoTypeNV21 = 2,
+    kNERtcVideoTypeBGRA = 3,
+    kNERtcVideoTypeCVPixelBuffer = 4
+}
+/** 视频旋转角度。*/
+export declare enum NERtcVideoRotation {
+    kNERtcVideoRotation_0 = 0,
+    kNERtcVideoRotation_90 = 90,
+    kNERtcVideoRotation_180 = 180,
+    kNERtcVideoRotation_270 = 270
+}
+/** 视频帧。*/
+export interface NERtcVideoFrame {
+    format: NERtcVideoType; /**< 视频帧格式，详细信息请参考 NERtcVideoType。*/
+    timestamp: number; /**< 视频时间戳，单位为毫秒。 */
+    width: number; /**< 视频桢宽度 */
+    height: number; /**< 视频桢宽高 */
+    rotation: NERtcVideoRotation; /**<  视频旋转角度 详见: #NERtcVideoRotation */
+    buffer: ArrayBuffer; /**<  视频桢数据 */
+}
+/** 音频类型。*/
+export declare enum NERtcAudioType {
+    kNERtcAudioTypePCM16 = 0
+}
+/** 音频格式。*/
+export interface NERtcAudioFormat {
+    type: NERtcAudioType; /**< 音频类型。*/
+    channels: number; /**< 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。*/
+    sample_rate: number; /**< 采样率。*/
+    bytes_per_sample: number; /**< 每个采样点的字节数。对于 PCM 来说，一般使用 16 bit，即两个字节。*/
+    samples_per_channel: number; /**< 每个房间的样本数量。*/
+}
+/** 音频帧。*/
+export interface NERtcAudioFrame {
+    format: NERtcAudioFormat; /**< 音频格式。*/
+    data: ArrayBuffer; /**< 数据缓冲区。有效数据长度为：samples_per_channel * channels * bytes_per_sample。*/
+}
 /** 视频尺寸。*/
 export interface NERtcVideoDimensions {
     width: number; /**< 宽度 */
@@ -553,6 +594,8 @@ export interface NERtcEngineAPI {
     setMixedAudioFrameParameters(samplerate: number): number;
     setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
     setExternalVideoSource(enabled: boolean): number;
+    pushExternalVideoFrame(data: Array<NERtcVideoFrame>): number;
+    pushExternalAudioFrame(data: Array<NERtcAudioFrame>): number;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {

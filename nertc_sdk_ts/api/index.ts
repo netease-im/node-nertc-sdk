@@ -53,7 +53,9 @@ import {
     NERtcInstallCastAudioDriverResult,
     NERtcScreenCaptureWindowParam,
     NERtcScreenCaptureStatus,
-    NERtcAudioRecordingCode
+    NERtcAudioRecordingCode,
+    NERtcVideoFrame,
+    NERtcAudioFrame
 } from './defs'
 import { EventEmitter } from 'events'
 import process from 'process';
@@ -2807,6 +2809,14 @@ class NERtcEngine extends EventEmitter {
     */
     setExternalVideoSource(enabled: boolean): number {
         return this.nertcEngine.setExternalVideoSource(enabled);      
+    }
+
+    pushExternalVideoFrame(data: Array<NERtcVideoFrame>): number {
+        return this.nertcEngine.pushExternalVideoFrame(data);      
+    }
+
+    pushExternalAudioFrame(data: Array<NERtcAudioFrame>): number {
+        return this.nertcEngine.pushExternalAudioFrame(data);      
     }
 
     // checkNECastAudioDriver(): number {

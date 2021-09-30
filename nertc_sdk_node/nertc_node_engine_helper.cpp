@@ -855,4 +855,80 @@ napi_status nertc_canvas_water_mark_obj_to_struct(Isolate* isolate, const Local<
     return napi_ok;
 }
 
+napi_status nertc_viedo_frame_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcVideoFrame* info)
+{
+    auto status = napi_ok;
+    int32_t out_i;
+    uint32_t out_u;
+    uint64_t out_u64;
+    if (nim_napi_get_object_value_int32(isolate, obj, "format", out_i) == napi_ok)
+    {
+        info->format = (nertc::NERtcVideoType)out_i;
+    }
+    if (nim_napi_get_object_value_uint64(isolate, obj, "timestamp", out_u64) == napi_ok)
+    {
+        info->timestamp = out_u64;
+    }
+    if (nim_napi_get_object_value_uint32(isolate, obj, "width", out_u) == napi_ok)
+    {
+        info->width = out_u;
+    }
+    if (nim_napi_get_object_value_uint32(isolate, obj, "height", out_u) == napi_ok)
+    {
+        info->height = out_u;
+    }
+    if (nim_napi_get_object_value_int32(isolate, obj, "rotation", out_i) == napi_ok)
+    {
+        info->rotation = (nertc::NERtcVideoType)out_i;
+    }
+    if (nim_napi_get_object_value(isolate, obj, "buffer", so) == napi_ok)
+    {
+         auto buffer = so.As<ArrayBuffer>();
+         info->buffer = static_cast<const char*>(buffer->GetContents().Data());
+    }
+    return napi_ok;
+}
+
+static napi_status nertc_audio_format_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcAudioFormat& info)
+{
+    auto status = napi_ok;
+    int32_t out_i;
+    uint32_t out_u;
+    if (nim_napi_get_object_value_int32(isolate, obj, "type", out_i) == napi_ok)
+    {
+        info.type = (nertc::NERtcAudioType)out_u;
+    }
+    if (nim_napi_get_object_value_uint32(isolate, obj, "channels", out_u) == napi_ok)
+    {
+        info.channels = out_u;
+    }
+    if (nim_napi_get_object_value_uint32(isolate, obj, "sample_rate", out_u) == napi_ok)
+    {
+        info.sample_rate = out_u;
+    }
+    if (nim_napi_get_object_value_uint32(isolate, obj, "bytes_per_sample", out_u) == napi_ok)
+    {
+        info.bytes_per_sample = out_u;
+    }
+    if (nim_napi_get_object_value_uint32(isolate, obj, "samples_per_channel", out_u) == napi_ok)
+    {
+        info.samples_per_channel = out_u;
+    }
+    return napi_ok;
+}
+
+napi_status nertc_audio_frame_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcAudioFrame* info)
+{
+    auto status = napi_ok;
+    if (nim_napi_get_object_value(isolate, obj, "format", so) == napi_ok)
+    {
+        nertc_audio_format_obj_to_struct(isolate, so.As<Object>(), info->format);
+    }
+    if (nim_napi_get_object_value(isolate, obj, "data", so) == napi_ok)
+    {
+         auto buffer = so.As<ArrayBuffer>();
+         info->data = static_cast<const char*>(buffer->GetContents().Data());
+    }
+    return napi_ok;
+}
 }
