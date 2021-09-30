@@ -861,6 +861,7 @@ napi_status nertc_viedo_frame_obj_to_struct(Isolate* isolate, const Local<Object
     int32_t out_i;
     uint32_t out_u;
     uint64_t out_u64;
+    Local<Value> so;
     if (nim_napi_get_object_value_int32(isolate, obj, "format", out_i) == napi_ok)
     {
         info->format = (nertc::NERtcVideoType)out_i;
@@ -879,12 +880,12 @@ napi_status nertc_viedo_frame_obj_to_struct(Isolate* isolate, const Local<Object
     }
     if (nim_napi_get_object_value_int32(isolate, obj, "rotation", out_i) == napi_ok)
     {
-        info->rotation = (nertc::NERtcVideoType)out_i;
+        info->rotation = (nertc::NERtcVideoRotation)out_i;
     }
     if (nim_napi_get_object_value(isolate, obj, "buffer", so) == napi_ok)
     {
          auto buffer = so.As<ArrayBuffer>();
-         info->buffer = static_cast<const char*>(buffer->GetContents().Data());
+         info->buffer = static_cast<void*>(buffer->GetContents().Data());
     }
     return napi_ok;
 }
@@ -894,6 +895,7 @@ static napi_status nertc_audio_format_obj_to_struct(Isolate* isolate, const Loca
     auto status = napi_ok;
     int32_t out_i;
     uint32_t out_u;
+    Local<Value> so;
     if (nim_napi_get_object_value_int32(isolate, obj, "type", out_i) == napi_ok)
     {
         info.type = (nertc::NERtcAudioType)out_u;
@@ -920,6 +922,7 @@ static napi_status nertc_audio_format_obj_to_struct(Isolate* isolate, const Loca
 napi_status nertc_audio_frame_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcAudioFrame* info)
 {
     auto status = napi_ok;
+    Local<Value> so;
     if (nim_napi_get_object_value(isolate, obj, "format", so) == napi_ok)
     {
         nertc_audio_format_obj_to_struct(isolate, so.As<Object>(), info->format);
@@ -927,7 +930,7 @@ napi_status nertc_audio_frame_obj_to_struct(Isolate* isolate, const Local<Object
     if (nim_napi_get_object_value(isolate, obj, "data", so) == napi_ok)
     {
          auto buffer = so.As<ArrayBuffer>();
-         info->data = static_cast<const char*>(buffer->GetContents().Data());
+         info->data = static_cast<void*>(buffer->GetContents().Data());
     }
     return napi_ok;
 }

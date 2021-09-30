@@ -46,7 +46,8 @@ public:
     NIM_SDK_NODE_API(setMixedAudioFrameParameters);
     NIM_SDK_NODE_API(setExternalAudioSource);
     NIM_SDK_NODE_API(pushExternalAudioFrame);
-
+    NIM_SDK_NODE_API(pushExternalVideoFrame);
+    
     // 4.0
     NIM_SDK_NODE_API(sendSEIMsg);//modify by lyq 修改参数名
     NIM_SDK_NODE_API(sendSEIMsgEx);//modify by lyq
@@ -137,8 +138,6 @@ public:
     NIM_SDK_NODE_API(pauseScreenCapture);
     NIM_SDK_NODE_API(resumeScreenCapture);
     NIM_SDK_NODE_API(setExternalVideoSource);
-    NIM_SDK_NODE_API(pushExternalVideoFrame);
-    NIM_SDK_NODE_API(pushExternalAudioFrame);
     NIM_SDK_NODE_API(getVersion);
     NIM_SDK_NODE_API(getErrorDescription);
     NIM_SDK_NODE_API(uploadSdkInfo);

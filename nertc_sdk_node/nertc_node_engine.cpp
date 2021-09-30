@@ -62,6 +62,7 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(setMixedAudioFrameParameters)
     SET_PROTOTYPE(setExternalAudioSource)
     SET_PROTOTYPE(pushExternalAudioFrame)
+    SET_PROTOTYPE(pushExternalVideoFrame)
 
     // 4.0
     SET_PROTOTYPE(sendSEIMsg)
@@ -149,8 +150,6 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(pauseScreenCapture)
     SET_PROTOTYPE(resumeScreenCapture)
     SET_PROTOTYPE(setExternalVideoSource)
-    SET_PROTOTYPE(pushExternalVideoFrame)
-    SET_PROTOTYPE(pushExternalAudioFrame)
     SET_PROTOTYPE(getVersion)
     SET_PROTOTYPE(getErrorDescription)
     SET_PROTOTYPE(uploadSdkInfo)
@@ -2314,18 +2313,6 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setExternalAudioSource)
             break;
         }
         ret = instance->rtc_engine_->setExternalAudioSource(enabled, samp, chan);
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, pushExternalAudioFrame)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 1)
-    int ret = -1;
-    do
-    {
-        CHECK_NATIVE_VDM_THIS(instance);
-        // TODO(litianyi)
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
