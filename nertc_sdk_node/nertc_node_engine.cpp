@@ -1638,7 +1638,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, pushExternalAudioFrame)
         auto status = napi_ok;
         // auto objs = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked().As<Array>();
         // nertc::NERtcAudioFrame *config = new nertc::NERtcAudioFrame[objs->Length()];
-        nertc::NERtcAudioFrame config = {0};
+        nertc::NERtcAudioFrame config = {};
         nertc_audio_frame_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), &config);
         if (status != napi_ok)
         {

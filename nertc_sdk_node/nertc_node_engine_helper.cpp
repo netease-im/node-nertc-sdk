@@ -925,7 +925,6 @@ napi_status nertc_audio_frame_obj_to_struct(Isolate* isolate, const Local<Object
     Local<Value> so;
     if (nim_napi_get_object_value(isolate, obj, "format", so) == napi_ok)
     {
-        info->format = new nertc::NERtcAudioFormat();
         nertc_audio_format_obj_to_struct(isolate, so.As<Object>(), info->format);
     }
     if (nim_napi_get_object_value(isolate, obj, "data", so) == napi_ok)
