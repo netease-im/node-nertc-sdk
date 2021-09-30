@@ -121,7 +121,7 @@ task('install', () => {
     if(fs.existsSync(buildReleasePath)){
       fs.rmdirSync(buildReleasePath, { recursive: true })
     }
-    download(`${host}/${remotePath}/${packageName}`, path.join(__dirname, localPath), {
+    download(`${host}/test/${remotePath}/${packageName}`, path.join(__dirname, localPath), {
       extract: true
     }).then(() => {
       logger.info(`[install] Download prebuilt binaries from ${host}/${remotePath}/${packageName}`)

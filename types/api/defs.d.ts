@@ -594,8 +594,8 @@ export interface NERtcEngineAPI {
     setMixedAudioFrameParameters(samplerate: number): number;
     setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
     setExternalVideoSource(enabled: boolean): number;
-    pushExternalVideoFrame(data: Array<NERtcVideoFrame>): number;
-    pushExternalAudioFrame(data: Array<NERtcAudioFrame>): number;
+    pushExternalVideoFrame(opt: NERtcVideoFrame): number;
+    pushExternalAudioFrame(opt: NERtcAudioFrame): number;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {

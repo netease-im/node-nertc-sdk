@@ -2621,11 +2621,47 @@ class NERtcEngine extends events_1.EventEmitter {
     setExternalVideoSource(enabled) {
         return this.nertcEngine.setExternalVideoSource(enabled);
     }
-    pushExternalVideoFrame(data) {
-        return this.nertcEngine.pushExternalVideoFrame(data);
+    /**
+    * 推送外部视频帧。
+    * @since 4.2.5
+    * <pre>
+    * - 该方法主动将视频帧数据用 NERtcVideoFrame 类封装后传递给 SDK。 请确保在你调用本方法前已调用 setExternalVideoSource，并将参数设为 true，否则调用本方法后会一直报错。
+    * <b>NOTE:</b>
+    * - 该方法设置内部引擎为启用状态，在 \ref IRtcEngine::leaveChannel "leaveChannel" 后不再有效。
+    * </pre>
+    * @param[in] frame 视频桢数据:
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    pushExternalVideoFrame(opt) {
+        return this.nertcEngine.pushExternalVideoFrame(opt);
     }
-    pushExternalAudioFrame(data) {
-        return this.nertcEngine.pushExternalAudioFrame(data);
+    /**
+    * 推送外部音频数据输入。
+    * @since 4.2.5
+    * <pre>
+    * - 将外部音频数据帧推送给内部引擎。 通过 setExternalAudioSource 启用外部音频数据输入功能成功后，可以使用 pushExternalAudioFrame 接口发送音频 PCM 数据。
+    * <b>NOTE:</b>
+    * - 该方法需要在加入房间后调用。
+    * - 数据帧时长建议匹配 10ms 周期。
+    * - 外部输入数据帧，数据时长和调用周期时长一致。
+    * - 该方法在音频输入设备关闭后不再生效。例如关闭本地音频、通话结束、通话前麦克风设备测试关闭等情况下，该设置不再生效。
+    * </pre>
+    * @param[in] frame 桢数据，数据长度不能超过7680:
+    * <pre>
+    * - 外部输入数据帧，数据时长和调用周期时长一致。
+    * </pre>
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    pushExternalAudioFrame(opt) {
+        return this.nertcEngine.pushExternalAudioFrame(opt);
     }
     // checkNECastAudioDriver(): number {
     //     return this.nertcEngine.checkNECastAudioDriver();

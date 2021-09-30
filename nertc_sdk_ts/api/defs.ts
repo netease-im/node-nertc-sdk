@@ -712,9 +712,8 @@ export interface NERtcEngineAPI {
     setMixedAudioFrameParameters(samplerate: number): number;
     setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
     setExternalVideoSource(enabled: boolean): number;
-    pushExternalVideoFrame(data: Array<NERtcVideoFrame>): number;
-    pushExternalAudioFrame(data: Array<NERtcAudioFrame>): number;
-    //pushExternalAudioFrame
+    pushExternalVideoFrame(opt: NERtcVideoFrame): number;
+    pushExternalAudioFrame(opt: NERtcAudioFrame): number;
     //setAudioFrameObserver
     //setStatsObserver
 }

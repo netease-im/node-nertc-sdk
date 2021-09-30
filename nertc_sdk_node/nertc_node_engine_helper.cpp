@@ -898,7 +898,7 @@ static napi_status nertc_audio_format_obj_to_struct(Isolate* isolate, const Loca
     Local<Value> so;
     if (nim_napi_get_object_value_int32(isolate, obj, "type", out_i) == napi_ok)
     {
-        info.type = (nertc::NERtcAudioType)out_u;
+        info.type = (nertc::NERtcAudioType)out_i;
     }
     if (nim_napi_get_object_value_uint32(isolate, obj, "channels", out_u) == napi_ok)
     {
@@ -925,6 +925,7 @@ napi_status nertc_audio_frame_obj_to_struct(Isolate* isolate, const Local<Object
     Local<Value> so;
     if (nim_napi_get_object_value(isolate, obj, "format", so) == napi_ok)
     {
+        info->format = new nertc::NERtcAudioFormat();
         nertc_audio_format_obj_to_struct(isolate, so.As<Object>(), info->format);
     }
     if (nim_napi_get_object_value(isolate, obj, "data", so) == napi_ok)
