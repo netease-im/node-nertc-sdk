@@ -529,6 +529,104 @@ void NertcNodeRtcMediaStatsHandler::Node_onNetworkQuality(const nertc::NERtcNetw
     }
 }
 
+void NertcNodeRtcAudioFrameHandler::onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame)
+{
+    nim_node::node_async_call::async_call([=]() {
+        NertcNodeRtcMediaStatsHandler::GetInstance()->Node_onAudioFrameDidRecord(frame);
+    });  
+}
+
+void NertcNodeRtcAudioFrameHandler::onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame)
+{
+    nim_node::node_async_call::async_call([=]() {
+        NertcNodeRtcMediaStatsHandler::GetInstance()->Node_onAudioFrameWillPlayback(frame);
+    });  
+}
+
+void NertcNodeRtcAudioFrameHandler::onMixedAudioFrame(nertc::NERtcAudioFrame *frame)
+{
+    nim_node::node_async_call::async_call([=]() {
+        NertcNodeRtcMediaStatsHandler::GetInstance()->Node_onMixedAudioFrame(frame);
+    }); 
+}
+
+void NertcNodeRtcAudioFrameHandler::onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame *frame)
+{
+    nim_node::node_async_call::async_call([=]() {
+        NertcNodeRtcMediaStatsHandler::GetInstance()->Node_onPlaybackAudioFrameBeforeMixing(userID, frame);
+    }); 
+}
+
+void NertcNodeRtcAudioFrameHandler::Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame)
+{
+    uint32_t length = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
+    Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, frame->data, length);
+    Isolate* isolate = Isolate::GetCurrent();
+    const unsigned argc = 2;
+    Local<Value> argv[argc] = { 
+        buffer,
+        nim_napi_new_uint32(isolate, (uint32_t)length),
+    };
+    auto it = callbacks_.find("onAudioFrameDidRecord");
+    if (it != callbacks_.end())
+    {
+        it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
+    }
+
+}
+
+void NertcNodeRtcAudioFrameHandler::Node_onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame)
+{
+    uint32_t length = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
+    Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, frame->data, length);
+    Isolate* isolate = Isolate::GetCurrent();
+    const unsigned argc = 2;
+    Local<Value> argv[argc] = { 
+        buffer,
+        nim_napi_new_uint32(isolate, (uint32_t)length),
+    };
+    auto it = callbacks_.find("onAudioFrameWillPlayback");
+    if (it != callbacks_.end())
+    {
+        it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
+    }
+}
+
+void NertcNodeRtcAudioFrameHandler::Node_onMixedAudioFrame(nertc::NERtcAudioFrame *frame)
+{
+    uint32_t length = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
+    Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, frame->data, length);
+    Isolate* isolate = Isolate::GetCurrent();
+    const unsigned argc = 2;
+    Local<Value> argv[argc] = { 
+        buffer,
+        nim_napi_new_uint32(isolate, (uint32_t)length),
+    };
+    auto it = callbacks_.find("onMixedAudioFrame");
+    if (it != callbacks_.end())
+    {
+        it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
+    }
+}
+
+void NertcNodeRtcAudioFrameHandler::Node_onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame *frame)
+{
+    uint32_t length = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
+    Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, frame->data, length);
+    Isolate* isolate = Isolate::GetCurrent();
+    const unsigned argc = 3;
+    Local<Value> argv[argc] = { 
+        nim_napi_new_uint64(isolate, (uint64_t)userID),
+        buffer,
+        nim_napi_new_uint32(isolate, (uint32_t)length),
+    };
+    auto it = callbacks_.find("onPlaybackAudioFrameBeforeMixing");
+    if (it != callbacks_.end())
+    {
+        it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
+    }
+}
+
 void NertcNodeEventHandler::onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile)
 {
     nim_node::node_async_call::async_call([=]() {

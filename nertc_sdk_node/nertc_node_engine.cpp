@@ -129,6 +129,7 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(enableEarback)
     SET_PROTOTYPE(setEarbackVolume)
     SET_PROTOTYPE(onStatsObserver)
+    SET_PROTOTYPE(onAudioFrameObserver)
     SET_PROTOTYPE(enableAudioVolumeIndication)
     SET_PROTOTYPE(startScreenCaptureByScreenRect)
     SET_PROTOTYPE(startScreenCaptureByDisplayId)
@@ -1369,6 +1370,37 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, onStatsObserver)
         else
         {
             ASSEMBLE_REG_CALLBACK(2, NertcNodeRtcMediaStatsHandler, eventName.toUtf8String())
+        }
+    } while (false);
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, onAudioFrameObserver)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 3)
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        instance->rtc_engine_->setAudioFrameObserver(NertcNodeRtcAudioFrameHandler::GetInstance());
+        auto status = napi_ok;
+        UTF8String eventName;
+        bool enable;
+        GET_ARGS_VALUE(isolate, 0, utf8string, eventName)
+        GET_ARGS_VALUE(isolate, 1, bool, enable)
+        if (status != napi_ok || eventName.length() == 0)
+        {
+            break;
+        }
+        if (!enable)
+        {
+            auto sz = NertcNodeRtcAudioFrameHandler::GetInstance()->RemoveEventHandler(eventName.toUtf8String());
+            if (sz == 0)
+            {
+                instance->rtc_engine_->setAudioFrameObserver(nullptr);
+            }
+        }
+        else
+        {
+            ASSEMBLE_REG_CALLBACK(2, NertcNodeRtcAudioFrameHandler, eventName.toUtf8String())
         }
     } while (false);
 }

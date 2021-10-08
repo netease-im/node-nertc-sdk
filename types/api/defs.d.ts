@@ -526,6 +526,7 @@ export interface NERtcEngineAPI {
     enableEarback(enabled: boolean, volume: number): number;
     setEarbackVolume(volume: number): number;
     onStatsObserver(eventName: String, enabled: boolean, callback: Function): void;
+    onAudioFrameObserver(eventName: String, enabled: boolean, callback: Function): void;
     enableAudioVolumeIndication(enabled: boolean, interval: number): number;
     startScreenCaptureByScreenRect(screenRect: NERtcRectangle, regionRect: NERtcRectangle, param: NERtcScreenCaptureParameters): number;
     startScreenCaptureByDisplayId(displayId: number, regionRect: NERtcRectangle, param: NERtcScreenCaptureParameters): number;

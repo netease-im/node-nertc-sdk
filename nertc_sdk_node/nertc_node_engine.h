@@ -123,6 +123,7 @@ public:
     NIM_SDK_NODE_API(enableEarback);
     NIM_SDK_NODE_API(setEarbackVolume);
     NIM_SDK_NODE_API(onStatsObserver);
+    NIM_SDK_NODE_API(onAudioFrameObserver);
     NIM_SDK_NODE_API(enableAudioVolumeIndication);
     NIM_SDK_NODE_API(startScreenCaptureByScreenRect);
     NIM_SDK_NODE_API(startScreenCaptureByDisplayId);

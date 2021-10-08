@@ -538,5 +538,55 @@ private:
     void Node_onNetworkQuality(const nertc::NERtcNetworkQualityInfo *infos, unsigned int user_count);
 }; 
 
+class NertcNodeRtcAudioFrameHandler : public nim_node::EventHandler, public nertc::INERtcAudioFrameObserver
+{
+private:
+    /* data */
+public:
+    NertcNodeRtcAudioFrameHandler(){};
+    ~NertcNodeRtcAudioFrameHandler(){};
+    SINGLETON_DEFINE(NertcNodeRtcAudioFrameHandler);
+
+public:
+    /** 采集音频数据回调，用于声音处理等操作。
+     @note
+     - 返回音频数据支持读/写。
+     - 有本地音频数据驱动就会回调。
+     @param frame 音频帧。
+     */
+    virtual void onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame) = 0;
+    /** 播放音频数据回调，用于声音处理等操作。
+     @note
+     - 返回音频数据支持读/写。
+     - 有本地音频数据驱动就会回调。
+     @param frame 音频帧。
+     */
+    virtual void onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame) = 0;
+    /** 获取本地用户和所有远端用户混音后的原始音频数据。
+     @note
+     - 返回音频数据只读。
+     - 有本地音频数据驱动就会回调。
+     @param frame 音频帧。
+     */
+    virtual void onMixedAudioFrame(nertc::NERtcAudioFrame * frame) = 0;
+    /**
+     * 获取单个远端用户混音前的音频数据。
+     *
+     * 成功注册音频观测器后，如果订阅了远端音频（默认订阅）且远端用户开启音频后，SDK 会在捕捉到混音前的音频数据时，触发该回调，将音频数据回调给用户。  
+     @note
+     - 返回音频数据只读。
+     @param userID 用户ID。
+     @param frame  音频帧。
+     */
+    virtual void onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame * frame) = 0;
+
+private:
+    void Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame);
+    void Node_onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame);
+    void Node_onMixedAudioFrame(nertc::NERtcAudioFrame * frame);
+    void Node_onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame * frame);
+}; 
+
+
 }
 #endif //NERTC_NODE_ENGINE_EVENT_HANDLER_H
