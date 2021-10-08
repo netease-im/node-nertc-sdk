@@ -554,21 +554,21 @@ public:
      - 有本地音频数据驱动就会回调。
      @param frame 音频帧。
      */
-    virtual void onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame) = 0;
+    virtual void onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame);
     /** 播放音频数据回调，用于声音处理等操作。
      @note
      - 返回音频数据支持读/写。
      - 有本地音频数据驱动就会回调。
      @param frame 音频帧。
      */
-    virtual void onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame) = 0;
+    virtual void onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame);
     /** 获取本地用户和所有远端用户混音后的原始音频数据。
      @note
      - 返回音频数据只读。
      - 有本地音频数据驱动就会回调。
      @param frame 音频帧。
      */
-    virtual void onMixedAudioFrame(nertc::NERtcAudioFrame * frame) = 0;
+    virtual void onMixedAudioFrame(nertc::NERtcAudioFrame * frame);
     /**
      * 获取单个远端用户混音前的音频数据。
      *
@@ -578,7 +578,7 @@ public:
      @param userID 用户ID。
      @param frame  音频帧。
      */
-    virtual void onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame * frame) = 0;
+    virtual void onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame * frame);
 
 private:
     void Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame);

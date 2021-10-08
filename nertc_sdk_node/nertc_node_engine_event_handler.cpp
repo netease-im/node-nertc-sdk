@@ -532,36 +532,36 @@ void NertcNodeRtcMediaStatsHandler::Node_onNetworkQuality(const nertc::NERtcNetw
 void NertcNodeRtcAudioFrameHandler::onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame)
 {
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeRtcMediaStatsHandler::GetInstance()->Node_onAudioFrameDidRecord(frame);
+        NertcNodeRtcAudioFrameHandler::GetInstance()->Node_onAudioFrameDidRecord(frame);
     });  
 }
 
 void NertcNodeRtcAudioFrameHandler::onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame)
 {
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeRtcMediaStatsHandler::GetInstance()->Node_onAudioFrameWillPlayback(frame);
+        NertcNodeRtcAudioFrameHandler::GetInstance()->Node_onAudioFrameWillPlayback(frame);
     });  
 }
 
 void NertcNodeRtcAudioFrameHandler::onMixedAudioFrame(nertc::NERtcAudioFrame *frame)
 {
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeRtcMediaStatsHandler::GetInstance()->Node_onMixedAudioFrame(frame);
+        NertcNodeRtcAudioFrameHandler::GetInstance()->Node_onMixedAudioFrame(frame);
     }); 
 }
 
 void NertcNodeRtcAudioFrameHandler::onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame *frame)
 {
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeRtcMediaStatsHandler::GetInstance()->Node_onPlaybackAudioFrameBeforeMixing(userID, frame);
+        NertcNodeRtcAudioFrameHandler::GetInstance()->Node_onPlaybackAudioFrameBeforeMixing(userID, frame);
     }); 
 }
 
 void NertcNodeRtcAudioFrameHandler::Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame)
 {
+    Isolate* isolate = Isolate::GetCurrent();
     uint32_t length = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
     Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, frame->data, length);
-    Isolate* isolate = Isolate::GetCurrent();
     const unsigned argc = 2;
     Local<Value> argv[argc] = { 
         buffer,
@@ -577,9 +577,9 @@ void NertcNodeRtcAudioFrameHandler::Node_onAudioFrameDidRecord(nertc::NERtcAudio
 
 void NertcNodeRtcAudioFrameHandler::Node_onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame)
 {
+    Isolate* isolate = Isolate::GetCurrent();
     uint32_t length = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
     Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, frame->data, length);
-    Isolate* isolate = Isolate::GetCurrent();
     const unsigned argc = 2;
     Local<Value> argv[argc] = { 
         buffer,
@@ -594,9 +594,9 @@ void NertcNodeRtcAudioFrameHandler::Node_onAudioFrameWillPlayback(nertc::NERtcAu
 
 void NertcNodeRtcAudioFrameHandler::Node_onMixedAudioFrame(nertc::NERtcAudioFrame *frame)
 {
+    Isolate* isolate = Isolate::GetCurrent();
     uint32_t length = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
     Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, frame->data, length);
-    Isolate* isolate = Isolate::GetCurrent();
     const unsigned argc = 2;
     Local<Value> argv[argc] = { 
         buffer,
@@ -611,9 +611,9 @@ void NertcNodeRtcAudioFrameHandler::Node_onMixedAudioFrame(nertc::NERtcAudioFram
 
 void NertcNodeRtcAudioFrameHandler::Node_onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame *frame)
 {
+    Isolate* isolate = Isolate::GetCurrent();
     uint32_t length = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
     Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, frame->data, length);
-    Isolate* isolate = Isolate::GetCurrent();
     const unsigned argc = 3;
     Local<Value> argv[argc] = { 
         nim_napi_new_uint64(isolate, (uint64_t)userID),
