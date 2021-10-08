@@ -49,8 +49,8 @@ public:
     NIM_SDK_NODE_API(pushExternalVideoFrame);
     
     // 4.0
-    NIM_SDK_NODE_API(sendSEIMsg);//modify by lyq 修改参数名
-    NIM_SDK_NODE_API(sendSEIMsgEx);//modify by lyq
+    NIM_SDK_NODE_API(sendSEIMsg);
+    NIM_SDK_NODE_API(sendSEIMsgEx);
     NIM_SDK_NODE_API(setExternalAudioRender);
     NIM_SDK_NODE_API(pullExternalAudioFrame);
 
@@ -60,16 +60,16 @@ public:
     NIM_SDK_NODE_API(setLocalVoicePitch);
     NIM_SDK_NODE_API(setLocalVoiceEqualization);
 
-    // 4.1.110
-    //NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);//modify by lyq
-    //NIM_SDK_NODE_API(subscribeRemoteAudioSubStream);//modify by lyq
-    //NIM_SDK_NODE_API(enableLocalAudioStream);//modify by lyq
-    //NIM_SDK_NODE_API(enableLoopbackRecording);//modify by lyq
-    //NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);//modify by lyq
-    NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);//modify by lyq 删除NERtcAudioStreamType参数
+    // 4.1.110(timing custom)
+    //NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);
+    //NIM_SDK_NODE_API(subscribeRemoteAudioSubStream);
+    //NIM_SDK_NODE_API(enableLocalAudioStream);
+    //NIM_SDK_NODE_API(enableLoopbackRecording);
+    //NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);
+    NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);
 
-    // // 4.1.112
-    // NIM_SDK_NODE_API(checkNECastAudioDriver);//modify by lyq
+    // // 4.1.112(timing custom)
+    // NIM_SDK_NODE_API(checkNECastAudioDriver);
 
     //4.2.5
     NIM_SDK_NODE_API(switchChannel);
@@ -78,15 +78,9 @@ public:
     NIM_SDK_NODE_API(setRemoteRenderMode); 
     NIM_SDK_NODE_API(setLocalMediaPriority);
     NIM_SDK_NODE_API(setExcludeWindowList);
-    NIM_SDK_NODE_API(setLocalCanvasWatermarkConfigs); 
-    NIM_SDK_NODE_API(setRemoteCanvasWatermarkConfigs); 
     NIM_SDK_NODE_API(startAudioRecording);
     NIM_SDK_NODE_API(stopAudioRecording);
     NIM_SDK_NODE_API(setRemoteSubSteamRenderMode);
-    //todo
-    // NIM_SDK_NODE_API(takeLocalSnapshot); 
-    // NIM_SDK_NODE_API(takeRemoteSnapshot); 
-
 
     // ex
     NIM_SDK_NODE_API(getConnectionState);
@@ -130,7 +124,7 @@ public:
     NIM_SDK_NODE_API(setEarbackVolume);
     NIM_SDK_NODE_API(onStatsObserver);
     NIM_SDK_NODE_API(enableAudioVolumeIndication);
-    NIM_SDK_NODE_API(startScreenCaptureByScreenRect);//modify by lyq modify param 
+    NIM_SDK_NODE_API(startScreenCaptureByScreenRect);
     NIM_SDK_NODE_API(startScreenCaptureByDisplayId);
     NIM_SDK_NODE_API(startScreenCaptureByWindowId);
     NIM_SDK_NODE_API(updateScreenCaptureRegion);

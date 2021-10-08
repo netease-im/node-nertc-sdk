@@ -75,17 +75,7 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(setVoiceBeautifierPreset)
     SET_PROTOTYPE(setLocalVoicePitch)
     SET_PROTOTYPE(setLocalVoiceEqualization)
-
-    // 4.1.110
-    //SET_PROTOTYPE(setRemoteHighPriorityAudioStream);
-    //SET_PROTOTYPE(subscribeRemoteAudioSubStream);
-    //SET_PROTOTYPE(enableLocalAudioStream);
-    //SET_PROTOTYPE(enableLoopbackRecording);
-    //SET_PROTOTYPE(adjustLoopbackRecordingSignalVolume);
     SET_PROTOTYPE(adjustUserPlaybackSignalVolume);
-
-    // // 4.1.112
-    // SET_PROTOTYPE(checkNECastAudioDriver);
 
     //4.2.5
     SET_PROTOTYPE(switchChannel);
@@ -94,12 +84,10 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(setRemoteRenderMode); 
     SET_PROTOTYPE(setLocalMediaPriority);
     SET_PROTOTYPE(setExcludeWindowList);
-    SET_PROTOTYPE(setLocalCanvasWatermarkConfigs); 
     SET_PROTOTYPE(startAudioRecording);
     SET_PROTOTYPE(stopAudioRecording);
     SET_PROTOTYPE(setRemoteSubSteamRenderMode);
-    //SET_PROTOTYPE(takeLocalSnapshot); 
-    //SET_PROTOTYPE(takeRemoteSnapshot); 
+    
 
     SET_PROTOTYPE(getConnectionState)
     SET_PROTOTYPE(muteLocalAudioStream)
@@ -586,51 +574,51 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setExcludeWindowList)
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalCanvasWatermarkConfigs)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 2)
-    int ret = -1;
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        auto status = napi_ok;
-        int32_t type;
-        GET_ARGS_VALUE(isolate, 0, int32, type)
-        if (status != napi_ok)
-            break;
-        nertc::NERtcCanvasWatermarkConfig config = {0};
-        status = nertc_canvas_water_mark_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), config);
-        if (status != napi_ok)
-            break;
-        ret = instance->rtc_engine_->setLocalCanvasWatermarkConfigs((nertc::NERtcVideoStreamType)type, config);
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
+// NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalCanvasWatermarkConfigs)
+// {
+//     CHECK_API_FUNC(NertcNodeEngine, 2)
+//     int ret = -1;
+//     do
+//     {
+//         CHECK_NATIVE_THIS(instance);
+//         auto status = napi_ok;
+//         int32_t type;
+//         GET_ARGS_VALUE(isolate, 0, int32, type)
+//         if (status != napi_ok)
+//             break;
+//         nertc::NERtcCanvasWatermarkConfig config = {0};
+//         status = nertc_canvas_water_mark_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), config);
+//         if (status != napi_ok)
+//             break;
+//         ret = instance->rtc_engine_->setLocalCanvasWatermarkConfigs((nertc::NERtcVideoStreamType)type, config);
+//     } while (false);
+//     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+// }
 
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, setRemoteCanvasWatermarkConfigs)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 3)
-    int ret = -1;
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        auto status = napi_ok;
-        uint64_t uid;
-        int32_t type;
-        GET_ARGS_VALUE(isolate, 0, uint64, uid)
-        if (status != napi_ok)
-            break;
-        GET_ARGS_VALUE(isolate, 1, int32, type)
-        if (status != napi_ok)
-            break;
-        nertc::NERtcCanvasWatermarkConfig config = {0};
-        status = nertc_canvas_water_mark_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), config);
-        if (status != napi_ok)
-            break;
-        ret = instance->rtc_engine_->setRemoteCanvasWatermarkConfigs(uid, (nertc::NERtcVideoStreamType)type, config);
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
+// NIM_SDK_NODE_API_DEF(NertcNodeEngine, setRemoteCanvasWatermarkConfigs)
+// {
+//     CHECK_API_FUNC(NertcNodeEngine, 3)
+//     int ret = -1;
+//     do
+//     {
+//         CHECK_NATIVE_THIS(instance);
+//         auto status = napi_ok;
+//         uint64_t uid;
+//         int32_t type;
+//         GET_ARGS_VALUE(isolate, 0, uint64, uid)
+//         if (status != napi_ok)
+//             break;
+//         GET_ARGS_VALUE(isolate, 1, int32, type)
+//         if (status != napi_ok)
+//             break;
+//         nertc::NERtcCanvasWatermarkConfig config = {0};
+//         status = nertc_canvas_water_mark_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), config);
+//         if (status != napi_ok)
+//             break;
+//         ret = instance->rtc_engine_->setRemoteCanvasWatermarkConfigs(uid, (nertc::NERtcVideoStreamType)type, config);
+//     } while (false);
+//     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+// }
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, startAudioRecording)
 {
