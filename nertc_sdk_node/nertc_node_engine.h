@@ -67,7 +67,6 @@ public:
     NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);
 
     // 4.1.112
-    NIM_SDK_NODE_API(checkNECastAudioDriver);
 
     // ex
     NIM_SDK_NODE_API(getConnectionState);

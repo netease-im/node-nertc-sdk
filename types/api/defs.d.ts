@@ -499,8 +499,6 @@ export interface NERtcEngineAPI {
     enableLoopbackRecording(enable: boolean, deviceName: String): number;
     adjustLoopbackRecordingSignalVolume(volume: number): number;
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
-    checkNECastAudioDriver(): number;
-    checkNeCastAudio(): boolean;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {
@@ -599,12 +597,6 @@ export declare enum NERtcConnectionStateType {
     kNERtcConnectionStateConnected = 3,
     kNERtcConnectionStateReconnecting = 4,
     kNERtcConnectionStateFailed = 5
-}
-/** 驱动安装状态 */
-export declare enum NERtcInstallCastAudioDriverResult {
-    kNERtcInstallCastAudioDriverSuccess = 0,
-    kNERtcInstallCastAudioDriverNotAuthorized = 1,
-    kNERtcInstallCastAudioDriverFailed = 2
 }
 /** 连接状态变更原因 */
 export declare enum NERtcReasonConnectionChangedType {

@@ -46,8 +46,7 @@ import {
     NERtcStreamChannelType,
     NERtcPullExternalAudioFrameCb,
     NERtcAudioStreamType,
-    NERtcVideoStreamType,
-    NERtcInstallCastAudioDriverResult
+    NERtcVideoStreamType
 } from './defs'
 import { EventEmitter } from 'events'
 import process from 'process';
@@ -2415,29 +2414,6 @@ class NERtcEngine extends EventEmitter {
     }
 
     /**
-     * 检查mac虚拟声卡是否安装。
-     * <pre>
-     * only for macOS。
-     * </pre>
-     * @returns {Boolean}
-     * <pre>
-     * - false: 虚拟声卡未安装
-     * - true: 虚拟声卡已安装
-     * </pre>
-     */
-    checkNeCastAudio(): boolean {
-        let ret = false;
-        let devices = this.nertcEngine.enumeratePlayoutDevices();
-        for(let i = 0; i < devices.length; ++i){
-            let item = devices[i];
-            if(item.device_name === "NeCastAudio A"){
-                ret = true;
-            }
-        }
-        return ret;
-    }
-
-    /**
      * 开关本地音频发送。
      * @since 4.1.110
      * <pre>
@@ -2553,9 +2529,6 @@ class NERtcEngine extends EventEmitter {
     //     return this.nertcEngine.setExternalAudioSource(enabled, samplerate, channel);      
     // }
 
-    checkNECastAudioDriver(): number {
-        return this.nertcEngine.checkNECastAudioDriver();
-    }
 
     /**
      * init event handler
@@ -3400,19 +3373,6 @@ class NERtcEngine extends EventEmitter {
         this.nertcEngine.onStatsObserver('onNetworkQuality', true, function (uc: number, stats: Array<NERtcNetworkQualityInfo>) {
             fire('onNetworkQuality', uc, stats);
         });
-
- /**
-         * 安装声卡回调
-         * @event NERtcEngine#onCheckNECastAudioDriverResult
-         * @param {NERtcErrorCode} result 安装结果
-         */
-        this.nertcEngine.onEvent('onCheckNECastAudioDriverResult', function (
-            result: NERtcInstallCastAudioDriverResult
-        ) {
-            fire('onCheckNECastAudioDriverResult', result);
-        });
-
-    
     }
 
 
@@ -4137,11 +4097,6 @@ declare interface NERtcEngine {
      */
     on(event: 'onReceSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
 
-    /** 安装声卡回调。
-
-     @param result  返回结果。
-     */
-     on(event: 'onCheckNECastAudioDriverResult', cb: (result: NERtcInstallCastAudioDriverResult) => void): this;
 }
 
 export default NERtcEngine;
