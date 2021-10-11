@@ -132,8 +132,7 @@
               'destination': '<(PRODUCT_DIR)',
               'files': [
                 './nertc_sdk/nertc_sdk_Mac.framework',
-                './nertc_sdk/NEFundation_Mac.framework',
-                './nertc_sdk/NeCastAudio.driver'
+                './nertc_sdk/NEFundation_Mac.framework'
               ]
             }],
             'defines': [
