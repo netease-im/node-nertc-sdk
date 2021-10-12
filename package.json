@@ -35,9 +35,16 @@
     "url": "git+https://github.com/surebeli/node-nertc-sdk.git#feat/4.1.301/private"
   },
   "files": [
+    ".github",
     "js",
+    "nertc_sdk_node",
+    "nertc_sdk_ts",
     "types",
     "scripts",
+    "shared",
+    "bindings.gyp",
+    "config_dts.json",
+    "config_ts.json",
     "just-task.js",
     "package.json"
   ],
