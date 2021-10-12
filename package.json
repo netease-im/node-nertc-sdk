@@ -42,7 +42,7 @@
     "types",
     "scripts",
     "shared",
-    "bindings.gyp",
+    "binding.gyp",
     "config_dts.json",
     "config_ts.json",
     "just-task.js",
