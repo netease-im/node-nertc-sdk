@@ -466,7 +466,7 @@ export enum NERtcVideoStreamType {
 }
 
 export interface NERtcEngineAPI {
-    initialize(context: NERtcEngineContext): number;
+    initialize(context: NERtcEngineContext, app_key: String, log_dir_path: String): number;
     release(): void;
     setChannelProfile(profile: NERtcChannelProfileType): number;
     joinChannel(token: String, channelName: String, uid: number): number;

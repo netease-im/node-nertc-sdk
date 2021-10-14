@@ -198,7 +198,7 @@ void NertcNodeEngine::New(const FunctionCallbackInfo<Value> &args)
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, initialize)
 {
-    CHECK_API_FUNC(NertcNodeEngine, 1)
+    CHECK_API_FUNC(NertcNodeEngine, 3)
     int ret = -1; bool log_ret = false;
     do
     {
@@ -214,6 +214,11 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, initialize)
         if (nertc_engine_context_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), context) != napi_ok) {
             break;
         }
+        UTF8String key, path;
+        GET_ARGS_VALUE(isolate, 1, utf8string, key)
+        GET_ARGS_VALUE(isolate, 2, utf8string, path)
+        context.app_key = key.get();
+        context.log_dir_path = path.get();
         ret = instance->rtc_engine_->initialize(context);
         if (ret == 0)
         {

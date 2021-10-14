@@ -388,7 +388,7 @@ export declare enum NERtcVideoStreamType {
     kNERtcVideoStreamSub = 1 /** 视频流副流 */
 }
 export interface NERtcEngineAPI {
-    initialize(context: NERtcEngineContext): number;
+    initialize(context: NERtcEngineContext, app_key: String, log_dir_path: String): number;
     release(): void;
     setChannelProfile(profile: NERtcChannelProfileType): number;
     joinChannel(token: String, channelName: String, uid: number): number;

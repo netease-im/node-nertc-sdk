@@ -108,7 +108,7 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     initialize(context: NERtcEngineContext): number {
-        return this.nertcEngine.initialize(context);
+        return this.nertcEngine.initialize(context, context.app_key, context.log_dir_path);
     }
 
     /** 
