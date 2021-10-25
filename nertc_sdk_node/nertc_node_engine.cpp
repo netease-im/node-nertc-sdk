@@ -547,11 +547,11 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalMediaPriority)
     {
         CHECK_NATIVE_THIS(instance);
         auto status = napi_ok;
-        uint32_t priority;
-        uint32_t sub;
-        GET_ARGS_VALUE(isolate, 0, uint32, priority)
-        GET_ARGS_VALUE(isolate, 1, uint32, sub)
-        ret = instance->rtc_engine_->setLocalMediaPriority((nertc::NERtcMediaPriorityType)priority, (bool)sub);
+        int32_t priority;
+        bool enable;
+        GET_ARGS_VALUE(isolate, 0, int32, priority)
+        GET_ARGS_VALUE(isolate, 1, bool, enable)
+        ret = instance->rtc_engine_->setLocalMediaPriority((nertc::NERtcMediaPriorityType)priority, enable);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
