@@ -1376,33 +1376,33 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, onStatsObserver)
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, onAudioFrameObserver)
 {
-    CHECK_API_FUNC(NertcNodeEngine, 3)
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        instance->rtc_engine_->setAudioFrameObserver(NertcNodeRtcAudioFrameHandler::GetInstance());
-        auto status = napi_ok;
-        UTF8String eventName;
-        bool enable;
-        GET_ARGS_VALUE(isolate, 0, utf8string, eventName)
-        GET_ARGS_VALUE(isolate, 1, bool, enable)
-        if (status != napi_ok || eventName.length() == 0)
-        {
-            break;
-        }
-        if (!enable)
-        {
-            auto sz = NertcNodeRtcAudioFrameHandler::GetInstance()->RemoveEventHandler(eventName.toUtf8String());
-            if (sz == 0)
-            {
-                instance->rtc_engine_->setAudioFrameObserver(nullptr);
-            }
-        }
-        else
-        {
-            ASSEMBLE_REG_CALLBACK(2, NertcNodeRtcAudioFrameHandler, eventName.toUtf8String())
-        }
-    } while (false);
+    // CHECK_API_FUNC(NertcNodeEngine, 3)
+    // do
+    // {
+    //     CHECK_NATIVE_THIS(instance);
+    //     instance->rtc_engine_->setAudioFrameObserver(NertcNodeRtcAudioFrameHandler::GetInstance());
+    //     auto status = napi_ok;
+    //     UTF8String eventName;
+    //     bool enable;
+    //     GET_ARGS_VALUE(isolate, 0, utf8string, eventName)
+    //     GET_ARGS_VALUE(isolate, 1, bool, enable)
+    //     if (status != napi_ok || eventName.length() == 0)
+    //     {
+    //         break;
+    //     }
+    //     if (!enable)
+    //     {
+    //         auto sz = NertcNodeRtcAudioFrameHandler::GetInstance()->RemoveEventHandler(eventName.toUtf8String());
+    //         if (sz == 0)
+    //         {
+    //             instance->rtc_engine_->setAudioFrameObserver(nullptr);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         ASSEMBLE_REG_CALLBACK(2, NertcNodeRtcAudioFrameHandler, eventName.toUtf8String())
+    //     }
+    // } while (false);
 }
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableAudioVolumeIndication)
@@ -1643,7 +1643,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, pushExternalVideoFrame)
         }
         // char * data1 = (char *)config->buffer;
         // OutputDebugStringA(data1);
-        ret = instance->rtc_engine_->pushExternalVideoFrame(&config);
+        // ret = instance->rtc_engine_->pushExternalVideoFrame(&config);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
@@ -1664,7 +1664,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, pushExternalAudioFrame)
         {
             break;
         }
-        ret = instance->rtc_engine_->pushExternalAudioFrame(&config);
+        //ret = instance->rtc_engine_->pushExternalAudioFrame(&config);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
