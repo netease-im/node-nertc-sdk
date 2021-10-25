@@ -1256,7 +1256,7 @@ void NertcNodeEventHandler::Node_onAudioRecording(nertc::NERtcAudioRecordingCode
         nim_napi_new_int32(isolate, (int32_t)code),
         nim_napi_new_utf8string(isolate, file_path.c_str()),
     };
-    auto it = callbacks_.find("Node_onAudioRecording");
+    auto it = callbacks_.find("onAudioRecording");
 	if (it != callbacks_.end())
 	{
 		it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);

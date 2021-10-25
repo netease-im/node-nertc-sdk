@@ -3309,15 +3309,16 @@ class NERtcEngine extends events_1.EventEmitter {
         /**
          * 屏幕分享状态回调
          * @event NERtcEngine#onScreenCaptureStatus
-         * @param {NERtcErrorCode} result 屏幕分享状态
+         * @param {NERtcErrorCode} status 屏幕分享状态
          */
         this.nertcEngine.onEvent('onScreenCaptureStatus', function (status) {
             fire('onScreenCaptureStatus', status);
         });
         /**
-         * 屏幕分享状态回调
+         * 音频录制状态回调
          * @event NERtcEngine#onAudioRecording
-         * @param {NERtcErrorCode} result 音频录制状态回调。
+         * @param {NERtcAudioRecordingCode} status 音频录制状态回调。
+         * @param {String} file_path 录制文件路径。
          */
         this.nertcEngine.onEvent('onAudioRecording', function (status, file_path) {
             fire('onAudioRecording', status, file_path);
