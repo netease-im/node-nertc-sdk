@@ -1629,22 +1629,22 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, pushExternalVideoFrame)
 {
     CHECK_API_FUNC(NertcNodeEngine, 1)
     int ret = -1;
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        auto status = napi_ok;
-        // auto objs = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked().As<Array>();
-        // nertc::NERtcVideoFrame *config = new nertc::NERtcVideoFrame[objs->Length()];
-        nertc::NERtcVideoFrame config = {0};
-        nertc_viedo_frame_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), &config);
-        if (status != napi_ok)
-        {
-            break;
-        }
-        // char * data1 = (char *)config->buffer;
-        // OutputDebugStringA(data1);
-        // ret = instance->rtc_engine_->pushExternalVideoFrame(&config);
-    } while (false);
+    // do
+    // {
+    //     CHECK_NATIVE_THIS(instance);
+    //     auto status = napi_ok;
+    //     // auto objs = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked().As<Array>();
+    //     // nertc::NERtcVideoFrame *config = new nertc::NERtcVideoFrame[objs->Length()];
+    //     nertc::NERtcVideoFrame config = {0};
+    //     nertc_viedo_frame_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), &config);
+    //     if (status != napi_ok)
+    //     {
+    //         break;
+    //     }
+    //     // char * data1 = (char *)config->buffer;
+    //     // OutputDebugStringA(data1);
+    //     // ret = instance->rtc_engine_->pushExternalVideoFrame(&config);
+    // } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
@@ -1652,20 +1652,20 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, pushExternalAudioFrame)
 {
     CHECK_API_FUNC(NertcNodeEngine, 1)
     int ret = -1;
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        auto status = napi_ok;
-        // auto objs = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked().As<Array>();
-        // nertc::NERtcAudioFrame *config = new nertc::NERtcAudioFrame[objs->Length()];
-        nertc::NERtcAudioFrame config = {};
-        nertc_audio_frame_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), &config);
-        if (status != napi_ok)
-        {
-            break;
-        }
-        //ret = instance->rtc_engine_->pushExternalAudioFrame(&config);
-    } while (false);
+    // do
+    // {
+    //     CHECK_NATIVE_THIS(instance);
+    //     auto status = napi_ok;
+    //     // auto objs = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked().As<Array>();
+    //     // nertc::NERtcAudioFrame *config = new nertc::NERtcAudioFrame[objs->Length()];
+    //     nertc::NERtcAudioFrame config = {};
+    //     nertc_audio_frame_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), &config);
+    //     if (status != napi_ok)
+    //     {
+    //         break;
+    //     }
+    //     //ret = instance->rtc_engine_->pushExternalAudioFrame(&config);
+    // } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
