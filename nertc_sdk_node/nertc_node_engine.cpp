@@ -208,7 +208,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, initialize)
     {
         CHECK_NATIVE_THIS(instance);
         auto status = napi_ok;
-        nertc::NERtcEngineContext context;
+        nertc::NERtcEngineContext context = {};
         context.video_use_exnternal_render = true;
         context.video_prefer_hw_decoder = false;
         context.video_prefer_hw_encoder = false;
