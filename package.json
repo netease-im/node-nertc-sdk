@@ -30,7 +30,7 @@
     "prebuild:ts": "npm run build:dts",
     "build:ts": "rimraf ./js && tsc -p config_ts.json",
     "install": "node-pre-build install --fall-back-to-build",
-    "build:win32": "node-pre-build build -r electron -rv 9.4.4 11.4.5 12.0.11 -a x64 ia32 -p",
+    "build:win32": "node-pre-build build -r electron -rv 9.4.4 11.4.5 12.0.11 -a x64 -p",
     "build:darwin": "node-pre-build build -r electron -rv 9.4.4 11.4.5 12.0.11 -a x64 -p"
   },
   "node_pre_build": {
