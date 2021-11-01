@@ -13,7 +13,7 @@
     "just-task": "^1.4.1",
     "lodash.isequal": "^4.5.0",
     "node-gyp": "^8.2.0",
-    "node-pre-build": "0.1.0",
+    "node-pre-build": "^0.1.1",
     "shelljs": "^0.8.4",
     "tar": "^6.1.11",
     "yuv-buffer": "^1.0.0",
