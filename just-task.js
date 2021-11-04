@@ -7,6 +7,8 @@ const buildAddon = require('./scripts/build_addon')
 const packAddon = require('./scripts/pack_addon')
 const fsExtra = require('fs-extra')
 
+
+
 option('target')
 option('target_platform', { default: process.platform, choices: ['darwin', 'win32', 'linux'] })
 option('target_arch', { default: process.arch, choices: ['ia32', 'x64'] })
@@ -122,18 +124,18 @@ task('install', () => {
       extract: true
     }).then(() => {
       logger.info(`[install] Download prebuilt binaries from ${host}/${remotePath}/${packageName}`)
-      if(process.platform == 'darwin'){
+      if (process.platform == 'darwin') {
         var marchDriver = new RegExp(/.+\.driver$/)
         let releaseDir = path.join(__dirname, localPath)
         const list = fs.readdirSync(releaseDir)
         list.map(framework => {
-          if(marchDriver.test(framework)){
+          if (marchDriver.test(framework)) {
             let srcDriverPath = path.join(releaseDir, framework)
-            let distDriverPath =  "/private/tmp/NeCastAudio/NeCastAudio.driver"
-            let delDriverPath =  "/private/tmp/NeCastAudio"
-            if(fs.existsSync(delDriverPath)){
+            let distDriverPath = "/private/tmp/NeCastAudio/NeCastAudio.driver"
+            let delDriverPath = "/private/tmp/NeCastAudio"
+            if (fs.existsSync(delDriverPath)) {
               var ret = fs.rmdirSync(delDriverPath, { recursive: true })
-              console.log("-------just task delete pre deriver-----"+ret)
+              console.log("-------just task delete pre deriver-----" + ret)
             }
             console.log("-------just task copySync deriver------")
             fsExtra.copySync(srcDriverPath, distDriverPath)
