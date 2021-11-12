@@ -529,6 +529,104 @@ void NertcNodeRtcMediaStatsHandler::Node_onNetworkQuality(const nertc::NERtcNetw
     }
 }
 
+void NertcNodeRtcAudioFrameHandler::onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame)
+{
+    nim_node::node_async_call::async_call([=]() {
+        NertcNodeRtcAudioFrameHandler::GetInstance()->Node_onAudioFrameDidRecord(frame);
+    });  
+}
+
+void NertcNodeRtcAudioFrameHandler::onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame)
+{
+    nim_node::node_async_call::async_call([=]() {
+        NertcNodeRtcAudioFrameHandler::GetInstance()->Node_onAudioFrameWillPlayback(frame);
+    });  
+}
+
+void NertcNodeRtcAudioFrameHandler::onMixedAudioFrame(nertc::NERtcAudioFrame *frame)
+{
+    nim_node::node_async_call::async_call([=]() {
+        NertcNodeRtcAudioFrameHandler::GetInstance()->Node_onMixedAudioFrame(frame);
+    }); 
+}
+
+void NertcNodeRtcAudioFrameHandler::onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame *frame)
+{
+    nim_node::node_async_call::async_call([=]() {
+        NertcNodeRtcAudioFrameHandler::GetInstance()->Node_onPlaybackAudioFrameBeforeMixing(userID, frame);
+    }); 
+}
+
+void NertcNodeRtcAudioFrameHandler::Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame)
+{
+    Isolate* isolate = Isolate::GetCurrent();
+    uint32_t length = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
+    Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, frame->data, length);
+    const unsigned argc = 2;
+    Local<Value> argv[argc] = { 
+        buffer,
+        nim_napi_new_uint32(isolate, (uint32_t)length),
+    };
+    auto it = callbacks_.find("onAudioFrameDidRecord");
+    if (it != callbacks_.end())
+    {
+        it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
+    }
+
+}
+
+void NertcNodeRtcAudioFrameHandler::Node_onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame)
+{
+    Isolate* isolate = Isolate::GetCurrent();
+    uint32_t length = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
+    Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, frame->data, length);
+    const unsigned argc = 2;
+    Local<Value> argv[argc] = { 
+        buffer,
+        nim_napi_new_uint32(isolate, (uint32_t)length),
+    };
+    auto it = callbacks_.find("onAudioFrameWillPlayback");
+    if (it != callbacks_.end())
+    {
+        it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
+    }
+}
+
+void NertcNodeRtcAudioFrameHandler::Node_onMixedAudioFrame(nertc::NERtcAudioFrame *frame)
+{
+    Isolate* isolate = Isolate::GetCurrent();
+    uint32_t length = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
+    Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, frame->data, length);
+    const unsigned argc = 2;
+    Local<Value> argv[argc] = { 
+        buffer,
+        nim_napi_new_uint32(isolate, (uint32_t)length),
+    };
+    auto it = callbacks_.find("onMixedAudioFrame");
+    if (it != callbacks_.end())
+    {
+        it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
+    }
+}
+
+void NertcNodeRtcAudioFrameHandler::Node_onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame *frame)
+{
+    Isolate* isolate = Isolate::GetCurrent();
+    uint32_t length = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
+    Local<v8::ArrayBuffer> buffer = ArrayBuffer::New(isolate, frame->data, length);
+    const unsigned argc = 3;
+    Local<Value> argv[argc] = { 
+        nim_napi_new_uint64(isolate, (uint64_t)userID),
+        buffer,
+        nim_napi_new_uint32(isolate, (uint32_t)length),
+    };
+    auto it = callbacks_.find("onPlaybackAudioFrameBeforeMixing");
+    if (it != callbacks_.end())
+    {
+        it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
+    }
+}
+
 void NertcNodeEventHandler::onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile)
 {
     nim_node::node_async_call::async_call([=]() {
@@ -725,10 +823,25 @@ void NertcNodeEventHandler::onPullExternalAudioFrame(const BaseCallbackPtr& bcb,
     });
 }
 
-void NertcNodeEventHandler::onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result)
+// void NertcNodeEventHandler::onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result)
+// {
+//     nim_node::node_async_call::async_call([=]() {
+//         NertcNodeEventHandler::GetInstance()->Node_onCheckNECastAudioDriverResult(result);
+//     });
+// }
+
+void NertcNodeEventHandler::onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status)
 {
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeEventHandler::GetInstance()->Node_onCheckNECastAudioDriverResult(result);
+        NertcNodeEventHandler::GetInstance()->Node_onScreenCaptureStatus(status);
+    });
+}
+
+void NertcNodeEventHandler::onAudioRecording(nertc::NERtcAudioRecordingCode code, const char* file_path)
+{
+    utf8_string str_file_path = file_path;
+    nim_node::node_async_call::async_call([=]() {
+        NertcNodeEventHandler::GetInstance()->Node_onAudioRecording(code, str_file_path);
     });
 }
 
@@ -1111,12 +1224,39 @@ void NertcNodeEventHandler::Node_onPullExternalAudioFrame(const BaseCallbackPtr&
         bcb->data_.Get(isolate), argc, argv);
 }
 
-void NertcNodeEventHandler::Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result)
+// void NertcNodeEventHandler::Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result)
+// {
+//     Isolate* isolate = Isolate::GetCurrent();
+//     const unsigned argc = 1;
+//     Local<Value> argv[argc] = { nim_napi_new_int32(isolate, (int32_t)result) };
+//     auto it = callbacks_.find("onCheckNECastAudioDriverResult");
+// 	if (it != callbacks_.end())
+// 	{
+// 		it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
+// 	}
+// }
+
+void NertcNodeEventHandler::Node_onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status)
 {
     Isolate* isolate = Isolate::GetCurrent();
     const unsigned argc = 1;
-    Local<Value> argv[argc] = { nim_napi_new_int32(isolate, (int32_t)result) };
-    auto it = callbacks_.find("onCheckNECastAudioDriverResult");
+    Local<Value> argv[argc] = { nim_napi_new_int32(isolate, (int32_t)status) };
+    auto it = callbacks_.find("onScreenCaptureStatus");
+	if (it != callbacks_.end())
+	{
+		it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);
+	}
+}
+
+void NertcNodeEventHandler::Node_onAudioRecording(nertc::NERtcAudioRecordingCode code, const utf8_string& file_path)
+{
+    Isolate* isolate = Isolate::GetCurrent();
+    const unsigned argc = 2;
+    Local<Value> argv[argc] = { 
+        nim_napi_new_int32(isolate, (int32_t)code),
+        nim_napi_new_utf8string(isolate, file_path.c_str()),
+    };
+    auto it = callbacks_.find("onAudioRecording");
 	if (it != callbacks_.end())
 	{
 		it->second->callback_.Get(isolate)->Call(isolate->GetCurrentContext(), it->second->data_.Get(isolate), argc, argv);

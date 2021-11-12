@@ -129,6 +129,7 @@ export declare enum NERtcVideoProfileType {
     kNERtcVideoProfileMAX = 4,
     kNERtcVideoProfileFake = 6
 }
+/** 视频缩放类型。*/
 export declare enum NERtcVideoScalingMode {
     kNERtcVideoScaleFit = 0,
     kNERtcVideoScaleFullFill = 1,
@@ -233,6 +234,47 @@ export declare enum NERtcScreenProfileType {
     kNERtcScreenProfileNone = 4,
     kNERtcScreenProfileMAX = 2
 }
+/** 视频类型。*/
+export declare enum NERtcVideoType {
+    kNERtcVideoTypeI420 = 0,
+    kNERtcVideoTypeNV12 = 1,
+    kNERtcVideoTypeNV21 = 2,
+    kNERtcVideoTypeBGRA = 3,
+    kNERtcVideoTypeCVPixelBuffer = 4
+}
+/** 视频旋转角度。*/
+export declare enum NERtcVideoRotation {
+    kNERtcVideoRotation_0 = 0,
+    kNERtcVideoRotation_90 = 90,
+    kNERtcVideoRotation_180 = 180,
+    kNERtcVideoRotation_270 = 270
+}
+/** 视频帧。*/
+export interface NERtcVideoFrame {
+    format: NERtcVideoType; /**< 视频帧格式，详细信息请参考 NERtcVideoType。*/
+    timestamp: number; /**< 视频时间戳，单位为毫秒。 */
+    width: number; /**< 视频桢宽度 */
+    height: number; /**< 视频桢宽高 */
+    rotation: NERtcVideoRotation; /**<  视频旋转角度 详见: #NERtcVideoRotation */
+    buffer: ArrayBuffer; /**<  视频桢数据 */
+}
+/** 音频类型。*/
+export declare enum NERtcAudioType {
+    kNERtcAudioTypePCM16 = 0
+}
+/** 音频格式。*/
+export interface NERtcAudioFormat {
+    type: NERtcAudioType; /**< 音频类型。*/
+    channels: number; /**< 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。*/
+    sample_rate: number; /**< 采样率。*/
+    bytes_per_sample: number; /**< 每个采样点的字节数。对于 PCM 来说，一般使用 16 bit，即两个字节。*/
+    samples_per_channel: number; /**< 每个房间的样本数量。*/
+}
+/** 音频帧。*/
+export interface NERtcAudioFrame {
+    format: NERtcAudioFormat; /**< 音频格式。*/
+    data: ArrayBuffer; /**< 数据缓冲区。有效数据长度为：samples_per_channel * channels * bytes_per_sample。*/
+}
 /** 视频尺寸。*/
 export interface NERtcVideoDimensions {
     width: number; /**< 宽度 */
@@ -259,6 +301,64 @@ export interface NERtcScreenCaptureParameters {
     excluded_window_list: Array<Number>; /**< 待屏蔽窗口的 ID 列表。 */
     excluded_window_count: number; /**< 待屏蔽窗口的数量。*/
     prefer: NERtcSubStreamContentPrefer; /**< 编码策略倾向。*/
+}
+export interface NERtcScreenCaptureWindowParam {
+    window_list: Array<Number>; /**< 待屏蔽窗口的 ID 列表。 */
+}
+/** 图片水印设置参数。最多可以添加 4 个图片水印。 */
+export interface NERtcImageWatermarkConfig {
+    image_paths: Array<String>; /**< 水印图片路径。空时无效。*/
+    offset_x: number; /**< 水印图片左上角与视频画布左上角的水平距离。单位为像素（pixel），默认值为 0。 */
+    offset_y: number; /**< 水印图片左上角与视频画布左上角的垂直距离。单位为像素（pixel），默认值为 0。 */
+    image_width: number; /**< 水印图片的宽度。单位为像素（pixel），默认值为 0 表示按原始图宽。*/
+    image_height: number; /**< 水印图片的高度。单位为像素（pixel），默认值为 0 表示按原始图高。*/
+    fps: number; /**< 播放帧率。默认 0 帧/秒，即不自动切换图片，图片单帧静态显示。注意：Windows端帧率不超过 20 fps。*/
+    loop: boolean; /**< 是否设置循环。默认循环，设置为 false 后水印数组播放完毕后消失。*/
+}
+/** 文字水印设置参数。最多可添加 10 个文字水印。*/
+export interface NERtcTextWatermarkConfig {
+    content: String;
+    font_path: String; /**< 字体路径，设置为空时，表示使用程序默认字体。*/
+    font_size: number; /**< 字体大小。默认值为 10，相当于 144 dpi 设备上的 10 x 15 磅。*/
+    font_color: number; /**< 字体颜色。ARGB 格式。 */
+    offset_x: number; /**< 水印左上角与视频画布左上角的水平距离。单位为像素（pixel）。*/
+    offset_y: number; /**< 水印左上角与视频画布左上角的垂直距离。单位为像素（pixel）。*/
+    wm_color: number; /**< 水印框内背景颜色。ARGB格式，支持透明度设置。*/
+    wm_width: number; /**< 水印框的宽度。单位为像素（pixel），默认值为 0，表示没有水印框。*/
+    wm_height: number; /**< 水印框的高度。单位为像素（pixel），默认值为 0，表示没有水印框。*/
+}
+/** 时间戳水印设置。只能添加 1 个时间戳水印。 时间戳水印的时间和当前时间相同，且实时变化。*/
+export interface NERtcTimestampWatermarkConfig {
+    font_path: String; /**< 字体路径。若未设置，使用程序默认字体。*/
+    font_size: number; /**< 字体大小。默认值为 10，相当于 144 dpi 设备上的 10 x 15 磅。*/
+    font_color: number; /**< 字体颜色。ARGB 格式。 */
+    offset_x: number; /**< 水印左上角与视频画布左上角的水平距离。单位为像素（pixel）。 */
+    offset_y: number; /**< 水印左上角与视频画布左上角的垂直距离。单位为像素（pixel）。 */
+    wm_color: number; /**< 水印框内背景颜色。ARGB格式，支持透明度设置。 */
+    wm_width: number; /**< 水印框的宽度。单位为像素（pixel），默认值为 0，表示没有水印框。*/
+    wm_height: number; /**< 水印框的高度。单位为像素（pixel），默认值为 0，表示没有水印框。*/
+    ts_type: number; /**< 时间戳类型，支持设置为：
+                                    - 1：yyyy-MM-dd HH:mm:ss。
+                                    - 2：yyyy-MM-dd HH:mm:ss.SSS。精确到毫秒。*/
+}
+/** 画布水印设置。同时设置文字、时间戳或图片水印时，如果不同类型的水印位置有重叠，会按照图片、文本、时间戳的顺序进行图层覆盖。*/
+export interface NERtcCanvasWatermarkConfig {
+    image_watermarks: Array<NERtcImageWatermarkConfig>; /**< 图片水印数组指针。 */
+    image_count_: number; /**< 图片水印个数，最多支持 4 个。 */
+    text_watermarks: Array<NERtcTextWatermarkConfig>; /**< 文字水印数组指针。 */
+    text_count_: number; /**< 文字水印个数，最多支持 10 个。 */
+    timestamp_watermark: NERtcTimestampWatermarkConfig; /**< 时间戳水印指针，仅一个。 */
+}
+/** 录音音质 */
+export declare enum NERtcAudioRecordingQuality {
+    kNERtcAudioRecordingQualityLow = 0,
+    kNERtcAudioRecordingQualityMedium = 1,
+    kNERtcAudioRecordingQualityHigh = 2
+}
+/** 媒体优先级类型。*/
+export declare enum NERtcMediaPriorityType {
+    kNERtcMediaPriorityHigh = 50,
+    kNERtcMediaPriorityNormal = 100
 }
 /** 直播推流模式 */
 export declare enum NERtcLiveStreamMode {
@@ -481,14 +581,21 @@ export interface NERtcEngineAPI {
     setVoiceBeautifierPreset(type: NERtcVoiceBeautifierType): number;
     setLocalVoicePitch(pitch: number): number;
     setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
-    setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
-    subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
-    enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
-    enableLoopbackRecording(enable: boolean, deviceName: String): number;
-    adjustLoopbackRecordingSignalVolume(volume: number): number;
-    adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
-    checkNECastAudioDriver(): number;
-    checkNeCastAudio(): boolean;
+    adjustUserPlaybackSignalVolume(uid: number, volume: number): number;
+    switchChannel(token: String, channelName: String): number;
+    setLocalRenderMode(scalingMode: NERtcVideoScalingMode): number;
+    setLocalSubStreamRenderMode(scalingMode: NERtcVideoScalingMode): number;
+    setRemoteRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number;
+    setLocalMediaPriority(priority: NERtcMediaPriorityType, preemptive: boolean): number;
+    setExcludeWindowList(param: NERtcScreenCaptureWindowParam): number;
+    startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number;
+    stopAudioRecording(): number;
+    setRemoteSubSteamRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number;
+    setMixedAudioFrameParameters(samplerate: number): number;
+    setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
+    setExternalVideoSource(enabled: boolean): number;
+    pushExternalVideoFrame(opt: NERtcVideoFrame): number;
+    pushExternalAudioFrame(opt: NERtcAudioFrame): number;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {
@@ -593,6 +700,22 @@ export declare enum NERtcInstallCastAudioDriverResult {
     kNERtcInstallCastAudioDriverSuccess = 0,
     kNERtcInstallCastAudioDriverNotAuthorized = 1,
     kNERtcInstallCastAudioDriverFailed = 2
+}
+/** 屏幕分享状态 */
+export declare enum NERtcScreenCaptureStatus {
+    kScreenCaptureStatusStart = 1,
+    kScreenCaptureStatusPause = 2,
+    kScreenCaptureStatusResume = 3,
+    kScreenCaptureStatusStop = 4,
+    kScreenCaptureStatusCovered = 5 /**< 屏幕分享的目标窗口被覆盖*/
+}
+/** 录音回调事件错误码 */
+export declare enum NERtcAudioRecordingCode {
+    kNERtcAudioRecordErrorSuffix = 1,
+    kNERtcAudioRecordOpenFileFailed = 2,
+    kNERtcAudioRecordStart = 3,
+    kNERtcAudioRecordError = 4,
+    kNERtcAudioRecordFinish = 5
 }
 /** 连接状态变更原因 */
 export declare enum NERtcReasonConnectionChangedType {

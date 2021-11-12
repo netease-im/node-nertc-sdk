@@ -385,13 +385,24 @@ public:
      */
     void onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize) override;
 
+    // /**
+    //  * 收到检测安装声卡的内容回调（仅适用于 Mac 系统）
+    //  *
+    //  * 在 Mac 系统上，您可以通过调用 {@link checkNECastAudioDriver} 为当前系统安装一个音频驱动，并让 SDK 通过该音频驱动捕获当前 Mac 系统播放出的声音。
+    //  * SDK 会将安装虚拟声卡的结果，通过本事件回调抛出，需要您关注参数中的错误码。
+    //  */
+    // virtual void onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result) override;
+
     /**
-     * 收到检测安装声卡的内容回调（仅适用于 Mac 系统）
-     *
-     * 在 Mac 系统上，您可以通过调用 {@link checkNECastAudioDriver} 为当前系统安装一个音频驱动，并让 SDK 通过该音频驱动捕获当前 Mac 系统播放出的声音。
-     * SDK 会将安装虚拟声卡的结果，通过本事件回调抛出，需要您关注参数中的错误码。
+     * 屏幕共享暂停/恢复/开始/结束等回调
      */
-    virtual void onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result) override;
+    virtual void onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status) override;
+
+    /** 音频录制状态回调。
+     * @param code 音频录制状态码。详细信息请参考 NERtcAudioRecordingCode。
+     * @param file_path 音频录制文件保存路径。
+     */
+    virtual void onAudioRecording(nertc::NERtcAudioRecordingCode code, const char* file_path) override;
 
 public:
     void onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
@@ -452,7 +463,9 @@ private:
     void Node_onAudioHowling(bool howling);
     void Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize);
     void Node_onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
-    void Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result);
+    //void Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result);//modify by lyq
+    void Node_onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status);
+    void Node_onAudioRecording(nertc::NERtcAudioRecordingCode code, const utf8_string& file_path);
 };
 
 class NertcNodeRtcMediaStatsHandler : public nim_node::EventHandler, public nertc::IRtcMediaStatsObserver
@@ -524,6 +537,56 @@ private:
     void Node_onRemoteVideoStats(const nertc::NERtcVideoRecvStats *stats, unsigned int user_count);
     void Node_onNetworkQuality(const nertc::NERtcNetworkQualityInfo *infos, unsigned int user_count);
 }; 
+
+class NertcNodeRtcAudioFrameHandler : public nim_node::EventHandler, public nertc::INERtcAudioFrameObserver
+{
+private:
+    /* data */
+public:
+    NertcNodeRtcAudioFrameHandler(){};
+    ~NertcNodeRtcAudioFrameHandler(){};
+    SINGLETON_DEFINE(NertcNodeRtcAudioFrameHandler);
+
+public:
+    /** 采集音频数据回调，用于声音处理等操作。
+     @note
+     - 返回音频数据支持读/写。
+     - 有本地音频数据驱动就会回调。
+     @param frame 音频帧。
+     */
+    virtual void onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame);
+    /** 播放音频数据回调，用于声音处理等操作。
+     @note
+     - 返回音频数据支持读/写。
+     - 有本地音频数据驱动就会回调。
+     @param frame 音频帧。
+     */
+    virtual void onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame);
+    /** 获取本地用户和所有远端用户混音后的原始音频数据。
+     @note
+     - 返回音频数据只读。
+     - 有本地音频数据驱动就会回调。
+     @param frame 音频帧。
+     */
+    virtual void onMixedAudioFrame(nertc::NERtcAudioFrame * frame);
+    /**
+     * 获取单个远端用户混音前的音频数据。
+     *
+     * 成功注册音频观测器后，如果订阅了远端音频（默认订阅）且远端用户开启音频后，SDK 会在捕捉到混音前的音频数据时，触发该回调，将音频数据回调给用户。  
+     @note
+     - 返回音频数据只读。
+     @param userID 用户ID。
+     @param frame  音频帧。
+     */
+    virtual void onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame * frame);
+
+private:
+    void Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame);
+    void Node_onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame);
+    void Node_onMixedAudioFrame(nertc::NERtcAudioFrame * frame);
+    void Node_onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame * frame);
+}; 
+
 
 }
 #endif //NERTC_NODE_ENGINE_EVENT_HANDLER_H

@@ -62,6 +62,14 @@
                 './nertc_sdk/dll/nertc_sdk.dll',
                 './nertc_sdk/dll/protoopp.dll',
                 './nertc_sdk/dll/SDL2.dll',
+                './nertc_sdk/dll/libfreetype-6.dll',
+                './nertc_sdk/dll/libjpeg-9.dll',
+                './nertc_sdk/dll/libpng16-16.dll',
+                './nertc_sdk/dll/libtiff-5.dll',
+                './nertc_sdk/dll/libwebp-7.dll',
+                './nertc_sdk/dll/SDL2_image.dll',
+                './nertc_sdk/dll/SDL2_ttf.dll',
+                './nertc_sdk/dll/zlib1.dll',
               ]
             }],
             'defines': [
@@ -132,8 +140,7 @@
               'destination': '<(PRODUCT_DIR)',
               'files': [
                 './nertc_sdk/nertc_sdk_Mac.framework',
-                './nertc_sdk/NEFundation_Mac.framework',
-                './nertc_sdk/NeCastAudio.driver'
+                './nertc_sdk/NEFundation_Mac.framework'
               ]
             }],
             'defines': [
@@ -149,7 +156,6 @@
                 'Foundation.framework',
                 'nertc_sdk_Mac.framework',
                 'NEFundation_Mac.framework',
-                'libNERTCPrivilegedTask.a',
                 '-Wl,-rpath,@loader_path',
                 '-ObjC'
               ]

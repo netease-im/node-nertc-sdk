@@ -14,6 +14,7 @@
 
 namespace nertc_node
 {
+
 class NertcNodeEngine : public node::ObjectWrap
 {
 private:
@@ -45,7 +46,8 @@ public:
     NIM_SDK_NODE_API(setMixedAudioFrameParameters);
     NIM_SDK_NODE_API(setExternalAudioSource);
     NIM_SDK_NODE_API(pushExternalAudioFrame);
-
+    NIM_SDK_NODE_API(pushExternalVideoFrame);
+    
     // 4.0
     NIM_SDK_NODE_API(sendSEIMsg);
     NIM_SDK_NODE_API(sendSEIMsgEx);
@@ -58,16 +60,27 @@ public:
     NIM_SDK_NODE_API(setLocalVoicePitch);
     NIM_SDK_NODE_API(setLocalVoiceEqualization);
 
-    // 4.1.110
-    NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);
-    NIM_SDK_NODE_API(subscribeRemoteAudioSubStream);
-    NIM_SDK_NODE_API(enableLocalAudioStream);
-    NIM_SDK_NODE_API(enableLoopbackRecording);
-    NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);
+    // 4.1.110(timing custom)
+    //NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);
+    //NIM_SDK_NODE_API(subscribeRemoteAudioSubStream);
+    //NIM_SDK_NODE_API(enableLocalAudioStream);
+    //NIM_SDK_NODE_API(enableLoopbackRecording);
+    //NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);
     NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);
 
-    // 4.1.112
-    NIM_SDK_NODE_API(checkNECastAudioDriver);
+    // // 4.1.112(timing custom)
+    // NIM_SDK_NODE_API(checkNECastAudioDriver);
+
+    //4.2.5
+    NIM_SDK_NODE_API(switchChannel);
+    NIM_SDK_NODE_API(setLocalRenderMode);
+    NIM_SDK_NODE_API(setLocalSubStreamRenderMode);
+    NIM_SDK_NODE_API(setRemoteRenderMode); 
+    NIM_SDK_NODE_API(setLocalMediaPriority);
+    NIM_SDK_NODE_API(setExcludeWindowList);
+    NIM_SDK_NODE_API(startAudioRecording);
+    NIM_SDK_NODE_API(stopAudioRecording);
+    NIM_SDK_NODE_API(setRemoteSubSteamRenderMode);
 
     // ex
     NIM_SDK_NODE_API(getConnectionState);
@@ -110,6 +123,7 @@ public:
     NIM_SDK_NODE_API(enableEarback);
     NIM_SDK_NODE_API(setEarbackVolume);
     NIM_SDK_NODE_API(onStatsObserver);
+    NIM_SDK_NODE_API(onAudioFrameObserver);
     NIM_SDK_NODE_API(enableAudioVolumeIndication);
     NIM_SDK_NODE_API(startScreenCaptureByScreenRect);
     NIM_SDK_NODE_API(startScreenCaptureByDisplayId);
@@ -119,7 +133,6 @@ public:
     NIM_SDK_NODE_API(pauseScreenCapture);
     NIM_SDK_NODE_API(resumeScreenCapture);
     NIM_SDK_NODE_API(setExternalVideoSource);
-    NIM_SDK_NODE_API(pushExternalVideoFrame);
     NIM_SDK_NODE_API(getVersion);
     NIM_SDK_NODE_API(getErrorDescription);
     NIM_SDK_NODE_API(uploadSdkInfo);

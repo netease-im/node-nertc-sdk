@@ -18,8 +18,8 @@ option('download_url')
 const includePath = 'nertc_sdk'
 const tempPath = 'temporary'
 const packageMeta = require(path.join(__dirname, 'package.json'))
-const nativeWinUrl = `http://yx-web.nos.netease.com/package/1631968304/NeRTC_Windows_SDK_v4.1.113.zip`
-const nativeMacUrl = `http://yx-web.nos.netease.com/package/1631968759/NeRTC_macOS_SDK_v4.1.113.zip`
+const nativeWinUrl = `http://yx-web.nos.netease.com/package/1627392017/NERtc_Windows_SDK_v4.2.5.zip`
+const nativeMacUrl = `http://yx-web.nos.netease.com/package/1635238074/NERTC_Mac_SDK_v4.2.6.zip`
 
 task('fetch-wrapper', () => {
   const platform = argv().target_platform
@@ -117,29 +117,14 @@ task('install', () => {
     const remotePath = 'package'
     const packageName = `${curPkgMeta.name}-v${curPkgMeta.version}-${nodeAbi}-${targetPlatform}-${targetArch}.tar.gz`
     const localPath = 'build/Release'
-    fs.rmdirSync(path.join(__dirname, localPath), { recursive: true })
+    const buildReleasePath = path.join(__dirname, localPath)
+    if(fs.existsSync(buildReleasePath)){
+      fs.rmdirSync(buildReleasePath, { recursive: true })
+    }
     download(`${host}/${remotePath}/${packageName}`, path.join(__dirname, localPath), {
       extract: true
     }).then(() => {
       logger.info(`[install] Download prebuilt binaries from ${host}/${remotePath}/${packageName}`)
-      if(process.platform == 'darwin'){
-        var marchDriver = new RegExp(/.+\.driver$/)
-        let releaseDir = path.join(__dirname, localPath)
-        const list = fs.readdirSync(releaseDir)
-        list.map(framework => {
-          if(marchDriver.test(framework)){
-            let srcDriverPath = path.join(releaseDir, framework)
-            let distDriverPath =  "/private/tmp/NeCastAudio/NeCastAudio.driver"
-            let delDriverPath =  "/private/tmp/NeCastAudio"
-            if(fs.existsSync(delDriverPath)){
-              var ret = fs.rmdirSync(delDriverPath, { recursive: true })
-              console.log("-------just task delete pre deriver-----"+ret)
-            }
-            console.log("-------just task copySync deriver------")
-            fsExtra.copySync(srcDriverPath, distDriverPath)
-          }
-        })
-      }
       resolve()
     }).catch(err => {
       let fetchUrl
