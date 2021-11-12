@@ -18,8 +18,8 @@ option('download_url')
 const includePath = 'nertc_sdk'
 const tempPath = 'temporary'
 const packageMeta = require(path.join(__dirname, 'package.json'))
-const nativeWinUrl = `http://yx-web.nos.netease.com/package/1635838349/NeRTC_Windows_SDK_v4.1.302.zip`
-const nativeMacUrl = `http://yx-web.nos.netease.com/package/1635838893/NeRTC_macOS_SDK_v4.1.302.zip`
+const nativeWinUrl = `http://yx-web.nos.netease.com/package/NERTC_Windows_SDK_V4.1.304.zip`
+const nativeMacUrl = `http://yx-web.nos.netease.com/package/NERTC_MacOS_SDK_V4.1.304.zip`
 
 task('fetch-wrapper', () => {
   const platform = argv().target_platform
