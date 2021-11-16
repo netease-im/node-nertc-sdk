@@ -1453,10 +1453,19 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByScreenRect)
         if (status != napi_ok) break;
         status = nertc_rectangle_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), region_rect);
         if (status != napi_ok) break;
-        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param);
-
+        std::set<intptr_t> vsWindowId;
+        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param, vsWindowId);
         if (status == napi_ok)
         {
+            intptr_t* wnd_list = nullptr;
+            int index = 0;
+            if (!vsWindowId.empty()) {
+                wnd_list = new intptr_t[vsWindowId.size()];
+                for (auto e : vsWindowId) {
+                    *(wnd_list + index++) = e;
+                }
+            }
+            param.excluded_window_list = (nertc::source_id_t*)wnd_list;
             ret = instance->rtc_engine_->startScreenCaptureByScreenRect(screen_rect, region_rect, param);
             if (param.excluded_window_list != nullptr)
             {
@@ -1482,8 +1491,17 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByDisplayId)
         GET_ARGS_VALUE(isolate, 0, int64, display)
         status = nertc_rectangle_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), region_rect);
         if (status != napi_ok) break;
-        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param);
-
+        std::set<intptr_t> vsWindowId;
+        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param, vsWindowId);
+        intptr_t* wnd_list = nullptr;
+        int index = 0;
+        if (!vsWindowId.empty()) {
+            wnd_list = new intptr_t[vsWindowId.size()];
+            for (auto e : vsWindowId) {
+                *(wnd_list + index++) = e;
+            }
+        }
+        param.excluded_window_list = (nertc::source_id_t*)wnd_list;
         if (status == napi_ok)
         {
 #ifdef WIN32
@@ -1543,8 +1561,17 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByWindowId)
         GET_ARGS_VALUE(isolate, 0, int32, windowid)
         status = nertc_rectangle_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), region_rect);
         if (status != napi_ok) break;
-        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param);
-
+        std::set<intptr_t> vsWindowId;
+        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param, vsWindowId);
+        intptr_t* wnd_list = nullptr;
+        int index = 0;
+        if (!vsWindowId.empty()) {
+            wnd_list = new intptr_t[vsWindowId.size()];
+            for (auto e : vsWindowId) {
+                *(wnd_list + index++) = e;
+            }
+        }
+        param.excluded_window_list = (nertc::source_id_t*)wnd_list;
         if (status == napi_ok)
         {
 #ifdef WIN32

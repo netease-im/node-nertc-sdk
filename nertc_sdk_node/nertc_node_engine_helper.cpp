@@ -202,7 +202,7 @@ napi_status nertc_video_dimensions_obj_to_struct(Isolate* isolate, const Local<O
     return napi_ok;        
 }
 
-napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcScreenCaptureParameters& params)
+napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcScreenCaptureParameters& params, std::set<intptr_t>& list)
 {
     int32_t out_i;
     bool out_b;
@@ -253,22 +253,26 @@ napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Lo
         {
             Local<Array> wl = so.As<Array>();
             if (wl->IsArray()) {
-                intptr_t *wi = new intptr_t[params.excluded_window_count];
-                if (wl->Length() == params.excluded_window_count)
+                for (auto i = 0; i < wl->Length(); i++)
                 {
-                    for (auto i = 0; i < params.excluded_window_count; i++)
-                    {
-                        wi[i] = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
-                    }
-                    void * window_list_v = (void *)wi;
-                    params.excluded_window_list = &window_list_v;
+                    list.insert(wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value());
                 }
-                else
-                {
-                    delete[] wi;
-                    wi = nullptr;
-                    return napi_invalid_arg;
-                }
+                // intptr_t *wi = new intptr_t[params.excluded_window_count];
+                // if (wl->Length() == params.excluded_window_count)
+                // {
+                //     for (auto i = 0; i < params.excluded_window_count; i++)
+                //     {
+                //         wi[i] = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
+                //     }
+                //     void * window_list_v = (void *)wi;
+                //     params.excluded_window_list = &window_list_v;
+                // }
+                // else
+                // {
+                //     delete[] wi;
+                //     wi = nullptr;
+                //     return napi_invalid_arg;
+                // }
             } else {
                 return napi_invalid_arg;
             }
@@ -602,7 +606,7 @@ napi_status nertc_audio_volume_info_to_obj(Isolate* isolate, const nertc::NERtcA
     return napi_ok;
 }
 
-napi_status nertc_window_id_list_to_struct(Isolate* isolate, const Local<Object>& obj, std::set<intptr_t> & list){
+napi_status nertc_window_id_list_to_struct(Isolate* isolate, const Local<Object>& obj, std::set<intptr_t>& list){
     Local<Value> so;
     if (nim_napi_get_object_value(isolate, obj, "window_list", so) == napi_ok)
     {
@@ -622,16 +626,22 @@ napi_status nertc_window_id_list_to_struct(Isolate* isolate, const Local<Object>
 //     Local<Value> so;
 //     if (nim_napi_get_object_value(isolate, obj, "window_list", so) == napi_ok)
 //     {
+//         intptr_t* wnd_list = NULL;
+//         int index = 0;
+//         std::set<intptr_t> vsWindowId;
+
 //         Local<Array> wl = so.As<Array>();
 //         if (wl->IsArray()) {
 //             count = wl->Length();
-//             static intptr_t *wi = new intptr_t[count];
+//             wnd_list = new intptr_t[count];
 //             for (auto i = 0; i < count; i++)
 //             {
-//                 wi[i] = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
+//                 vsWindowId.insert(wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value());
 //             }
-//             //void * window_list_v = (void *)wi;
-//             window_list=static_cast<void**> &wi;
+//             for (auto e : vsWindowId) {
+//                 *(wnd_list + index++) = e;
+//             }
+//             window_list=(nertc::source_id_t*)wnd_list;
 //         }else{
 //             return napi_invalid_arg;
 //         }
