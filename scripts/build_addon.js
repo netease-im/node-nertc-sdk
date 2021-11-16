@@ -36,7 +36,7 @@ module.exports = ({
         command.push('-- -f xcode')
       }
     }
-
+    command.push(' --openssl_fips=X')
     logger.info(command.join(' '))
     logger.info('[build] platform:', platform)
     logger.info('[build] arch:', arch)
