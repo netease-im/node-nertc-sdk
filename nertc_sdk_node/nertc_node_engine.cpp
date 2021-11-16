@@ -566,11 +566,24 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setExcludeWindowList)
         auto status = napi_ok;
         nertc::source_id_t *window_list = nullptr;
         uint32_t count;
-        status = nertc_window_id_list_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), window_list, count);
-        if (status != napi_ok)
+        // status = nertc_window_id_list_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), window_list, count);
+        std::set<intptr_t> vsWindowId;
+        status = nertc_window_id_list_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), vsWindowId);
+        if (status != napi_ok){
             break;
-            
-        ret = instance->rtc_engine_->setExcludeWindowList(window_list, count);
+        }
+        intptr_t* wnd_list = NULL;
+        int index = 0;
+        if (!vsWindowId.empty()) {
+            wnd_list = new intptr_t[vsWindowId.size()];
+            for (auto e : vsWindowId) {
+                *(wnd_list + index++) = e;
+            }
+        }
+        ret = instance->rtc_engine_->setExcludeWindowList((nertc::source_id_t*)wnd_list, index);
+        if (wnd_list) {
+          delete[] wnd_list;
+        }
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }

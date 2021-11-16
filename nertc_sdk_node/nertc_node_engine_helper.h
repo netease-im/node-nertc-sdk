@@ -4,6 +4,7 @@
 #include <node.h>
 #include <node_api.h>
 #include <list>
+#include <set>
 #include "nertc_engine.h"
 
 using v8::Context;
@@ -38,7 +39,8 @@ napi_status nertc_network_quality_to_obj(Isolate* isolate, const nertc::NERtcNet
 napi_status nertc_audio_volume_info_to_obj(Isolate* isolate, const nertc::NERtcAudioVolumeInfo& config, Local<Object>& obj);
 
 //4.2.5
-napi_status nertc_window_id_list_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::source_id_t* window_list, uint32_t& count);
+napi_status nertc_window_id_list_to_struct(Isolate* isolate, const Local<Object>& obj, std::set<intptr_t> & list);
+// napi_status nertc_window_id_list_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::source_id_t* window_list, uint32_t& count);
 napi_status nertc_canvas_water_mark_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcCanvasWatermarkConfig& info);
 napi_status nertc_viedo_frame_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcVideoFrame* info);
 napi_status nertc_audio_frame_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcAudioFrame* info);

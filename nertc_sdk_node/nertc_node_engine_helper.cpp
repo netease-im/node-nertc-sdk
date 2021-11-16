@@ -602,27 +602,42 @@ napi_status nertc_audio_volume_info_to_obj(Isolate* isolate, const nertc::NERtcA
     return napi_ok;
 }
 
-napi_status nertc_window_id_list_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::source_id_t* window_list, uint32_t& count)
-{
+napi_status nertc_window_id_list_to_struct(Isolate* isolate, const Local<Object>& obj, std::set<intptr_t> & list){
     Local<Value> so;
     if (nim_napi_get_object_value(isolate, obj, "window_list", so) == napi_ok)
     {
         Local<Array> wl = so.As<Array>();
         if (wl->IsArray()) {
-            count = wl->Length();
-            intptr_t *wi = new intptr_t[count];
-            for (auto i = 0; i < count; i++)
+            for (auto i = 0; i < wl->Length(); i++)
             {
-                wi[i] = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
+                list.insert(wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value());
             }
-            void * window_list_v = (void *)wi;
-            window_list= &window_list_v;
-        }else{
-            return napi_invalid_arg;
         }
     }
     return napi_ok;      
 }
+
+// napi_status nertc_window_id_list_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::source_id_t* window_list, uint32_t& count)
+// {
+//     Local<Value> so;
+//     if (nim_napi_get_object_value(isolate, obj, "window_list", so) == napi_ok)
+//     {
+//         Local<Array> wl = so.As<Array>();
+//         if (wl->IsArray()) {
+//             count = wl->Length();
+//             static intptr_t *wi = new intptr_t[count];
+//             for (auto i = 0; i < count; i++)
+//             {
+//                 wi[i] = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
+//             }
+//             //void * window_list_v = (void *)wi;
+//             window_list=static_cast<void**> &wi;
+//         }else{
+//             return napi_invalid_arg;
+//         }
+//     }
+//     return napi_ok;      
+// }
 
 static napi_status nertc_image_water_mark_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcImageWatermarkConfig& info)
 {
