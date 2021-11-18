@@ -29,16 +29,13 @@
     "build:dts": "rimraf ./types && tsc -p config_dts.json",
     "prebuild:ts": "npm run build:dts",
     "build:ts": "rimraf ./js && tsc -p config_ts.json",
+    "clean": "node-pre-build clean",
     "install": "node-pre-build install --fall-back-to-build",
-    "build:win32:x64:9.4.4": "node-pre-build build -r electron -rv 9.4.4 -a x64 -p",
-    "build:win32:x64:11.4.5": "node-pre-build build -r electron -rv 11.4.5 -a x64 -p",
-    "build:win32:x64:12.0.11": "node-pre-build build -r electron -rv 12.0.11 -a x64 -p",
-    "build:win32:ia32:9.4.4": "node-pre-build build -r electron -rv 9.4.4 -a ia32 -p",
-    "build:win32:ia32:11.4.5": "node-pre-build build -r electron -rv 11.4.5 -a ia32 -p",
-    "build:win32:ia32:12.0.11": "node-pre-build build -r electron -rv 12.0.11 -a ia32 -p",
-    "build:darwin:9.4.4": "node-pre-build build -r electron -rv 9.4.4 -a x64 -p",
-    "build:darwin:11.4.5": "node-pre-build build -r electron -rv 11.4.5 -a x64 -p",
-    "build:darwin:12.0.11": "node-pre-build build -r electron -rv 12.0.11 -a x64 -p"
+    "install:x64": "node-pre-build install --fall-back-to-build -a x64 ",
+    "install:ia32": "node-pre-build install --fall-back-to-build -a ia32",
+    "build:win32:x64": "node-pre-build build -r electron -rv 9.4.4 11.4.5 12.0.11 -a x64 -p",
+    "build:win32:ia32": "node-pre-build build -r electron -rv 9.4.4 11.4.5 12.0.11 -a ia32 -p",
+    "build:darwin": "node-pre-build build -r electron -rv 9.4.4 11.4.5 12.0.11 -a x64 -p"
   },
   "node_pre_build": {
     "sdk-dir": "nertc_sdk",
