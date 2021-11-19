@@ -17,7 +17,7 @@ module.exports = ({
       fs.rmdirSync(extractPath, { recursive: true })
     }
     const temporaryPath = path.join(extractPath, 'temporary')
-    download(fetchUrl, temporaryPath, { extract: true, strip: 1 }).then(() => {
+    download(fetchUrl, temporaryPath, { extract: true, strip: 0 }).then(() => {
       if (platform === 'win32') {
         let binaryDirectory = ''
         let libraryDirectory = ''
