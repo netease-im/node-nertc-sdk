@@ -37,6 +37,7 @@ module.exports = ({
       }
     }
 
+    command.push(' --openssl_fips=X')
     logger.info(command.join(' '))
     logger.info('[build] platform:', platform)
     logger.info('[build] arch:', arch)

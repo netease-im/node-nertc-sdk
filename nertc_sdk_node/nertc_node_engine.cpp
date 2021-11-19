@@ -142,6 +142,7 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(addLiveStreamTask)
     SET_PROTOTYPE(updateLiveStreamTask)
     SET_PROTOTYPE(removeLiveStreamTask)
+    SET_PROTOTYPE(enableRtspStream)
 
     SET_PROTOTYPE(enumerateRecordDevices)
     SET_PROTOTYPE(setRecordDevice)
@@ -2524,6 +2525,39 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setSystemAudioLoopbackCaptureVolume)
         // ret = instance->rtc_engine_->setSystemAudioLoopbackCaptureVolume(vol);
 #endif
     } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableRtspStream)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+
+        bool enable = false;
+        UTF8String rtsp_url;
+        GET_ARGS_VALUE(isolate, 0, bool, enable)
+        if (status != napi_ok)
+            break;
+        GET_ARGS_VALUE(isolate, 1, utf8string, rtsp_url)
+        if (status != napi_ok)
+            break;
+
+        if (rtsp_url.toUtf8String().length() >= kNERtcMaxURILength)
+            break;;
+         char url[kNERtcMaxURILength];
+        memset(url, 0, kNERtcMaxURILength);
+        strncpy(url, rtsp_url.toUtf8String().c_str(), kNERtcMaxURILength);
+        if(enable){
+            ret = instance->rtc_engine_->enableRtspStream(true, url);
+        }else{
+            ret = instance->rtc_engine_->enableRtspStream(false, "");
+        }
+    } while (false);
+
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 

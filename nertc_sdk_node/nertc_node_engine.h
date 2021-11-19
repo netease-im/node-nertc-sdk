@@ -126,6 +126,7 @@ public:
     NIM_SDK_NODE_API(addLiveStreamTask);
     NIM_SDK_NODE_API(updateLiveStreamTask);
     NIM_SDK_NODE_API(removeLiveStreamTask);
+    NIM_SDK_NODE_API(enableRtspStream);
 
     // adm
     NIM_SDK_NODE_API(enumerateRecordDevices);
