@@ -2206,6 +2206,22 @@ declare class NERtcEngine extends EventEmitter {
      */
     removeBeautyMakeup(): number;
     /**
+     * 导入美颜资源或模型。
+     * @since 4.1.114
+     * <pre>
+     * - 在 macOS 平台中使用自定义美颜效果之前，需要先通过此方法导入美颜资源或模型。
+     * <b>NOTE:</b>
+     * - 美颜功能模块开启过程中，如果资源路径或名称没有变更，则只需导入一次。如需更换资源，需要调用此接口重新导入。
+     * </pre>
+     * @param  {String} filePath 美妆模型所在路径。例如：`e:\Resources\StickerZipAndIcons\makeup_sticker.bundle\makeup\template.json`。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    addTemplate(filePath: String): number;
+    /**
      * init event handler
      * @private
      */

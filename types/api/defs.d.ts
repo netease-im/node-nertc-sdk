@@ -528,6 +528,7 @@ export interface NERtcEngineAPI {
     removeBeautySticker(): number;
     addBeautyMakeup(filePath: String): number;
     removeBeautyMakeup(): number;
+    addTemplate(filePath: String): number;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {

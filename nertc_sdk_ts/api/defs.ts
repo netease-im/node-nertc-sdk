@@ -628,6 +628,7 @@ export interface NERtcEngineAPI {
     removeBeautySticker(): number;
     addBeautyMakeup(filePath: String): number;
     removeBeautyMakeup(): number;
+    addTemplate(filePath: String): number;
 
 }
 

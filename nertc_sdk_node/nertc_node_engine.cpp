@@ -223,6 +223,7 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(removeBeautySticker)
     SET_PROTOTYPE(addBeautyMakeup)
     SET_PROTOTYPE(removeBeautyMakeup)
+    SET_PROTOTYPE(addTemplate)
 
 
     END_OBJECT_INIT_EX(NertcNodeEngine)
@@ -2587,6 +2588,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startBeauty)
         ret = instance->rtc_engine_->startBeauty();
 #else
        //mac
+       ret = nertc::RtcBeauty::startBeauty();
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2604,6 +2606,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, stopBeauty)
         ret = 0;
 #else
        //mac
+       nertc::RtcBeauty::stopBeauty();
        ret = 0;
 #endif
     } while (false);
@@ -2627,6 +2630,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableBeauty)
         instance->rtc_engine_->enableBeauty(enabled);
 #else
        //mac
+       nertc::RtcBeauty::enableBeauty(enabled);
 
 #endif
     } while (false);
@@ -2649,6 +2653,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableBeautyMirrorMode)
         instance->rtc_engine_->enableBeautyMirrorMode(enabled);
 #else
        //mac
+       nertc::RtcBeauty::enableBeautyMirrorMode(enabled);
 
 #endif
     } while (false);
@@ -2668,13 +2673,14 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, getBeautyEffect)
         {
             break;
         }
+        float f_ret = 0;
 #ifdef WIN32
-        float f_ret = instance->rtc_engine_->getBeautyEffect((nertc::NERtcBeautyEffectType)type);
+        f_ret = instance->rtc_engine_->getBeautyEffect((nertc::NERtcBeautyEffectType)type);
         ret = (int)(f_ret * 100);
 #else
-       //mac
-
-
+        //mac
+        f_ret = nertc::RtcBeauty::getBeautyEffect((nertc::NERtcBeautyEffectType)type);
+        ret = (int)(f_ret * 100);
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2705,8 +2711,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setBeautyEffect)
 #ifdef WIN32
         ret = instance->rtc_engine_->setBeautyEffect((nertc::NERtcBeautyEffectType)type, flevel);
 #else
-       //mac
-
+        //mac
+        ret = nertc::RtcBeauty::setBeautyEffect((nertc::NERtcBeautyEffectType)type, flevel);
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2730,9 +2736,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautyFilter)
         std::wstring wstr = StringToWString(file_path.toUtf8String());
         ret = instance->rtc_engine_->addBeautyFilter(UTF16ToString(wstr).c_str());
 #else
-       //mac
-
-
+        //mac
+        ret = nertc::RtcBeauty::addBeautyFilter(file_path.toUtf8String().c_str());
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2748,7 +2753,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, removeBeautyFilter)
 #ifdef WIN32
         ret = instance->rtc_engine_->removeBeautyFilter();
 #else
-       //mac
+        //mac
+        ret = nertc::RtcBeauty::removeBeautyFilter();
        
 #endif
     } while (false);
@@ -2773,7 +2779,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setBeautyFilterLevel)
 #ifdef WIN32
         ret = instance->rtc_engine_->setBeautyFilterLevel(flevel);
 #else
-       //mac
+        //mac
+        ret = nertc::RtcBeauty::setBeautyFilterLevel(flevel);
 
 #endif
     } while (false);
@@ -2798,7 +2805,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautySticker)
         std::wstring wstr = StringToWString(file_path.toUtf8String());
         ret = instance->rtc_engine_->addBeautySticker(UTF16ToString(wstr).c_str());
 #else
-       //mac
+        //mac
+        ret = nertc::RtcBeauty::addBeautySticker(file_path.toUtf8String().c_str());
 
 #endif
     } while (false);
@@ -2816,6 +2824,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, removeBeautySticker)
         ret = instance->rtc_engine_->removeBeautySticker();
 #else
        //mac
+        ret = nertc::RtcBeauty::removeBeautySticker();
 
 #endif
     } while (false);
@@ -2841,7 +2850,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautyMakeup)
         ret = instance->rtc_engine_->addBeautyMakeup(UTF16ToString(wstr).c_str());
 #else
        //mac
-
+        ret = nertc::RtcBeauty::addBeautyMakeup(file_path.toUtf8String().c_str());
 
 #endif
     } while (false);
@@ -2858,12 +2867,35 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, removeBeautyMakeup)
 #ifdef WIN32
         ret = instance->rtc_engine_->removeBeautyMakeup();
 #else
-       //mac
+        //mac
+        ret = nertc::RtcBeauty::removeBeautyMakeup();
 
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, addTemplate)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1; 
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        UTF8String file_path;
+        GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
+        if (status != napi_ok)
+        {
+            break;
+        }
+#ifdef WIN32
+
+#else
+        ret = nertc::RtcBeauty::addTemplate(file_path.toUtf8String().c_str());
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
 
 }

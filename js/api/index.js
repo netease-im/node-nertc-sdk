@@ -2470,7 +2470,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * - 多次调用此接口可以叠加多种全局美颜效果，也可以通过相关方法叠加滤镜、贴纸、美妆等自定义效果。
      * </pre>
      * @param  {NERtcBeautyEffectType} type 美颜类型。
-     * @param  {number} level 对应美颜类型的强度。取值范围为 [0, 1]，各种美颜效果的默认值不同。
+     * @param  {number} level 对应美颜类型的强度。取值范围为 [0, 100]，各种美颜效果的默认值不同。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功
@@ -2478,7 +2478,6 @@ class NERtcEngine extends events_1.EventEmitter {
      * </pre>
      */
     setBeautyEffect(type, level) {
-        console.log('setBeautyEffect: type = ' + type + 'level = ' + level )
         return this.nertcEngine.setBeautyEffect(type, level);
     }
     /**
@@ -2498,7 +2497,6 @@ class NERtcEngine extends events_1.EventEmitter {
      * </pre>
      */
     addBeautyFilter(filePath) {
-        console.log('filePath = ' + filePath)
         return this.nertcEngine.addBeautyFilter(filePath);
     }
     /**
@@ -2519,7 +2517,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * <pre>
      * - 取值越大，滤镜强度越大，开发者可以根据业务需求自定义设置滤镜强度。
      * - 滤镜强度设置实时生效，更换滤镜后需要重新设置滤镜强度，否则强度取默认值
-     * @param  {number} level 滤镜强度。取值范围为 [0 - 1]，默认值为 0.5。
+     * @param  {number} level 滤镜强度。取值范围为 [0 - 100]，默认50。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功
@@ -2590,6 +2588,25 @@ class NERtcEngine extends events_1.EventEmitter {
      */
     removeBeautyMakeup() {
         return this.nertcEngine.removeBeautyMakeup();
+    }
+    /**
+     * 导入美颜资源或模型。
+     * @since 4.1.114
+     * <pre>
+     * - 在 macOS 平台中使用自定义美颜效果之前，需要先通过此方法导入美颜资源或模型。
+     * <b>NOTE:</b>
+     * - 美颜功能模块开启过程中，如果资源路径或名称没有变更，则只需导入一次。如需更换资源，需要调用此接口重新导入。
+     * </pre>
+     * @param  {String} filePath 美妆模型所在路径。例如：`e:\Resources\StickerZipAndIcons\makeup_sticker.bundle\makeup\template.json`。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    addTemplate(filePath) {
+        console.log('filePath: ' + filePath)
+        return this.nertcEngine.addTemplate(filePath);
     }
     /**
      * init event handler

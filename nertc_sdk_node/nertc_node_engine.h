@@ -10,6 +10,8 @@
 #include "nertc_node_engine_event_handler.h"
 #ifdef WIN32
 #include "../shared/util/windows_helper.h"
+#else
+#include "nertc_beauty_ex.h"
 #endif
 
 namespace nertc_node
@@ -178,7 +180,7 @@ public:
     NIM_SDK_NODE_API(removeBeautySticker);
     NIM_SDK_NODE_API(addBeautyMakeup);
     NIM_SDK_NODE_API(removeBeautyMakeup);
-
+    NIM_SDK_NODE_API(addTemplate);
 
 
 protected:
