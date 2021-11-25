@@ -2585,6 +2585,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startBeauty)
         CHECK_NATIVE_THIS(instance);
 #ifdef WIN32
         ret = instance->rtc_engine_->startBeauty();
+#else
+       //mac
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2600,6 +2602,9 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, stopBeauty)
 #ifdef WIN32
         instance->rtc_engine_->stopBeauty();
         ret = 0;
+#else
+       //mac
+       ret = 0;
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2611,7 +2616,6 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableBeauty)
     do
     {
         CHECK_NATIVE_THIS(instance);
-#ifdef WIN32
         auto status = napi_ok;
         bool enabled;
         GET_ARGS_VALUE(isolate, 0, bool, enabled)
@@ -2619,7 +2623,11 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableBeauty)
         {
             break;
         }
+#ifdef WIN32
         instance->rtc_engine_->enableBeauty(enabled);
+#else
+       //mac
+
 #endif
     } while (false);
 }
@@ -2630,7 +2638,6 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableBeautyMirrorMode)
     do
     {
         CHECK_NATIVE_THIS(instance);
-#ifdef WIN32
         auto status = napi_ok;
         bool enabled;
         GET_ARGS_VALUE(isolate, 0, bool, enabled)
@@ -2638,7 +2645,11 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableBeautyMirrorMode)
         {
             break;
         }
+#ifdef WIN32
         instance->rtc_engine_->enableBeautyMirrorMode(enabled);
+#else
+       //mac
+
 #endif
     } while (false);
 }
@@ -2650,7 +2661,6 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, getBeautyEffect)
     do
     {
         CHECK_NATIVE_THIS(instance);
-#ifdef WIN32
         auto status = napi_ok;
         uint32_t type;
         GET_ARGS_VALUE(isolate, 0, uint32, type)
@@ -2658,8 +2668,13 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, getBeautyEffect)
         {
             break;
         }
+#ifdef WIN32
         float f_ret = instance->rtc_engine_->getBeautyEffect((nertc::NERtcBeautyEffectType)type);
         ret = (int)(f_ret * 100);
+#else
+       //mac
+
+
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2689,6 +2704,9 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setBeautyEffect)
         float flevel = level/100.0;
 #ifdef WIN32
         ret = instance->rtc_engine_->setBeautyEffect((nertc::NERtcBeautyEffectType)type, flevel);
+#else
+       //mac
+
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2701,16 +2719,20 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautyFilter)
     do
     {
         CHECK_NATIVE_THIS(instance);
-#ifdef WIN32
         auto status = napi_ok;
         UTF8String file_path;
         GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
-        std::wstring wstr = StringToWString(file_path.toUtf8String());
         if (status != napi_ok)
         {
             break;
         }
+#ifdef WIN32
+        std::wstring wstr = StringToWString(file_path.toUtf8String());
         ret = instance->rtc_engine_->addBeautyFilter(UTF16ToString(wstr).c_str());
+#else
+       //mac
+
+
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2725,6 +2747,9 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, removeBeautyFilter)
         CHECK_NATIVE_THIS(instance);
 #ifdef WIN32
         ret = instance->rtc_engine_->removeBeautyFilter();
+#else
+       //mac
+       
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2738,7 +2763,6 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setBeautyFilterLevel)
     {
         CHECK_NATIVE_THIS(instance);
         auto status = napi_ok;
-#ifdef WIN32
         uint32_t level;
         GET_ARGS_VALUE(isolate, 0, uint32, level)
         if (status != napi_ok)
@@ -2746,7 +2770,11 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setBeautyFilterLevel)
             break;
         }
         float flevel = level/100.0;
+#ifdef WIN32
         ret = instance->rtc_engine_->setBeautyFilterLevel(flevel);
+#else
+       //mac
+
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2759,7 +2787,6 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautySticker)
     do
     {
         CHECK_NATIVE_THIS(instance);
-#ifdef WIN32
         auto status = napi_ok;
         UTF8String file_path;
         GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
@@ -2767,8 +2794,12 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautySticker)
         {
             break;
         }
+#ifdef WIN32
         std::wstring wstr = StringToWString(file_path.toUtf8String());
         ret = instance->rtc_engine_->addBeautySticker(UTF16ToString(wstr).c_str());
+#else
+       //mac
+
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2783,6 +2814,9 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, removeBeautySticker)
         CHECK_NATIVE_THIS(instance);
 #ifdef WIN32
         ret = instance->rtc_engine_->removeBeautySticker();
+#else
+       //mac
+
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2795,7 +2829,6 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautyMakeup)
     do
     {
         CHECK_NATIVE_THIS(instance);
-#ifdef WIN32
         auto status = napi_ok;
         UTF8String file_path;
         GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
@@ -2803,8 +2836,13 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautyMakeup)
         {
             break;
         }
+#ifdef WIN32
         std::wstring wstr = StringToWString(file_path.toUtf8String());
         ret = instance->rtc_engine_->addBeautyMakeup(UTF16ToString(wstr).c_str());
+#else
+       //mac
+
+
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2819,6 +2857,9 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, removeBeautyMakeup)
         CHECK_NATIVE_THIS(instance);
 #ifdef WIN32
         ret = instance->rtc_engine_->removeBeautyMakeup();
+#else
+       //mac
+
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
