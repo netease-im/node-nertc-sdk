@@ -4,10 +4,45 @@
 #ifdef WIN32
 #include "../shared/util/string_util.h"
 using namespace nertc_electron_util;
+
 #endif
 
 namespace nertc_node
 {
+#ifdef WIN32
+std::string UTF16ToString(const std::wstring &wstrcode) {
+    int asciisize = ::WideCharToMultiByte(CP_ACP, 0, wstrcode.c_str(), -1, NULL, 0, NULL, NULL);
+    if (asciisize == 0) {
+        return "";
+    }
+
+    char *tmpStr = new char[asciisize + 1];
+    memset(tmpStr, 0, sizeof(char) * (asciisize + 1));
+    int convresult = ::WideCharToMultiByte(CP_ACP, 0, wstrcode.c_str(), -1, tmpStr, asciisize, NULL, NULL);
+    if (convresult != asciisize) {
+        delete[] tmpStr;
+        return "";
+    }
+
+    std::string asciiStr = tmpStr;
+    delete[] tmpStr;
+    return asciiStr;
+}
+
+std::wstring StringToWString(const std::string &str)
+{
+    std::wstring wContext = L"";
+    int len = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.size(), NULL, 0);
+    WCHAR* buffer = new WCHAR[len + 1];
+    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.size(), buffer, len);
+    buffer[len] = '\0';
+    wContext.append(buffer);
+    delete[] buffer;
+ 
+    return wContext;
+}
+#endif
+
 DEFINE_CLASS(NertcNodeEngine);
 
 NertcNodeEngine::NertcNodeEngine(Isolate *isolate)
@@ -142,7 +177,6 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(addLiveStreamTask)
     SET_PROTOTYPE(updateLiveStreamTask)
     SET_PROTOTYPE(removeLiveStreamTask)
-    SET_PROTOTYPE(enableRtspStream)
 
     SET_PROTOTYPE(enumerateRecordDevices)
     SET_PROTOTYPE(setRecordDevice)
@@ -176,6 +210,20 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(startSystemAudioLoopbackCapture)
     SET_PROTOTYPE(stopSystemAudioLoopbackCapture)
     SET_PROTOTYPE(setSystemAudioLoopbackCaptureVolume)
+    SET_PROTOTYPE(startBeauty)
+    SET_PROTOTYPE(stopBeauty)
+    SET_PROTOTYPE(enableBeauty)
+    SET_PROTOTYPE(enableBeautyMirrorMode)
+    SET_PROTOTYPE(getBeautyEffect)
+    SET_PROTOTYPE(setBeautyEffect)
+    SET_PROTOTYPE(addBeautyFilter)
+    SET_PROTOTYPE(removeBeautyFilter)
+    SET_PROTOTYPE(setBeautyFilterLevel)
+    SET_PROTOTYPE(addBeautySticker)
+    SET_PROTOTYPE(removeBeautySticker)
+    SET_PROTOTYPE(addBeautyMakeup)
+    SET_PROTOTYPE(removeBeautyMakeup)
+
 
     END_OBJECT_INIT_EX(NertcNodeEngine)
 }
@@ -2528,37 +2576,253 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setSystemAudioLoopbackCaptureVolume)
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableRtspStream)
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, startBeauty)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 0)
+    int ret = -1; 
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+#ifdef WIN32
+        ret = instance->rtc_engine_->startBeauty();
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, stopBeauty)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 0)
+    int ret = -1; 
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+#ifdef WIN32
+        instance->rtc_engine_->stopBeauty();
+        ret = 0;
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableBeauty)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+#ifdef WIN32
+        auto status = napi_ok;
+        bool enabled;
+        GET_ARGS_VALUE(isolate, 0, bool, enabled)
+        if (status != napi_ok)
+        {
+            break;
+        }
+        instance->rtc_engine_->enableBeauty(enabled);
+#endif
+    } while (false);
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableBeautyMirrorMode)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+#ifdef WIN32
+        auto status = napi_ok;
+        bool enabled;
+        GET_ARGS_VALUE(isolate, 0, bool, enabled)
+        if (status != napi_ok)
+        {
+            break;
+        }
+        instance->rtc_engine_->enableBeautyMirrorMode(enabled);
+#endif
+    } while (false);
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, getBeautyEffect)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    double ret = 0; 
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+#ifdef WIN32
+        auto status = napi_ok;
+        uint32_t type;
+        GET_ARGS_VALUE(isolate, 0, uint32, type)
+        if (status != napi_ok)
+        {
+            break;
+        }
+        float f_ret = instance->rtc_engine_->getBeautyEffect((nertc::NERtcBeautyEffectType)type);
+        ret = (int)(f_ret * 100);
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setBeautyEffect)
 {
     CHECK_API_FUNC(NertcNodeEngine, 2)
-    int ret = -1;
+    int ret = -1; 
     do
     {
         CHECK_NATIVE_THIS(instance);
         auto status = napi_ok;
 
-        bool enable = false;
-        UTF8String rtsp_url;
-        GET_ARGS_VALUE(isolate, 0, bool, enable)
+        uint32_t type;
+        GET_ARGS_VALUE(isolate, 0, uint32, type)
         if (status != napi_ok)
+        {
             break;
-        GET_ARGS_VALUE(isolate, 1, utf8string, rtsp_url)
-        if (status != napi_ok)
-            break;
-
-        if (rtsp_url.toUtf8String().length() >= kNERtcMaxURILength)
-            break;;
-         char url[kNERtcMaxURILength];
-        memset(url, 0, kNERtcMaxURILength);
-        strncpy(url, rtsp_url.toUtf8String().c_str(), kNERtcMaxURILength);
-        if(enable){
-            ret = instance->rtc_engine_->enableRtspStream(true, url);
-        }else{
-            ret = instance->rtc_engine_->enableRtspStream(false, "");
         }
+        uint32_t level;
+        GET_ARGS_VALUE(isolate, 1, uint32, level)
+        if (status != napi_ok)
+        {
+            break;
+        }
+        float flevel = level/100.0;
+#ifdef WIN32
+        ret = instance->rtc_engine_->setBeautyEffect((nertc::NERtcBeautyEffectType)type, flevel);
+#endif
     } while (false);
-
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautyFilter)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1; 
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+#ifdef WIN32
+        auto status = napi_ok;
+        UTF8String file_path;
+        GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
+        std::wstring wstr = StringToWString(file_path.toUtf8String());
+        if (status != napi_ok)
+        {
+            break;
+        }
+        ret = instance->rtc_engine_->addBeautyFilter(UTF16ToString(wstr).c_str());
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, removeBeautyFilter)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 0)
+    int ret = -1; 
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+#ifdef WIN32
+        ret = instance->rtc_engine_->removeBeautyFilter();
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setBeautyFilterLevel)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1; 
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+#ifdef WIN32
+        uint32_t level;
+        GET_ARGS_VALUE(isolate, 0, uint32, level)
+        if (status != napi_ok)
+        {
+            break;
+        }
+        float flevel = level/100.0;
+        ret = instance->rtc_engine_->setBeautyFilterLevel(flevel);
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautySticker)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1; 
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+#ifdef WIN32
+        auto status = napi_ok;
+        UTF8String file_path;
+        GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
+        if (status != napi_ok)
+        {
+            break;
+        }
+        std::wstring wstr = StringToWString(file_path.toUtf8String());
+        ret = instance->rtc_engine_->addBeautySticker(UTF16ToString(wstr).c_str());
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, removeBeautySticker)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 0)
+    int ret = -1; 
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+#ifdef WIN32
+        ret = instance->rtc_engine_->removeBeautySticker();
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautyMakeup)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1; 
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+#ifdef WIN32
+        auto status = napi_ok;
+        UTF8String file_path;
+        GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
+        if (status != napi_ok)
+        {
+            break;
+        }
+        std::wstring wstr = StringToWString(file_path.toUtf8String());
+        ret = instance->rtc_engine_->addBeautyMakeup(UTF16ToString(wstr).c_str());
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, removeBeautyMakeup)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 0)
+    int ret = -1; 
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+#ifdef WIN32
+        ret = instance->rtc_engine_->removeBeautyMakeup();
+#endif
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
 
 }

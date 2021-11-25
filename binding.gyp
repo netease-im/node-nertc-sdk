@@ -59,9 +59,19 @@
             'copies': [{
               'destination': '<(PRODUCT_DIR)',
               'files': [
+                './nertc_sdk/dll/CNamaSDK.dll',
+                './nertc_sdk/dll/fuai.dll',
+                './nertc_sdk/dll/glew32.dll',
+                './nertc_sdk/dll/glfw3.dll',
+                './nertc_sdk/dll/ne_test_framework.dll',
                 './nertc_sdk/dll/nertc_sdk.dll',
+                './nertc_sdk/dll/nim_tools_http.dll',
+                './nertc_sdk/dll/nim_tools_http_d.dll',
                 './nertc_sdk/dll/protoopp.dll',
+                './nertc_sdk/dll/pthreadVC2.dll',
                 './nertc_sdk/dll/SDL2.dll',
+                './nertc_sdk/dll/SoundTouchDLL_x64.dll',
+                './nertc_sdk/dll/vld.dll'
               ]
             }],
             'defines': [

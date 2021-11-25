@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NERtcVoiceEqualizationBand = exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcVideoStreamType = exports.NERtcAudioStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcLogLevel = void 0;
+exports.NERtcVoiceEqualizationBand = exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcVideoStreamType = exports.NERtcAudioStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcLogLevel = exports.NERtcBeautyEffectType = void 0;
 /** 日志级别。 */
 var NERtcLogLevel;
 (function (NERtcLogLevel) {
@@ -282,6 +282,33 @@ var NERtcVideoStreamType;
     NERtcVideoStreamType[NERtcVideoStreamType["kNERtcVideoStreamMain"] = 0] = "kNERtcVideoStreamMain";
     NERtcVideoStreamType[NERtcVideoStreamType["kNERtcVideoStreamSub"] = 1] = "kNERtcVideoStreamSub"; /** 视频流副流 */
 })(NERtcVideoStreamType = exports.NERtcVideoStreamType || (exports.NERtcVideoStreamType = {}));
+/**美颜类型 */
+var NERtcBeautyEffectType;
+(function (NERtcBeautyEffectType) {
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyWhiteTeeth"] = 0] = "kNERtcBeautyWhiteTeeth";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyLightEye"] = 1] = "kNERtcBeautyLightEye";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyWhiten"] = 2] = "kNERtcBeautyWhiten";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautySmooth"] = 3] = "kNERtcBeautySmooth";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautySmallNose"] = 4] = "kNERtcBeautySmallNose";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyEyeDis"] = 5] = "kNERtcBeautyEyeDis";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyEyeAngle"] = 6] = "kNERtcBeautyEyeAngle";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyMouth"] = 7] = "kNERtcBeautyMouth";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyBigEye"] = 8] = "kNERtcBeautyBigEye";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautySmallFace"] = 9] = "kNERtcBeautySmallFace";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyJaw"] = 10] = "kNERtcBeautyJaw";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyThinFace"] = 11] = "kNERtcBeautyThinFace";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyFaceRuddy"] = 12] = "kNERtcBeautyFaceRuddy";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyLongNose"] = 13] = "kNERtcBeautyLongNose";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyRenZhong"] = 14] = "kNERtcBeautyRenZhong";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyMouthAngle"] = 15] = "kNERtcBeautyMouthAngle";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyRoundEye"] = 16] = "kNERtcBeautyRoundEye";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyOpenEyeAngle"] = 17] = "kNERtcBeautyOpenEyeAngle";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyVFace"] = 18] = "kNERtcBeautyVFace";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyThinUnderjaw"] = 19] = "kNERtcBeautyThinUnderjaw";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyNarrowFace"] = 20] = "kNERtcBeautyNarrowFace";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyCheekBone"] = 21] = "kNERtcBeautyCheekBone";
+    NERtcBeautyEffectType[NERtcBeautyEffectType["kNERtcBeautyFaceSharpen"] = 22] = "kNERtcBeautyFaceSharpen";
+})(NERtcBeautyEffectType = exports.NERtcBeautyEffectType || (exports.NERtcBeautyEffectType = {}));
 /** @enum NERtcNetworkQualityType 网络质量类型。*/
 var NERtcNetworkQualityType;
 (function (NERtcNetworkQualityType) {

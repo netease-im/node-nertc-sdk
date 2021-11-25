@@ -452,6 +452,33 @@ export enum NERtcVideoStreamType {
     kNERtcVideoStreamSub  = 1   /** 视频流副流 */
 }
 
+/**美颜类型 */
+export enum NERtcBeautyEffectType {
+    kNERtcBeautyWhiteTeeth = 0, /*美牙*/
+    kNERtcBeautyLightEye  = 1,  /**亮眼*/
+    kNERtcBeautyWhiten  = 2,  /*美白*/
+    kNERtcBeautySmooth  = 3,  /**磨皮*/
+    kNERtcBeautySmallNose  = 4,  /**小鼻*/
+    kNERtcBeautyEyeDis  = 5,  /**眼距调整*/
+    kNERtcBeautyEyeAngle  = 6,  /**眼角调整*/
+    kNERtcBeautyMouth  = 7,  /**嘴型调整*/
+    kNERtcBeautyBigEye  = 8,  /**大眼*/
+    kNERtcBeautySmallFace  = 9,  /**小脸*/
+    kNERtcBeautyJaw  = 10,  /**下巴调整*/
+    kNERtcBeautyThinFace  = 11,  /**瘦脸*/
+    kNERtcBeautyFaceRuddy  = 12,  /**红润*/
+    kNERtcBeautyLongNose  = 13,  /**长鼻*/
+    kNERtcBeautyRenZhong  = 14,  /**人中*/
+    kNERtcBeautyMouthAngle  = 15,  /**嘴角*/
+    kNERtcBeautyRoundEye  = 16,  /**圆眼*/
+    kNERtcBeautyOpenEyeAngle  = 17,  /**开眼角*/
+    kNERtcBeautyVFace  = 18,  /*V脸*/
+    kNERtcBeautyThinUnderjaw  = 19,  /**瘦下颌*/
+    kNERtcBeautyNarrowFace  = 20,  /**窄脸*/
+    kNERtcBeautyCheekBone  = 21,  /** 瘦颧骨*/
+    kNERtcBeautyFaceSharpen  = 22,  /**锐化*/
+}
+
 export interface NERtcEngineAPI {
     initialize(context: NERtcEngineContext): number;
     release(): void;
@@ -586,6 +613,22 @@ export interface NERtcEngineAPI {
     //pushExternalVideoFrame
     // setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
     //pushExternalAudioFrame
+
+    // 4.1.114 beauty
+    startBeauty(): number;
+    stopBeauty(): void;
+    enableBeauty(enabled: boolean): void;
+    enableBeautyMirrorMode(enabled: boolean): void;
+    getBeautyEffect(type: NERtcBeautyEffectType): number;
+    setBeautyEffect(type: NERtcBeautyEffectType, level: number): number;
+    addBeautyFilter(filePath: String): number;
+    removeBeautyFilter(): number;
+    setBeautyFilterLevel(level: number): number;
+    addBeautySticker(filePath: String): number;
+    removeBeautySticker(): number;
+    addBeautyMakeup(filePath: String): number;
+    removeBeautyMakeup(): number;
+
 }
 
 /** 通话相关的统计信息。*/

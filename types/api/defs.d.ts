@@ -375,6 +375,32 @@ export declare enum NERtcVideoStreamType {
     kNERtcVideoStreamMain = 0,
     kNERtcVideoStreamSub = 1 /** 视频流副流 */
 }
+/**美颜类型 */
+export declare enum NERtcBeautyEffectType {
+    kNERtcBeautyWhiteTeeth = 0,
+    kNERtcBeautyLightEye = 1,
+    kNERtcBeautyWhiten = 2,
+    kNERtcBeautySmooth = 3,
+    kNERtcBeautySmallNose = 4,
+    kNERtcBeautyEyeDis = 5,
+    kNERtcBeautyEyeAngle = 6,
+    kNERtcBeautyMouth = 7,
+    kNERtcBeautyBigEye = 8,
+    kNERtcBeautySmallFace = 9,
+    kNERtcBeautyJaw = 10,
+    kNERtcBeautyThinFace = 11,
+    kNERtcBeautyFaceRuddy = 12,
+    kNERtcBeautyLongNose = 13,
+    kNERtcBeautyRenZhong = 14,
+    kNERtcBeautyMouthAngle = 15,
+    kNERtcBeautyRoundEye = 16,
+    kNERtcBeautyOpenEyeAngle = 17,
+    kNERtcBeautyVFace = 18,
+    kNERtcBeautyThinUnderjaw = 19,
+    kNERtcBeautyNarrowFace = 20,
+    kNERtcBeautyCheekBone = 21,
+    kNERtcBeautyFaceSharpen = 22
+}
 export interface NERtcEngineAPI {
     initialize(context: NERtcEngineContext): number;
     release(): void;
@@ -488,7 +514,20 @@ export interface NERtcEngineAPI {
     adjustLoopbackRecordingSignalVolume(volume: number): number;
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
     checkNECastAudioDriver(): number;
-    checkNeCastAudio(): boolean;
+    checkNeCastAudio(): number;
+    startBeauty(): number;
+    stopBeauty(): void;
+    enableBeauty(enabled: boolean): void;
+    enableBeautyMirrorMode(enabled: boolean): void;
+    getBeautyEffect(type: NERtcBeautyEffectType): number;
+    setBeautyEffect(type: NERtcBeautyEffectType, level: number): number;
+    addBeautyFilter(filePath: String): number;
+    removeBeautyFilter(): number;
+    setBeautyFilterLevel(level: number): number;
+    addBeautySticker(filePath: String): number;
+    removeBeautySticker(): number;
+    addBeautyMakeup(filePath: String): number;
+    removeBeautyMakeup(): number;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {

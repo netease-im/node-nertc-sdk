@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { IRenderer } from '../renderer';
-import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcAudioStreamType, NERtcVideoStreamType, NERtcInstallCastAudioDriverResult } from './defs';
+import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcAudioStreamType, NERtcVideoStreamType, NERtcInstallCastAudioDriverResult, NERtcBeautyEffectType } from './defs';
 import { EventEmitter } from 'events';
 /**
  * @class NERtcEngine
@@ -1976,7 +1976,7 @@ declare class NERtcEngine extends EventEmitter {
      * - true: 开启声卡采集
      * - false: 关闭声卡采集（默认）
      * </pre>
-     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “NeCastAudio”，可以将虚拟声卡名称 “NeCastAudio” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集，若参数为空则在 macOS 下默认使用 NeCastAudio 设备名称 。
+     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “NeCastAudio”，可以将虚拟声卡名称 “NeCastAudio” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集，若参数为空则在 macOS 下默认使用 NeCastAudio设备名称 。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功
@@ -2027,6 +2027,184 @@ declare class NERtcEngine extends EventEmitter {
      */
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
     checkNECastAudioDriver(): number;
+    /**
+     * 开启美颜功能模块
+     * @since 4.1.114
+     * <pre>
+     * - 调用此接口后，开启美颜引擎。如果后续不再需要使用美颜功能，可以调用 `stopBeauty`
+     * - 结束美颜功能模块，销毁美颜引擎并释放资源。
+     * - 开启美颜功能模块后，默认无美颜效果，需要通过 `setBeautyEffect` 或其他滤镜、贴纸相关接口设置美颜或滤镜效果。
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 30001: kNERtcErrFatal 方法调用失败。
+     * - 30004: kNERtcErrNotSupported 不支持美颜功能。
+     * </pre>
+     */
+    startBeauty(): number;
+    /**
+     * 结束美颜功能模块
+     * @since 4.1.114
+     * <pre>
+     * - 如果后续不再需要使用美颜功能，可以调用 `stopBeauty` 结束美颜功能模块，SDK 会自动销毁美颜引擎并释放资源。
+     * </pre>
+     */
+    stopBeauty(): void;
+    /**
+     * 开启或关闭美颜功能
+     * @since 4.1.114
+     * <pre>
+     * - 美颜功能默认为禁用状态，您可以调用此接口开启或关闭美颜功能。启用美颜功能之后，默认开启全局美颜效果，您也可以通过
+     * - `setBeautyEffect` 调整美颜效果，或通过相关方法增加滤镜、贴纸、美妆等效果。
+     * - 美颜功能关闭后，包括全局美颜、滤镜、贴纸和美妆在内的所有美颜效果都会暂时关闭，直至重新启用美颜功能。
+     * <b>NOTE:</b>
+     * - 该方法需要在 `startBeauty` 之后调用。
+     * </pre>
+     * <pre>
+     * - true：表示启用美颜功能。
+     * - false: 表示不启用美颜功能。
+     * </pre>
+     * @param  {number} enabled 是否暂停美颜功能，默认为false
+     */
+    enableBeauty(enabled: boolean): void;
+    /**
+     * 启用美颜时，启用或关闭镜像模式
+     * @since 4.1.114
+     * <pre>
+     * - 美颜功能启用时，此接口用于开启或关闭镜像模式。默认为关闭状态。美颜功能暂停或结束后，此接口不再生效。
+     * - 启用镜像模式之后，本端画面会呈现为左右翻转的视觉效果。
+     * <pre>
+     * - true：表示美颜时启用镜像模式。
+     * - false: 表示美颜时取消镜像模式。
+     * </pre>
+     * @param  {number} enabled 美颜时是否启用镜像模式，默认为true
+     */
+    enableBeautyMirrorMode(enabled: boolean): void;
+    /**
+     * 获取指定美颜类型的强度设置。
+     * @since 4.1.114
+     * <pre>
+     * - 通过接口 `setBeautyEffect` 设置美颜效果及强度后，可以通过此接口查看指定美颜效果的强度设置。
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用成功，浮点型，范围为 [0,1]。
+     * </pre>
+     */
+    getBeautyEffect(type: NERtcBeautyEffectType): number;
+    /**
+     * 设置指定美颜类型的强度。
+     * @since 4.1.114
+     * <pre>
+     * - 此方法可用于设置磨皮、美白、大眼等多种全局美颜类型。
+     * - 多次调用此接口可以叠加多种全局美颜效果，也可以通过相关方法叠加滤镜、贴纸、美妆等自定义效果。
+     * </pre>
+     * @param  {NERtcBeautyEffectType} type 美颜类型。
+     * @param  {number} level 对应美颜类型的强度。取值范围为 [0, 1]，各种美颜效果的默认值不同。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setBeautyEffect(type: NERtcBeautyEffectType, level: number): number;
+    /**
+     * 添加滤镜效果。
+     * @since 4.1.114
+     * <pre>
+     * - 此接口用于加载滤镜资源，并添加对应的滤镜效果。需要更换滤镜时，重复调用此接口使用新的滤镜资源即可。
+     * <b>NOTE:</b>
+     * - 使用滤镜、贴纸和美妆等自定义美颜效果之前，需要先准备好对应的美颜资源或模型。
+     * - 滤镜效果可以和全局美颜、贴纸、美妆等效果互相叠加，但是不支持叠加多个滤镜。
+     * </pre>
+     * @param  {String} filePath 滤镜资源或模型所在路径。例如：`e:\Resources\Filters\filters.bundle\filter_style_白皙\template.json`。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    addBeautyFilter(filePath: String): number;
+    /**
+     * 取消滤镜效果。
+     * @since 4.1.114
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    removeBeautyFilter(): number;
+    /**
+     * 设置滤镜强度。
+     * @since 4.1.114
+     * <pre>
+     * - 取值越大，滤镜强度越大，开发者可以根据业务需求自定义设置滤镜强度。
+     * - 滤镜强度设置实时生效，更换滤镜后需要重新设置滤镜强度，否则强度取默认值
+     * @param  {number} level 滤镜强度。取值范围为 [0 - 1]，默认值为 0.5。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setBeautyFilterLevel(level: number): number;
+    /**
+     * 添加贴纸效果。
+     * @since 4.1.114
+     * <pre>
+     * - 此接口用于加载贴纸资源，添加对应的贴纸效果。需要更换贴纸时，重复调用此接口使用新的贴纸资源即可。
+     * <b>NOTE:</b>
+     * - 使用滤镜、贴纸和美妆等自定义美颜效果之前，需要先准备好对应的美颜资源或模型。
+     * - 贴纸效果可以和全局美颜、滤镜、美妆等效果互相叠加，但是不支持叠加多个贴纸。
+     * </pre>
+     * @param  {String} filePath 贴纸资源或模型所在路径。例如：`e:\Resources\StickerZipAndIcons\2d_sticker.bundle\bunny\template.json`。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    addBeautySticker(filePath: String): number;
+    /**
+     * 取消贴纸效果。
+     * @since 4.1.114
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    removeBeautySticker(): number;
+    /**
+     * 添加美妆效果。
+     * @since 4.1.114
+     * <pre>
+     * - 此接口用于加载美妆模型，添加对应的美妆效果。需要更换美妆效果时，重复调用此接口使用新的美妆模型即可。
+     * <b>NOTE:</b>
+     * - 使用滤镜、贴纸和美妆等自定义美颜效果之前，需要先准备好对应的美颜资源或模型。
+     * - 美妆效果可以和全局美颜、滤镜、贴纸等效果互相叠加，但是不支持叠加多个美妆效果。
+     * </pre>
+     * @param  {String} filePath 美妆模型所在路径。例如：`e:\Resources\StickerZipAndIcons\makeup_sticker.bundle\makeup\template.json`。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    addBeautyMakeup(filePath: String): number;
+    /**
+     * 取消美妆效果。
+     * @since 4.1.114
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    removeBeautyMakeup(): number;
     /**
      * init event handler
      * @private

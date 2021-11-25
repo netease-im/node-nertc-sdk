@@ -126,7 +126,6 @@ public:
     NIM_SDK_NODE_API(addLiveStreamTask);
     NIM_SDK_NODE_API(updateLiveStreamTask);
     NIM_SDK_NODE_API(removeLiveStreamTask);
-    NIM_SDK_NODE_API(enableRtspStream);
 
     // adm
     NIM_SDK_NODE_API(enumerateRecordDevices);
@@ -164,6 +163,23 @@ public:
     NIM_SDK_NODE_API(startSystemAudioLoopbackCapture);
     NIM_SDK_NODE_API(stopSystemAudioLoopbackCapture);
     NIM_SDK_NODE_API(setSystemAudioLoopbackCaptureVolume);
+
+    // 4.1.114 Beauty
+    NIM_SDK_NODE_API(startBeauty);
+    NIM_SDK_NODE_API(stopBeauty);
+    NIM_SDK_NODE_API(enableBeauty);
+    NIM_SDK_NODE_API(enableBeautyMirrorMode);
+    NIM_SDK_NODE_API(getBeautyEffect);
+    NIM_SDK_NODE_API(setBeautyEffect);
+    NIM_SDK_NODE_API(addBeautyFilter);
+    NIM_SDK_NODE_API(removeBeautyFilter);
+    NIM_SDK_NODE_API(setBeautyFilterLevel);
+    NIM_SDK_NODE_API(addBeautySticker);
+    NIM_SDK_NODE_API(removeBeautySticker);
+    NIM_SDK_NODE_API(addBeautyMakeup);
+    NIM_SDK_NODE_API(removeBeautyMakeup);
+
+
 
 protected:
     NertcNodeEngine(Isolate *isolate);
