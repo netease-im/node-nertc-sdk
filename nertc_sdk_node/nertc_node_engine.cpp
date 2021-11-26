@@ -1,6 +1,7 @@
 #include "nertc_node_engine.h"
 #include "nertc_node_engine_helper.h"
 #include "nertc_node_video_frame_provider.h"
+#include "../shared/util/Logger.h"
 #ifdef WIN32
 #include "../shared/util/string_util.h"
 using namespace nertc_electron_util;
@@ -330,6 +331,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setChannelProfile)
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, joinChannel)
 {
+
     CHECK_API_FUNC(NertcNodeEngine, 3)
     int ret = -1;
     do
@@ -2897,5 +2899,9 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, addTemplate)
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
+
+    //请勿删除，开发调试参数使用
+    // Logger::Instance()->initPath("D:/nertc_node_log.txt");
+    // Logger::Instance()->debug("joinChannel" + Logger::int32ToStr(1990));
 
 }
