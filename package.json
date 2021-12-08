@@ -36,7 +36,6 @@
   },
   "files": [
     ".github",
-    "data",
     "js",
     "nertc_sdk_node",
     "nertc_sdk_ts",
