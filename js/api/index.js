@@ -65,6 +65,10 @@ class NERtcEngine extends events_1.EventEmitter {
     release() {
         return this.nertcEngine.release();
     }
+
+    enableRtspStream(enabled, url) {
+        return this.nertcEngine.enableRtspStream(enabled, url);
+    }
     /**
      * 设置参会者角色
      * <pre>
