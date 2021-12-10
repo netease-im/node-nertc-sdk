@@ -118,7 +118,7 @@ task('install', () => {
     const packageName = `${curPkgMeta.name}-v${curPkgMeta.version}-${nodeAbi}-${targetPlatform}-${targetArch}.tar.gz`
     const localPath = 'build/Release'
     fs.rmdirSync(path.join(__dirname, localPath), { recursive: true })
-    download(`${host}/123/${remotePath}/${packageName}`, path.join(__dirname, localPath), {
+    download(`${host}/${remotePath}/${packageName}`, path.join(__dirname, localPath), {
       extract: true
     }).then(() => {
       logger.info(`[install] Download prebuilt binaries from ${host}/${remotePath}/${packageName}`)
