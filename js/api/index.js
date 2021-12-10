@@ -63,6 +63,8 @@ class NERtcEngine extends events_1.EventEmitter {
      * 释放资源。
      */
     release() {
+        //bfix:解决用户未手动停止rtsp问题，默认释放前停止
+        this.nertcEngine.enableRtspStream(false, '');
         return this.nertcEngine.release();
     }
     /**
