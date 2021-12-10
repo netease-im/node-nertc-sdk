@@ -65,10 +65,6 @@ class NERtcEngine extends events_1.EventEmitter {
     release() {
         return this.nertcEngine.release();
     }
-
-    enableRtspStream(enabled, url) {
-        return this.nertcEngine.enableRtspStream(enabled, url);
-    }
     /**
      * 设置参会者角色
      * <pre>
@@ -2388,6 +2384,23 @@ class NERtcEngine extends events_1.EventEmitter {
     // }
     checkNECastAudioDriver() {
         return this.nertcEngine.checkNECastAudioDriver();
+    }
+    /**
+     * 开启/关闭rtsp流。
+     * @param  {boolean} enabled 是否开启rtsp流
+     * <pre>
+     * - true：开启。
+     * - false：关闭。
+     * </pre>
+     * @param  {String} url rtsp流url
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    enableRtspStream(enabled, url) {
+        return this.nertcEngine.enableRtspStream(enabled, url);
     }
     /**
      * init event handler

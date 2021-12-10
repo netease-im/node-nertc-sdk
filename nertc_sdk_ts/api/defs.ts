@@ -586,6 +586,9 @@ export interface NERtcEngineAPI {
     //pushExternalVideoFrame
     // setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
     //pushExternalAudioFrame
+
+    // 4.1.505
+    enableRtspStream(enabled: boolean, url: String): number;
 }
 
 /** 通话相关的统计信息。*/

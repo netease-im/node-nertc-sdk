@@ -488,7 +488,8 @@ export interface NERtcEngineAPI {
     adjustLoopbackRecordingSignalVolume(volume: number): number;
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
     checkNECastAudioDriver(): number;
-    checkNeCastAudio(): boolean;
+    checkNeCastAudio(): number;
+    enableRtspStream(enabled: boolean, url: String): number;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {

@@ -2558,6 +2558,24 @@ class NERtcEngine extends EventEmitter {
     }
 
     /**
+     * 开启/关闭rtsp流。
+     * @param  {boolean} enabled 是否开启rtsp流
+     * <pre>
+     * - true：开启。
+     * - false：关闭。
+     * </pre>
+     * @param  {String} url rtsp流url
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    enableRtspStream(enabled: boolean, url: String) {
+        return this.nertcEngine.enableRtspStream(enabled, url);
+    }
+
+    /**
      * init event handler
      * @private
      */
