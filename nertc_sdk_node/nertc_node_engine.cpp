@@ -2594,7 +2594,8 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startBeauty)
         {
             break;
         }
-        ret = instance->rtc_engine_->startBeauty(file_path.toUtf8String().c_str());
+        std::wstring wstr = StringToWString(file_path.toUtf8String());
+        ret = instance->rtc_engine_->startBeauty(UTF16ToString(wstr).c_str());
 #else
        //mac
        ret = nertc::RtcBeauty::startBeauty();
