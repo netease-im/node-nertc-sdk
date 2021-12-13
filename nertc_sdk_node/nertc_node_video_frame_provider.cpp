@@ -17,7 +17,7 @@ NodeVideoFrameTransporter* getNodeVideoFrameTransporter()
 NodeVideoFrameTransporter::NodeVideoFrameTransporter()
 : init(false)
 , env(nullptr)
-, m_FPS(10)
+, m_FPS(25)
 {
     
 }
