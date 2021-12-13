@@ -2566,6 +2566,9 @@ class NERtcEngine extends EventEmitter {
      * - 结束美颜功能模块，销毁美颜引擎并释放资源。
      * - 开启美颜功能模块后，默认无美颜效果，需要通过 `setBeautyEffect` 或其他滤镜、贴纸相关接口设置美颜或滤镜效果。
      * </pre>
+     * @param file_path 文件绝对路径。例如：xxx/data/beauty/nebeauty
+     * <b>NOTE:</b>
+     * - 该方法macOS下传空字符串即可，windows下传文件绝对路径。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功
@@ -2573,8 +2576,8 @@ class NERtcEngine extends EventEmitter {
      * - 30004: kNERtcErrNotSupported 不支持美颜功能。
      * </pre>
      */
-    startBeauty(): number{
-        return this.nertcEngine.startBeauty();
+    startBeauty(filePath: String): number{
+        return this.nertcEngine.startBeauty(filePath);
     }
 
     /**

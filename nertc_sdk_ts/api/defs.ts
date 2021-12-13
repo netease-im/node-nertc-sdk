@@ -615,7 +615,7 @@ export interface NERtcEngineAPI {
     //pushExternalAudioFrame
 
     // 4.1.114 beauty
-    startBeauty(): number;
+    startBeauty(filePath: String): number;
     stopBeauty(): void;
     enableBeauty(enabled: boolean): void;
     enableBeautyMirrorMode(enabled: boolean): void;

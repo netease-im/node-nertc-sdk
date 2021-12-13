@@ -515,7 +515,7 @@ export interface NERtcEngineAPI {
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
     checkNECastAudioDriver(): number;
     checkNeCastAudio(): number;
-    startBeauty(): number;
+    startBeauty(filePath: String): number;
     stopBeauty(): void;
     enableBeauty(enabled: boolean): void;
     enableBeautyMirrorMode(enabled: boolean): void;

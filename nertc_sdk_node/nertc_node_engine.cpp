@@ -2581,13 +2581,20 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setSystemAudioLoopbackCaptureVolume)
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, startBeauty)
 {
-    CHECK_API_FUNC(NertcNodeEngine, 0)
+    CHECK_API_FUNC(NertcNodeEngine, 1)
     int ret = -1; 
     do
     {
         CHECK_NATIVE_THIS(instance);
 #ifdef WIN32
-        ret = instance->rtc_engine_->startBeauty();
+        auto status = napi_ok;
+        UTF8String file_path;
+        GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
+        if (status != napi_ok)
+        {
+            break;
+        }
+        ret = instance->rtc_engine_->startBeauty(file_path.toUtf8String().c_str());
 #else
        //mac
        ret = nertc::RtcBeauty::startBeauty();
