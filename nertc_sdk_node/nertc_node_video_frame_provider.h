@@ -1,7 +1,7 @@
 #ifndef NERTC_NODE_VIDEO_FRAME_PROVIDER_H
 #define NERTC_NODE_VIDEO_FRAME_PROVIDER_H
 
-#include <node.h>
+#include <napi.h>
 #include <array>
 #include <vector>
 #include <string>
@@ -11,21 +11,6 @@
 #include <thread>
 #include <memory>
 #include "nertc_engine_defines.h"
-using v8::Persistent;
-using v8::Context;
-using v8::Function;
-using v8::FunctionCallback;
-using v8::FunctionCallbackInfo;
-using v8::FunctionTemplate;
-using v8::HandleScope;
-using v8::Integer;
-using v8::Isolate;
-using v8::Local;
-using v8::Name;
-using v8::NewStringType;
-using v8::Object;
-using v8::String;
-using v8::Value;
 
 namespace nertc_node
 {
@@ -57,22 +42,6 @@ namespace nertc_node
             V_PLANE = 2,
             NUM_OF_PLANES = 3
         };
-
-        // int stride(PLANE_TYPE type) const
-        // {
-        //     switch (type)
-        //     {
-        //     case Y_PLANE:
-        //         return stride[0];    
-        //     case U_PLANE:
-        //         return stride[1];
-        //     case V_PLANE:
-        //         return stride[2];
-        //     default:
-        //         assert(0);
-        //     }
-        //     return 0;
-        // };
 
         const unsigned char * buffer(PLANE_TYPE type) const
         {
@@ -128,12 +97,18 @@ namespace nertc_node
 
     class NodeVideoFrameTransporter
     {
+
+    public:
+        typedef struct NodeFrameCallback {
+            Napi::FunctionReference function;
+        } FrameDataCallback;
+
     public:
         NodeVideoFrameTransporter();
         ~NodeVideoFrameTransporter();
 
         void setLocalVideoMirrorMode(uint32_t mirrorMode) { m_localVideoMirrorMode = mirrorMode; }
-        bool initialize(Isolate *isolate, const v8::FunctionCallbackInfo<Value> &callbackinfo);
+        bool initialize(Napi::FunctionReference&& function);
         int deliverFrame_I420(NodeRenderType type, nertc::uid_t uid, std::string channelId, const IVideoFrame &videoFrame, int rotation, bool mirrored);
         int setVideoDimension(NodeRenderType, nertc::uid_t uid, std::string channelId, uint32_t width, uint32_t height);
         static void onFrameDataCallback(
@@ -194,9 +169,12 @@ namespace nertc_node
 
     private:
         bool init;
-        Isolate *env;
-        Persistent<Function> callback;
-        Persistent<Object> js_this;
+        // Napi::Env env;
+        // Isolate *env;
+        // Persistent<Function> callback;
+        // Napi::FunctionReference js_callback;
+        FrameDataCallback* m_pFrameDataCallback;
+        // Persistent<Object> js_this;
         std::unordered_map<nertc::uid_t, VideoFrameInfo> m_remoteVideoFrames;
         std::unique_ptr<VideoFrameInfo> m_localVideoFrame;
         std::unordered_map<nertc::uid_t, VideoFrameInfo> m_substreamVideoFrame;

@@ -9,9 +9,6 @@ import {
     NERtcEngineContext,
     NERtcChannelProfileType,
     NERtcRemoteVideoStreamType,
-    NERtcCanvasWatermarkConfig,
-    NERtcMediaPriorityType,
-    NERtcAudioRecordingQuality,
     NERtcVideoCanvas,
     NERtcErrorCode,
     NERtcSessionLeaveReason,
@@ -48,14 +45,12 @@ import {
     NERtcVoiceEqualizationBand,
     NERtcStreamChannelType,
     NERtcPullExternalAudioFrameCb,
-    NERtcAudioStreamType,
+    NERtcChannelMediaRelayConfiguration,
     NERtcVideoStreamType,
-    NERtcInstallCastAudioDriverResult,
+    NERtcMediaPriorityType,
     NERtcScreenCaptureWindowParam,
-    NERtcScreenCaptureStatus,
-    NERtcAudioRecordingCode,
-    NERtcVideoFrame,
-    NERtcAudioFrame
+    NERtcAudioRecordingQuality,
+    NERtcEncryptionConfig
 } from './defs'
 import { EventEmitter } from 'events'
 import process from 'process';
@@ -2379,148 +2374,64 @@ class NERtcEngine extends EventEmitter {
     setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number {
         return this.nertcEngine.setLocalVoiceEqualization(bandFrequency, bandGain)
     }
+    
+    /**
+     * 开启声卡采集
+     * @since 4.1.110
+     * <pre>
+     * - 启用声卡采集功能后，声卡播放的声音会被合到本地音频流中，从而可以发送到远端。
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 macOS 和 Windows 平台。
+     * - macOS 系统默认声卡不支持采集功能，如需开启此功能需要 App 自己启用一个虚拟声卡，并将该虚拟声卡的名字作为 deviceName 传入 SDK。
+     * - 该方法在加入频道前后都能调用。
+     * </pre>
+     * @param  {boolean} enable
+     * <pre>
+     * - true: 开启声卡采集
+     * - false: 关闭声卡采集（默认）
+     * </pre>
+     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “NeCastAudio”，可以将虚拟声卡名称 “NeCastAudio” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集，若参数为空则在 macOS 下默认使用 NeCastAudio设备名称 。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    enableLoopbackRecording(enable: boolean, deviceName: String ): number { //deviceName: String = 'NeCastAudio'
+        // if (deviceName === '' && process.platform === 'darwin') {
+        //     const playoutDevices = this.nertcEngine.enumeratePlayoutDevices()
+        //     let foundDevice = false
+        //     for (let i = 0; i < playoutDevices.length; i++) {
+        //         if (playoutDevices[i].device_name === 'NeCastAudio A') {
+        //             foundDevice = true
+        //             break
+        //         }
+        //     }
+        //     if (foundDevice) {
+        //         deviceName = 'NeCastAudio'
+        //     } else {
+        //         return -1
+        //     }
+        // }
+        return this.nertcEngine.enableLoopbackRecording(enable, deviceName)
+    }
 
-    // /**
-    //  * 设置远端用户音频流高优先级
-    //  * @since 4.1.110
-    //  * <pre>
-    //  * - 支持在音频自动订阅的情况下，设置某一个远端用户的音频为最高优先级，可以优先听到该用户的音频
-    //  * </pre>
-    //  * @param  {boolean} enable 开启或关闭
-    //  * @param  {number} uid 用户 ID
-    //  * @param  {NERtcAudioStreamType} streamType 音频类型：主流、辅流
-    //  * @returns {number}
-    //  * <pre>
-    //  * - 0: 方法调用成功
-    //  * - 其他: 方法调用失败。
-    //  * </pre>
-    //  */
-    // setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number {
-    //     return this.nertcEngine.setRemoteHighPriorityAudioStream(enable, uid, streamType)
-    // }
-    // /**
-    //  * 取消或恢复订阅指定远端用户的音频辅流
-    //  * @since 4.1.110
-    //  * <pre>
-    //  * - 加入房间时，默认不订阅所有远端用户的音频辅流流，您可以通过此方法取消或恢复订阅指定远端用户的音频辅流。
-    //  * <b>NOTE:</b>
-    //  * - 该方法需要在加入房间，远端用户开启音频后调用。 
-    //  * </pre>
-    //  * @param  {number} uid 指定用户的 ID
-    //  * @param  {boolean} subscribe
-    //  * <pre>
-    //  * - true: 订阅指定音频流
-    //  * - false: 取消订阅指定音频流（默认）
-    //  * </pre>
-    //  * @returns {number}
-    //  * <pre>
-    //  * - 0: 方法调用成功
-    //  * - 其他: 方法调用失败。
-    //  * </pre>
-    //  */
-    // subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number {
-    //     return this.nertcEngine.subscribeRemoteAudioSubStream(uid, subscribe)
-    // }
-
-    // /**
-    //  * 检查mac虚拟声卡是否安装。
-    //  * <pre>
-    //  * only for macOS。
-    //  * </pre>
-    //  * @returns {Boolean}
-    //  * <pre>
-    //  * - false: 虚拟声卡未安装
-    //  * - true: 虚拟声卡已安装
-    //  * </pre>
-    //  */
-    // checkNeCastAudio(): boolean {
-    //     let ret = false;
-    //     let devices = this.nertcEngine.enumeratePlayoutDevices();
-    //     for(let i = 0; i < devices.length; ++i){
-    //         let item = devices[i];
-    //         if(item.device_name === "NeCastAudio A"){
-    //             ret = true;
-    //         }
-    //     }
-    //     return ret;
-    // }
-
-    // /**
-    //  * 开关本地音频发送。
-    //  * @since 4.1.110
-    //  * <pre>
-    //  * - 该方法用于允许或禁止向网络发送本地音频流。
-    //  * <b>NOTE:</b>
-    //  * - 该方法不影响音频采集状态，功能与enableLocalAudio（audioDevice + enableLocalAudioStream）类似，但不会主动打开音频采集设备，适用于需要发送音频流但是不需要开启麦克风的场景。
-    //  * - 静音状态会在通话结束后被重置为非静音。
-    //  * </pre>
-    //  * @param  {boolean} enable 是否开启本地音频发送。
-    //  * @param  {NERtcAudioStreamType} streamType 音频类型：主流、辅流
-    //  * @returns {number}
-    //  * <pre>
-    //  * - 0: 方法调用成功
-    //  * - 其他: 方法调用失败。
-    //  * </pre>
-    //  */
-    // enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number {
-    //     return this.nertcEngine.enableLocalAudioStream(enable, streamType)
-    // }
-    // /**
-    //  * 开启声卡采集
-    //  * @since 4.1.110
-    //  * <pre>
-    //  * - 启用声卡采集功能后，声卡播放的声音会被合到本地音频流中，从而可以发送到远端。
-    //  * <b>NOTE:</b>
-    //  * - 该方法仅适用于 macOS 和 Windows 平台。
-    //  * - macOS 系统默认声卡不支持采集功能，如需开启此功能需要 App 自己启用一个虚拟声卡，并将该虚拟声卡的名字作为 deviceName 传入 SDK。
-    //  * - 该方法在加入频道前后都能调用。
-    //  * </pre>
-    //  * @param  {boolean} enable
-    //  * <pre>
-    //  * - true: 开启声卡采集
-    //  * - false: 关闭声卡采集（默认）
-    //  * </pre>
-    //  * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “NeCastAudio”，可以将虚拟声卡名称 “NeCastAudio” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集，若参数为空则在 macOS 下默认使用 NeCastAudio设备名称 。
-    //  * @returns {number}
-    //  * <pre>
-    //  * - 0: 方法调用成功
-    //  * - 其他: 方法调用失败。
-    //  * </pre>
-    //  */
-    // enableLoopbackRecording(enable: boolean, deviceName: String = 'NeCastAudio'): number {
-    //     if (deviceName === '' && process.platform === 'darwin') {
-    //         const playoutDevices = this.nertcEngine.enumeratePlayoutDevices()
-    //         let foundDevice = false
-    //         for (let i = 0; i < playoutDevices.length; i++) {
-    //             if (playoutDevices[i].device_name === 'NeCastAudio A') {
-    //                 foundDevice = true
-    //                 break
-    //             }
-    //         }
-    //         if (foundDevice) {
-    //             deviceName = 'NeCastAudio'
-    //         } else {
-    //             return -1
-    //         }
-    //     }
-    //     return this.nertcEngine.enableLoopbackRecording(enable, deviceName)
-    // }
-    // /**
-    //  * 调节声卡采集信号音量。
-    //  * @since 4.1.110
-    //  * <pre>
-    //  * - 调用 {@link nertc::IRtcEngineEx::enableLoopbackRecording} "enableLoopbackRecording" 开启声卡采集后，你可以调用该方法调节声卡采集的信号音量。
-    //  * </pre>
-    //  * @param  {number} volume 声卡采集信号音量。取值范围为 [0,100]。默认值为 100，表示原始音量 。
-    //  * @returns {number}
-    //  * <pre>
-    //  * - 0: 方法调用成功
-    //  * - 其他: 方法调用失败。
-    //  * </pre>
-    //  */
-    // adjustLoopbackRecordingSignalVolume(volume: number): number {
-    //     return this.nertcEngine.adjustLoopbackRecordingSignalVolume(volume)
-    // }
+    /**
+     * 调节声卡采集信号音量。
+     * @since 4.1.110
+     * <pre>
+     * - 调用 {@link nertc::IRtcEngineEx::enableLoopbackRecording} "enableLoopbackRecording" 开启声卡采集后，你可以调用该方法调节声卡采集的信号音量。
+     * </pre>
+     * @param  {number} volume 声卡采集信号音量。取值范围为 [0,100]。默认值为 100，表示原始音量 。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    adjustLoopbackRecordingSignalVolume(volume: number): number {
+        return this.nertcEngine.adjustLoopbackRecordingSignalVolume(volume)
+    }
 
     /**
      * 调节本地播放的指定远端用户的指定流类型的信号音量
@@ -2538,6 +2449,11 @@ class NERtcEngine extends EventEmitter {
      * - 0：静音。
      * - 100：原始音量。
      * </pre>
+     * @param  {number} streamType 音频类型：主流、辅流
+     * <pre>
+     * - 0: 音频流主流
+     * - 1: 音频流辅流
+     * </pre>
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功
@@ -2548,7 +2464,7 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.adjustUserPlaybackSignalVolume(uid, volume)
     }
 
-   /** 
+    /** 
     * 快速切换音视频房间。
     * @since 4.2.5
     * <pre>
@@ -2575,62 +2491,6 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.switchChannel(token, channelName);
     }
 
-    /** 
-    * 设置本地视图显示模式。
-    * @since 4.2.5
-    * <pre>
-    * - 该方法设置本地视图显示模式。 App 可以多次调用此方法更改显示模式。
-    * <b>NOTE:</b>
-    * - 在打开屏幕共享前必须设置本地辅流画布。
-    * </pre>
-    * @param[in] scaling_mode  视频显示模式: #NERtcVideoScalingMode
-    * @return {number}
-    * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
-    * </pre>
-    */
-    setLocalRenderMode(scalingMode: NERtcVideoScalingMode): number {
-        return this.nertcEngine.setLocalRenderMode(scalingMode);
-    }
-
-    /** 
-    * 设置本地视频镜像模式。
-    * @since 4.2.5
-    * <pre>
-    * - 该方法设置本地视频镜像模式。 App 可以多次调用此方法更改镜像模式。
-    * <b>NOTE:</b>
-    * - 必须先通过 setupLocalSubStreamVideoCanvas 设置本地辅流画布。
-    * </pre>
-    * @param[in] scaling_mode  视频显示模式: #NERtcVideoScalingMode
-    * @return {number}
-    * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
-    * </pre>
-    */
-    setLocalSubStreamRenderMode(scalingMode: NERtcVideoScalingMode): number {
-        return this.nertcEngine.setLocalSubStreamRenderMode(scalingMode);
-    }
-
-    /** 
-    * 设置远端视图显示模式。
-    * @since 4.2.5
-    * <pre>
-    * - 该方法设置远端视图显示模式。App 可以多次调用此方法更改显示模式。
-    * </pre>
-    * @param[in] uid 远端用户 ID
-    * @param[in] scaling_mode  视频显示模式: #NERtcVideoScalingMode
-    * @return {number}
-    * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
-    * </pre>
-    */
-    setRemoteRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number{
-        return this.nertcEngine.setRemoteRenderMode(uid, scalingMode);
-    }
-       
     /** 
     * 设置本地用户的媒体流优先级。
     * @since 4.2.5
@@ -2700,7 +2560,7 @@ class NERtcEngine extends EventEmitter {
     * - 其他：方法调用失败
     * </pre>
     */
-    startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number{
+     startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number{
         return this.nertcEngine.startAudioRecording(filePath, sampleRate, quality);
     }
 
@@ -2722,98 +2582,116 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.stopAudioRecording();
     }
 
-    /** 
-    * 设置远端的屏幕共享辅流视频显示模式。
-    * @since 4.2.5
-    * <pre>
-    * - 在远端开启辅流形式的屏幕共享时使用。App 可以多次调用此方法更改显示模式。
-    * </pre>
-    * @param[in] uid 远端用户 ID
-    * @param[in] scaling_mode  视频显示模式: #NERtcVideoScalingMode
-    * @return {number}
-    * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
-    * </pre>
-    */
-    setRemoteSubSteamRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number{
-        return this.nertcEngine.setRemoteSubSteamRenderMode(uid, scalingMode);
+    /**
+     Starts relaying media streams. Media streams from up to four rooms can be relayed. A room can receive multiple relayed media streams.
+     @param config The configuration for destination rooms.
+     @return A value of 0 returned indicates that the method call is successful. Otherwise, the method call fails.
+     */
+     startChannelMediaRelay(config: NERtcChannelMediaRelayConfiguration): number{
+        return this.nertcEngine.startChannelMediaRelay(config);
     }
 
-    /** 
-    * 设置录制和播放声音混音后的采样率。
-    * @since 4.2.5
-    * <pre>
-    * - 该方法设置 \ref nertc::INERtcAudioFrameObserver::onMixedAudioFrame "onMixedAudioFrame" 回调的声音格式。
-    * <b>NOTE:</b>
-    * - 该方法在加入房间前后均可设置或修改。
-    * - 目前只支持设置采样率。
-    * - 未调用该接口设置数据格式时，回调中的采样率返回 SDK 默认值。
-    * </pre>
-    * @param sample_rate 指定 *onMixedAudioFrame* 中返回数据的采样率。仅支持 8000， 16000， 32000， 44100或48000。
-    * @return {number}
-    * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
-    * </pre>
-    */
-    setMixedAudioFrameParameters(samplerate: number): number {
-        return this.nertcEngine.setMixedAudioFrameParameters(samplerate);      
+    /**
+     Updates the information of the destination room that relays media stream.
+     @param config The configuration for destination rooms.
+     @return A value of 0 returned indicates that the method call is successful. Otherwise, the method call fails.
+     */
+     updateChannelMediaRelay(config: NERtcChannelMediaRelayConfiguration): number{
+        return this.nertcEngine.updateChannelMediaRelay(config);
     }
 
-    /** 
-    * 开启或关闭外部音频源数据输入。
-    * @since 4.2.5
-    * <pre>
-    * - 当该方法调用成功后，音频输入设备选择和异常重启会失效。调用成功后可以使用 pushExternalAudioFrame 接口发送音频 PCM 数据。
-    * <b>NOTE:</b>
-    * - 请在加入房间前调用该方法。
-    * - 该方法设置内部引擎为启用状态，启动时将用虚拟设备代替麦克风工作，在leaveChannel后仍然有效。如果需要关闭该功能，需要在下次通话前调用接口关闭外部音频数据输入功能。
-    * - 启用外部音频数据输入功能后，SDK 内部实现部分麦克风由外部输入数据代替，麦克风相关的设置会失败或不在通话中生效。例如进行 loopback 检测时，会听到输入的外部数据。
-    * </pre>
-    * @param[in] enabled 是否外部数据输入: true: 开启外部数据输入；false: 关闭外部数据输入 (默认)。
-    * @param[in] sample_rate 数据采样率，后续数据传入需要按该格式传入。 注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效。
-    * @param[in] channels 数据声道数，后续数据传入需要按该格式传入。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效。
-    * <pre>
-    * - 1：单声道。
-    * - 2：双声道。
-    * </pre>
-    * @return {number}
-    * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
-    * </pre>
-    */
-    setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number {
-        return this.nertcEngine.setExternalAudioSource(enabled, samplerate, channel);      
+    /**
+     Stops relaying media streams.
+     @return A value of 0 returned indicates that the method call is successful. Otherwise, the method call fails.
+     */
+    stopChannelMediaRelay(): number{
+        return this.nertcEngine.stopChannelMediaRelay();
     }
 
-    /** 
-    * 开启或关闭外部视频源数据输入。
-    * @since 4.2.5
-    * <pre>
-    * - 通过该方法启用外部视频数据输入功能时，需要通过 IVideoDeviceManager::setDevice 设置 kNERtcExternalVideoDeviceID 为外部视频输入源 ID。
-    * <b>NOTE:</b>
-    * - 该方法设置内部引擎为启用状态，在 \ref IRtcEngine::leaveChannel "leaveChannel" 后仍然有效。
-    * </pre>
-    * @param[in] enabled 是否外部视频源数据输入:。
-    * <pre>
-    * - true: 开启外部视频源数据输入；
-    * - false: 关闭外部视频源数据输入 (默认)。
-    * </pre>
-    * @return {number}
-    * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
-    * </pre>
-    */
-    setExternalVideoSource(enabled: boolean): number {
-        return this.nertcEngine.setExternalVideoSource(enabled);      
+    /** Sets the fallback option for the published local video stream based on the network conditions.
+
+     The quality of the published local audio and video streams is degraded with poor quality network connections. After calling this method and setting the option to #kNERtcStreamFallbackAudioOnly:
+     - With unreliable upstream network connections and the quality of audio and video streams is downgraded, the SDK automatically disables video stream or stops receiving video streams. In this way, the communication quality is guaranteed.
+     - The SDK monitors the network performance and recover audio and video streams if the network quality improves.
+     - If the locally published audio and video stream falls back to audio stream, or recovers to audio and video stream, the SDK triggers the onLocalPublishFallbackToAudioOnly callback.
+     @note You must call the method before you call joinChannel.
+     @since V4.3.0
+     @param option The fallback option of publishing audio and video streams. The fallback kNERtcStreamFallbackAudioOnly is disabled by default. For more information, see {@link RTCStreamFallbackOption}.
+     @return {@code 0} A value of 0 returned indicates that the method call is successful. Otherwise, the method call fails.
+     */
+    setLocalPublishFallbackOption(option: number): number{
+        return this.nertcEngine.setLocalPublishFallbackOption(option);
     }
 
-    // checkNECastAudioDriver(): number {
-    //     return this.nertcEngine.checkNECastAudioDriver();
+    /**
+      Sets the fallback option for the subscribed remote audio and video stream with poor network connections.
+
+      The quality of the subscribed audio and video streams is degraded with unreliable network connections. You can use the interface to set the option as #kNERtcStreamFallbackVideoStreamLow or #kNERtcStreamFallbackAudioOnly. 
+     - In unreliable downstream network connections, the SDK switches to receive a low-quality video stream or stops receiving video streams. In this way, the communication quality is maintained or improved.
+     - The SDK monitors the network quality and resumes the video stream when the network condition improves.
+     - If the subscribed remote video stream falls back to audio only, or the audio-only stream switches back to the video stream, the SDK triggers the onRemoteSubscribeFallbackToAudioOnly callback.
+ 
+     @note You must call the method before you call joinChannel.
+     @since V4.3.0
+     @param option The fallback option for the subscribed remote audio and video stream. With unreliable network connections, the stream falls back to a low-quality video stream of kNERtcStreamFallbackVideoStreamLow. For more information, see {@link RTCStreamFallbackOption}.
+     @return {@code 0} A value of 0 returned indicates that the method call is successful. Otherwise, the method call fails.
+     */
+    setRemoteSubscribeFallbackOption(option: number): number{
+        return this.nertcEngine.setRemoteSubscribeFallbackOption(option);
+    }
+
+    /** Enables or disables AI super resolution.
+
+     @since V4.4.0
+
+     @note 
+      - Please contact our technical support to enable AI super resolution before you perform the feature. 
+      - AI super resolution is only valid when you enable the following types of video streams: 
+      - Video streams that are received from local 360P.
+      - High stream video of bigstream that are captured by the camera. AI super resolution is currently unsupported to resume low streams or substreams of screen sharing. 
+     
+     @param enable specifies whether to enable AI super resolution. By default, the setting is disabled. 
+
+     @return
+     - 0: Success.
+     - Other values: Failure.
+     */
+    enableSuperResolution(enable: boolean): number{
+        return this.nertcEngine.enableSuperResolution(enable);
+    }
+
+    /**
+     * Enables or disables media stream encryption.
+     * 
+     * @since V4.4.0
+     * 
+     * In scenes where high safety is required such as financial sectors, you can set encryption modes of media streams with the method before joining the room. 
+     * 
+     * @note 
+     * - Please calls the method before you join the room. The encryption mode and private key cannot be changed after you join the room. The SDK will automatically disable encryption after users leave the room. If you need to enable encryption again, users need to call the method before joining the room. 
+     * - In the same room, all users who enable media stream encryption must share the same encryption mode and private keys. If not, members who use different private keys will report kNERtcErrEncryptNotSuitable (30113). 
+     * - For safety, we recommend that you use a new private key every time you enable media stream encryption.     
+     * @param enable whether to enable media stream encryption.
+     *                  - true: Enabled.
+     *                  - false: Disabled. This is the default value.
+     * @param config specifies encryption plan for media streams. For more information, see NERtcEncryptionConfig.
+     * @return
+     * - 0: Success.
+     * - Other values: Failure.
+     */
+    enableEncryption(enable: boolean, config: NERtcEncryptionConfig): number{
+        return this.nertcEngine.enableEncryption(enable, config);
+    }
+
+
+    // setMixedAudioFrameParameters(samplerate: number): number {
+    //     return this.nertcEngine.setMixedAudioFrameParameters(samplerate);      
     // }
+
+    // setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number {
+    //     return this.nertcEngine.setExternalAudioSource(enabled, samplerate, channel);      
+    // }
+
 
     /**
      * init event handler
@@ -3482,12 +3360,72 @@ class NERtcEngine extends EventEmitter {
          * @param {number} uid 发送该 sei 的用户 id
          * @param {ArrayBuffer} data 接收到的 sei 数据
          */
-        this.nertcEngine.onEvent('onReceSEIMsg', function (
+        this.nertcEngine.onEvent('onRecvSEIMsg', function (
             uid: number,
             data: ArrayBuffer,
         ) {
-            fire('onReceSEIMsg', uid, data);
+            fire('onRecvSEIMsg', uid, data);
         });
+
+       /**
+        * 屏幕共享暂停/恢复/开始/结束等回调
+        */
+        this.nertcEngine.onEvent('onScreenCaptureStatus', function (status: number) {
+            fire('onScreenCaptureStatus', status);
+        });
+
+       /** 音频录制状态回调。
+        * @param code 音频录制状态码。详细信息请参考 NERtcAudioRecordingCode。
+        * @param file_path 音频录制文件保存路径。
+        */
+        this.nertcEngine.onEvent('onAudioRecording', function (code: number, file_path: String) {
+            fire('onAudioRecording', code, file_path);
+        });
+        
+       /** Occurs when the state of the media stream is relayed. 
+        * @param state The state of the media stream.
+        * @param channel_name The name of the destination room where the media streams are relayed. 
+        */
+        this.nertcEngine.onEvent('onMediaRelayStateChanged', function (state: number, channel_name: String) {
+            fire('onMediaRelayStateChanged', state, channel_name);
+        });
+
+       /** Occurs when events related to media stream relay are triggered.
+        * @param event The media stream relay event.
+        * @param channel_name The name of the destination room where the media streams are relayed.
+        * @param error  Specific error codes.
+        */
+        this.nertcEngine.onEvent('onMediaRelayEvent', function (event: number, channel_name: String, error: number) {
+            fire('onMediaRelayEvent', event, channel_name, error);
+        });
+
+        /**
+        * Occurs when the published local media stream falls back to an audio-only stream due to poor network conditions or switches back to audio and video stream after the network conditions improve.
+        * If you call setLocalPublishFallbackOption and set option to #kNERtcStreamFallbackAudioOnly, this callback is triggered when the locally published stream falls back to audio-only mode due to poor uplink network conditions, or when the audio stream switches back to the audio and video stream after the uplink network conditions improve. 
+        * @since V4.3.0
+        * @param is_fallback  The locally published stream falls back to audio-only mode or switches back to audio and video stream.
+        * - true: The published stream from a local client falls back to audio-only mode due to poor uplink network conditions.
+        * - false: The audio stream switches back to the audio and video stream after the upstream network condition improves.
+        * @param stream_type The type of the video stream, such as bigstream and substream. 
+        */
+        this.nertcEngine.onEvent('onLocalPublishFallbackToAudioOnly', function (is_fallback: boolean, stream_type: number) {
+            fire('onLocalPublishFallbackToAudioOnly', is_fallback, stream_type);
+        });
+
+        /**
+         * Occurs when the subscribed remote media stream falls back to an audio-only stream due to poor network conditions or switches back to the audio and video stream after the network condition improves.
+         * If you call setLocalPublishFallbackOption and set option to #kNERtcStreamFallbackAudioOnly, this callback is triggered when the locally published stream falls back to audio-only mode due to poor uplink network conditions, or when the audio stream switches back to the audio and video stream after the uplink network condition improves.
+         * @since V4.3.0
+         * @param uid The ID of a remote user.
+         * @param is_fallback The subscribed remote media stream falls back to audio-only mode or switches back to the audio and video stream. 
+         * - true: The subscribed remote media stream falls back to audio-only mode due to poor downstream network conditions.
+         * - false: The subscribed remote media stream switches back to the audio and video stream after the downstream network condition improves.
+         * @param stream_type  The type of the video stream, such as bigstream and substream. 
+         */
+        this.nertcEngine.onEvent('onRemoteSubscribeFallbackToAudioOnly', function (uid: number, is_fallback: boolean, stream_type: number) {
+            fire('onRemoteSubscribeFallbackToAudioOnly', uid, is_fallback, stream_type);
+        });
+
 
         this.nertcEngine.onVideoFrame(function (infos: any) {
             self.doVideoFrameReceived(infos);
@@ -3658,25 +3596,6 @@ class NERtcEngine extends EventEmitter {
         this.nertcEngine.onStatsObserver('onNetworkQuality', true, function (uc: number, stats: Array<NERtcNetworkQualityInfo>) {
             fire('onNetworkQuality', uc, stats);
         });
-
-    
-        /**
-         * 屏幕分享状态回调
-         * @event NERtcEngine#onScreenCaptureStatus
-         * @param {NERtcErrorCode} status 屏幕分享状态
-         */
-        this.nertcEngine.onEvent('onScreenCaptureStatus', function (status: NERtcScreenCaptureStatus) {
-            fire('onScreenCaptureStatus', status);
-        }); 
-        /**
-         * 音频录制状态回调
-         * @event NERtcEngine#onAudioRecording
-         * @param {NERtcAudioRecordingCode} status 音频录制状态回调。
-         * @param {String} file_path 录制文件路径。
-         */
-         this.nertcEngine.onEvent('onAudioRecording', function (status: NERtcAudioRecordingCode, file_path: string) {
-            fire('onAudioRecording', status, file_path);
-        });     
     }
 
 
@@ -4399,23 +4318,55 @@ declare interface NERtcEngine {
      * @param uid 发送该 sei 的用户 id
      * @param data 接收到的 sei 数据
      */
-    on(event: 'onReceSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
+    on(event: 'onRecvSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
 
-    // /** 安装声卡回调。
-
-    //  @param result  返回结果。
-    //  */
-    // on(event: 'onCheckNECastAudioDriverResult', cb: (result: NERtcInstallCastAudioDriverResult) => void): this;
-
-    /** 安装声卡回调。
-     * @param result  返回结果。
+    /**
+     * 屏幕共享暂停/恢复/开始/结束等回调
      */
-     on(event: 'onScreenCaptureStatus', cb: (status: NERtcScreenCaptureStatus) => void): this;
-     /** 音频录制状态回调。
-     * @param code 音频录制状态码。详细信息请参考 NERtcAudioRecordingCode。
-     * @param file_path 音频录制文件保存路径。
-     */
-      on(event: 'onAudioRecording', cb: (status: NERtcAudioRecordingCode, file_path: string) => void): this;  
+    on(event: 'onScreenCaptureStatus', cb: (status: number) => void): this;
+
+   /** 音频录制状态回调。
+    * @param code 音频录制状态码。详细信息请参考 NERtcAudioRecordingCode。
+    * @param file_path 音频录制文件保存路径。
+    */
+    on(event: 'onAudioRecording', cb: (code: number, file_path: String) => void): this;
+
+   /** Occurs when the state of the media stream is relayed. 
+    * @param state The state of the media stream.
+    * @param channel_name The name of the destination room where the media streams are relayed. 
+    */
+    on(event: 'onMediaRelayStateChanged', cb: (state: number, channel_name: String) => void): this;
+
+   /** Occurs when events related to media stream relay are triggered.
+    * @param event The media stream relay event.
+    * @param channel_name The name of the destination room where the media streams are relayed.
+    * @param error  Specific error codes.
+    */
+    on(event: 'onMediaRelayEvent', cb: (event: number, channel_name: String, error: number) => void): this;
+
+   /**
+    * Occurs when the published local media stream falls back to an audio-only stream due to poor network conditions or switches back to audio and video stream after the network conditions improve.
+    * If you call setLocalPublishFallbackOption and set option to #kNERtcStreamFallbackAudioOnly, this callback is triggered when the locally published stream falls back to audio-only mode due to poor uplink network conditions, or when the audio stream switches back to the audio and video stream after the uplink network conditions improve. 
+    * @since V4.3.0
+    * @param is_fallback  The locally published stream falls back to audio-only mode or switches back to audio and video stream.
+    * - true: The published stream from a local client falls back to audio-only mode due to poor uplink network conditions.
+    * - false: The audio stream switches back to the audio and video stream after the upstream network condition improves.
+    * @param stream_type The type of the video stream, such as bigstream and substream. 
+    */
+    on(event: 'onLocalPublishFallbackToAudioOnly', cb: (is_fallback: boolean, stream_type: number) => void): this;
+
+   /**
+    * Occurs when the subscribed remote media stream falls back to an audio-only stream due to poor network conditions or switches back to the audio and video stream after the network condition improves.
+    * If you call setLocalPublishFallbackOption and set option to #kNERtcStreamFallbackAudioOnly, this callback is triggered when the locally published stream falls back to audio-only mode due to poor uplink network conditions, or when the audio stream switches back to the audio and video stream after the uplink network condition improves.
+    * @since V4.3.0
+    * @param uid The ID of a remote user.
+    * @param is_fallback The subscribed remote media stream falls back to audio-only mode or switches back to the audio and video stream. 
+    * - true: The subscribed remote media stream falls back to audio-only mode due to poor downstream network conditions.
+    * - false: The subscribed remote media stream switches back to the audio and video stream after the downstream network condition improves.
+    * @param stream_type  The type of the video stream, such as bigstream and substream. 
+    */
+    on(event: 'onRemoteSubscribeFallbackToAudioOnly', cb: (uid: number, is_fallback: boolean, stream_type: number) => void): this;
+
 }
 
 export default NERtcEngine;

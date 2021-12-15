@@ -1,49 +1,53 @@
 #ifndef NERTC_NODE_SDK_ENGINE_HELPER_H
 #define NERTC_NODE_SDK_ENGINE_HELPER_H
 
-#include <node.h>
-#include <node_api.h>
+#include <napi.h>
+#include <stdio.h>
+#include "nertc_engine.h"
 #include <list>
 #include <set>
-#include "nertc_engine.h"
 
-using v8::Context;
-using v8::Integer;
-using v8::Isolate;
-using v8::Local;
-using v8::NewStringType;
-using v8::Object;
-using v8::String;
-using v8::Value;
-using v8::Exception;
-using v8::Array;
+namespace nertc_node
+{
+//get object field
+napi_status nertc_engine_context_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcEngineContext& context);
+napi_status nertc_window_id_list_to_struct(const Napi::Env& env, const Napi::Object& obj, std::set<int64_t>& list);
+napi_status nertc_screen_capture_params_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcScreenCaptureParameters& params, std::set<int64_t>& list);
+napi_status nertc_rectangle_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcRectangle& rect);
+napi_status nertc_ls_task_info_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcLiveStreamTaskInfo& info);
+napi_status nertc_audio_effect_option_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcCreateAudioEffectOption* option);
+napi_status nertc_audio_mixing_option_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcCreateAudioMixingOption& option);
+napi_status nertc_audio_frame_rf_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcAudioFrameRequestFormat& format);
+napi_status nertc_video_config_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcVideoConfig& config);
+napi_status nertc_media_relay_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcChannelMediaRelayConfiguration* config);
+napi_status nertc_encry_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcEncryptionConfig& config);
+napi_status nertc_channel_media_relay_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcChannelMediaRelayInfo& config);
 
-namespace nertc_node {
+//set object field
+napi_status nertc_stats_to_obj(const Napi::Env env, const nertc::NERtcStats& config,  Napi::Object& obj);
+napi_status nertc_audio_send_stats_to_obj(const Napi::Env env, const nertc::NERtcAudioSendStats& config,  Napi::Object& obj);
+napi_status nertc_audio_recv_stats_to_obj(const Napi::Env env, const nertc::NERtcAudioRecvStats& config,  Napi::Object& obj);
+napi_status nertc_video_send_stats_to_obj(const Napi::Env env, const nertc::NERtcVideoSendStats& config,  Napi::Object& obj);
+napi_status nertc_video_recv_stats_to_obj(const Napi::Env env, const nertc::NERtcVideoRecvStats& config,  Napi::Object& obj);
+napi_status nertc_network_quality_to_obj(const Napi::Env env, const nertc::NERtcNetworkQualityInfo& config,  Napi::Object& obj);
+napi_status nertc_audio_volume_info_to_obj(const Napi::Env env, const nertc::NERtcAudioVolumeInfo& config,  Napi::Object& obj);
 
-napi_status nertc_engine_context_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcEngineContext& context);
-napi_status nertc_video_config_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcVideoConfig& config);
-napi_status nertc_audio_frame_rf_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcAudioFrameRequestFormat& format);
-napi_status nertc_audio_mixing_option_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcCreateAudioMixingOption& option);
-napi_status nertc_audio_effect_option_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcCreateAudioEffectOption* option);
-napi_status nertc_rectangle_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcRectangle& rect);
-napi_status nertc_video_dimensions_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcVideoDimensions& dimen);
-napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcScreenCaptureParameters& params, std::set<intptr_t>& list);
-napi_status nertc_ls_task_info_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcLiveStreamTaskInfo& info);
-
-napi_status nertc_stats_to_obj(Isolate* isolate, const nertc::NERtcStats& config, Local<Object>& obj);
-napi_status nertc_audio_send_stats_to_obj(Isolate* isolate, const nertc::NERtcAudioSendStats& config, Local<Object>& obj);
-napi_status nertc_audio_recv_stats_to_obj(Isolate* isolate, const nertc::NERtcAudioRecvStats& config, Local<Object>& obj);
-napi_status nertc_video_send_stats_to_obj(Isolate* isolate, const nertc::NERtcVideoSendStats& config, Local<Object>& obj);
-napi_status nertc_video_recv_stats_to_obj(Isolate* isolate, const nertc::NERtcVideoRecvStats& config, Local<Object>& obj);
-napi_status nertc_network_quality_to_obj(Isolate* isolate, const nertc::NERtcNetworkQualityInfo& config, Local<Object>& obj);
-napi_status nertc_audio_volume_info_to_obj(Isolate* isolate, const nertc::NERtcAudioVolumeInfo& config, Local<Object>& obj);
-
-//4.2.5
-napi_status nertc_window_id_list_to_struct(Isolate* isolate, const Local<Object>& obj, std::set<intptr_t> & list);
-// napi_status nertc_window_id_list_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::source_id_t* window_list, uint32_t& count);
-napi_status nertc_canvas_water_mark_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcCanvasWatermarkConfig& info);
-napi_status nertc_viedo_frame_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcVideoFrame* info);
-napi_status nertc_audio_frame_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcAudioFrame* info);
 }
 
-#endif //NERTC_NODE_SDK_ENGINE_HELPER_H
+#define CHECK_API_FUNC(info, n)                                                              \
+    if (info.Length() != n) {                                                                 \
+        Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();  \
+    }
+
+//饿汉模式
+#define SINGLETON_DEFINE(TypeName)				\
+static TypeName* GetInstance()					\
+{												\
+	static TypeName type_instance;				\
+	return &type_instance;						\
+}												\
+												\
+TypeName(const TypeName&) = delete;				\
+TypeName& operator=(const TypeName&) = delete
+    
+#endif

@@ -1,13 +1,21 @@
+/**
+ * @file meeting-engine.cpp
+ * @brief nertc-electron-sdk导出类
+ * @copyright Copyright (c) 2021 NetEase, Inc.  All rights reserved.\n
+ *            Use of this source code is governed by a MIT license that can be found in the LICENSE file.
+ * @author qyl
+ * @date 2021/10/13
+ */
+
 #ifndef NERTC_NODE_ENGINE_H
 #define NERTC_NODE_ENGINE_H
 
+#include <napi.h>
+#include <memory>
 #include "nertc_engine_ex.h"
+#include "nertc_node_engine_event_handler.h"
 #include "nertc_audio_device_manager.h"
 #include "nertc_video_device_manager.h"
-#include <node.h>
-#include <node_object_wrap.h>
-#include "../shared/sdk_helper/nim_node_helper.h"
-#include "nertc_node_engine_event_handler.h"
 #ifdef WIN32
 #include "../shared/util/windows_helper.h"
 #endif
@@ -15,16 +23,18 @@
 namespace nertc_node
 {
 
-class NertcNodeEngine : public node::ObjectWrap
-{
-private:
-    /* data */
+#define NIM_SDK_NODE_API(m) \
+    Napi::Value (m)(const Napi::CallbackInfo& info)
+
+class NertcNodeEngine : public Napi::ObjectWrap<NertcNodeEngine> {
+
 public:
-    static void New(const FunctionCallbackInfo<Value> &args);
-    // static void InitModule(Local<Object> &module);
-    static void InitModule(Local<Object> &exports,
-                        Local<Value> &module,
-                        Local<Context> &context);
+#if NAPI_VERSION < 6
+    static Napi::FunctionReference constructor;
+#endif
+    static Napi::Object Init(Napi::Env env, Napi::Object exports);
+    NertcNodeEngine(const Napi::CallbackInfo& info);
+    virtual ~NertcNodeEngine();
 
 public:
     NIM_SDK_NODE_API(initialize);
@@ -52,7 +62,7 @@ public:
     NIM_SDK_NODE_API(sendSEIMsg);
     NIM_SDK_NODE_API(sendSEIMsgEx);
     NIM_SDK_NODE_API(setExternalAudioRender);
-    NIM_SDK_NODE_API(pullExternalAudioFrame);
+    NIM_SDK_NODE_API(pullExternalAudioFrame); //todo
 
     // 4.1.1
     NIM_SDK_NODE_API(setAudioEffectPreset);
@@ -61,26 +71,24 @@ public:
     NIM_SDK_NODE_API(setLocalVoiceEqualization);
 
     // 4.1.110(timing custom)
-    //NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);
-    //NIM_SDK_NODE_API(subscribeRemoteAudioSubStream);
-    //NIM_SDK_NODE_API(enableLocalAudioStream);
-    //NIM_SDK_NODE_API(enableLoopbackRecording);
-    //NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);
     NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);
 
-    // // 4.1.112(timing custom)
-    // NIM_SDK_NODE_API(checkNECastAudioDriver);
-
-    //4.2.5
+    // 4.4.8
     NIM_SDK_NODE_API(switchChannel);
-    NIM_SDK_NODE_API(setLocalRenderMode);
-    NIM_SDK_NODE_API(setLocalSubStreamRenderMode);
-    NIM_SDK_NODE_API(setRemoteRenderMode); 
     NIM_SDK_NODE_API(setLocalMediaPriority);
+    NIM_SDK_NODE_API(enableLoopbackRecording);
+    NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);
     NIM_SDK_NODE_API(setExcludeWindowList);
     NIM_SDK_NODE_API(startAudioRecording);
     NIM_SDK_NODE_API(stopAudioRecording);
-    NIM_SDK_NODE_API(setRemoteSubSteamRenderMode);
+    NIM_SDK_NODE_API(startChannelMediaRelay);
+    NIM_SDK_NODE_API(updateChannelMediaRelay);
+    NIM_SDK_NODE_API(stopChannelMediaRelay);
+    NIM_SDK_NODE_API(setLocalPublishFallbackOption);
+    NIM_SDK_NODE_API(setRemoteSubscribeFallbackOption);
+    NIM_SDK_NODE_API(enableSuperResolution);
+    NIM_SDK_NODE_API(enableEncryption);
+
 
     // ex
     NIM_SDK_NODE_API(getConnectionState);
@@ -123,8 +131,8 @@ public:
     NIM_SDK_NODE_API(enableEarback);
     NIM_SDK_NODE_API(setEarbackVolume);
     NIM_SDK_NODE_API(onStatsObserver);
-    NIM_SDK_NODE_API(onAudioFrameObserver);
     NIM_SDK_NODE_API(enableAudioVolumeIndication);
+
     NIM_SDK_NODE_API(startScreenCaptureByScreenRect);
     NIM_SDK_NODE_API(startScreenCaptureByDisplayId);
     NIM_SDK_NODE_API(startScreenCaptureByWindowId);
@@ -140,7 +148,7 @@ public:
     NIM_SDK_NODE_API(updateLiveStreamTask);
     NIM_SDK_NODE_API(removeLiveStreamTask);
 
-    // adm
+    // // adm
     NIM_SDK_NODE_API(enumerateRecordDevices);
     NIM_SDK_NODE_API(setRecordDevice);
     NIM_SDK_NODE_API(getRecordDevice);
@@ -177,39 +185,22 @@ public:
     NIM_SDK_NODE_API(stopSystemAudioLoopbackCapture);
     NIM_SDK_NODE_API(setSystemAudioLoopbackCaptureVolume);
 
-protected:
-    NertcNodeEngine(Isolate *isolate);
-    ~NertcNodeEngine();
-
 private:
-    DECLARE_CLASS;
     nertc::IRtcEngineEx *rtc_engine_ = nullptr;
     nertc::IAudioDeviceManager *_adm = nullptr;
     nertc::IVideoDeviceManager *_vdm = nullptr;
-    Isolate *isolate_;
+    std::shared_ptr<NertcNodeEventHandler> _event_handler;
+    std::shared_ptr<NertcNodeRtcMediaStatsHandler> _stats_observer;
+
 #ifdef WIN32
     nertc_electron_util::WindowsHelpers *_windows_helper = nullptr;
     std::unique_ptr<nertc_electron_util::WindowCaptureHelper> window_capture_helper_;
     std::unique_ptr<nertc_electron_util::ScreenCaptureHelper> screen_capture_helper_;
 #endif
+
 };
 
-#define napi_get_native_this(args, native) \
-            native = ObjectWrap::Unwrap<NertcNodeEngine>(args.Holder());
-
-#define CHECK_NATIVE_THIS(engine) \
-        if(!engine->rtc_engine_) { \
-            break;\
-        }
-
-#define CHECK_NATIVE_ADM_THIS(engine) \
-        if(!engine->rtc_engine_ || !engine->_adm) { \
-            break;\
-        }
-
-#define CHECK_NATIVE_VDM_THIS(engine) \
-        if(!engine->rtc_engine_ || !engine->_vdm) { \
-            break;\
-        }
 }
-#endif //NERTC_NODE_ENGINE_H
+#endif//NERTC_NODE_ENGINE_H
+
+

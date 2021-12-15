@@ -1,56 +1,69 @@
 {
   "targets": [
     {
-      'target_name': 'nertc-electron-sdk',
-      'include_dirs': [
-      './shared',
-      './shared/libyuv/include',
-      './nertc_sdk',
-      './nertc_sdk/api',
-      './nertc_sdk/nertc_sdk_Mac.framework/Headers/'
+      "target_name": "nertc-electron-sdk",
+      "cflags!": [ "-fno-exceptions" ],
+      "cflags_cc!": [ "-fno-exceptions" ],
+      "include_dirs": [
+        "<!@(node -p \"require('node-addon-api').include\")",
+        './nertc_sdk',
+        './nertc_sdk/api',
+        './nertc_sdk/nertc_sdk_Mac.framework/Headers/',
+        './shared',
+        './shared/libyuv/include',
       ],
-      'sources': [
-        './nertc_sdk_node/nertc_node_engine.cpp',
-        './nertc_sdk_node/nertc_node_engine.h',
-        './nertc_sdk_node/nertc_node_engine_helper.cpp',
-        './nertc_sdk_node/nertc_node_engine_helper.h',
-        './nertc_sdk_node/nertc_node_engine_event_handler.cpp',
-        './nertc_sdk_node/nertc_node_engine_event_handler.h',
-        './nertc_sdk_node/nertc_node_ext.cpp',
-        './nertc_sdk_node/nertc_node_ext.h',
-        './nertc_sdk_node/nertc_node_video_frame_provider.cpp',
-        './nertc_sdk_node/nertc_node_video_frame_provider.h',
-        './shared/sdk_helper/nim_node_helper.h',
-        './shared/sdk_helper/nim_node_helper.cpp',
-        './shared/sdk_helper/nim_node_async_queue.h',
-        './shared/sdk_helper/nim_node_async_queue.cpp',
-        './shared/sdk_helper/nim_event_handler.h',
-        './shared/sdk_helper/nim_event_handler.cpp',
-        './shared/sdk_helper/superfasthash.cpp',
-        './shared/libyuv/source/compare_common.cc',
-        './shared/libyuv/source/compare.cc',
-        './shared/libyuv/source/convert_argb.cc',
-        './shared/libyuv/source/convert_from_argb.cc',
-        './shared/libyuv/source/convert_from.cc',
-        './shared/libyuv/source/convert_jpeg.cc',
-        './shared/libyuv/source/convert_to_argb.cc',
-        './shared/libyuv/source/convert_to_i420.cc',
-        './shared/libyuv/source/convert.cc',
-        './shared/libyuv/source/cpu_id.cc',
-        './shared/libyuv/source/mjpeg_decoder.cc',
-        './shared/libyuv/source/mjpeg_validate.cc',
-        './shared/libyuv/source/planar_functions.cc',
-        './shared/libyuv/source/rotate_any.cc',
-        './shared/libyuv/source/rotate_argb.cc',
-        './shared/libyuv/source/rotate_common.cc',
-        './shared/libyuv/source/rotate.cc',
-        './shared/libyuv/source/row_any.cc',
-        './shared/libyuv/source/row_common.cc',
-        './shared/libyuv/source/scale_any.cc',
-        './shared/libyuv/source/scale_argb.cc',
-        './shared/libyuv/source/scale_common.cc',
-        './shared/libyuv/source/scale.cc',
-        './shared/libyuv/source/video_common.cc'
+      "dependencies": [
+        "<!(node -p \"require('node-addon-api').gyp\")"
+      ],
+      'defines': [
+        "NAPI_DISABLE_CPP_EXCEPTIONS",
+        # 'NAPI_CPP_EXCEPTIONS',
+        "NODE_ADDON_API_DISABLE_DEPRECATED",
+        "NAPI_VERSION=6", # <=electron10.x  = 4
+        # "NAPI_EXPERIMENTAL",
+        # "NAPI_VERSION=6",
+      ],
+      "sources": [
+          "./nertc_sdk_node/addon.cc", 
+          "./nertc_sdk_node/nertc_node_engine.h",
+          "./nertc_sdk_node/nertc_node_engine.cpp",
+          './nertc_sdk_node/nertc_node_engine_helper.cpp',
+          './nertc_sdk_node/nertc_node_engine_helper.h',
+          './nertc_sdk_node/nertc_node_video_frame_provider.cpp',
+          './nertc_sdk_node/nertc_node_video_frame_provider.h',
+          './shared/sdk_helper/node_api_helper.h',
+          './shared/sdk_helper/node_api_helper.cpp',
+          "./shared/sdk_helper/nim_node_async_queue.h",
+          "./shared/sdk_helper/nim_node_async_queue.cpp",
+          './shared/sdk_helper/superfasthash.cpp',
+          './nertc_sdk_node/nertc_node_engine_event_handler.h',
+          './nertc_sdk_node/nertc_node_engine_event_handler.cpp',
+          './shared/libyuv/source/compare_common.cc',
+          './shared/libyuv/source/compare.cc',
+          './shared/libyuv/source/convert_argb.cc',
+          './shared/libyuv/source/convert_from_argb.cc',
+          './shared/libyuv/source/convert_from.cc',
+          './shared/libyuv/source/convert_jpeg.cc',
+          './shared/libyuv/source/convert_to_argb.cc',
+          './shared/libyuv/source/convert_to_i420.cc',
+          './shared/libyuv/source/convert.cc',
+          './shared/libyuv/source/cpu_id.cc',
+          './shared/libyuv/source/mjpeg_decoder.cc',
+          './shared/libyuv/source/mjpeg_validate.cc',
+          './shared/libyuv/source/planar_functions.cc',
+          './shared/libyuv/source/rotate_any.cc',
+          './shared/libyuv/source/rotate_argb.cc',
+          './shared/libyuv/source/rotate_common.cc',
+          './shared/libyuv/source/rotate.cc',
+          './shared/libyuv/source/row_any.cc',
+          './shared/libyuv/source/row_common.cc',
+          './shared/libyuv/source/scale_any.cc',
+          './shared/libyuv/source/scale_argb.cc',
+          './shared/libyuv/source/scale_common.cc',
+          './shared/libyuv/source/scale.cc',
+          './shared/libyuv/source/video_common.cc',
+          './shared/util/logger.h',
+          './shared/util/logger.cpp'
       ],
       'conditions': [
         [
@@ -59,17 +72,7 @@
             'copies': [{
               'destination': '<(PRODUCT_DIR)',
               'files': [
-                './nertc_sdk/dll/nertc_sdk.dll',
-                './nertc_sdk/dll/protoopp.dll',
-                './nertc_sdk/dll/SDL2.dll',
-                './nertc_sdk/dll/libfreetype-6.dll',
-                './nertc_sdk/dll/libjpeg-9.dll',
-                './nertc_sdk/dll/libpng16-16.dll',
-                './nertc_sdk/dll/libtiff-5.dll',
-                './nertc_sdk/dll/libwebp-7.dll',
-                './nertc_sdk/dll/SDL2_image.dll',
-                './nertc_sdk/dll/SDL2_ttf.dll',
-                './nertc_sdk/dll/zlib1.dll',
+                './nertc_sdk/dll/*',
               ]
             }],
             'defines': [
@@ -156,6 +159,7 @@
                 'Foundation.framework',
                 'nertc_sdk_Mac.framework',
                 'NEFundation_Mac.framework',
+                #'libNERTCPrivilegedTask.a',
                 '-Wl,-rpath,@loader_path',
                 '-ObjC'
               ]
@@ -180,7 +184,7 @@
             }
           }
         ]
-      ]
+      ],
     }
   ]
 }

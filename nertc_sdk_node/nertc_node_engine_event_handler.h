@@ -1,54 +1,65 @@
 #ifndef NERTC_NODE_ENGINE_EVENT_HANDLER_H
 #define NERTC_NODE_ENGINE_EVENT_HANDLER_H
 
-#include <node.h>
-#include "../shared/sdk_helper/nim_node_helper.h"
-#include "../shared/sdk_helper/nim_event_handler.h"
+#include <napi.h>
+#include <unordered_map>
+#include "nertc_node_engine_helper.h"
 #include "nertc_engine_event_handler_ex.h"
 #include "nertc_engine_media_stats_observer.h"
-using v8::Object;
+
 
 namespace nertc_node
 {
 
-class NertcNodeEventHandler : public nim_node::EventHandler, public nertc::IRtcEngineEventHandlerEx
+class EventHandler
 {
-private:
-    /* data */
+public:
+    typedef struct NodeEventCallback {
+        Napi::FunctionReference function;
+    } EventCallback;
+
+public:
+    EventHandler(){};
+    ~EventHandler(){};
+public:
+    void addEvent(const std::string& eventName, Napi::FunctionReference&& function);
+    int removeEventHandler(const std::string &eventName);
+    int removeAll();
+
+protected:
+    std::unordered_map<std::string, EventCallback*> _callbacks;
+};
+
+
+class NertcNodeEventHandler : public EventHandler, public nertc::IRtcEngineEventHandlerEx
+{
+
 public:
     NertcNodeEventHandler(){};
     ~NertcNodeEventHandler(){};
-    SINGLETON_DEFINE(NertcNodeEventHandler);
 
 public:
     /** 发生错误回调。
-
      该回调方法表示 SDK 运行时出现了（网络或媒体相关的）错误。通常情况下，SDK上报的错误意味着SDK无法自动恢复，需要 App 干预或提示用户。
-
      @param error_code 错误代码: #NERtcDMErrorCode.
      @param msg 错误描述。
      */
     virtual void onError(int error_code, const char* msg);
 
     /** 发生警告回调。
-
      该回调方法表示 SDK 运行时出现了（网络或媒体相关的）警告。通常情况下，SDK 上报的警告信息 App 可以忽略，SDK 会自动恢复。
-
      @param warn_code 错误代码: #NERtcWarnCode.
      @param msg 警告描述。
      */
     virtual void onWarning(int warn_code, const char* msg);
 
     /** 释放硬件资源的回调。
-
      SDK提示释放硬件资源是否成功。
-
      @param result 返回结果。
      */
     virtual void onReleasedHwResources(nertc::NERtcErrorCode result);
 
     /** 加入频道回调。
-
      @param cid  频道 ID。
      @param uid  用户 ID。
      @param result  返回结果。
@@ -57,27 +68,21 @@ public:
     virtual void onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed);
 
     /** 连接状态变更。
-
       有时候由于通话流程、用户行为、网络原因等，客户端通话状态变更，触发此回调。
-
      @param state  变更后通话状态。
      @param reason  变更原因。
      */
     virtual void onConnectionStateChange(nertc::NERtcConnectionStateType state, nertc::NERtcReasonConnectionChangedType reason);
 
     /** 触发重连。
-
       有时候由于网络原因，客户端可能会和服务器失去连接，SDK会进行自动重连，开始自动重连后触发此回调。
-
      @param cid  频道 ID。
      @param uid  用户 ID。
      */
     virtual void onReconnectingStart(nertc::channel_id_t cid, nertc::uid_t uid);
 
     /** 重新加入频道回调。
-
 	  有时候由于网络原因，客户端可能会和服务器失去连接，SDK会进行自动重连，自动重连后触发此回调方法。
-
      @param cid  频道 ID。
      @param uid  用户 ID。
      @param result  返回结果。
@@ -86,33 +91,27 @@ public:
     virtual void onRejoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed);
 
     /** 离开频道回调。
-
      App 调用 \ref IRtcEngine::leaveChannel "leaveChannel" 方法时，SDK提示 App 离开频道是否成功。
-
      @param result 返回结果。
      */
     virtual void onLeaveChannel(nertc::NERtcErrorCode result);
 
     /** 掉线回调。
-
 	  由于非网络原因，客户端可能会和服务器失去连接，此时SDK无需自动重连，直接触发此回调方法。
-
      @param reason  返回结果。
      */
     virtual void onDisconnect(nertc::NERtcErrorCode reason);
 
     /** 参会者角色类型变更回调。
-    
     本地用户加入房间后，通过 \ref IRtcEngine::setClientRole "setClientRole" 切换用户角色后会触发此回调。例如从主播切换为观众、从观众切换为主播。
-
     @note 直播场景下，如果您在加入房间后调用该方法切换用户角色，调用成功后，会触发以下回调：
     - 主播切观众，本端触发onClientRoleChanged回调，远端触发\ref nertc::IRtcEngineEventHandler::onUserLeft "onUserLeft"回调。
     - 观众切主播，本端触发onClientRoleChanged回调，远端触发\ref nertc::IRtcEngineEventHandler::onUserJoined "onUserJoined"回调。
-
      @param oldRole  原角色类型。
      @param newRole  新角色类型。
      */
     virtual void onClientRoleChanged(nertc::NERtcClientRole oldRole, nertc::NERtcClientRole newRole);
+
 
     /** 远端用户加入当前频道回调。
 
@@ -131,65 +130,62 @@ public:
      @param reason 远端用户离开原因。
      */
     virtual void onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason);
+
     /** 远端用户开启音频回调。
     
      @param uid 远端用户ID。
      */
     virtual void onUserAudioStart(nertc::uid_t uid);
-    /** 远端用户停用音频回调。
 
+    /** 远端用户停用音频回调。
      @param uid 远端用户ID。
      */
     virtual void onUserAudioStop(nertc::uid_t uid);
+
     /** 远端用户开启视频回调。
 
      @param uid 远端用户ID。
      @param max_profile 最大分辨率。
      */
     virtual void onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile);
-    /** 远端用户停用视频回调。
 
+    /** 远端用户停用视频回调。
      @param uid 远端用户ID。
      */
     virtual void onUserVideoStop(nertc::uid_t uid);
 
+
 public:
     /** 远端用户开启辅流视频回调。
-
      @param uid 远端用户ID。
      @param max_profile 最大分辨率。
      */
     virtual void onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile);
 
     /** 远端用户停用辅流视频回调。
-
      @param uid 远端用户ID。
      */
     virtual void onUserSubStreamVideoStop(nertc::uid_t uid);
 
     /** 远端用户视频配置更新回调。
-
      @param uid 远端用户ID。
      @param max_profile 最大分辨率。
      */
     virtual void onUserVideoProfileUpdate(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile);
 
     /** 远端用户是否静音回调。
-
      @param uid 远端用户ID。
      @param mute 是否静音。
      */
     virtual void onUserAudioMute(nertc::uid_t uid, bool mute);
 
     /** 远端用户是否禁视频流回调。
-
      @param uid 远端用户ID。
      @param mute 是否禁视频流。
      */
     virtual void onUserVideoMute(nertc::uid_t uid, bool mute);
 
     /** 音频设备状态更改回调。
-
      @param device_id 设备ID。
      @param device_type 音频设备类型。
      @param device_state 音频设备状态。
@@ -199,7 +195,6 @@ public:
         nertc::NERtcAudioDeviceState device_state);
 
     /** 音频默认设备更改回调。
-
      @param device_id 设备ID。
      @param device_type 音频设备类型。
      */
@@ -207,7 +202,6 @@ public:
         nertc::NERtcAudioDeviceType device_type);
 
     /** 视频设备状态更改回调。
-
      @param device_id 设备ID。
      @param device_type 视频设备类型。
      @param device_state 视频设备状态。
@@ -217,29 +211,24 @@ public:
         nertc::NERtcVideoDeviceState device_state);
 
     /** 已接收到远端音频首帧回调。
-
      @param uid 发送音频帧的远端用户的用户 ID。
      */
     virtual void onFirstAudioDataReceived(nertc::uid_t uid);
 
     /** 已显示首帧远端视频回调。
-
     第一帧远端视频显示在视图上时，触发此调用。
-
      @param uid 用户 ID，指定是哪个用户的视频流。
      */
     virtual void onFirstVideoDataReceived(nertc::uid_t uid);
 
-    /** 已解码远端音频首帧的回调。
 
+    /** 已解码远端音频首帧的回调。
      @param uid 远端用户 ID。
      */
     virtual void onFirstAudioFrameDecoded(nertc::uid_t uid);
 
     /** 已接收到远端视频并完成解码回调。
-
     引擎收到第一帧远端视频流并解码成功时，触发此调用。 App 可在此回调中设置该用户的 video canvas。
-
      @param uid 用户 ID，指定是哪个用户的视频流。
      @param width 视频流宽（px）。
      @param height 视频流高（px）。
@@ -248,7 +237,6 @@ public:
     virtual void onFirstVideoFrameDecoded(nertc::uid_t uid, uint32_t width, uint32_t height);
 
     /** 采集视频数据回调。
-
      @param data 采集视频数据。
      @param type 视频类型。
      @param width 视频宽度。
@@ -281,25 +269,22 @@ public:
     virtual void onAudioMixingStateChanged(nertc::NERtcAudioMixingState state, nertc::NERtcAudioMixingErrorCode error_code);
 
     /** 本地用户的音乐文件播放进度回调。
-
     调用 startAudioMixing 播放混音音乐文件后，当音乐文件的播放进度改变时，会触发该回调。
     @param timestamp_ms 音乐文件播放进度，单位为毫秒
     */
     virtual void onAudioMixingTimestampUpdate(uint64_t timestamp_ms);
 
-    /** 本地音效文件播放已结束回调。
 
+    /** 本地音效文件播放已结束回调。
     当播放音效结束后，会触发该回调。
     @param effect_id 指定音效的 ID。每个音效均有唯一的 ID。
     */
     virtual void onAudioEffectFinished(uint32_t effect_id);
 
     /** 提示频道内本地用户瞬时音量的回调。
-
      该回调默认禁用。可以通过 enableAudioVolumeIndication 方法开启；
      开启后，本地用户说话，SDK 会按 enableAudioVolumeIndication 方法中设置的时间间隔触发该回调。
      如果本地用户将自己静音（调用了 muteLocalAudioStream），SDK 将音量设置为 0 后回调给应用层。
-
      @param volume （混音后的）音量，取值范围为 [0,100]。
      */
     virtual void onLocalAudioVolumeIndication(int volume);
@@ -322,9 +307,7 @@ public:
     virtual void onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume);
 
     /** 通知添加直播任务结果。
-
      该回调异步返回 \ref IRtcEngineEx::addLiveStreamTask "addLiveStreamTask" 接口的调用结果；实际推流状态参考 \ref IRtcEngineEventHandlerEx::onLiveStreamState "onLiveStreamState"
-
      @param task_id 任务id
      @param url 推流地址
      @param error_code 结果
@@ -334,9 +317,7 @@ public:
     virtual void onAddLiveStreamTask(const char* task_id, const char* url, int error_code);
 
     /** 通知更新直播任务结果。
-
      该回调异步返回 \ref IRtcEngineEx::updateLiveStreamTask "updateLiveStreamTask" 接口的调用结果；实际推流状态参考 \ref IRtcEngineEventHandlerEx::onLiveStreamState "onLiveStreamState"
-
      @param task_id 任务id
      @param url 推流地址
      @param error_code 结果
@@ -346,9 +327,7 @@ public:
     virtual void onUpdateLiveStreamTask(const char* task_id, const char* url, int error_code);
 
     /** 通知删除直播任务结果。
-
      该回调异步返回 \ref IRtcEngineEx::removeLiveStreamTask "removeLiveStreamTask" 接口的调用结果；实际推流状态参考 \ref IRtcEngineEventHandlerEx::onLiveStreamState "onLiveStreamState"
-
      @param task_id 任务id
      @param error_code 结果
      - 0: 调用成功；
@@ -357,7 +336,6 @@ public:
     virtual void onRemoveLiveStreamTask(const char* task_id, int error_code);
 
     /** 通知直播推流状态
-
      @param task_id 任务id
      @param url 推流地址
      @param state #NERtcLiveStreamStateCode, 直播推流状态
@@ -366,9 +344,8 @@ public:
      - 511: 推流结束；
      */
     virtual void onLiveStreamState(const char* task_id, const char* url, nertc::NERtcLiveStreamStateCode state); 
-        
-    /** 监测音频啸叫的回调。
 
+    /** 监测音频啸叫的回调。
      @param howling 是否出现啸叫
      - true: 啸叫；
      - false: 正常；。
@@ -376,22 +353,12 @@ public:
     virtual void onAudioHowling(bool howling);
 
     /** 收到远端流的 SEI 内容回调。
-
      当远端成功发送 SEI 后，本端会收到此回调。
-
      * @param[in] uid 发送该 sei 的用户 id
      * @param[in] data 接收到的 sei 数据
      * @param[in] dataSize 接收到 sei 数据的大小
      */
     void onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize) override;
-
-    // /**
-    //  * 收到检测安装声卡的内容回调（仅适用于 Mac 系统）
-    //  *
-    //  * 在 Mac 系统上，您可以通过调用 {@link checkNECastAudioDriver} 为当前系统安装一个音频驱动，并让 SDK 通过该音频驱动捕获当前 Mac 系统播放出的声音。
-    //  * SDK 会将安装虚拟声卡的结果，通过本事件回调抛出，需要您关注参数中的错误码。
-    //  */
-    // virtual void onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result) override;
 
     /**
      * 屏幕共享暂停/恢复/开始/结束等回调
@@ -404,78 +371,70 @@ public:
      */
     virtual void onAudioRecording(nertc::NERtcAudioRecordingCode code, const char* file_path) override;
 
+    /** Occurs when the state of the media stream is relayed. 
+
+     @param state The state of the media stream.
+     @param channel_name The name of the destination room where the media streams are relayed. 
+     */
+    virtual void onMediaRelayStateChanged(nertc::NERtcChannelMediaRelayState state, const char* channel_name) override;
+
+    /** Occurs when events related to media stream relay are triggered.
+
+     @param event The media stream relay event.
+     @param channel_name The name of the destination room where the media streams are relayed.
+     @param error  Specific error codes.
+     */
+    virtual void onMediaRelayEvent(nertc::NERtcChannelMediaRelayEvent event, const char* channel_name, nertc::NERtcErrorCode error) override;
+
+    /**
+     Occurs when the published local media stream falls back to an audio-only stream due to poor network conditions or switches back to audio and video stream after the network conditions improve.
+
+     If you call setLocalPublishFallbackOption and set option to #kNERtcStreamFallbackAudioOnly, this callback is triggered when the locally published stream falls back to audio-only mode due to poor uplink network conditions, or when the audio stream switches back to the audio and video stream after the uplink network conditions improve. 
+
+     @since V4.3.0
+     @param is_fallback  The locally published stream falls back to audio-only mode or switches back to audio and video stream.
+                         - true: The published stream from a local client falls back to audio-only mode due to poor uplink network conditions.
+                         - false: The audio stream switches back to the audio and video stream after the upstream network condition improves.
+     @param stream_type The type of the video stream, such as bigstream and substream. 
+     */
+    virtual void onLocalPublishFallbackToAudioOnly(bool is_fallback, nertc::NERtcVideoStreamType stream_type) override;
+    
+    /**
+     Occurs when the subscribed remote media stream falls back to an audio-only stream due to poor network conditions or switches back to the audio and video stream after the network condition improves.
+
+     If you call setLocalPublishFallbackOption and set option to #kNERtcStreamFallbackAudioOnly, this callback is triggered when the locally published stream falls back to audio-only mode due to poor uplink network conditions, or when the audio stream switches back to the audio and video stream after the uplink network condition improves.
+     
+     @since V4.3.0
+     @param uid The ID of a remote user.
+     @param is_fallback The subscribed remote media stream falls back to audio-only mode or switches back to the audio and video stream. 
+                           - true: The subscribed remote media stream falls back to audio-only mode due to poor downstream network conditions.
+                           - false: The subscribed remote media stream switches back to the audio and video stream after the downstream network condition improves.
+     @param stream_type  The type of the video stream, such as bigstream and substream. 
+     */
+    virtual void onRemoteSubscribeFallbackToAudioOnly(nertc::uid_t uid, bool is_fallback, nertc::NERtcVideoStreamType stream_type) override;
+
 public:
-    void onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
+    void onPullExternalAudioFrame(Napi::FunctionReference&& function, const std::shared_ptr<unsigned char>& data, uint32_t length);
+
+
+// public:
+//     void addEvent(const std::string& eventName, Napi::FunctionReference&& function);
+//     int removeAll();
+// private:
+//     std::unordered_map<std::string, EventCallback*> _callbacks;
 
 private:
-    void Node_onError(int error_code, const utf8_string& msg);
-    void Node_onWarning(int warn_code, const utf8_string& msg);
-    void Node_onReleasedHwResources(nertc::NERtcErrorCode result);
-    void Node_onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed);
-    void Node_onConnectionStateChange(nertc::NERtcConnectionStateType state, nertc::NERtcReasonConnectionChangedType reason);
-    void Node_onReconnectingStart(nertc::channel_id_t cid, nertc::uid_t uid);
-    void Node_onRejoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed);
-    void Node_onLeaveChannel(nertc::NERtcErrorCode result);
-    void Node_onDisconnect(nertc::NERtcErrorCode reason);
-    void Node_onClientRoleChanged(nertc::NERtcClientRole oldRole, nertc::NERtcClientRole newRole);
-    void Node_onUserJoined(nertc::uid_t uid, const utf8_string& user_name);
-    void Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason);
-    void Node_onUserAudioStart(nertc::uid_t uid);
-    void Node_onUserAudioStop(nertc::uid_t uid);
-    void Node_onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile);
-    void Node_onUserVideoStop(nertc::uid_t uid);
-
-private:
-    void Node_onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile);
-    void Node_onUserSubStreamVideoStop(nertc::uid_t uid);
-    void Node_onUserVideoProfileUpdate(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile);
-    void Node_onUserAudioMute(nertc::uid_t uid, bool mute);
-    void Node_onUserVideoMute(nertc::uid_t uid, bool mute);
-    void Node_onAudioDeviceStateChanged(const utf8_string& device_id,
-        nertc::NERtcAudioDeviceType device_type,
-        nertc::NERtcAudioDeviceState device_state);
-    void Node_onAudioDefaultDeviceChanged(const utf8_string& device_id,
-        nertc::NERtcAudioDeviceType device_type);
-    void Node_onVideoDeviceStateChanged(const utf8_string& device_id,
-        nertc::NERtcVideoDeviceType device_type,
-        nertc::NERtcVideoDeviceState device_state);
-    void Node_onFirstAudioDataReceived(nertc::uid_t uid);
-    void Node_onFirstVideoDataReceived(nertc::uid_t uid);
-    void Node_onFirstAudioFrameDecoded(nertc::uid_t uid);
-    void Node_onFirstVideoFrameDecoded(nertc::uid_t uid, uint32_t width, uint32_t height);
-    void Node_onCaptureVideoFrame(void *data,
-        nertc::NERtcVideoType type, 
-        uint32_t width, 
-        uint32_t height,
-        uint32_t count,
-        uint32_t offset[kNERtcMaxPlaneCount],
-        uint32_t stride[kNERtcMaxPlaneCount],
-        nertc::NERtcVideoRotation rotation) ;
-    void Node_onAudioMixingStateChanged(nertc::NERtcAudioMixingState state, nertc::NERtcAudioMixingErrorCode error_code);
-    void Node_onAudioMixingTimestampUpdate(uint64_t timestamp_ms);
-    void Node_onAudioEffectFinished(uint32_t effect_id);
-    void Node_onLocalAudioVolumeIndication(int volume);
-    void Node_onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume);
-    void Node_onAddLiveStreamTask(const utf8_string& task_id, const utf8_string& url, int error_code);
-    void Node_onUpdateLiveStreamTask(const utf8_string& task_id, const utf8_string& url, int error_code);
-    void Node_onRemoveLiveStreamTask(const utf8_string& task_id, int error_code);
-    void Node_onLiveStreamState(const utf8_string& task_id, const utf8_string& url, nertc::NERtcLiveStreamStateCode state); 
-    void Node_onAudioHowling(bool howling);
     void Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize);
-    void Node_onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
-    //void Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result);//modify by lyq
-    void Node_onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status);
-    void Node_onAudioRecording(nertc::NERtcAudioRecordingCode code, const utf8_string& file_path);
+    
 };
 
-class NertcNodeRtcMediaStatsHandler : public nim_node::EventHandler, public nertc::IRtcMediaStatsObserver
+class NertcNodeRtcMediaStatsHandler : public EventHandler, public nertc::IRtcMediaStatsObserver
 {
 private:
     /* data */
 public:
     NertcNodeRtcMediaStatsHandler(){};
     ~NertcNodeRtcMediaStatsHandler(){};
-    SINGLETON_DEFINE(NertcNodeRtcMediaStatsHandler);
 
 public:
     /** 当前通话统计回调。
@@ -528,64 +487,10 @@ public:
      @param user_count infos 数组的大小，即用户数。
      */
     virtual void onNetworkQuality(const nertc::NERtcNetworkQualityInfo *infos, unsigned int user_count);
-
-private:
-    void Node_onRtcStats(const nertc::NERtcStats &stats);
-    void Node_onLocalAudioStats(const nertc::NERtcAudioSendStats &stats);
-    void Node_onRemoteAudioStats(const nertc::NERtcAudioRecvStats *stats, unsigned int user_count);
-    void Node_onLocalVideoStats(const nertc::NERtcVideoSendStats &stats);
-    void Node_onRemoteVideoStats(const nertc::NERtcVideoRecvStats *stats, unsigned int user_count);
-    void Node_onNetworkQuality(const nertc::NERtcNetworkQualityInfo *infos, unsigned int user_count);
 }; 
 
-class NertcNodeRtcAudioFrameHandler : public nim_node::EventHandler, public nertc::INERtcAudioFrameObserver
-{
-private:
-    /* data */
-public:
-    NertcNodeRtcAudioFrameHandler(){};
-    ~NertcNodeRtcAudioFrameHandler(){};
-    SINGLETON_DEFINE(NertcNodeRtcAudioFrameHandler);
 
-public:
-    /** 采集音频数据回调，用于声音处理等操作。
-     @note
-     - 返回音频数据支持读/写。
-     - 有本地音频数据驱动就会回调。
-     @param frame 音频帧。
-     */
-    virtual void onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame);
-    /** 播放音频数据回调，用于声音处理等操作。
-     @note
-     - 返回音频数据支持读/写。
-     - 有本地音频数据驱动就会回调。
-     @param frame 音频帧。
-     */
-    virtual void onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame);
-    /** 获取本地用户和所有远端用户混音后的原始音频数据。
-     @note
-     - 返回音频数据只读。
-     - 有本地音频数据驱动就会回调。
-     @param frame 音频帧。
-     */
-    virtual void onMixedAudioFrame(nertc::NERtcAudioFrame * frame);
-    /**
-     * 获取单个远端用户混音前的音频数据。
-     *
-     * 成功注册音频观测器后，如果订阅了远端音频（默认订阅）且远端用户开启音频后，SDK 会在捕捉到混音前的音频数据时，触发该回调，将音频数据回调给用户。  
-     @note
-     - 返回音频数据只读。
-     @param userID 用户ID。
-     @param frame  音频帧。
-     */
-    virtual void onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame * frame);
 
-private:
-    void Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame *frame);
-    void Node_onAudioFrameWillPlayback(nertc::NERtcAudioFrame *frame);
-    void Node_onMixedAudioFrame(nertc::NERtcAudioFrame * frame);
-    void Node_onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame * frame);
-}; 
 
 
 }

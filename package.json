@@ -1,9 +1,14 @@
 {
   "name": "nertc-electron-sdk",
-  "version": "4.2.5-rc-941",
+  "version": "4.4.8-rc-944",
   "description": "nertc-electron-sdk",
   "main": "js/nertc_sdk.js",
   "types": "types/nertc_sdk.d.ts",
+  "private": true,
+  "gypfile": true,
+  "engines": {
+    "node": "~10 >=10.20 || >=12.17"
+  },
   "dependencies": {
     "bindings": "^1.5.0",
     "download": "^8.0.0",
@@ -13,9 +18,10 @@
     "just-task": "^1.4.1",
     "lodash.isequal": "^4.5.0",
     "node-gyp": "^8.2.0",
-    "node-pre-build": "^0.1.13",
+    "node-pre-build": "^0.1.11",
     "shelljs": "^0.8.4",
     "tar": "^6.1.11",
+    "node-addon-api": "^4.2.0",
     "yuv-buffer": "^1.0.0",
     "yuv-canvas": "^1.2.6"
   },
@@ -29,10 +35,7 @@
     "build:dts": "rimraf ./types && tsc -p config_dts.json",
     "prebuild:ts": "npm run build:dts",
     "build:ts": "rimraf ./js && tsc -p config_ts.json",
-    "clean": "node-pre-build clean",
     "install": "node-pre-build install --fall-back-to-build",
-    "install:x64": "node-pre-build install --fall-back-to-build -a x64 ",
-    "install:ia32": "node-pre-build install --fall-back-to-build -a ia32",
     "build:win32:x64": "node-pre-build build -r electron -rv 9.4.4 11.4.5 12.0.11 -a x64 -p",
     "build:win32:ia32": "node-pre-build build -r electron -rv 9.4.4 11.4.5 12.0.11 -a ia32 -p",
     "build:darwin": "node-pre-build build -r electron -rv 9.4.4 11.4.5 12.0.11 -a x64 -p"
@@ -48,12 +51,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/surebeli/node-nertc-sdk.git#feat/3.9.0/screencapture"
+    "url": "git+https://github.com/surebeli/node-nertc-sdk.git#feat/4.1.301/private"
   },
   "files": [
+    ".github",
     "js",
+    "nertc_sdk_node",
+    "nertc_sdk_ts",
     "types",
     "scripts",
+    "shared",
+    "binding.gyp",
+    "config_dts.json",
+    "config_ts.json",
     "just-task.js",
     "package.json"
   ],

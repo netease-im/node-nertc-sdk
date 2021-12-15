@@ -17,11 +17,24 @@ export enum NERtcLogLevel{
     kNERtcLogLevelOff      = 7,        /**< 不输出日志信息。*/
 }
 
+/** 私有化服务器配置项 */
+export interface NERtcServerAddresses {
+    channel_server: string; /**< 获取通道信息服务器, <256chars */
+    statistics_server: string; /**< 统计上报服务器, <256chars */
+    room_server: string;       /**< roomServer服务器, <256chars */
+    compat_server: string;     /**< 兼容性配置服务器, <256chars */
+    nos_lbs_server: string;     /**< nos 域名解析服务器, <256chars */
+    nos_upload_sever: string;   /**< 默认nos 上传服务器, <256chars */
+    nos_token_server: string;   /**< 获取NOS token 服务器, <256chars */
+    use_ipv6: Boolean;               /**< 是否使用IPv6（默认false) */
+}
+
 export interface NERtcEngineContext {
     app_key: string;		/**< 用户注册云信的APP Key。如果你的开发包里面缺少 APP Key，请申请注册一个新的 APP Key。*/
     log_dir_path: string;	/**< 日志目录的完整路径，采用UTF-8 编码。*/
     log_level: NERtcLogLevel;	/**< 日志级别，默认级别为 kNERtcLogLevelInfo。*/
     log_file_max_size_KBytes: number;	/**< 指定 SDK 输出日志文件的大小上限，单位为 KB。如果设置为 0，则默认为 20 M。*/
+    server_config: NERtcServerAddresses;   /**< 私有化服务器地址 */
 }
 
 /** 场景模式 */
@@ -157,9 +170,8 @@ export enum NERtcVideoProfileType
     kNERtcVideoProfileFake = 6, /**< FakeVideo标识，仅在回调中显示。请勿主动设置，否则 SDK 会按照STANDARD处理。 当远端在纯音频状态发送 SEI 时，本端将会收到远端的onUserVideoStart回调，其中 max_profile 参数为kNERtcVideoProfileFake ， 表示对端发送 16*16 的FakeVideo，此时如果本端需要接收远端的SEI信息，只需要订阅一下远端的视频即可，无须设置远端画布。*/
 }
 
-/** 视频缩放类型。*/
 export enum NERtcVideoScalingMode {
-    kNERtcVideoScaleFit = 0,   /**< 0: 视频尺寸等比缩放。优先保证视频内容全部显示。因视频尺寸与显示视窗尺寸不一致造成的视窗未被填满的区域填充黑色。*/
+    kNERtcVideoScaleFit      = 0,   /**< 0: 视频尺寸等比缩放。优先保证视频内容全部显示。因视频尺寸与显示视窗尺寸不一致造成的视窗未被填满的区域填充黑色。*/
     kNERtcVideoScaleFullFill = 1,   /**< 1: 视频尺寸非等比缩放。保证视频内容全部显示，且填满视窗。*/
     kNERtcVideoScaleCropFill = 2,   /**< 2: 视频尺寸等比缩放。优先保证视窗被填满。因视频尺寸与显示视窗尺寸不一致而多出的视频将被截掉。*/    
 }
@@ -278,57 +290,6 @@ export enum NERtcScreenProfileType
     kNERtcScreenProfileMAX = kNERtcScreenProfileHD1080P,
 }
 
-/** 视频类型。*/
-export enum NERtcVideoType
-{
-    kNERtcVideoTypeI420 = 0,    /**< I420 视频格式。*/
-    kNERtcVideoTypeNV12 = 1,    /**< NV12 视频格式。*/
-    kNERtcVideoTypeNV21 = 2,    /**< NV21 视频格式。*/
-    kNERtcVideoTypeBGRA = 3,    /**< BGRA 视频格式。*/
-    kNERtcVideoTypeCVPixelBuffer = 4,    /**< oc capture native视频格式。不支持外部视频输入*/
-}
-
-/** 视频旋转角度。*/
-export enum NERtcVideoRotation
-{
-    kNERtcVideoRotation_0 = 0,      /**< 0 度。*/
-    kNERtcVideoRotation_90 = 90,    /**< 90 度。*/
-    kNERtcVideoRotation_180 = 180,  /**< 180 度。*/
-    kNERtcVideoRotation_270 = 270,  /**< 270 度。*/
-}
-
-/** 视频帧。*/
-export interface NERtcVideoFrame {
-    format: NERtcVideoType;      /**< 视频帧格式，详细信息请参考 NERtcVideoType。*/
-    timestamp: number;         /**< 视频时间戳，单位为毫秒。 */
-    width: number;             /**< 视频桢宽度 */
-    height: number;            /**< 视频桢宽高 */
-    rotation: NERtcVideoRotation;/**<  视频旋转角度 详见: #NERtcVideoRotation */
-    buffer: ArrayBuffer;               /**<  视频桢数据 */
-}
-
-/** 音频类型。*/
-export enum NERtcAudioType
-{
-    kNERtcAudioTypePCM16 = 0,    /**< PCM 音频格式。*/
-}
-
-/** 音频格式。*/
-export interface NERtcAudioFormat
-{
-    type: NERtcAudioType; /**< 音频类型。*/
-    channels: number;  /**< 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。*/
-    sample_rate: number;  /**< 采样率。*/
-    bytes_per_sample: number; /**< 每个采样点的字节数。对于 PCM 来说，一般使用 16 bit，即两个字节。*/
-    samples_per_channel: number;  /**< 每个房间的样本数量。*/
-}
-
-/** 音频帧。*/
-export interface NERtcAudioFrame {
-    format: NERtcAudioFormat;    /**< 音频格式。*/
-    data: ArrayBuffer;     /**< 数据缓冲区。有效数据长度为：samples_per_channel * channels * bytes_per_sample。*/
-}
-
 /** 视频尺寸。*/
 export interface NERtcVideoDimensions
 {
@@ -362,69 +323,53 @@ export interface NERtcScreenCaptureParameters {
     prefer: NERtcSubStreamContentPrefer; /**< 编码策略倾向。*/
 }
 
-export interface NERtcScreenCaptureWindowParam {
+/** 媒体优先级类型。*/
+export enum NERtcMediaPriorityType
+{
+    kNERtcMediaPriorityHigh = 50,    /**< 高优先级 */
+    kNERtcMediaPriorityNormal = 100, /**< （默认）普通优先级 */
+}
+
+export interface NERtcScreenCaptureWindowParam 
+{
     window_list: Array<Number>;         /**< 待屏蔽窗口的 ID 列表。 */
 }
 
-/** 图片水印设置参数。最多可以添加 4 个图片水印。 */
-export interface NERtcImageWatermarkConfig {
-	image_paths: Array<String>;   /**< 水印图片路径。空时无效。*/
-	offset_x: number;	/**< 水印图片左上角与视频画布左上角的水平距离。单位为像素（pixel），默认值为 0。 */
-	offset_y: number;   /**< 水印图片左上角与视频画布左上角的垂直距离。单位为像素（pixel），默认值为 0。 */
-    image_width: number; /**< 水印图片的宽度。单位为像素（pixel），默认值为 0 表示按原始图宽。*/
-    image_height: number;/**< 水印图片的高度。单位为像素（pixel），默认值为 0 表示按原始图高。*/
-	fps: number;		/**< 播放帧率。默认 0 帧/秒，即不自动切换图片，图片单帧静态显示。注意：Windows端帧率不超过 20 fps。*/
-	loop: boolean;	/**< 是否设置循环。默认循环，设置为 false 后水印数组播放完毕后消失。*/
-}
-
-/** 文字水印设置参数。最多可添加 10 个文字水印。*/
-export interface NERtcTextWatermarkConfig {
-    content: String;
-    font_path: String;          /**< 字体路径，设置为空时，表示使用程序默认字体。*/
-	font_size: number;			/**< 字体大小。默认值为 10，相当于 144 dpi 设备上的 10 x 15 磅。*/
-	font_color: number;		    /**< 字体颜色。ARGB 格式。 */
-	offset_x: number;			/**< 水印左上角与视频画布左上角的水平距离。单位为像素（pixel）。*/
-	offset_y: number;			/**< 水印左上角与视频画布左上角的垂直距离。单位为像素（pixel）。*/
-	wm_color: number;			/**< 水印框内背景颜色。ARGB格式，支持透明度设置。*/
-	wm_width: number;			/**< 水印框的宽度。单位为像素（pixel），默认值为 0，表示没有水印框。*/
-	wm_height: number;			/**< 水印框的高度。单位为像素（pixel），默认值为 0，表示没有水印框。*/
-}
-
-/** 时间戳水印设置。只能添加 1 个时间戳水印。 时间戳水印的时间和当前时间相同，且实时变化。*/
-export interface NERtcTimestampWatermarkConfig {
-    font_path: String;          /**< 字体路径。若未设置，使用程序默认字体。*/
-	font_size: number;			/**< 字体大小。默认值为 10，相当于 144 dpi 设备上的 10 x 15 磅。*/
-	font_color: number;			/**< 字体颜色。ARGB 格式。 */
-	offset_x: number;			/**< 水印左上角与视频画布左上角的水平距离。单位为像素（pixel）。 */
-	offset_y: number;			/**< 水印左上角与视频画布左上角的垂直距离。单位为像素（pixel）。 */
-	wm_color: number;			/**< 水印框内背景颜色。ARGB格式，支持透明度设置。 */
-	wm_width: number;			/**< 水印框的宽度。单位为像素（pixel），默认值为 0，表示没有水印框。*/
-	wm_height: number;			/**< 水印框的高度。单位为像素（pixel），默认值为 0，表示没有水印框。*/
-	ts_type: number;			/**< 时间戳类型，支持设置为：
-                                    - 1：yyyy-MM-dd HH:mm:ss。
-                                    - 2：yyyy-MM-dd HH:mm:ss.SSS。精确到毫秒。*/
-}
-
-/** 画布水印设置。同时设置文字、时间戳或图片水印时，如果不同类型的水印位置有重叠，会按照图片、文本、时间戳的顺序进行图层覆盖。*/
- export interface NERtcCanvasWatermarkConfig {
-    image_watermarks: Array<NERtcImageWatermarkConfig>;       /**< 图片水印数组指针。 */
-    image_count_: number;                                     /**< 图片水印个数，最多支持 4 个。 */
-    text_watermarks:Array<NERtcTextWatermarkConfig>;          /**< 文字水印数组指针。 */
-    text_count_: number;                                      /**< 文字水印个数，最多支持 10 个。 */
-	timestamp_watermark: NERtcTimestampWatermarkConfig;       /**< 时间戳水印指针，仅一个。 */
-}
-
 /** 录音音质 */
-export enum NERtcAudioRecordingQuality{
+export enum NERtcAudioRecordingQuality
+{
     kNERtcAudioRecordingQualityLow = 0,    /**< 低音质 */
     kNERtcAudioRecordingQualityMedium = 1, /**< 中音质 */
     kNERtcAudioRecordingQualityHigh = 2,   /**< 高音质 */
 }
 
-/** 媒体优先级类型。*/
-export enum NERtcMediaPriorityType{
-    kNERtcMediaPriorityHigh = 50,    /**< 高优先级 */
-    kNERtcMediaPriorityNormal = 100, /**< （默认）普通优先级 */
+/** Data structure related to media stream relay.*/
+export interface NERtcChannelMediaRelayInfo 
+{
+    channel_name: String;     /**< The name of the destination room to which the media stream is relayed. */
+    channel_token: String;    /**< The token used to connect to the destination room. */
+    uid: number;               /**< The user ID used in the destination room. This ID can be different from the ID used in the current room. */
+}
+
+/** Configurations for media stream relay.*/
+export interface NERtcChannelMediaRelayConfiguration 
+{
+    src_infos: NERtcChannelMediaRelayInfo;     /**<The information about the current room. */
+    dest_infos: NERtcChannelMediaRelayInfo;    /**< The configuration of the destination room. */
+    dest_count: number;                     /**< The number of destination rooms. The default value is 0. */
+}
+
+/** Media stream encryption mode. */
+export enum NERtcEncryptionMode
+{
+    kNERtcGMCryptoSM4ECB      = 0, /**< 128-bit SM4 encryption, ECB mode. */
+}
+
+/** Media stream encryption scheme. */
+export interface NERtcEncryptionConfig 
+{
+    mode: NERtcEncryptionMode;     /**< Media stream encryption mode. For more information, see NERtcEncryptionMode. */
+    key: String;     /**< Media stream encryption key. The key is of string type. We recommend that you set the key to a string that contains only letters. */
 }
 
 /** 直播推流模式 */
@@ -558,166 +503,10 @@ export interface NERtcPullExternalAudioFrameCb
     (data: ArrayBuffer): void
 }
 
-/** 音频流类型，目前同时支持音频两路流：主流和辅流 */
-export enum NERtcAudioStreamType {
-    kNERtcAudioStreamMain = 0,  /**音频流主流*/
-    kNERtcAudioStreamSub  = 1,  /**音频流辅流*/
-}
-
 export enum NERtcVideoStreamType {
     kNERtcVideoStreamMain = 0,  /** 视频流主流 */
     kNERtcVideoStreamSub  = 1   /** 视频流副流 */
 }
-
-export interface NERtcEngineAPI {
-    initialize(context: NERtcEngineContext): number;
-    release(): void;
-    setChannelProfile(profile: NERtcChannelProfileType): number;
-    joinChannel(token: String, channelName: String, uid: number): number;
-    leaveChannel(): number;
-    enableLocalAudio(enabled: Boolean): number;
-    enableLocalVideo(enabled: Boolean): number;
-    subscribeRemoteVideoStream(uid: number, type: NERtcRemoteVideoStreamType, subscribe: Boolean): number;
-
-    setupVideoCanvas(uid: number, enabled: Boolean): number;
-    onVideoFrame(callback: Function): number;
-    onEvent(eventName: String, callback: Function): void;
-
-    getConnectionState(): number;
-    muteLocalAudioStream(enabled: Boolean): number;
-    setAudioProfile(profile: NERtcAudioProfileType, scenario: NERtcAudioScenarioType): number;
-    subscribeRemoteAudioStream(uid: number, enabled: Boolean): number;
-    setVideoConfig(config: NERtcVideoConfig): number;
-    enableDualStreamMode(enabled: Boolean): number;
-    startVideoPreview(): number;
-    stopVideoPreview(): number;
-    muteLocalVideoStream(enabled: Boolean): number;
-    setParameters(parameters: String): number;
-    setRecordingAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number;
-    setPlaybackAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number;
-    startAudioDump(): number;
-    stopAudioDump(): number;
-    startAudioMixing(opt: NERtcCreateAudioMixingOption): number;
-    stopAudioMixing(): number;
-    pauseAudioMixing(): number;
-    resumeAudioMixing(): number;
-    setAudioMixingSendVolume(volume: number): number;
-    getAudioMixingSendVolume(): number;
-    setAudioMixingPlaybackVolume(volume: number): number;
-    getAudioMixingPlaybackVolume(): number;
-    getAudioMixingDuration(): number;
-    getAudioMixingCurrentPosition(): number;
-    setAudioMixingPosition(pos: number): number;
-    playEffect(effectId: number, opt: Array<NERtcCreateAudioEffectOption>): number;
-    stopEffect(effectId: number): number;
-    stopAllEffects(): number;
-    pauseEffect(effectId: number): number;
-    resumeEffect(effectId: number): number;
-    pauseAllEffects(): number;
-    resumeAllEffects(): number;
-    setEffectSendVolume(effectId: number, volume: number): number;
-    getEffectSendVolume(effectId: number): number;
-    setEffectPlaybackVolume(effectId: number, volume: number): number;
-    getEffectPlaybackVolume(effectId: number): number;
-    enableEarback(enabled: boolean, volume: number): number;
-    setEarbackVolume(volume: number): number;
-    onStatsObserver(eventName: String, enabled: boolean, callback: Function): void;
-    enableAudioVolumeIndication(enabled: boolean, interval: number): number;
-    startScreenCaptureByScreenRect(screenRect: NERtcRectangle, regionRect: NERtcRectangle, param: NERtcScreenCaptureParameters): number;
-    startScreenCaptureByDisplayId(displayId: number, regionRect: NERtcRectangle, param: NERtcScreenCaptureParameters): number;
-    startScreenCaptureByWindowId(windowid: number, regionRect: NERtcRectangle, param: NERtcScreenCaptureParameters): number;
-    updateScreenCaptureRegion(regionRect: NERtcRectangle): number;
-    stopScreenCapture(): number;
-    pauseScreenCapture(): number;
-    resumeScreenCapture(): number;
-    getVersion(): String;
-    getErrorDescription(errorCode: number): String;
-    uploadSdkInfo(): void;
-    addLiveStreamTask(info: NERtcLiveStreamTaskInfo): number;
-    updateLiveStreamTask(info: NERtcLiveStreamTaskInfo): number;
-    removeLiveStreamTask(taskId: String): number;
-    enumerateRecordDevices(): Array<NERtcDevice>;
-    setRecordDevice(id: String): number; //<256chars
-    getRecordDevice(): String;
-    enumeratePlayoutDevices(): Array<NERtcDevice>;
-    setPlayoutDevice(id: String): number; //<256chars
-    getPlayoutDevice(): String;
-    setRecordDeviceVolume(volume: number): number;
-    getRecordDeviceVolume(): number;
-    setPlayoutDeviceVolume(volume: number): number;
-    getPlayoutDeviceVolume(): number;
-    setPlayoutDeviceMute(mute: boolean): number;
-    getPlayoutDeviceMute(): boolean;
-    setRecordDeviceMute(mute: boolean): number;
-    getRecordDeviceMute(): boolean;
-    adjustRecordingSignalVolume(volume: number): number;
-    adjustPlaybackSignalVolume(volume: number): number;
-    startRecordDeviceTest(interval: number): number;
-    stopRecordDeviceTest(): number;
-    startPlayoutDeviceTest(path: String): number;
-    stopPlayoutDeviceTest(): number;
-    startAudioDeviceLoopbackTest(interval: number): number;
-    stopAudioDeviceLoopbackTest(): number;
-    enumerateCaptureDevices(): Array<NERtcDevice>;
-    setDevice(id: String): number; //<256chars
-    getDevice(): String;
-    setLocalVideoMirrorMode(mode: NERtcVideoMirrorMode): number;
-    //3.9
-    setClientRole(role: NERtcClientRole): number;
-    setupSubStreamVideoCanvas(uid: number, enabled: Boolean): number;
-    subscribeRemoteVideoSubStream(uid: number, sub: boolean): number;
-
-    //sc
-    enumerateScreenCaptureSourceInfo(thumbWidth: number, thumbHeight: number, iconWidth: number, iconHeight: number): Array<Object>;
-    startSystemAudioLoopbackCapture(): number;
-    stopSystemAudioLoopbackCapture(): number;
-    setSystemAudioLoopbackCaptureVolume(volume: number): number;
-
-    // 4.0.x
-    sendSEIMsg(data: ArrayBuffer): number;
-    sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType): number;
-    setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number;
-    pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number;
-
-    // 4.1.1
-    setAudioEffectPreset(type: NERtcVoiceChangerType): number;
-    setVoiceBeautifierPreset(type: NERtcVoiceBeautifierType): number;
-    setLocalVoicePitch(pitch: number): number;
-    setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
-
-    // 4.1.110
-    //setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
-    //subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
-    //enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
-    //enableLoopbackRecording(enable: boolean, deviceName: String): number;
-    //adjustLoopbackRecordingSignalVolume(volume: number): number;
-    adjustUserPlaybackSignalVolume(uid: number, volume: number): number;
-
-    // 4.1.112
-    // checkNECastAudioDriver(): number;
-    //checkNeCastAudio(): number;
-
-    //4.2.5
-    switchChannel(token: String, channelName: String): number;
-    setLocalRenderMode(scalingMode: NERtcVideoScalingMode): number;
-    setLocalSubStreamRenderMode(scalingMode: NERtcVideoScalingMode): number;
-    setRemoteRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number;
-    setLocalMediaPriority(priority: NERtcMediaPriorityType, preemptive: boolean): number;
-    setExcludeWindowList(param: NERtcScreenCaptureWindowParam): number;
-    startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number;
-    stopAudioRecording(): number;
-    setRemoteSubSteamRenderMode(uid: number, scalingMode: NERtcVideoScalingMode): number;
-
-    //TODO 4.1.113是注释掉的，是否需要放开?
-    setMixedAudioFrameParameters(samplerate: number): number;
-    setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
-    setExternalVideoSource(enabled: boolean): number;
-    pushExternalVideoFrame(opt: NERtcVideoFrame): number;
-    pushExternalAudioFrame(opt: NERtcAudioFrame): number;
-    //setAudioFrameObserver
-    //setStatsObserver
-}
-
 /** 通话相关的统计信息。*/
 export interface NERtcStats
 {
@@ -830,35 +619,6 @@ export enum NERtcConnectionStateType
     kNERtcConnectionStateConnected      = 3, /**< 加入频道成功。*/
     kNERtcConnectionStateReconnecting   = 4, /**< 正在尝试重新加入频道。*/
     kNERtcConnectionStateFailed         = 5, /**< 加入频道失败。*/
-}
-
-/** 驱动安装状态 */
-export enum NERtcInstallCastAudioDriverResult
-{
-    kNERtcInstallCastAudioDriverSuccess = 0,              /**< 安装音频驱动插件成功*/
-    kNERtcInstallCastAudioDriverNotAuthorized = 1,        /**< 安装音频驱动插件未授权。*/
-    kNERtcInstallCastAudioDriverFailed = 2,               /**< 安装音频驱动插件失败。*/
-}
-
-/** 屏幕分享状态 */
-export enum NERtcScreenCaptureStatus
-{
-    kScreenCaptureStatusStart   = 1,    /**< 开始屏幕分享*/
-    kScreenCaptureStatusPause   = 2,    /**< 暂停屏幕分享*/
-    kScreenCaptureStatusResume  = 3,    /**< 恢复屏幕分享*/
-    kScreenCaptureStatusStop    = 4,    /**< 停止屏幕分享*/
-    kScreenCaptureStatusCovered = 5     /**< 屏幕分享的目标窗口被覆盖*/
-}
-/** 录音回调事件错误码 */
-export enum NERtcAudioRecordingCode
-{
-    kNERtcAudioRecordErrorSuffix = 1,    /**< 不支持的录音文件格式。 */
-    kNERtcAudioRecordOpenFileFailed = 2, /**< 无法创建录音文件，原因通常包括：
-                                                - 应用没有磁盘写入权限。
-                                                - 文件路径不存在。 */
-    kNERtcAudioRecordStart = 3,          /**< 开始录制。 */
-    kNERtcAudioRecordError = 4,          /**< 录制错误。原因通常为磁盘空间已满，无法写入。 */
-    kNERtcAudioRecordFinish = 5,         /**< 完成录制。 */
 }
 
 /** 连接状态变更原因 */
@@ -993,4 +753,150 @@ export enum NERtcVoiceEqualizationBand {
     kNERtcVoiceEqualizationBand_4K  = 7, /**<  4 kHz */
     kNERtcVoiceEqualizationBand_8K  = 8, /**<  8 kHz */
     kNERtcVoiceEqualizationBand_16K = 9, /**<  16 kHz */
+}
+
+export interface NERtcEngineAPI {
+    initialize(context: NERtcEngineContext): number;
+    release(): void;
+    setChannelProfile(profile: NERtcChannelProfileType): number;
+    joinChannel(token: String, channelName: String, uid: number): number;
+    leaveChannel(): number;
+    enableLocalAudio(enabled: Boolean): number;
+    enableLocalVideo(enabled: Boolean): number;
+    subscribeRemoteVideoStream(uid: number, type: NERtcRemoteVideoStreamType, subscribe: Boolean): number;
+
+    setupVideoCanvas(uid: number, enabled: Boolean): number;
+    onVideoFrame(callback: Function): number;
+    onEvent(eventName: String, callback: Function): void;
+
+    getConnectionState(): number;
+    muteLocalAudioStream(enabled: Boolean): number;
+    setAudioProfile(profile: NERtcAudioProfileType, scenario: NERtcAudioScenarioType): number;
+    subscribeRemoteAudioStream(uid: number, enabled: Boolean): number;
+    setVideoConfig(config: NERtcVideoConfig): number;
+    enableDualStreamMode(enabled: Boolean): number;
+    startVideoPreview(): number;
+    stopVideoPreview(): number;
+    muteLocalVideoStream(enabled: Boolean): number;
+    setParameters(parameters: String): number;
+    setRecordingAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number;
+    setPlaybackAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number;
+    startAudioDump(): number;
+    stopAudioDump(): number;
+    startAudioMixing(opt: NERtcCreateAudioMixingOption): number;
+    stopAudioMixing(): number;
+    pauseAudioMixing(): number;
+    resumeAudioMixing(): number;
+    setAudioMixingSendVolume(volume: number): number;
+    getAudioMixingSendVolume(): number;
+    setAudioMixingPlaybackVolume(volume: number): number;
+    getAudioMixingPlaybackVolume(): number;
+    getAudioMixingDuration(): number;
+    getAudioMixingCurrentPosition(): number;
+    setAudioMixingPosition(pos: number): number;
+    playEffect(effectId: number, opt: Array<NERtcCreateAudioEffectOption>): number;
+    stopEffect(effectId: number): number;
+    stopAllEffects(): number;
+    pauseEffect(effectId: number): number;
+    resumeEffect(effectId: number): number;
+    pauseAllEffects(): number;
+    resumeAllEffects(): number;
+    setEffectSendVolume(effectId: number, volume: number): number;
+    getEffectSendVolume(effectId: number): number;
+    setEffectPlaybackVolume(effectId: number, volume: number): number;
+    getEffectPlaybackVolume(effectId: number): number;
+    enableEarback(enabled: boolean, volume: number): number;
+    setEarbackVolume(volume: number): number;
+    onStatsObserver(eventName: String, enabled: boolean, callback: Function): void;
+    enableAudioVolumeIndication(enabled: boolean, interval: number): number;
+    startScreenCaptureByScreenRect(screenRect: NERtcRectangle, regionRect: NERtcRectangle, param: NERtcScreenCaptureParameters): number;
+    startScreenCaptureByDisplayId(displayId: number, regionRect: NERtcRectangle, param: NERtcScreenCaptureParameters): number;
+    startScreenCaptureByWindowId(windowid: number, regionRect: NERtcRectangle, param: NERtcScreenCaptureParameters): number;
+    updateScreenCaptureRegion(regionRect: NERtcRectangle): number;
+    stopScreenCapture(): number;
+    pauseScreenCapture(): number;
+    resumeScreenCapture(): number;
+    getVersion(): String;
+    getErrorDescription(errorCode: number): String;
+    uploadSdkInfo(): void;
+    addLiveStreamTask(info: NERtcLiveStreamTaskInfo): number;
+    updateLiveStreamTask(info: NERtcLiveStreamTaskInfo): number;
+    removeLiveStreamTask(taskId: String): number;
+    enumerateRecordDevices(): Array<NERtcDevice>;
+    setRecordDevice(id: String): number; //<256chars
+    getRecordDevice(): String;
+    enumeratePlayoutDevices(): Array<NERtcDevice>;
+    setPlayoutDevice(id: String): number; //<256chars
+    getPlayoutDevice(): String;
+    setRecordDeviceVolume(volume: number): number;
+    getRecordDeviceVolume(): number;
+    setPlayoutDeviceVolume(volume: number): number;
+    getPlayoutDeviceVolume(): number;
+    setPlayoutDeviceMute(mute: boolean): number;
+    getPlayoutDeviceMute(): boolean;
+    setRecordDeviceMute(mute: boolean): number;
+    getRecordDeviceMute(): boolean;
+    adjustRecordingSignalVolume(volume: number): number;
+    adjustPlaybackSignalVolume(volume: number): number;
+    startRecordDeviceTest(interval: number): number;
+    stopRecordDeviceTest(): number;
+    startPlayoutDeviceTest(path: String): number;
+    stopPlayoutDeviceTest(): number;
+    startAudioDeviceLoopbackTest(interval: number): number;
+    stopAudioDeviceLoopbackTest(): number;
+    enumerateCaptureDevices(): Array<NERtcDevice>;
+    setDevice(id: String): number; //<256chars
+    getDevice(): String;
+    setLocalVideoMirrorMode(mode: NERtcVideoMirrorMode): number;
+    //3.9
+    setClientRole(role: NERtcClientRole): number;
+    setupSubStreamVideoCanvas(uid: number, enabled: Boolean): number;
+    subscribeRemoteVideoSubStream(uid: number, sub: boolean): number;
+
+    //sc
+    enumerateScreenCaptureSourceInfo(thumbWidth: number, thumbHeight: number, iconWidth: number, iconHeight: number): Array<Object>;
+    startSystemAudioLoopbackCapture(): number;
+    stopSystemAudioLoopbackCapture(): number;
+    setSystemAudioLoopbackCaptureVolume(volume: number): number;
+
+    // 4.0.x
+    sendSEIMsg(data: ArrayBuffer): number;
+    sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType): number;
+    setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number;
+    pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number;
+
+    // 4.1.1
+    setAudioEffectPreset(type: NERtcVoiceChangerType): number;
+    setVoiceBeautifierPreset(type: NERtcVoiceBeautifierType): number;
+    setLocalVoicePitch(pitch: number): number;
+    setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
+  
+    
+
+    // 4.1.112
+
+    //TODO
+    // setMixedAudioFrameParameters(samplerate: number): number;
+    // setExternalVideoSource(enabled: boolean): number;
+    //pushExternalVideoFrame
+    // setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
+    //pushExternalAudioFrame
+
+    //4.4.8
+    switchChannel(token: String, channelName: String): number;
+    setLocalMediaPriority(priority: NERtcMediaPriorityType, preemptive: boolean): number;
+    setExcludeWindowList(param: NERtcScreenCaptureWindowParam): number;
+    enableLoopbackRecording(enable: boolean, deviceName: String): number;
+    startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number;
+    stopAudioRecording(): number;
+    adjustUserPlaybackSignalVolume(uid: number, volume: number): number;
+    adjustLoopbackRecordingSignalVolume(volume: number): number;
+    startChannelMediaRelay(config: NERtcChannelMediaRelayConfiguration): number;
+    updateChannelMediaRelay(config: NERtcChannelMediaRelayConfiguration): number;
+    stopChannelMediaRelay(): number;
+    setLocalPublishFallbackOption(option: number): number;
+    setRemoteSubscribeFallbackOption(option: number): number;
+    enableSuperResolution(enable: boolean): number;
+    enableEncryption(enable: boolean, config: NERtcEncryptionConfig): number;
+
 }

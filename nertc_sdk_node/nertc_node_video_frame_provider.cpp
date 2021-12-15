@@ -1,5 +1,5 @@
 #include "nertc_node_video_frame_provider.h"
-#include "../shared/sdk_helper/nim_node_helper.h"
+// #include "../shared/sdk_helper/nim_node_helper.h"
 #include "../shared/sdk_helper/nim_node_async_queue.h"
 #include <chrono>
 #include <string>
@@ -16,8 +16,8 @@ NodeVideoFrameTransporter* getNodeVideoFrameTransporter()
 
 NodeVideoFrameTransporter::NodeVideoFrameTransporter()
 : init(false)
-, env(nullptr)
-, m_FPS(10)
+// , env(nullptr)
+, m_FPS(25)
 {
     
 }
@@ -27,15 +27,19 @@ NodeVideoFrameTransporter::~NodeVideoFrameTransporter()
     deinitialize();
 }
 
-bool NodeVideoFrameTransporter::initialize(v8::Isolate *isolate, const v8::FunctionCallbackInfo<v8::Value> &callbackinfo)
+bool NodeVideoFrameTransporter::initialize(Napi::FunctionReference&& function)
 {
     if (init) {
         deinitialize();
     }
     m_stopFlag = false;
-    env = isolate;
-    callback.Reset(isolate, callbackinfo[0].As<Function>());
-    js_this.Reset(isolate, callbackinfo.This());
+    // env = isolate;
+    // js_callback = std::move(function);
+    m_pFrameDataCallback = new FrameDataCallback();
+    m_pFrameDataCallback->function = std::move(function);
+    // env = callback.Env();
+    // callback.Reset(isolate, callbackinfo[0].As<Function>());
+    // js_this.Reset(isolate, callbackinfo.This());
     m_thread.reset(new std::thread(&NodeVideoFrameTransporter::FlushVideo, this));
     init = true;
     return true;
@@ -50,9 +54,10 @@ bool NodeVideoFrameTransporter::deinitialize()
         m_thread->join();
     init = false;
     m_thread.reset();
-    env = nullptr;
-    callback.Reset();
-    js_this.Reset();
+    m_pFrameDataCallback = nullptr;
+    // env = nullptr;
+    // js_callback.Reset();
+    // js_this.Reset();
     return true;
 }
 
@@ -232,49 +237,39 @@ unsigned char* dstYPlane, unsigned char* dstUPlane, unsigned char* dstVPlane, in
 
 #define NODE_SET_OBJ_PROP_HEADER(obj, it) \
     { \
-        Local<Value> propName = String::NewFromUtf8(isolate, "header", NewStringType::kInternalized).ToLocalChecked(); \
-        Local<v8::ArrayBuffer> buff = v8::ArrayBuffer::New(isolate, (it)->buffer, (it)->length); \
-        v8::Maybe<bool> ret = obj->Set(isolate->GetCurrentContext(), propName, buff); \
-        if(!ret.IsNothing()) { \
-            if(!ret.ToChecked()) { \
-                break; \
-            } \
-        } \
+        Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, (it)->buffer, (it)->length); \
+        obj.Set(Napi::String::New(env, "header"), arrayBuffer); \
     }
 
 #define NODE_SET_OBJ_PROP_DATA(obj, name, it) \
     { \
-        Local<Value> propName = String::NewFromUtf8(isolate, name, NewStringType::kInternalized).ToLocalChecked(); \
-        Local<v8::ArrayBuffer> buff = v8::ArrayBuffer::New(isolate, (it)->buffer, (it)->length); \
-        Local<v8::Uint8Array> dataarray = v8::Uint8Array::New(buff, 0, it->length);\
-        v8::Maybe<bool> ret = obj->Set(isolate->GetCurrentContext(), propName, dataarray); \
-        if(!ret.IsNothing()) { \
-            if(!ret.ToChecked()) { \
-                break; \
-            } \
-        } \
+        Napi::ArrayBuffer arrayBuffer1 = Napi::ArrayBuffer::New(env, (it)->buffer, (it)->length);  \
+        Napi::Uint8Array buff = Napi::TypedArrayOf<uint8_t>::New(env, arrayBuffer1.ByteLength(), arrayBuffer1, 0, napi_uint8_array);\
+        obj.Set(Napi::String::New(env, name), buff); \
     }
 
-bool AddObj(Isolate* isolate, Local<v8::Array>& infos, int index, VideoFrameInfo& info)
+bool AddObj(Napi::Env& env, Napi::Array& infos, int index, VideoFrameInfo& info)
 {
     if (!info.m_needUpdate)
         return false;
     info.m_needUpdate = false;
     bool result = false;
     do {
-        Local<v8::Object> obj = Object::New(isolate);
-        nim_napi_set_object_value_uint32(isolate, obj, "type", info.m_renderType);
-        nim_napi_set_object_value_uint64(isolate, obj, "uid", info.m_uid);
-        nim_napi_set_object_value_utf8string(isolate, obj, "channelId", info.m_channelId);
+        Napi::Object obj = Napi::Object::New(env);
+        obj.Set(Napi::String::New(env, "type"), Napi::Number::New(env, info.m_renderType));
+        obj.Set(Napi::String::New(env, "uid"), Napi::Number::New(env, info.m_uid));
+        obj.Set(Napi::String::New(env, "channelId"), Napi::String::New(env, info.m_channelId));
         auto it = info.m_bufferList.begin();
+        
         NODE_SET_OBJ_PROP_HEADER(obj, it);
         ++it;
-        NODE_SET_OBJ_PROP_DATA(obj, "ydata", it);
+        NODE_SET_OBJ_PROP_DATA(obj,"ydata",it);
         ++it;
-        NODE_SET_OBJ_PROP_DATA(obj, "udata", it);
+        NODE_SET_OBJ_PROP_DATA(obj,"udata",it);
         ++it;
-        NODE_SET_OBJ_PROP_DATA(obj, "vdata", it);
-        result = infos->Set(isolate->GetCurrentContext(), index, obj).FromJust();
+        NODE_SET_OBJ_PROP_DATA(obj,"vdata",it);
+        infos[index] = obj;
+        result = true;
     } while (false);
     return result;
 }
@@ -284,47 +279,47 @@ void NodeVideoFrameTransporter::FlushVideo()
     while (!m_stopFlag) {
         {
             nim_node::node_async_call::async_call([this]() {
-                Isolate *isolate = env;
-                HandleScope scope(isolate);
                 std::lock_guard<std::mutex> lock(m_lock);
-                Local<v8::Array> infos = v8::Array::New(isolate);
-
+                auto env = m_pFrameDataCallback->function.Env();
+                Napi::Array infos = Napi::Array::New(env);
                 uint32_t i = 0;
+
                 for (auto& it : m_remoteVideoFrames) {
-                    if (AddObj(isolate, infos, i, it.second))
+                    if (AddObj(env, infos, i, it.second))
+                    {
                         ++i;
-                    else {
+                    }else {
                         ++it.second.m_count;
                     }
                 }
-
                 if (m_localVideoFrame.get()) {
-                    if (AddObj(isolate, infos, i, *m_localVideoFrame.get()))
+                    if (AddObj(env, infos, i, *(m_localVideoFrame.get())))
+                    {
                         ++i;
-                    else {
+                    }else {
                         ++m_localVideoFrame->m_count;
                     }
                 }
-
                 for (auto& it : m_substreamVideoFrame) {
-                    if (AddObj(isolate, infos, i, it.second))
+                    if (AddObj(env, infos, i, it.second))
+                    {
                         ++i;
+                    }
                     else {
                         ++it.second.m_count;
                     }
                 } 
-
                 if (m_localSubStreamVideoFrame.get()) {
-                    if (AddObj(isolate, infos, i, *m_localSubStreamVideoFrame.get()))
+                    if (AddObj(env, infos, i, *m_localSubStreamVideoFrame.get()))
+                    {
                         ++i;
-                    else {
+                    }else {
                         ++m_localSubStreamVideoFrame->m_count;
                     }
                 }
-
                 if (i > 0) {
-                    Local<v8::Value> args[1] = { infos };
-                    callback.Get(isolate)->Call(isolate->GetCurrentContext(), js_this.Get(isolate), 1, args);
+                    const std::vector<napi_value> args = {infos};
+                    m_pFrameDataCallback->function.Call(args);
                 }
             });
             std::this_thread::sleep_for(std::chrono::milliseconds(1000 / m_FPS));
@@ -382,7 +377,7 @@ void NodeVideoFrameTransporter::onFrameDataCallback(
     frame.uid = *((nertc::uid_t *)user_data);
     frame.width = width;
     frame.height = height;
-
+    
     NodeRenderType nrt = frame.uid == 0 ? NODE_RENDER_TYPE_LOCAL : NODE_RENDER_TYPE_REMOTE;
     auto *pTransporter = getNodeVideoFrameTransporter();
     if (pTransporter)
