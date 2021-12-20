@@ -19,7 +19,7 @@
         "NAPI_DISABLE_CPP_EXCEPTIONS",
         # 'NAPI_CPP_EXCEPTIONS',
         "NODE_ADDON_API_DISABLE_DEPRECATED",
-        "NAPI_VERSION=6", # <=electron10.x  = 4
+        "NAPI_VERSION=4", # <=electron10.x  = 4 else 6
         # "NAPI_EXPERIMENTAL",
         # "NAPI_VERSION=6",
       ],
