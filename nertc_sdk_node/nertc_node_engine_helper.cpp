@@ -493,7 +493,8 @@ napi_status nertc_video_send_stats_to_obj(const Napi::Env env, const nertc::NERt
         o.Set(static_cast<napi_value>(Napi::String::New(env,"target_bitrate")), config.video_layers_list[i].target_bitrate);
         o.Set(static_cast<napi_value>(Napi::String::New(env,"encoder_bitrate")), config.video_layers_list[i].encoder_bitrate);
         o.Set(static_cast<napi_value>(Napi::String::New(env,"codec_name")), config.video_layers_list[i].codec_name);
-        s[i] = o;
+        // s[i] = o;
+        s.Set(static_cast<napi_value>(Napi::Number::New(env, i)),  o);
     }
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"video_layers_list")), s);
     return napi_ok;
@@ -741,7 +742,9 @@ napi_status nertc_video_recv_stats_to_obj(const Napi::Env env, const nertc::NERt
         o.Set(static_cast<napi_value>(Napi::String::New(env,"total_frozen_time")), config.video_layers_list[index].total_frozen_time);
         o.Set(static_cast<napi_value>(Napi::String::New(env,"frozen_rate")), config.video_layers_list[index].frozen_rate);
         o.Set(static_cast<napi_value>(Napi::String::New(env,"codec_name")), config.video_layers_list[index].codec_name);
-        s[index] = o;
+        // s[index] = o;
+        s.Set(static_cast<napi_value>(Napi::Number::New(env, index)),  o);
+
     }
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"video_layers_list")), s);
     return napi_ok;

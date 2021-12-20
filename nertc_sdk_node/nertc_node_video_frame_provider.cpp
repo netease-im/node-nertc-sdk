@@ -268,7 +268,8 @@ bool AddObj(Napi::Env& env, Napi::Array& infos, int index, VideoFrameInfo& info)
         NODE_SET_OBJ_PROP_DATA(obj,"udata",it);
         ++it;
         NODE_SET_OBJ_PROP_DATA(obj,"vdata",it);
-        infos[index] = obj;
+        // infos[index] = obj;
+        infos.Set(static_cast<napi_value>(Napi::Number::New(env, index)),  obj);
         result = true;
     } while (false);
     return result;

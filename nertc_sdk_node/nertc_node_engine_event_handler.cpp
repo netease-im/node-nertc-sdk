@@ -586,7 +586,8 @@ void NertcNodeEventHandler::onRemoteAudioVolumeIndication(const nertc::NERtcAudi
             {
                 Napi::Object obj = Napi::Object::New(env);
                 nertc_audio_volume_info_to_obj(env, speakers[i], obj);
-                param1[i] = obj;
+                // param1[i] = obj;
+                param1.Set(static_cast<napi_value>(Napi::Number::New(env, i)),  obj);
             }
             auto param2 = Napi::Number::New(env, speaker_number);
             auto param3 = Napi::Number::New(env, total_volume);
@@ -880,7 +881,8 @@ void NertcNodeRtcMediaStatsHandler::onRemoteAudioStats(const nertc::NERtcAudioRe
             {
                 Napi::Object o = Napi::Object::New(env);
                 nertc_audio_recv_stats_to_obj(env, ss[i], o);
-                s[i] = o;
+                // s[i] = o;
+                s.Set(static_cast<napi_value>(Napi::Number::New(env, i)),  o);
             }
             if (ss)
             {
@@ -943,7 +945,8 @@ void NertcNodeRtcMediaStatsHandler::onRemoteVideoStats(const nertc::NERtcVideoRe
             {
                 Napi::Object o = Napi::Object::New(env);
                 nertc_video_recv_stats_to_obj(env, ss[i], o);
-                s[i] = o;
+                // s[i] = o;
+                s.Set(static_cast<napi_value>(Napi::Number::New(env, i)),  o);
             }
             if (ss)
             {
@@ -980,7 +983,8 @@ void NertcNodeRtcMediaStatsHandler::onNetworkQuality(const nertc::NERtcNetworkQu
             {
                 Napi::Object o = Napi::Object::New(env);
                 nertc_network_quality_to_obj(env, ss[i], o);
-                s[i] = o;
+                // s[i] = o;
+                s.Set(static_cast<napi_value>(Napi::Number::New(env, i)),  o);
             }
             if (ss) {
                 delete[] ss;
