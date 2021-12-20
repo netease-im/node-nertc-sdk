@@ -39,9 +39,9 @@
     "clean": "node-pre-build clean",
     "install:ia32": "node-pre-build install -a ia32",
     "install:x64": "node-pre-build install -a x64",
-    "build:win32:x64": "node-pre-build build -r electron -rv 9.4.4 11.4.5 12.0.11 -a x64 -p",
-    "build:win32:ia32": "node-pre-build build -r electron -rv 9.4.4 11.4.5 12.0.11 -a ia32 -p",
-    "build:darwin": "node-pre-build build -r electron -rv 9.4.4 11.4.5 12.0.11 -a x64 -p"
+    "build:win32:x64": "node-pre-build build -r electron -rv 9.4.4 11.4.5 14.2.1 16.0.2 -a x64 -p",
+    "build:win32:ia32": "node-pre-build build -r electron -rv 9.4.4 11.4.5 14.2.1 16.0.2 -a ia32 -p",
+    "build:darwin": "node-pre-build build -r electron -rv 9.4.4 11.4.5 14.2.1 16.0.2 -a x64 -p"
   },
   "node_pre_build": {
     "sdk-dir": "nertc_sdk",
