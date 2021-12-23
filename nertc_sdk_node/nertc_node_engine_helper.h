@@ -34,11 +34,6 @@ napi_status nertc_audio_volume_info_to_obj(const Napi::Env env, const nertc::NER
 
 }
 
-#define CHECK_API_FUNC(info, n)                                                              \
-    if (info.Length() != n) {                                                                 \
-        Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();  \
-    }
-
 //饿汉模式
 #define SINGLETON_DEFINE(TypeName)				\
 static TypeName* GetInstance()					\

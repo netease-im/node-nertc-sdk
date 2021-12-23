@@ -10,7 +10,7 @@ namespace nertc_node
 
 void EventHandler::addEvent(const std::string& eventName, Napi::FunctionReference&& function)
 {
-    auto callback = new EventCallback();
+    std::shared_ptr<EventCallback> callback = std::make_shared<EventCallback>();// auto callback = new EventCallback();
     callback->function = std::move(function);
     _callbacks[eventName] = callback;
 }

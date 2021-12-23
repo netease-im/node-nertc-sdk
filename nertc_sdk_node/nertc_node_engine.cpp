@@ -24,6 +24,10 @@ using namespace nertc_electron_util;
     Napi::Env env = info.Env();\
     bool ret = false;
 
+#define CHECK_API_FUNC(n)                                                              \
+    if (info.Length() != n) {                                                                 \
+        Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();  \
+    }
 
 namespace nertc_node
 {
@@ -217,6 +221,7 @@ NIM_SDK_NODE_API_DEF(initialize)
     INIT_ENV
     do
     {
+        //CHECK_API_FUNC(1);
         Napi::Object obj = info[0].As<Napi::Object>();
         nertc::NERtcEngineContext context = {0};
         context.video_use_exnternal_render = true;
