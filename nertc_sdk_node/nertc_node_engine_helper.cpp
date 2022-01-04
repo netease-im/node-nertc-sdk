@@ -395,8 +395,8 @@ napi_status nertc_ls_task_info_obj_to_struct(const Napi::Env& env, const Napi::O
 
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"stream_url")))){
         out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"stream_url"))).As<Napi::String>().Utf8Value();
-        memset(info.stream_url, 0, kNERtcMaxTaskIDLength);
-        strncpy(info.stream_url, out.c_str(), kNERtcMaxTaskIDLength);
+        memset(info.stream_url, 0, kNERtcMaxURILength);
+        strncpy(info.stream_url, out.c_str(), kNERtcMaxURILength);
     }
 
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"server_record_enabled")))){
