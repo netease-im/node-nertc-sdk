@@ -424,7 +424,95 @@ public:
 //     std::unordered_map<std::string, EventCallback*> _callbacks;
 
 private:
+    void Node_onError(int error_code, std::string msg);
+
+    void Node_onWarning(int warn_code, std::string msg);
+
+    void Node_onReleasedHwResources(nertc::NERtcErrorCode result);
+
+    void Node_onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed);
+
+    void Node_onConnectionStateChange(nertc::NERtcConnectionStateType state, nertc::NERtcReasonConnectionChangedType reason);
+
+    void Node_onReconnectingStart(nertc::channel_id_t cid, nertc::uid_t uid);
+
+    void Node_onRejoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed);
+
+    void Node_onLeaveChannel(nertc::NERtcErrorCode result);
+
+    void Node_onDisconnect(nertc::NERtcErrorCode reason);
+
+    void Node_onClientRoleChanged(nertc::NERtcClientRole oldRole, nertc::NERtcClientRole newRole);
+
+    void Node_onUserJoined(nertc::uid_t uid, std::string user_name);
+    
+    void Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason);
+    
+    void Node_onUserAudioStart(nertc::uid_t uid);
+
+    void Node_onUserAudioStop(nertc::uid_t uid);
+
+    void Node_onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile);
+
+    void Node_onUserVideoStop(nertc::uid_t uid);
+
+    void Node_onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile);
+
+    void Node_onUserSubStreamVideoStop(nertc::uid_t uid);
+
+    void Node_onUserVideoProfileUpdate(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile);
+
+    void Node_onUserAudioMute(nertc::uid_t uid, bool mute);
+
+    void Node_onUserVideoMute(nertc::uid_t uid, bool mute);
+
+    void Node_onAudioDeviceStateChanged(std::string device_id, nertc::NERtcAudioDeviceType device_type, nertc::NERtcAudioDeviceState device_state);
+
+    void Node_onAudioDefaultDeviceChanged(std::string device_id, nertc::NERtcAudioDeviceType device_type);
+
+    void Node_onVideoDeviceStateChanged(std::string device_id, nertc::NERtcVideoDeviceType device_type, nertc::NERtcVideoDeviceState device_state);
+
+    void Node_onFirstAudioDataReceived(nertc::uid_t uid);
+ 
+    void Node_onFirstVideoDataReceived(nertc::uid_t uid);
+
+    void Node_onFirstAudioFrameDecoded(nertc::uid_t uid);
+
+    void Node_onFirstVideoFrameDecoded(nertc::uid_t uid, uint32_t width, uint32_t height);
+
+    void Node_onAudioMixingStateChanged(nertc::NERtcAudioMixingState state, nertc::NERtcAudioMixingErrorCode error_code);
+
+    void Node_onAudioMixingTimestampUpdate(uint64_t timestamp_ms);
+
+    void Node_onAudioEffectFinished(uint32_t effect_id);
+
+    void Node_onLocalAudioVolumeIndication(int volume);
+
+    void Node_onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume);
+
+    void Node_onAddLiveStreamTask(std::string task_id, std::string url, int error_code);
+
+    void Node_onUpdateLiveStreamTask(std::string task_id, std::string url, int error_code);
+
+    void Node_onRemoveLiveStreamTask(std::string task_id, int error_code);
+
+    void Node_onLiveStreamState(std::string task_id, std::string url, nertc::NERtcLiveStreamStateCode state);
+
+    void Node_onAudioHowling(bool howling);
+
     void Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize);
+
+    void Node_onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status);
+
+    void Node_onAudioRecording(nertc::NERtcAudioRecordingCode code, std::string file_path);
+
+    void Node_onMediaRelayStateChanged(nertc::NERtcChannelMediaRelayState state, std::string channel_name);
+
+    void Node_onMediaRelayEvent(nertc::NERtcChannelMediaRelayEvent event, std::string channel_name, nertc::NERtcErrorCode error);
+
+    void Node_onLocalPublishFallbackToAudioOnly(bool is_fallback, nertc::NERtcVideoStreamType stream_type);
+
+    void Node_onRemoteSubscribeFallbackToAudioOnly(nertc::uid_t uid, bool is_fallback, nertc::NERtcVideoStreamType stream_type);
     
 };
 
@@ -487,6 +575,21 @@ public:
      @param user_count infos 数组的大小，即用户数。
      */
     virtual void onNetworkQuality(const nertc::NERtcNetworkQualityInfo *infos, unsigned int user_count);
+
+
+private:
+    void Node_onRtcStats(const nertc::NERtcStats & stats);
+
+    void Node_onLocalAudioStats(const nertc::NERtcAudioSendStats & stats);
+
+    void Node_onRemoteAudioStats(const nertc::NERtcAudioRecvStats *stats, unsigned int user_count);
+
+    void Node_onLocalVideoStats(const nertc::NERtcVideoSendStats & ss);
+
+    void Node_onRemoteVideoStats(const nertc::NERtcVideoRecvStats *ss, unsigned int user_count);
+
+    void Node_onNetworkQuality(const nertc::NERtcNetworkQualityInfo *ss, unsigned int user_count);
+
 }; 
 
 
