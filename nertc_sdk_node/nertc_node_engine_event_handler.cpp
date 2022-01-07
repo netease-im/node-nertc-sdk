@@ -770,8 +770,7 @@ void NertcNodeEventHandler::Node_onRemoteAudioVolumeIndication(const nertc::NERt
         auto param3 = Napi::Number::New(env, total_volume);
         const std::vector<napi_value> args = {param1, param2, param3};
         function_reference->function.Call(args);
-        delete[] speakers;
-        speakers = nullptr;
+        free((void*)speakers);
     }
 }
 
