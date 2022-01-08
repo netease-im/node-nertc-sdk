@@ -1148,28 +1148,42 @@ void NertcNodeRtcMediaStatsHandler::onLocalVideoStats(const nertc::NERtcVideoSen
         ss.video_layers_list[i] = stats.video_layers_list[i];
     }
 
-    nim_node::node_async_call::async_call([=]() {
-        Node_onLocalVideoStats(ss);
+    nim_node::node_async_call::async_call([&]() {
+        auto it = _callbacks.find("onLocalVideoStats");
+        if (it != _callbacks.end())
+        {
+            auto function_reference = it->second;
+            auto env = function_reference->function.Env();
+            Napi::Object s = Napi::Object::New(env);
+            nertc_video_send_stats_to_obj(env, ss, s);
+            const std::vector<napi_value> args = {s};
+            function_reference->function.Call(args);
+            if (ss.video_layers_list)
+            {
+                delete[] ss.video_layers_list;
+                ss.video_layers_list = nullptr;
+            }
+        }
     });
 }
 
-void NertcNodeRtcMediaStatsHandler::Node_onLocalVideoStats(const nertc::NERtcVideoSendStats & ss)
+void NertcNodeRtcMediaStatsHandler::Node_onLocalVideoStats(nertc::NERtcVideoSendStats & ss)
 {
-    auto it = _callbacks.find("onLocalVideoStats");
-    if (it != _callbacks.end())
-    {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
-        Napi::Object s = Napi::Object::New(env);
-        nertc_video_send_stats_to_obj(env, ss, s);
-        const std::vector<napi_value> args = {s};
-        function_reference->function.Call(args);
-        if (ss.video_layers_list)
-        {
-            delete[] ss.video_layers_list;
-            ss.video_layers_list = nullptr;
-        }
-    }
+    // auto it = _callbacks.find("onLocalVideoStats");
+    // if (it != _callbacks.end())
+    // {
+    //     auto function_reference = it->second;
+    //     auto env = function_reference->function.Env();
+    //     Napi::Object s = Napi::Object::New(env);
+    //     nertc_video_send_stats_to_obj(env, ss, s);
+    //     const std::vector<napi_value> args = {s};
+    //     function_reference->function.Call(args);
+    //     if (ss.video_layers_list)
+    //     {
+    //         delete[] ss.video_layers_list;
+    //         ss.video_layers_list = nullptr;
+    //     }
+    // }
 }
 
 void NertcNodeRtcMediaStatsHandler::onRemoteVideoStats(const nertc::NERtcVideoRecvStats *stats, unsigned int user_count)
@@ -1189,7 +1203,7 @@ void NertcNodeRtcMediaStatsHandler::onRemoteVideoStats(const nertc::NERtcVideoRe
     });
 }
 
-void NertcNodeRtcMediaStatsHandler::Node_onRemoteVideoStats(const nertc::NERtcVideoRecvStats *ss, unsigned int user_count)
+void NertcNodeRtcMediaStatsHandler::Node_onRemoteVideoStats(nertc::NERtcVideoRecvStats *ss, unsigned int user_count)
 {
     auto it = _callbacks.find("onRemoteVideoStats");
     if (it != _callbacks.end())

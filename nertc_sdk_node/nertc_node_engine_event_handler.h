@@ -584,9 +584,9 @@ private:
 
     void Node_onRemoteAudioStats(const nertc::NERtcAudioRecvStats *stats, unsigned int user_count);
 
-    void Node_onLocalVideoStats(const nertc::NERtcVideoSendStats & ss);
+    void Node_onLocalVideoStats(nertc::NERtcVideoSendStats & ss);
 
-    void Node_onRemoteVideoStats(const nertc::NERtcVideoRecvStats *ss, unsigned int user_count);
+    void Node_onRemoteVideoStats(nertc::NERtcVideoRecvStats *ss, unsigned int user_count);
 
     void Node_onNetworkQuality(const nertc::NERtcNetworkQualityInfo *ss, unsigned int user_count);
 
