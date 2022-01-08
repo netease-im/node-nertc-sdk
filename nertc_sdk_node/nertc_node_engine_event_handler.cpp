@@ -771,6 +771,7 @@ void NertcNodeEventHandler::Node_onRemoteAudioVolumeIndication(const nertc::NERt
         const std::vector<napi_value> args = {param1, param2, param3};
         function_reference->function.Call(args);
         free((void*)speakers);
+        speakers = nullptr;
     }
 }
 
@@ -1047,15 +1048,15 @@ void NertcNodeEventHandler::Node_onRemoteSubscribeFallbackToAudioOnly(nertc::uid
 
 void NertcNodeEventHandler::onPullExternalAudioFrame(Napi::FunctionReference&& function, const std::shared_ptr<unsigned char>& data, uint32_t length)
 {
-    auto callback = new EventCallback();
-    callback->function = std::move(function);
+    // auto callback = new EventCallback();
+    // callback->function = std::move(function);
 
-    nim_node::node_async_call::async_call([=]() {
-        auto env = callback->function.Env();
-        Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, data.get(), length);
-        const std::vector<napi_value> args = {arrayBuffer};
-        callback->function.Call(args);
-    });
+    // nim_node::node_async_call::async_call([=]() {
+    //     auto env = callback->function.Env();
+    //     Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, data.get(), length);
+    //     const std::vector<napi_value> args = {arrayBuffer};
+    //     callback->function.Call(args);
+    // });
 }
 
 
@@ -1166,6 +1167,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onLocalVideoStats(const nertc::NERtcVid
         if (ss.video_layers_list)
         {
             delete[] ss.video_layers_list;
+            ss.video_layers_list = nullptr;
         }
     }
 }
@@ -1212,6 +1214,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onRemoteVideoStats(const nertc::NERtcVi
                 if (ss[i].video_layers_list)
                 {
                     delete[] ss[i].video_layers_list;
+                    ss[i].video_layers_list = nullptr;
                 }
             }
             delete[] ss;
