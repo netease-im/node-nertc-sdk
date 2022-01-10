@@ -279,7 +279,7 @@ void NodeVideoFrameTransporter::FlushVideo()
 {
     while (!m_stopFlag) {
         {
-            if (count_task < 2) {
+            if (count_task < 5) {
                 count_task++;
                 nim_node::node_async_call::async_call([this]() {
                     std::lock_guard<std::mutex> lock(m_lock);
