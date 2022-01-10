@@ -770,9 +770,9 @@ void NertcNodeEventHandler::Node_onRemoteAudioVolumeIndication(const nertc::NERt
         auto param3 = Napi::Number::New(env, total_volume);
         const std::vector<napi_value> args = {param1, param2, param3};
         function_reference->function.Call(args);
-        free((void*)speakers);
-        speakers = nullptr;
     }
+    free((void*)speakers);
+    speakers = nullptr;
 }
 
 void NertcNodeEventHandler::onAddLiveStreamTask(const char* task_id, const char* url, int error_code)
@@ -902,18 +902,18 @@ void NertcNodeEventHandler::onRecvSEIMsg(nertc::uid_t uid, const char* data, uin
 void NertcNodeEventHandler::Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t length)
 {
     auto it = _callbacks.find("onRecvSEIMsg");
-        if (it != _callbacks.end())
-        {
-            auto function_reference = it->second;
-            auto env = function_reference->function.Env();
-            auto param1 = Napi::Number::New(env, uid);
-            Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, length);
-            memcpy(arrayBuffer.Data(), data, length);
-            const std::vector<napi_value> args = {param1, arrayBuffer};
-            function_reference->function.Call(args);
-            delete [] data;
-            data = nullptr;
-        }
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::Number::New(env, uid);
+        Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, length);
+        memcpy(arrayBuffer.Data(), data, length);
+        const std::vector<napi_value> args = {param1, arrayBuffer};
+        function_reference->function.Call(args);
+    }
+    delete [] data;
+    data = nullptr;
 }
 
 void NertcNodeEventHandler::onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status)
@@ -1105,6 +1105,8 @@ void NertcNodeRtcMediaStatsHandler::Node_onLocalAudioStats(const nertc::NERtcAud
 
 void NertcNodeRtcMediaStatsHandler::onRemoteAudioStats(const nertc::NERtcAudioRecvStats *stats, unsigned int user_count)
 {
+    if (user_count <= 0)
+        return;
     nertc::NERtcAudioRecvStats *ss = new nertc::NERtcAudioRecvStats[user_count];
     for (auto i = 0; i < user_count; i++) {
         ss[i] = stats[i];
@@ -1116,6 +1118,8 @@ void NertcNodeRtcMediaStatsHandler::onRemoteAudioStats(const nertc::NERtcAudioRe
 
 void NertcNodeRtcMediaStatsHandler::Node_onRemoteAudioStats(const nertc::NERtcAudioRecvStats *stats, unsigned int user_count)
 {
+    if (user_count <= 0)
+        return;
     auto it = _callbacks.find("onRemoteAudioStats");
     if (it != _callbacks.end())
     {
@@ -1132,11 +1136,11 @@ void NertcNodeRtcMediaStatsHandler::Node_onRemoteAudioStats(const nertc::NERtcAu
         Napi::Number param1 = Napi::Number::New(env, (int)user_count);
         const std::vector<napi_value> args = {param1, s};
         function_reference->function.Call(args);
-        if (stats)
-        {
-            delete[] stats;
-            // stats = nullptr;
-        }
+    }
+    if (stats)
+    {
+        delete[] stats;
+        stats = nullptr;
     }
 }
 
@@ -1165,10 +1169,10 @@ void NertcNodeRtcMediaStatsHandler::Node_onLocalVideoStats(const nertc::NERtcVid
         nertc_video_send_stats_to_obj(env, ss, s);
         const std::vector<napi_value> args = {s};
         function_reference->function.Call(args);
-        if (ss.video_layers_list)
-        {
-            delete[] ss.video_layers_list;
-        }
+    }
+    if (ss.video_layers_list)
+    {
+        delete[] ss.video_layers_list;
     }
 }
 
@@ -1207,19 +1211,19 @@ void NertcNodeRtcMediaStatsHandler::Node_onRemoteVideoStats(const nertc::NERtcVi
         auto param1 = Napi::Number::New(env, (int)user_count);
         const std::vector<napi_value> args = {param1, s};
         function_reference->function.Call(args);
-        if (ss)
+    }
+    if (ss)
+    {
+        for (int i = 0; i < user_count; i++)
         {
-            for (int i = 0; i < user_count; i++)
+            if (ss[i].video_layers_list)
             {
-                if (ss[i].video_layers_list)
-                {
-                    delete[] ss[i].video_layers_list;
-                    // ss[i].video_layers_list = nullptr;
-                }
+                delete[] ss[i].video_layers_list;
+                // ss[i].video_layers_list = nullptr;
             }
-            delete[] ss;
-            // ss = nullptr;
         }
+        delete[] ss;
+        // ss = nullptr;
     }
 }
 
@@ -1254,10 +1258,10 @@ void NertcNodeRtcMediaStatsHandler::Node_onNetworkQuality(const nertc::NERtcNetw
         auto param1 = Napi::Number::New(env, user_count);
         const std::vector<napi_value> args = {param1, s};
         function_reference->function.Call(args);
-        if (ss) {
-            delete[] ss;
-            // ss = nullptr;
-        }
+    }
+    if (ss) {
+        delete[] ss;
+        ss = nullptr;
     }
 }
 
