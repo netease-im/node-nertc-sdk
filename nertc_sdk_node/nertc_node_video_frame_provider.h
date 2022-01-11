@@ -184,7 +184,7 @@ namespace nertc_node
         std::unique_ptr<std::thread> m_thread;
         uint32_t m_FPS;
         uint32_t m_localVideoMirrorMode = 0; //0-auto 1-mirror 2-unmirror
-        std::atomic<int> count_task = 0;
+        // std::atomic<int> count_task = 0;
 
     };
 
