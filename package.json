@@ -15,7 +15,8 @@
     "node-addon-api": "^4.2.0",
     "yuv-buffer": "^1.0.0",
     "yuv-canvas": "^1.2.6",
-    "lodash.isequal": "^4.5.0"
+    "lodash.isequal": "^4.5.0",
+    "node-gyp": "^8.2.0"
   },
   "devDependencies": {
     "@types/node": "^12.12.22",
@@ -28,8 +29,7 @@
     "fs-extra": "^8.1.0",
     "just-task": "^1.4.1",
     "shelljs": "^0.8.4",
-    "tar": "^6.1.11",
-    "node-gyp": "^8.2.0"
+    "tar": "^6.1.11"
   },
   "scripts": {
     "build:dts": "rimraf ./types && tsc -p config_dts.json",
