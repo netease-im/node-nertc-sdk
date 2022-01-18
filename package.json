@@ -4,7 +4,6 @@
   "description": "nertc-electron-sdk",
   "main": "js/nertc_sdk.js",
   "types": "types/nertc_sdk.d.ts",
-  "private": true,
   "gypfile": true,
   "engines": {
     "node": "~10 >=10.20 || >=12.17"
