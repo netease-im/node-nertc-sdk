@@ -35,19 +35,19 @@ class NERtcEngine extends events_1.EventEmitter {
      * - 必须使用同一个 App Key 才能进行通话。
      * - 一个 NERtcEngine 实例对象只能使用一个 App Key。如需更换 App Key，必须先调用 {@link NERtcEngine#release} 方法释放当前实例资源再调用本方法初始化实例。
      * </pre>
-     * @param {Object} context 传入的RTC engine context对象: NERtcEngineContext.
-     * @param {String} context.app_key 用户注册云信的APP Key。如果你的开发包里面缺少 APP Key，请申请注册一个新的 APP Key。
-     * @param {String} context.log_dir_path 日志目录的完整路径，采用UTF-8 编码。
+     * @param {Object} context 传入的 RTC engine context 对象: NERtcEngineContext。
+     * @param {String} context.app_key 用户注册云信的 APP Key。如果你的开发包里面缺少 APP Key，请申请注册一个新的 APP Key。
+     * @param {String} context.log_dir_path 日志目录的完整路径，采用 UTF-8 编码。
      * @param {number} [context.log_level=3] 日志级别，默认级别为 kNERtcLogLevelInfo。
      * <pre>
-     * - 0 Fatal级别日志信息
-     * - 1 Error级别日志信息
-     * - 2 Warning级别日志信息
-     * - 3 Info级别日志信息。默认级别
-     * - 4 DetailInfo级别日志信息
-     * - 5 Verbos级别日志信息
-     * - 6 Debug级别日志信息。如果你想获取最完整的日志，可以将日志级别设为该等级
-     * - 7 不输出日志信息
+     * - 0 Fatal 级别日志信息。
+     * - 1 Error 级别日志信息。
+     * - 2 Warning 级别日志信息。
+     * - 3 Info 级别日志信息。默认级别。
+     * - 4 DetailInfo 级别日志信息。
+     * - 5 Verbos 级别日志信息。
+     * - 6 Debug 级别日志信息。如果你想获取最完整的日志，可以将日志级别设为该等级。
+     * - 7 不输出日志信息。
      * </pre>
      * @param {number} [context.log_file_max_size_KBytes=20480] 指定 SDK 输出日志文件的大小上限，单位为 KB。如果设置为 0，则默认为 20 M。
      * @param {Object} context.server_config 私有化服务器地址，默认需要置空, 如需启用私有化功能，请联系技术支持获取详情。
@@ -245,14 +245,14 @@ class NERtcEngine extends events_1.EventEmitter {
         }
     }
     /**
-     * 在指定画布上截图
-     * @param {'local'|number} uid 要截图的 uid，本地视频为 local，远端用户为远端 uid
-     * @param {NERtcVideoStreamType} streamType 流类型：
+     * 在指定用户的画布上截图。
+     * @param {'local'|number} uid 指定用户的 uid，其中在本地用户画布上截图时，此参数为 local。
+     * @param {NERtcVideoStreamType} streamType 视频流类型。
      * <pre>
-     * 0 - 视频流主流
-     * 1 - 视频流副流
+     * - 0：视频流主流。
+     * - 1：视频流辅流。
      * </pre>
-     * @returns string 返回 base64 截图数据
+     * @returns string 返回 base64 截图数据。
      */
     captureImageByUid(uid, streamType = defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
         return this.captureRender(uid, streamType);
@@ -639,9 +639,9 @@ class NERtcEngine extends events_1.EventEmitter {
      * 开启视频预览。
      * <pre>
      * 该方法用于在进入频道前启动本地视频预览。调用该 API 前，必须:
-     * - 调用 {@link NERtcEngine#setupLocalVideoCanvas} 设置预览窗口。
-     * - 调用 {@link NERtcEngine#setVideoDevice} 前必须先设置设备id。
-     * 启用了本地视频预览后，在进入频道前，本地预览必须先关闭，需要调用 {@link NERtcEngine#stopVideoPreview} 。
+     * - 调用 {@link NERtcEngine#setupLocalVideoCanvas} 设置预览窗口；
+     * - 调用 {@link NERtcEngine#setVideoDevice} 前必须先设置设备id；
+     * <b>NOTE:</b> 启用了本地视频预览后，在进入频道前，本地预览必须先关闭，需要调用 {@link NERtcEngine#stopVideoPreview}。
      * </pre>
      * @returns {number}
      * <pre>
@@ -1433,7 +1433,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * 发送媒体补充增强信息（SEI）。
      * @since 4.1.110
      * <pre>
-     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onReceSEIMsg 的回调获取 SEI 内容。
+     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onRecvSEIMsg 的回调获取 SEI 内容。
      * - 调用时机：视频流（主流）开启后，可调用此函数。
      * - 数据长度限制： SEI 最大数据长度为 4096 字节，超限会发送失败。如果频繁发送大量数据会导致视频码率增大，可能会导致视频画质下降甚至卡顿。
      * - 发送频率限制：最高为视频发送的帧率，建议不超过 10 次/秒。
@@ -1456,7 +1456,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * 发送媒体补充增强信息（SEI）。
      * @since 4.1.110
      * <pre>
-     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onReceSEIMsg 的回调获取 SEI 内容。
+     * 在本端推流传输视频流数据同时，发送流媒体补充增强信息来同步一些其他附加信息。当推流方发送 SEI 后，拉流方可通过监听 onRecvSEIMsg 的回调获取 SEI 内容。
      * - 调用时机：视频流（主流）开启后，可调用此函数。
      * - 数据长度限制： SEI 最大数据长度为 4096 字节，超限会发送失败。如果频繁发送大量数据会导致视频码率增大，可能会导致视频画质下降甚至卡顿。
      * - 发送频率限制：最高为视频发送的帧率，建议不超过 10 次/秒。
@@ -2217,7 +2217,7 @@ class NERtcEngine extends events_1.EventEmitter {
         return this.nertcEngine.setLocalVoiceEqualization(bandFrequency, bandGain);
     }
     /**
-     * 开启声卡采集
+     * 开启或关闭声卡采集。
      * @since 4.1.110
      * <pre>
      * - 启用声卡采集功能后，声卡播放的声音会被合到本地音频流中，从而可以发送到远端。
@@ -2226,15 +2226,18 @@ class NERtcEngine extends events_1.EventEmitter {
      * - macOS 系统默认声卡不支持采集功能，如需开启此功能需要 App 自己启用一个虚拟声卡，并将该虚拟声卡的名字作为 deviceName 传入 SDK。
      * - 该方法在加入频道前后都能调用。
      * </pre>
-     * @param  {boolean} enable
+     * @param  {boolean} enable 是否开启声卡采集功能。
      * <pre>
-     * - true: 开启声卡采集
-     * - false: 关闭声卡采集（默认）
+     * - true: 开启声卡采集。
+     * - false: 关闭声卡采集（默认）。
      * </pre>
-     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “NeCastAudio”，可以将虚拟声卡名称 “NeCastAudio” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集。
+     * @param  {String} deviceName 声卡的设备名。默认设为 NULL，即使用当前声卡采集。
+     * <pre>
+     * - 如果用户使用虚拟声卡，如 “Soundflower”，可以将虚拟声卡名称 “Soundflower” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集。
+     * <pre>
      * @returns {number}
      * <pre>
-     * - 0: 方法调用成功
+     * - 0: 方法调用成功。
      * - 其他: 方法调用失败。
      * </pre>
      */
@@ -2295,7 +2298,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * </pre>
      * @returns {number}
      * <pre>
-     * - 0: 方法调用成功
+     * - 0: 方法调用成功。
      * - 其他: 方法调用失败。
      * </pre>
      */
@@ -2307,7 +2310,7 @@ class NERtcEngine extends events_1.EventEmitter {
     * @since 4.4.8
     * <pre>
     * - 房间场景为直播场景时，房间中角色为观众的成员可以调用该方法从当前房间快速切换至另一个房间。
-    * - 成功调用该方切换房间后，本端会先收到离开房间的回调 onLeaveChannel，再收到成功加入新房间的回调 onJoinChannel。远端用户会收到 onUserLeave 和 onUserJoined 的回调。
+    * - 成功调用该方切换房间后，本端用户会先收到离开房间的回调 onLeaveChannel，再收到成功加入新房间的回调 onJoinChannel。远端用户会收到 onUserLeave 和 onUserJoined 回调。
     * <b>NOTE:</b>
     * - 快速切换房间功能默认关闭。如需使用，请联系技术支持免费开通。
     * - 该方法仅适用于直播场景中，角色为观众的音视频房间成员。即已通过接口 setchannelprofile 设置房间场景为直播，通过 setClientRole 设置房间成员的角色为观众。
@@ -2316,13 +2319,13 @@ class NERtcEngine extends events_1.EventEmitter {
     * @param {number}  token 安全认证签名（NERTC Token）。
     * <pre>
     * - null。非安全模式下可设置为 null。安全性不高，建议在产品正式上线前联系对应商务经理转为安全模式。
-    * - 已获取的NERTC Token。安全模式下必须设置为获取到的 Token 。若未传入正确的 Token 将无法进入房间。推荐使用安全模式。
+    * - 已获取的 NERTC Token。安全模式下必须设置为获取到的 Token 。若未传入正确的 Token，用户将无法进入房间。推荐使用安全模式。
     * </pre>
     * @param {string} channel_name 期望切换到的目标房间名称。
     * @return {number}
     * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
+    * - 0: 方法调用成功。
+    * - 其他：方法调用失败。
     * </pre>
     */
     switchChannel(token, channelName) {
@@ -2332,26 +2335,26 @@ class NERtcEngine extends events_1.EventEmitter {
     * 设置本地用户的媒体流优先级。
     * @since 4.4.8
     * <pre>
-    * - 如果某个用户的优先级为高，那么该用户媒体流的优先级就会高于其他用户，弱网环境下 SDK 会优先保证其他用户收到的、高优先级用户的媒体流的质量。
+    * - 如果本地用户的优先级为高，则该用户媒体流的优先级就会高于其他用户，那么弱网环境下 SDK 会优先保证其他用户收到的本地用户媒体流的质量。
     * <b>NOTE:</b>
     * - 请在加入房间（joinChannel）前调用此方法。
     * - 快速切换房间 （switchChannel） 后，媒体优先级会恢复为默认值，即普通优先级。
-    * - 一个音视频房间中只有一个高优先级的用户。建议房间中只有一位用户调用 setLocalMediaPriority 将本端媒体流设为高优先级，否则需要开启抢占模式，保证本地用户的高优先级设置生效。
+    * - 一个音视频房间中只有一个高优先级的用户。建议房间中只有一位用户调用 setLocalMediaPriority 将本端媒体流设为高优先级，否则需要开启抢占模式，才能保证本地用户的高优先级设置生效。
     * </pre>
-    * @param {number} priority 本地用户的媒体流优先级 NERtcMediaPriorityType
+    * @param {number} priority 本地用户的媒体流优先级。
     * <pre>
     * - 50 高优先级。
     * - 100 普通，默认优先级。
     * </pre>
     * @param {boolean} preemptive 是否开启抢占模式。默认为 false，即不开启。
     * <pre>
-    * - 抢占模式开启后，本地用户可以抢占其他用户的高优先级，被抢占的用户的媒体优先级变为普通优先级，在抢占者退出房间后，其他用户的优先级仍旧维持普通优先级。
-    * - 抢占模式关闭时，如果房间中已有高优先级用户，则本地用户的高优先级设置不生效，仍旧为普通优先级。
+    * - 抢占模式开启后，本地用户可以抢占其他用户的高优先级，被抢占的用户的媒体流优先级变为普通优先级。在抢占者退出房间后，其他用户的优先级仍旧维持普通优先级。
+    * - 抢占模式关闭后，如果房间中已有高优先级用户，则本地用户的高优先级设置不生效，仍旧为普通优先级。
     * </pre
     * @return {number}
     * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
+    * - 0: 方法调用成功。
+    * - 其他：方法调用失败。
     * </pre>
     */
     setLocalMediaPriority(priority, preemptive) {
@@ -2359,15 +2362,15 @@ class NERtcEngine extends events_1.EventEmitter {
     }
     /**
     * 设置屏幕捕捉时需屏蔽的窗口列表, 该方法在捕捉过程中可动态调用。
+    * @since 4.4.8
     * <pre>
     *  - 仅支持Windows
     * </pre>
-    * @since 4.4.8
     * @param {list} window_list 需屏蔽的窗口ID列表, 例如：[id1,id2...]。
     * @return {number}
     * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
+    * - 0: 方法调用成功。
+    * - 其他：方法调用失败。
     * </pre>
     */
     setExcludeWindowList(param) {
@@ -2395,8 +2398,8 @@ class NERtcEngine extends events_1.EventEmitter {
     * @param {number} quality 录音音质，只在 AAC 格式下有效。详细说明请参考 NERtcAudioRecordingQuality。
     * @return {number}
     * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
+    * - 0: 方法调用成功。
+    * - 其他：方法调用失败。
     * </pre>
     */
     startAudioRecording(filePath, sampleRate, quality) {
@@ -2412,8 +2415,8 @@ class NERtcEngine extends events_1.EventEmitter {
     * </pre>
     * @return {number}
     * <pre>
-    * - 0: 方法调用成功
-    * - 其他：方法调用失败
+    * - 0: 方法调用成功。
+    * - 其他：方法调用失败。
     * </pre>
     */
     stopAudioRecording() {
@@ -2423,12 +2426,11 @@ class NERtcEngine extends events_1.EventEmitter {
     * 开始跨房间媒体流转发。
     * <pre>
     * - 该方法可用于实现跨房间连麦等场景。支持同时转发到 4 个房间，同一个房间可以有多个转发进来的媒体流。
-    * - 成功调用该方法后，SDK 会触发 `onMediaRelayStateChange` 和 `onMediaRelayEvent` 回调，并在回调中报告当前的跨房间媒体流转发状态和事件。
+    * - 成功调用该方法后，SDK 会触发 onMediaRelayStateChanged 和 onMediaRelayEvent 回调，并在回调中报告当前的跨房间媒体流转发状态和事件。
     * <b>NOTE:</b>
-    * - 请在成功加入房间后调用该方法。调用此方法前需要通过 `NERtcChannelMediaRelayConfiguration` 中的 `dest_infos` 设置目标房间。
-    * - 该方法仅对直播场景下的主播角色有效。
-    * - 成功调用该方法后，若您想再次调用该方法，必须先调用 `stopChannelMediaRelay` 方法退出当前的转发状态。
-    * - 成功开始跨房间转发媒体流后，如果您需要修改目标房间，例如添加或删减目标房间等，可以调用方法 `updateChannelMediaRelay` 更新目标房间信息。
+    * - 此方法仅适用于用户角色为主播时。
+    * - 成功调用该方法后，若您想再次调用该方法，必须先调用 stopChannelMediaRelay 方法退出当前的转发状态。
+    * - 成功开始跨房间转发媒体流后，如果您需要修改目标房间，例如添加或删减目标房间等，可以调用方法 updateChannelMediaRelay 更新目标房间信息。
     * </pre>
     * @param {Object} config 跨房间媒体流转发参数配置信息: NERtcChannelMediaRelayConfiguration
     * @param {Object} config.src_infos 源房间信息: NERtcChannelMediaRelayInfo
@@ -2441,7 +2443,7 @@ class NERtcEngine extends events_1.EventEmitter {
     * @param {String} config.dest_infos.uid 标识目标房间中的转发媒体流的 UID。请确保不要将该参数设为目标房间的主播的 UID，并与目标房间中的 所有 UID 都不同。
     * @returns {number}
     * <pre>
-    * - 0: 方法调用成功；
+    * - 0: 方法调用成功。
     * - 其他: 方法调用失败。
     * </pre>
     */
@@ -2451,12 +2453,11 @@ class NERtcEngine extends events_1.EventEmitter {
     /**
     * 更新媒体流转发的目标房间。
     * <pre>
-    * - 成功开始跨房间转发媒体流后，如果你希望将流转发到多个目标房间，或退出当前的转发房间，可以调用该方法。
     * - 成功开始跨房间转发媒体流后，如果您需要修改目标房间，例如添加或删减目标房间等，可以调用此方法。
-    * - 成功调用该方法后，SDK 会触发 `onMediaRelayStateChange` 和 `onMediaRelayEvent` 回调，并在回调中报告当前的跨房间媒体流转发状态和事件。
+    * - 成功调用该方法后，SDK 会触发 onMediaRelayStateChanged 和 onMediaRelayEvent 回调，并在回调中报告当前的跨房间媒体流转发状态和事件。
     * <b>NOTE:</b>
-    * - 请在加入房间并成功调用 `startChannelMediaRelay` 开始跨房间媒体流转发后，调用此方法。调用此方法前需要通过 `NERtcChannelMediaRelayConfiguration` 中的 `dest_infos` 设置目标房间。
-    * </pre>
+    * - 请在加入房间并成功调用 startChannelMediaRelay 开始跨房间媒体流转发后，调用此方法。
+    * <pre>
     * @param {Object} config 跨房间媒体流转发参数配置信息: NERtcChannelMediaRelayConfiguration
     * @param {Object} config.src_infos 源房间信息: NERtcChannelMediaRelayInfo
     * @param {String} config.src_infos.channel_name 源房间名。默认值为 nil，表示 SDK 填充当前的房间名。
@@ -2468,8 +2469,8 @@ class NERtcEngine extends events_1.EventEmitter {
     * @param {String} config.dest_infos.uid 标识目标房间中的转发媒体流的 UID。请确保不要将该参数设为目标房间的主播的 UID，并与目标房间中的 所有 UID 都不同。
     * @returns {number}
     * <pre>
-    * - 0: 方法调用成功；
-    * - 其他: 方法调用失败。
+    * - 0: 方法调用成功。
+    * - 其他：方法调用失败。
     * </pre>
     */
     updateChannelMediaRelay(config) {
@@ -2478,14 +2479,13 @@ class NERtcEngine extends events_1.EventEmitter {
     /** 
     * 停止跨房间媒体流转发。
     * <pre>
-    * -主播离开房间时，跨房间媒体流转发自动停止，您也可以在需要的时候随时调用 `stopChannelMediaRelay` 方法，此时主播会退出所有目标房间。
-    * - 成功调用该方法后，SDK 会触发 `onMediaRelayStateChange` 回调。如果报告 `NERtcChannelMediaRelayStateIdle`，则表示已停止转发媒体流。
-    * - 如果该方法调用不成功，SDK 会触发 `onMediaRelayStateChange` 回调，并报告状态码 `NERtcChannelMediaRelayStateFailure`。
-    * </pre>
-    * @returns {number}
+    * 主播离开房间时，跨房间媒体流转发自动停止，您也可以在需要的时候随时调用 stopChannelMediaRelay 方法，此时主播会退出所有目标房间。
+    * 成功调用该方法后，SDK 会触发 onMediaRelayStateChanged 回调。
     * <pre>
-    * - 0: 方法调用成功；
-    * - 其他: 方法调用失败。
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功。
+    * - 其他：方法调用失败。
     * </pre>
     */
     stopChannelMediaRelay() {
@@ -2493,13 +2493,13 @@ class NERtcEngine extends events_1.EventEmitter {
     }
     /** 
     * 设置弱网条件下发布的音视频流回退选项。
-    * <pre>在网络不理想的环境下，发布的音视频质量都会下降。使用该接口并将 option 设置为 #kNERtcStreamFallbackAudioOnly 后：
+    * <pre>
+    * 在网络不理想的环境下，发布的音视频质量都会下降。使用该接口并将 option 设置为 kNERtcStreamFallbackAudioOnly 后：
     * - SDK 会在上行弱网且音视频质量严重受影响时，自动关断视频流，尽量保证音频质量。
     * - 同时 SDK 会持续监控网络质量，并在网络质量改善时恢复音视频流。
     * - 当本地发布的音视频流回退为音频流时，或由音频流恢复为音视频流时，SDK 会触发本地发布的媒体流已回退为音频流 onLocalPublishFallbackToAudioOnly 回调。
-    * <b>NOTE:</b>
-    * -请在加入房间（joinChannel）前调用此方法。
-    * </pre>
+    * <b>NOTE:</b> 请在加入房间（joinChannel）前调用此方法。
+    * <pre>
     * @param  {number} option 发布音视频流的回退选项: NERTCStreamFallbackOption。
     * <pre>
     * - 0: 上行或下行网络较弱时，不对音视频流作回退处理，但不能保证音视频流的质量。
@@ -2508,7 +2508,7 @@ class NERtcEngine extends events_1.EventEmitter {
     * </pre>
     * @returns {number}
     * <pre>
-    * - 0: 方法调用成功；
+    * - 0: 方法调用成功。
     * - 其他: 方法调用失败。
     * </pre>
     */
@@ -2541,16 +2541,19 @@ class NERtcEngine extends events_1.EventEmitter {
     }
     /** 
     * 启用或停止 AI 超分。
+    * @since V4.4.0
     * <pre>
+    * <b>NOTE:</b>
+    * - 使用 AI 超分功能之前，请联系技术支持开通 AI 超分功能。
     * - AI 超分仅对以下类型的视频流有效：
     * - 必须为本端接收到第一路 360P 的视频流。
     * - 必须为摄像头采集到的主流大流视频。AI 超分功能暂不支持复原重建小流和屏幕共享辅流。
-    * </pre>
-    * @param {boolean} enable 是否启用 AI 超分。默认为关闭状态。
-    * @returns {number}
     * <pre>
-    * - 0: 方法调用成功；
-    * - 其他: 方法调用失败。
+    * @param enable 是否启用 AI 超分。默认为关闭状态。
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功。
+    * - 其他：方法调用失败。
     * </pre>
     */
     enableSuperResolution(enable) {
@@ -3331,21 +3334,21 @@ class NERtcEngine extends events_1.EventEmitter {
          * 该回调描述远端用户在通话中端到端的视频流统计信息，每 2 秒触发一次。
          * </pre>
          * @event NERtcEngine#onRemoteVideoStats
-         * @param {number} uc 数组的大小。
+         * @param {number} uc stats 数组的大小。
          * @param {object} stats 每个远端用户视频统计信息的数组:
          * @param {number} stats.uid 用户 ID，指定是哪个用户的视频流。
          * @param {number} stats.video_layers_count 视频流条数。
          * @param {object[]} stats.video_layers_list 视频流信息数组:
          * @param {number} stats.video_layers_list[].layer_type 流类型： 1、主流，2、辅流。
-         * @param {number} stats.video_layers_list[].width 视频流宽（像素）
-         * @param {number} stats.video_layers_list[].height 视频流高（像素）
-         * @param {number} stats.video_layers_list[].capture_frame_rate 视频采集帧率。
+         * @param {number} stats.video_layers_list[].width 视频流宽（像素）。
+         * @param {number} stats.video_layers_list[].height 视频流高（像素）。
+         * @param {number} stats.video_layers_list[].received_frame_rate 接收到的帧率 (fps)。
          * @param {number} stats.video_layers_list[].render_frame_rate 视频渲染帧率。
-         * @param {number} stats.video_layers_list[].encoder_frame_rate 编码帧率。
-         * @param {number} stats.video_layers_list[].sent_frame_rate 发送帧率。
-         * @param {number} stats.video_layers_list[].sent_bitrate 发送码率(Kbps)。
-         * @param {number} stats.video_layers_list[].target_bitrate 编码器目标码率(Kbps)。
-         * @param {number} stats.video_layers_list[].encoder_bitrate 编码器实际编码码率(Kbps)。
+         * @param {number} stats.video_layers_list[].decoder_frame_rate 视频解码帧率（fps）。
+         * @param {number} stats.video_layers_list[].frozen_rate 用户的下行视频平均卡顿率（%）。
+         * @param {number} stats.video_layers_list[].packet_loss_rate 下行丢包率（%）。
+         * @param {number} stats.video_layers_list[].received_bitrate 接收到的码率（Kbps）。
+         * @param {number} stats.video_layers_list[].total_frozen_time 用户的下行视频卡顿累计时长（ms）。
          * @param {String} stats.video_layers_list[].codec_name 视频编码器名字。
          */
         this.nertcEngine.onStatsObserver('onRemoteVideoStats', true, function (uc, stats) {
