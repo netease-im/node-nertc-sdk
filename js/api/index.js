@@ -3184,8 +3184,8 @@ class NERtcEngine extends events_1.EventEmitter {
         });
         /**
          * 本地发布流已回退为音频流、或已恢复为音视频流回调。
-         * @event NERtcEngine#onLocalPublishFallbackToAudioOnly
          * <br>如果您调用了设置本地推流回退选项 setLocalPublishFallbackOption 接口，并将 option 设置为 #kNERtcStreamFallbackAudioOnly 后，当上行网络环境不理想、本地发布的媒体流回退为音频流时，或当上行网络改善、媒体流恢复为音视频流时，会触发该回调。 
+         * @event NERtcEngine#onLocalPublishFallbackToAudioOnly
          * @param {boolean} is_fallback   本地发布流已回退或已恢复。
          * <pre>
          * - true： 由于网络环境不理想，发布的媒体流已回退为音频流。
@@ -3202,10 +3202,10 @@ class NERtcEngine extends events_1.EventEmitter {
         });
         /**
          * 订阅的远端流已回退为音频流、或已恢复为音视频流回调。
-         * @event NERtcEngine#onRemoteSubscribeFallbackToAudioOnly
          * <pre>
          * 如果你调用了设置远端订阅流回退选项 setRemoteSubscribeFallbackOption 接口并将 option 设置 #kNERtcStreamFallbackAudioOnly 后，当下行网络环境不理想、仅接收远端音频流时，或当下行网络改善、恢复订阅音视频流时，会触发该回调。
          * </pre>
+         * @event NERtcEngine#onRemoteSubscribeFallbackToAudioOnly 
          * @param {number} uid 远端用户的 ID。
          * @param {boolean} is_fallback 远端订阅流已回退或恢复：
          * <pre>
