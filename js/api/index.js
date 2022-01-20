@@ -2291,11 +2291,6 @@ class NERtcEngine extends events_1.EventEmitter {
      * - 0：静音。
      * - 100：原始音量。
      * </pre>
-     * @param  {number} streamType 音频类型：主流、辅流
-     * <pre>
-     * - 0: 音频流主流
-     * - 1: 音频流辅流
-     * </pre>
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功。
@@ -3117,7 +3112,7 @@ class NERtcEngine extends events_1.EventEmitter {
         /**
          * 监听 SEI 数据回调
          * @since 4.1.110
-         * @event NERtcEngine#onReceSEIMsg
+         * @event NERtcEngine#onRecvSEIMsg
          * @param {number} uid 发送该 sei 的用户 id
          * @param {ArrayBuffer} data 接收到的 sei 数据
          */
