@@ -18,8 +18,8 @@ option('download_url')
 const includePath = 'nertc_sdk'
 const tempPath = 'temporary'
 const packageMeta = require(path.join(__dirname, 'package.json'))
-const nativeWinUrl = `http://yx-web.nos.netease.com/package/1639395659521/NERTC_Windows_SDK_V4.1.114.zip`
-const nativeMacUrl = `http://yx-web.nos.netease.com/package/1639393231/NERTC_MacOS_SDK_V4.1.114.zip`
+const nativeWinUrl = `http://yx-web.nos.netease.com/package/1641798320/NERTC_Windows_SDK_V4.2.124.zip`
+const nativeMacUrl = `http://yx-web.nos.netease.com/package/1641798382/NERTC_MacOS_SDK_V4.2.124.zip`
 
 task('fetch-wrapper', () => {
   const platform = argv().target_platform
@@ -126,24 +126,24 @@ task('install', () => {
       extract: true
     }).then(() => {
       logger.info(`[install] Download prebuilt binaries from ${host}/${remotePath}/${packageName}`)
-      if(process.platform == 'darwin'){
-        var marchDriver = new RegExp(/.+\.driver$/)
-        let releaseDir = path.join(__dirname, localPath)
-        const list = fs.readdirSync(releaseDir)
-        list.map(framework => {
-          if(marchDriver.test(framework)){
-            let srcDriverPath = path.join(releaseDir, framework)
-            let distDriverPath =  "/private/tmp/NeCastAudio/NeCastAudio.driver"
-            let delDriverPath =  "/private/tmp/NeCastAudio"
-            if(fs.existsSync(delDriverPath)){
-              var ret = fs.rmdirSync(delDriverPath, { recursive: true })
-              console.log("-------just task delete pre deriver-----"+ret)
-            }
-            console.log("-------just task copySync deriver------")
-            fsExtra.copySync(srcDriverPath, distDriverPath)
-          }
-        })
-      }
+      // if(process.platform == 'darwin'){
+      //   var marchDriver = new RegExp(/.+\.driver$/)
+      //   let releaseDir = path.join(__dirname, localPath)
+      //   const list = fs.readdirSync(releaseDir)
+      //   list.map(framework => {
+      //     if(marchDriver.test(framework)){
+      //       let srcDriverPath = path.join(releaseDir, framework)
+      //       let distDriverPath =  "/private/tmp/NeCastAudio/NeCastAudio.driver"
+      //       let delDriverPath =  "/private/tmp/NeCastAudio"
+      //       if(fs.existsSync(delDriverPath)){
+      //         var ret = fs.rmdirSync(delDriverPath, { recursive: true })
+      //         console.log("-------just task delete pre deriver-----"+ret)
+      //       }
+      //       console.log("-------just task copySync deriver------")
+      //       fsExtra.copySync(srcDriverPath, distDriverPath)
+      //     }
+      //   })
+      // }
       resolve()
     }).catch(err => {
       let fetchUrl

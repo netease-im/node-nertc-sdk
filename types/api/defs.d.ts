@@ -508,27 +508,13 @@ export interface NERtcEngineAPI {
     setLocalVoicePitch(pitch: number): number;
     setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
     setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
-    subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
     enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
-    enableLoopbackRecording(enable: boolean, deviceName: String): number;
-    adjustLoopbackRecordingSignalVolume(volume: number): number;
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
-    checkNECastAudioDriver(): number;
-    checkNeCastAudio(): number;
-    startBeauty(filePath: String): number;
-    stopBeauty(): void;
-    enableBeauty(enabled: boolean): void;
-    enableBeautyMirrorMode(enabled: boolean): void;
-    getBeautyEffect(type: NERtcBeautyEffectType): number;
-    setBeautyEffect(type: NERtcBeautyEffectType, level: number): number;
-    addBeautyFilter(filePath: String): number;
-    removeBeautyFilter(): number;
-    setBeautyFilterLevel(level: number): number;
-    addBeautySticker(filePath: String): number;
-    removeBeautySticker(): number;
-    addBeautyMakeup(filePath: String): number;
-    removeBeautyMakeup(): number;
-    addTemplate(filePath: String): number;
+    switchChannel(token: String, channelName: String): number;
+    setLocalMediaPriority(priority: NERtcMediaPriorityType, preemptive: boolean): number;
+    setExcludeWindowList(param: NERtcScreenCaptureWindowParam): number;
+    startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number;
+    stopAudioRecording(): number;
 }
 /** 通话相关的统计信息。*/
 export interface NERtcStats {
@@ -628,11 +614,35 @@ export declare enum NERtcConnectionStateType {
     kNERtcConnectionStateReconnecting = 4,
     kNERtcConnectionStateFailed = 5
 }
-/** 驱动安装状态 */
-export declare enum NERtcInstallCastAudioDriverResult {
-    kNERtcInstallCastAudioDriverSuccess = 0,
-    kNERtcInstallCastAudioDriverNotAuthorized = 1,
-    kNERtcInstallCastAudioDriverFailed = 2
+/** 屏幕分享状态 */
+export declare enum NERtcScreenCaptureStatus {
+    kScreenCaptureStatusStart = 1,
+    kScreenCaptureStatusPause = 2,
+    kScreenCaptureStatusResume = 3,
+    kScreenCaptureStatusStop = 4,
+    kScreenCaptureStatusCovered = 5 /**< 屏幕分享的目标窗口被覆盖*/
+}
+/** 媒体优先级类型。*/
+export declare enum NERtcMediaPriorityType {
+    kNERtcMediaPriorityHigh = 50,
+    kNERtcMediaPriorityNormal = 100
+}
+export interface NERtcScreenCaptureWindowParam {
+    window_list: Array<Number>; /**< 待屏蔽窗口的 ID 列表。 */
+}
+/** 录音音质 */
+export declare enum NERtcAudioRecordingQuality {
+    kNERtcAudioRecordingQualityLow = 0,
+    kNERtcAudioRecordingQualityMedium = 1,
+    kNERtcAudioRecordingQualityHigh = 2
+}
+/** 录音回调事件错误码 */
+export declare enum NERtcAudioRecordingCode {
+    kNERtcAudioRecordErrorSuffix = 1,
+    kNERtcAudioRecordOpenFileFailed = 2,
+    kNERtcAudioRecordStart = 3,
+    kNERtcAudioRecordError = 4,
+    kNERtcAudioRecordFinish = 5
 }
 /** 连接状态变更原因 */
 export declare enum NERtcReasonConnectionChangedType {

@@ -385,13 +385,24 @@ public:
      */
     void onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize) override;
 
+    // /**
+    //  * 收到检测安装声卡的内容回调（仅适用于 Mac 系统）
+    //  *
+    //  * 在 Mac 系统上，您可以通过调用 {@link checkNECastAudioDriver} 为当前系统安装一个音频驱动，并让 SDK 通过该音频驱动捕获当前 Mac 系统播放出的声音。
+    //  * SDK 会将安装虚拟声卡的结果，通过本事件回调抛出，需要您关注参数中的错误码。
+    //  */
+    // virtual void onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result) override;
+
     /**
-     * 收到检测安装声卡的内容回调（仅适用于 Mac 系统）
-     *
-     * 在 Mac 系统上，您可以通过调用 {@link checkNECastAudioDriver} 为当前系统安装一个音频驱动，并让 SDK 通过该音频驱动捕获当前 Mac 系统播放出的声音。
-     * SDK 会将安装虚拟声卡的结果，通过本事件回调抛出，需要您关注参数中的错误码。
+     * 屏幕共享暂停/恢复/开始/结束等回调
      */
-    virtual void onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result) override;
+    virtual void onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status) override;
+
+    /** 音频录制状态回调。
+     * @param code 音频录制状态码。详细信息请参考 NERtcAudioRecordingCode。
+     * @param file_path 音频录制文件保存路径。
+     */
+    virtual void onAudioRecording(nertc::NERtcAudioRecordingCode code, const char* file_path) override;
 
 public:
     void onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
@@ -452,7 +463,9 @@ private:
     void Node_onAudioHowling(bool howling);
     void Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize);
     void Node_onPullExternalAudioFrame(const BaseCallbackPtr& bcb, const std::shared_ptr<unsigned char>& data, uint32_t length);
-    void Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result);
+    // void Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result);
+    void Node_onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status);
+    void Node_onAudioRecording(nertc::NERtcAudioRecordingCode code, const utf8_string& file_path);
 };
 
 class NertcNodeRtcMediaStatsHandler : public nim_node::EventHandler, public nertc::IRtcMediaStatsObserver

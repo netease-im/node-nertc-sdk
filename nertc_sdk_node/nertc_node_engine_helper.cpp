@@ -1,33 +1,75 @@
-#include "nertc_node_engine_helper.h"
+﻿#include "nertc_node_engine_helper.h"
 #include "../shared/sdk_helper/nim_node_helper.h"
 
 namespace nertc_node
 {
+	static napi_status nertc_private_conf_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcServerAddresses& config)
+	{
+		UTF8String out;
+		bool out_b;
+		if (nim_napi_get_object_value_utf8string(isolate, obj, "channel_server", out) == napi_ok)
+		{
+			strcpy(config.channel_server, out.toUtf8String().c_str());
+		}
+		if (nim_napi_get_object_value_utf8string(isolate, obj, "statistics_server", out) == napi_ok)
+		{
+			strcpy(config.statistics_server, out.toUtf8String().c_str());
+		}
+		if (nim_napi_get_object_value_utf8string(isolate, obj, "room_server", out) == napi_ok)
+		{
+			strcpy(config.room_server, out.toUtf8String().c_str());
+		}
+		if (nim_napi_get_object_value_utf8string(isolate, obj, "compat_server", out) == napi_ok)
+		{
+			strcpy(config.compat_server, out.toUtf8String().c_str());
+		}
+		if (nim_napi_get_object_value_utf8string(isolate, obj, "nos_lbs_server", out) == napi_ok)
+		{
+			strcpy(config.nos_lbs_server, out.toUtf8String().c_str());
+		}
+		if (nim_napi_get_object_value_utf8string(isolate, obj, "nos_upload_sever", out) == napi_ok)
+		{
+			strcpy(config.nos_upload_sever, out.toUtf8String().c_str());
+		}
+		if (nim_napi_get_object_value_utf8string(isolate, obj, "nos_token_server", out) == napi_ok)
+		{
+			strcpy(config.nos_token_server, out.toUtf8String().c_str());
+		}
+		if (nim_napi_get_object_value_bool(isolate, obj, "use_ipv6", out_b) == napi_ok)
+		{
+			config.use_ipv6 = out_b;
+		}
+		return napi_ok;
+	}
 
 napi_status nertc_engine_context_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcEngineContext& context)
 {
-    // UTF8String out, out1;
-    uint32_t out_u;
-    int32_t out_i;
-    // if (nim_napi_get_object_value_utf8string(isolate, obj, "app_key", out) == napi_ok)
-    // {
-    //     utf8_string o = out.toUtf8String();
-    //     context.app_key = o.c_str();
-    // }
-    // if (nim_napi_get_object_value_utf8string(isolate, obj, "log_dir_path", out1) == napi_ok)
-    // {
-    //     utf8_string o = out1.toUtf8String();
-    //     context.log_dir_path = o.c_str();
-    // }
-    if (nim_napi_get_object_value_int32(isolate, obj, "log_level", out_i) == napi_ok)
-    {
-        context.log_level = (nertc::NERtcLogLevel)out_i;
-    }
-    if (nim_napi_get_object_value_uint32(isolate, obj, "log_file_max_size_KBytes", out_u) == napi_ok)
-    {
-        context.log_file_max_size_KBytes = out_u;
-    }
-    return napi_ok;
+	uint32_t out_u;
+	int32_t out_i;
+	UTF8String app_key, log_dir_path;
+	if (nim_napi_get_object_value_utf8string(isolate, obj, "app_key", app_key) == napi_ok)
+	{
+		context.app_key = (const char *)app_key.get();
+	}
+	if (nim_napi_get_object_value_utf8string(isolate, obj, "log_dir_path", log_dir_path) == napi_ok)
+	{
+		context.log_dir_path = (const char *)log_dir_path.get();
+	}
+	uint32_t logLevel = 3, log_file_max_size_KBytes = 20 * 1024;
+	if (nim_napi_get_object_value_uint32(isolate, obj, "log_level", logLevel) == napi_ok)
+	{
+		context.log_level = (nertc::NERtcLogLevel)logLevel;
+	}
+	if (nim_napi_get_object_value_uint32(isolate, obj, "log_file_max_size_KBytes", log_file_max_size_KBytes) == napi_ok)
+	{
+		context.log_file_max_size_KBytes = log_file_max_size_KBytes;
+	}
+	Local<Value> so;
+	if (nim_napi_get_object_value(isolate, obj, "server_config", so) == napi_ok)
+	{
+		return nertc_private_conf_obj_to_struct(isolate, so.As<Object>(), context.server_config);
+	}
+	return napi_ok;
 }
 
 napi_status nertc_video_config_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcVideoConfig& config)
@@ -201,7 +243,7 @@ napi_status nertc_video_dimensions_obj_to_struct(Isolate* isolate, const Local<O
     return napi_ok;        
 }
 
-napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcScreenCaptureParameters& params)
+napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcScreenCaptureParameters& params, std::set<int64_t>& list)
 {
     int32_t out_i;
     bool out_b;
@@ -257,9 +299,11 @@ napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Lo
                 {
                     for (auto i = 0; i < params.excluded_window_count; i++)
                     {
-                        wi[i] = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
+                        int64_t id  = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
+						list.insert(id);
+                        // wi[i] = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
                     }
-                    params.excluded_window_list = (void *)wi;
+                    // params.excluded_window_list = (void *)wi;
                 }
                 else
                 {
@@ -598,5 +642,25 @@ napi_status nertc_audio_volume_info_to_obj(Isolate* isolate, const nertc::NERtcA
     nim_napi_set_object_value_uint64(isolate, obj, "uid", config.uid);
     nim_napi_set_object_value_uint32(isolate, obj, "volume", (uint32_t)config.volume);
     return napi_ok;
+}
+
+napi_status nertc_window_id_list_obj_to_struct(Isolate* isolate, const Local<Object>& obj, std::set<int64_t>& list)
+{
+    Local<Value> so;
+    if (nim_napi_get_object_value(isolate, obj, "excluded_window_list", so) == napi_ok)
+    {
+        Local<Array> wl = so.As<Array>();
+        if (wl->IsArray()) {
+            int count = wl->Length();
+            for (auto i = 0; i < count; i++)
+            {
+                int64_t id  = wl->Get(isolate->GetCurrentContext(), i).ToLocalChecked()->ToInteger(isolate->GetCurrentContext()).ToLocalChecked()->Value();
+                list.insert(id);
+            }
+        }else{
+            return napi_invalid_arg;
+        }
+    }
+    return napi_ok;      
 }
 }

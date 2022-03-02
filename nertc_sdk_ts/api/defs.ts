@@ -597,38 +597,16 @@ export interface NERtcEngineAPI {
 
     // 4.1.110
     setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
-    subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
     enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
-    enableLoopbackRecording(enable: boolean, deviceName: String): number;
-    adjustLoopbackRecordingSignalVolume(volume: number): number;
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
 
-    // 4.1.112
-    checkNECastAudioDriver(): number;
-    checkNeCastAudio(): number;
+    //4.2.124
+    switchChannel(token: String, channelName: String): number;
+    setLocalMediaPriority(priority: NERtcMediaPriorityType, preemptive: boolean): number;
+    setExcludeWindowList(param: NERtcScreenCaptureWindowParam): number;
+    startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number;
+    stopAudioRecording(): number;
 
-    //TODO
-    // setMixedAudioFrameParameters(samplerate: number): number;
-    // setExternalVideoSource(enabled: boolean): number;
-    //pushExternalVideoFrame
-    // setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
-    //pushExternalAudioFrame
-
-    // 4.1.114 beauty
-    startBeauty(filePath: String): number;
-    stopBeauty(): void;
-    enableBeauty(enabled: boolean): void;
-    enableBeautyMirrorMode(enabled: boolean): void;
-    getBeautyEffect(type: NERtcBeautyEffectType): number;
-    setBeautyEffect(type: NERtcBeautyEffectType, level: number): number;
-    addBeautyFilter(filePath: String): number;
-    removeBeautyFilter(): number;
-    setBeautyFilterLevel(level: number): number;
-    addBeautySticker(filePath: String): number;
-    removeBeautySticker(): number;
-    addBeautyMakeup(filePath: String): number;
-    removeBeautyMakeup(): number;
-    addTemplate(filePath: String): number;
 
 }
 
@@ -746,12 +724,43 @@ export enum NERtcConnectionStateType
     kNERtcConnectionStateFailed         = 5, /**< 加入频道失败。*/
 }
 
-/** 驱动安装状态 */
-export enum NERtcInstallCastAudioDriverResult
+/** 屏幕分享状态 */
+export enum NERtcScreenCaptureStatus
 {
-    kNERtcInstallCastAudioDriverSuccess = 0,              /**< 安装音频驱动插件成功*/
-    kNERtcInstallCastAudioDriverNotAuthorized = 1,        /**< 安装音频驱动插件未授权。*/
-    kNERtcInstallCastAudioDriverFailed = 2,               /**< 安装音频驱动插件失败。*/
+    kScreenCaptureStatusStart   = 1,    /**< 开始屏幕分享*/
+    kScreenCaptureStatusPause   = 2,    /**< 暂停屏幕分享*/
+    kScreenCaptureStatusResume  = 3,    /**< 恢复屏幕分享*/
+    kScreenCaptureStatusStop    = 4,    /**< 停止屏幕分享*/
+    kScreenCaptureStatusCovered = 5     /**< 屏幕分享的目标窗口被覆盖*/
+}
+
+/** 媒体优先级类型。*/
+export enum NERtcMediaPriorityType{
+    kNERtcMediaPriorityHigh = 50,    /**< 高优先级 */
+    kNERtcMediaPriorityNormal = 100, /**< （默认）普通优先级 */
+}
+
+export interface NERtcScreenCaptureWindowParam {
+    window_list: Array<Number>;         /**< 待屏蔽窗口的 ID 列表。 */
+}
+
+/** 录音音质 */
+export enum NERtcAudioRecordingQuality{
+    kNERtcAudioRecordingQualityLow = 0,    /**< 低音质 */
+    kNERtcAudioRecordingQualityMedium = 1, /**< 中音质 */
+    kNERtcAudioRecordingQualityHigh = 2,   /**< 高音质 */
+}
+
+/** 录音回调事件错误码 */
+export enum NERtcAudioRecordingCode
+{
+    kNERtcAudioRecordErrorSuffix = 1,    /**< 不支持的录音文件格式。 */
+    kNERtcAudioRecordOpenFileFailed = 2, /**< 无法创建录音文件，原因通常包括：
+                                                - 应用没有磁盘写入权限。
+                                                - 文件路径不存在。 */
+    kNERtcAudioRecordStart = 3,          /**< 开始录制。 */
+    kNERtcAudioRecordError = 4,          /**< 录制错误。原因通常为磁盘空间已满，无法写入。 */
+    kNERtcAudioRecordFinish = 5,         /**< 完成录制。 */
 }
 
 /** 连接状态变更原因 */

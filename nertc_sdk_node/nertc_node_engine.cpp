@@ -1,4 +1,4 @@
-#include "nertc_node_engine.h"
+﻿#include "nertc_node_engine.h"
 #include "nertc_node_engine_helper.h"
 #include "nertc_node_video_frame_provider.h"
 #include "../shared/util/Logger.h"
@@ -91,6 +91,13 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(onVideoFrame)
     SET_PROTOTYPE(onEvent)
 
+    // 4.2.124
+    SET_PROTOTYPE(switchChannel)
+    SET_PROTOTYPE(setLocalMediaPriority)
+    SET_PROTOTYPE(setExcludeWindowList)
+    SET_PROTOTYPE(startAudioRecording);
+    SET_PROTOTYPE(stopAudioRecording);
+
     // 3.9
     SET_PROTOTYPE(setClientRole)
     SET_PROTOTYPE(setupSubStreamVideoCanvas)
@@ -113,14 +120,8 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
 
     // 4.1.110
     SET_PROTOTYPE(setRemoteHighPriorityAudioStream);
-    SET_PROTOTYPE(subscribeRemoteAudioSubStream);
     SET_PROTOTYPE(enableLocalAudioStream);
-    SET_PROTOTYPE(enableLoopbackRecording);
-    SET_PROTOTYPE(adjustLoopbackRecordingSignalVolume);
     SET_PROTOTYPE(adjustUserPlaybackSignalVolume);
-
-    // 4.1.112
-    SET_PROTOTYPE(checkNECastAudioDriver);
 
     SET_PROTOTYPE(getConnectionState)
     SET_PROTOTYPE(muteLocalAudioStream)
@@ -211,21 +212,6 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(startSystemAudioLoopbackCapture)
     SET_PROTOTYPE(stopSystemAudioLoopbackCapture)
     SET_PROTOTYPE(setSystemAudioLoopbackCaptureVolume)
-    SET_PROTOTYPE(startBeauty)
-    SET_PROTOTYPE(stopBeauty)
-    SET_PROTOTYPE(enableBeauty)
-    SET_PROTOTYPE(enableBeautyMirrorMode)
-    SET_PROTOTYPE(getBeautyEffect)
-    SET_PROTOTYPE(setBeautyEffect)
-    SET_PROTOTYPE(addBeautyFilter)
-    SET_PROTOTYPE(removeBeautyFilter)
-    SET_PROTOTYPE(setBeautyFilterLevel)
-    SET_PROTOTYPE(addBeautySticker)
-    SET_PROTOTYPE(removeBeautySticker)
-    SET_PROTOTYPE(addBeautyMakeup)
-    SET_PROTOTYPE(removeBeautyMakeup)
-    SET_PROTOTYPE(addTemplate)
-
 
     END_OBJECT_INIT_EX(NertcNodeEngine)
 }
@@ -250,36 +236,23 @@ void NertcNodeEngine::New(const FunctionCallbackInfo<Value> &args)
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, initialize)
 {
+    Logger::Instance()->initPath("D:/nertc_node_log1.txt");
     CHECK_API_FUNC(NertcNodeEngine, 1)
     int ret = -1; bool log_ret = false;
     do
     {
         CHECK_NATIVE_THIS(instance);
         auto status = napi_ok;
-        nertc::NERtcEngineContext context;
+        nertc::NERtcEngineContext context = {0};
+        context.server_config = {0};
         context.video_use_exnternal_render = true;
         context.video_prefer_hw_decoder = false;
         context.video_prefer_hw_encoder = false;
         context.log_level = nertc::kNERtcLogLevelInfo;
         context.log_file_max_size_KBytes = 20 * 1024;
         context.event_handler = NertcNodeEventHandler::GetInstance();
-        UTF8String app_key, log_dir_path;
-        if (nim_napi_get_object_value_utf8string(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "app_key", app_key) == napi_ok)
-        {
-            context.app_key = (const char *)app_key.get();
-        }
-        if (nim_napi_get_object_value_utf8string(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "log_dir_path", log_dir_path) == napi_ok)
-        {
-            context.log_dir_path = (const char *)log_dir_path.get();
-        }
-        uint32_t logLevel = 3, log_file_max_size_KBytes = 20 * 1024;
-        if (nim_napi_get_object_value_uint32(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "log_level", logLevel) == napi_ok)
-        {
-            context.log_level = (nertc::NERtcLogLevel)logLevel;
-        }
-        if (nim_napi_get_object_value_uint32(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "log_file_max_size_KBytes", log_file_max_size_KBytes) == napi_ok)
-        {
-            context.log_file_max_size_KBytes = log_file_max_size_KBytes;
+       if (nertc_engine_context_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), context) != napi_ok) {
+            break;
         }
         ret = instance->rtc_engine_->initialize(context);
         if (ret == 0)
@@ -1210,8 +1183,17 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByScreenRect)
         if (status != napi_ok) break;
         status = nertc_rectangle_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), region_rect);
         if (status != napi_ok) break;
-        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param);
-
+        std::set<int64_t> vsWindowId;
+        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param, vsWindowId);
+        intptr_t* wnd_list = nullptr;
+        int index = 0;
+        if (!vsWindowId.empty()) {
+            wnd_list = new intptr_t[vsWindowId.size()];
+            for (auto e : vsWindowId) {
+                *(wnd_list + index++) = e;
+            }
+        }
+        param.excluded_window_list = (nertc::source_id_t*)wnd_list;
         if (status == napi_ok)
         {
             ret = instance->rtc_engine_->startScreenCaptureByScreenRect(screen_rect, region_rect, param);
@@ -1239,8 +1221,17 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByDisplayId)
         GET_ARGS_VALUE(isolate, 0, int64, display)
         status = nertc_rectangle_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), region_rect);
         if (status != napi_ok) break;
-        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param);
-
+        std::set<int64_t> vsWindowId;
+        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param, vsWindowId);
+        intptr_t* wnd_list = nullptr;
+        int index = 0;
+        if (!vsWindowId.empty()) {
+            wnd_list = new intptr_t[vsWindowId.size()];
+            for (auto e : vsWindowId) {
+                *(wnd_list + index++) = e;
+            }
+        }
+        param.excluded_window_list = (nertc::source_id_t*)wnd_list;
         if (status == napi_ok)
         {
 #ifdef WIN32
@@ -1300,8 +1291,17 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startScreenCaptureByWindowId)
         GET_ARGS_VALUE(isolate, 0, int32, windowid)
         status = nertc_rectangle_obj_to_struct(isolate, args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), region_rect);
         if (status != napi_ok) break;
-        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param);
-
+        std::set<int64_t> vsWindowId;
+        status = nertc_screen_capture_params_obj_to_struct(isolate, args[2]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), param, vsWindowId);
+        intptr_t* wnd_list = nullptr;
+        int index = 0;
+        if (!vsWindowId.empty()) {
+            wnd_list = new intptr_t[vsWindowId.size()];
+            for (auto e : vsWindowId) {
+                *(wnd_list + index++) = e;
+            }
+        }
+        param.excluded_window_list = (nertc::source_id_t*)wnd_list;
         if (status == napi_ok)
         {
 #ifdef WIN32
@@ -2119,7 +2119,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, sendSEIMsgEx)
         ret = instance->rtc_engine_->sendSEIMsg(
             static_cast<const char*>(buffer->GetContents().Data()), 
             buffer->GetContents().ByteLength(),
-            static_cast<nertc::NERtcStreamChannelType>(type));
+            static_cast<nertc::NERtcVideoStreamType>(type));
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
@@ -2267,35 +2267,17 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setRemoteHighPriorityAudioStream)
         GET_ARGS_VALUE(isolate, 2, int32, stream_type)
         if (status != napi_ok)
             break;
+#if 0
         ret = instance->rtc_engine_->setRemoteHighPriorityAudioStream(enable, uid, 
             static_cast<nertc::NERtcAudioStreamType>(stream_type));
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, subscribeRemoteAudioSubStream)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 2)
-    int ret = -1;
-    do
-    {
-        CHECK_NATIVE_ADM_THIS(instance);
-        auto status = napi_ok;
-        uint64_t uid = 0;
-        bool subscribe = false;
-        GET_ARGS_VALUE(isolate, 0, uint64, uid)
-        if (status != napi_ok)
-            break;
-        GET_ARGS_VALUE(isolate, 1, bool, subscribe)
-        if (status != napi_ok)
-            break;
-        ret = instance->rtc_engine_->subscribeRemoteAudioSubStream(uid, subscribe);
+#endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableLocalAudioStream)
 {
+#if 0
     CHECK_API_FUNC(NertcNodeEngine, 2)
     int ret = -1;
     do
@@ -2313,46 +2295,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableLocalAudioStream)
         ret = instance->rtc_engine_->enableLocalAudioStream(enable, static_cast<nertc::NERtcAudioStreamType>(stream_type));
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableLoopbackRecording)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 2)
-    int ret = -1;
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        auto status = napi_ok;
-        bool enable = false;
-        UTF8String device_name;
-        GET_ARGS_VALUE(isolate, 0, bool, enable)
-        if (status != napi_ok)
-            break;
-        GET_ARGS_VALUE(isolate, 1, utf8string, device_name)
-        if (status != napi_ok)
-            break;
-        ret = instance->rtc_engine_->enableLoopbackRecording(enable, 
-            device_name.length() > 0 ? device_name.toUtf8String().c_str() : nullptr
-        );
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, adjustLoopbackRecordingSignalVolume)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 1)
-    int ret = -1;
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        auto status = napi_ok;
-        uint32_t volume = 0;
-        GET_ARGS_VALUE(isolate, 0, uint32, volume)
-        if (status != napi_ok)
-            break;
-        ret = instance->rtc_engine_->adjustLoopbackRecordingSignalVolume(volume);
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+#endif
 }
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, adjustUserPlaybackSignalVolume)
@@ -2376,20 +2319,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, adjustUserPlaybackSignalVolume)
         GET_ARGS_VALUE(isolate, 2, int32, stream_type)
         if (status != napi_ok)
             break;
-        ret = instance->rtc_engine_->adjustUserPlaybackSignalVolume(uid, volume,
-            static_cast<nertc::NERtcAudioStreamType>(stream_type));
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, checkNECastAudioDriver)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 0)
-    int ret = -1;
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        ret = instance->rtc_engine_->checkNECastAudioDriver();
+        ret = instance->rtc_engine_->adjustUserPlaybackSignalVolume(uid, volume/*, static_cast<nertc::NERtcAudioStreamType>(stream_type)*/);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
@@ -2539,7 +2469,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startSystemAudioLoopbackCapture)
     {
         CHECK_NATIVE_THIS(instance);
 #ifdef WIN32
-        // ret = instance->rtc_engine_->startSystemAudioLoopbackCapture();
+        ret = instance->rtc_engine_->startSystemAudioLoopbackCapture();
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2553,7 +2483,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, stopSystemAudioLoopbackCapture)
     {
         CHECK_NATIVE_THIS(instance);
 #ifdef WIN32
-        // ret = instance->rtc_engine_->stopSystemAudioLoopbackCapture();
+        ret = instance->rtc_engine_->stopSystemAudioLoopbackCapture();
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2573,343 +2503,124 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setSystemAudioLoopbackCaptureVolume)
             break;
         }
 #ifdef WIN32
-        // ret = instance->rtc_engine_->setSystemAudioLoopbackCaptureVolume(vol);
+        ret = instance->rtc_engine_->setSystemAudioLoopbackCaptureVolume(vol);
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, startBeauty)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 1)
-    int ret = -1; 
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-#ifdef WIN32
-        auto status = napi_ok;
-        UTF8String file_path;
-        GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
-        if (status != napi_ok)
-        {
-            break;
-        }
-        std::wstring wstr = StringToWString(file_path.toUtf8String());
-        ret = instance->rtc_engine_->startBeauty(UTF16ToString(wstr).c_str());
-#else
-       //mac
-       ret = nertc::RtcBeauty::startBeauty();
-#endif
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, stopBeauty)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 0)
-    int ret = -1; 
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-#ifdef WIN32
-        instance->rtc_engine_->stopBeauty();
-        ret = 0;
-#else
-       //mac
-       nertc::RtcBeauty::stopBeauty();
-       ret = 0;
-#endif
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableBeauty)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 1)
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        auto status = napi_ok;
-        bool enabled;
-        GET_ARGS_VALUE(isolate, 0, bool, enabled)
-        if (status != napi_ok)
-        {
-            break;
-        }
-#ifdef WIN32
-        instance->rtc_engine_->enableBeauty(enabled);
-#else
-       //mac
-       nertc::RtcBeauty::enableBeauty(enabled);
-
-#endif
-    } while (false);
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableBeautyMirrorMode)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 1)
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        auto status = napi_ok;
-        bool enabled;
-        GET_ARGS_VALUE(isolate, 0, bool, enabled)
-        if (status != napi_ok)
-        {
-            break;
-        }
-#ifdef WIN32
-        instance->rtc_engine_->enableBeautyMirrorMode(enabled);
-#else
-       //mac
-       nertc::RtcBeauty::enableBeautyMirrorMode(enabled);
-
-#endif
-    } while (false);
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, getBeautyEffect)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 1)
-    double ret = 0; 
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        auto status = napi_ok;
-        uint32_t type;
-        GET_ARGS_VALUE(isolate, 0, uint32, type)
-        if (status != napi_ok)
-        {
-            break;
-        }
-        float f_ret = 0;
-#ifdef WIN32
-        f_ret = instance->rtc_engine_->getBeautyEffect((nertc::NERtcBeautyEffectType)type);
-        ret = (int)(f_ret * 100);
-#else
-        //mac
-        f_ret = nertc::RtcBeauty::getBeautyEffect((nertc::NERtcBeautyEffectType)type);
-        ret = (int)(f_ret * 100);
-#endif
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, setBeautyEffect)
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, switchChannel)
 {
     CHECK_API_FUNC(NertcNodeEngine, 2)
-    int ret = -1; 
+    int ret = -1;
     do
     {
         CHECK_NATIVE_THIS(instance);
         auto status = napi_ok;
-
-        uint32_t type;
-        GET_ARGS_VALUE(isolate, 0, uint32, type)
+        UTF8String token, channel_name;
+        GET_ARGS_VALUE(isolate, 0, utf8string, token)
         if (status != napi_ok)
-        {
+            break;
+        GET_ARGS_VALUE(isolate, 1, utf8string, channel_name)
+        if (status != napi_ok)
+            break;
+        if(channel_name.length() == 0){
             break;
         }
-        uint32_t level;
-        GET_ARGS_VALUE(isolate, 1, uint32, level)
-        if (status != napi_ok)
-        {
-            break;
-        }
-        float flevel = level/100.0;
-#ifdef WIN32
-        ret = instance->rtc_engine_->setBeautyEffect((nertc::NERtcBeautyEffectType)type, flevel);
-#else
-        //mac
-        ret = nertc::RtcBeauty::setBeautyEffect((nertc::NERtcBeautyEffectType)type, flevel);
-#endif
+        Logger::Instance()->debug("joinChannel" + token.toUtf8String() +  " " + channel_name.toUtf8String());
+        ret = instance->rtc_engine_->switchChannel(token.get(), channel_name.get());
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautyFilter)
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalMediaPriority)
+{
+    Logger::Instance()->debug("setLocalMediaPriority 1" );
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    Logger::Instance()->debug("setLocalMediaPriority 2");
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        Logger::Instance()->debug("setLocalMediaPriority 3"); 
+        auto status = napi_ok;
+        uint32_t priority;
+        GET_ARGS_VALUE(isolate, 0, uint32, priority)
+        Logger::Instance()->debug("setLocalMediaPriority 4");
+        bool enabled;
+        GET_ARGS_VALUE(isolate, 1, bool, enabled)
+        Logger::Instance()->debug("setLocalMediaPriority 5");
+        ret = instance->rtc_engine_->setLocalMediaPriority((nertc::NERtcMediaPriorityType)priority, enabled);
+        Logger::Instance()->debug("setLocalMediaPriority 6" + Logger::int32ToStr(ret));
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, setExcludeWindowList)
 {
     CHECK_API_FUNC(NertcNodeEngine, 1)
-    int ret = -1; 
+    int ret = -1;
     do
     {
         CHECK_NATIVE_THIS(instance);
         auto status = napi_ok;
-        UTF8String file_path;
-        GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
-        if (status != napi_ok)
-        {
-            break;
+        std::set<int64_t> vsWindowId;
+        nertc_window_id_list_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), vsWindowId);
+        intptr_t* wnd_list = nullptr;
+        int index = 0;
+        if (!vsWindowId.empty()) {
+            wnd_list = new intptr_t[vsWindowId.size()];
+            for (auto e : vsWindowId) {
+                *(wnd_list + index++) = e;
+            }
         }
-#ifdef WIN32
-        std::wstring wstr = StringToWString(file_path.toUtf8String());
-        ret = instance->rtc_engine_->addBeautyFilter(UTF16ToString(wstr).c_str());
-#else
-        //mac
-        ret = nertc::RtcBeauty::addBeautyFilter(file_path.toUtf8String().c_str());
-#endif
+        nertc::source_id_t* excluded_window_list = (nertc::source_id_t*)wnd_list;
+        ret = instance->rtc_engine_->setExcludeWindowList(excluded_window_list, vsWindowId.size());
+        if (wnd_list != nullptr)
+        {
+            delete[] wnd_list;
+            wnd_list = nullptr;
+        }
+
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, removeBeautyFilter)
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, startAudioRecording)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 3)
+    int ret = -1;
+    do
+    {
+        CHECK_NATIVE_THIS(instance);
+        auto status = napi_ok;
+        UTF8String path;
+        uint32_t profile, scenario;
+        GET_ARGS_VALUE(isolate, 0, utf8string, path)
+        GET_ARGS_VALUE(isolate, 1, uint32, profile)
+        GET_ARGS_VALUE(isolate, 2, uint32, scenario)
+        ret = instance->rtc_engine_->startAudioRecording(path.get(), profile, (nertc::NERtcAudioRecordingQuality)scenario);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, stopAudioRecording)
 {
     CHECK_API_FUNC(NertcNodeEngine, 0)
-    int ret = -1; 
+    int ret = -1;
     do
     {
         CHECK_NATIVE_THIS(instance);
-#ifdef WIN32
-        ret = instance->rtc_engine_->removeBeautyFilter();
-#else
-        //mac
-        ret = nertc::RtcBeauty::removeBeautyFilter();
-       
-#endif
+        ret = instance->rtc_engine_->stopAudioRecording();
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
 
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, setBeautyFilterLevel)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 1)
-    int ret = -1; 
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        auto status = napi_ok;
-        uint32_t level;
-        GET_ARGS_VALUE(isolate, 0, uint32, level)
-        if (status != napi_ok)
-        {
-            break;
-        }
-        float flevel = level/100.0;
-#ifdef WIN32
-        ret = instance->rtc_engine_->setBeautyFilterLevel(flevel);
-#else
-        //mac
-        ret = nertc::RtcBeauty::setBeautyFilterLevel(flevel);
-
-#endif
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautySticker)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 1)
-    int ret = -1; 
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        auto status = napi_ok;
-        UTF8String file_path;
-        GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
-        if (status != napi_ok)
-        {
-            break;
-        }
-#ifdef WIN32
-        std::wstring wstr = StringToWString(file_path.toUtf8String());
-        ret = instance->rtc_engine_->addBeautySticker(UTF16ToString(wstr).c_str());
-#else
-        //mac
-        ret = nertc::RtcBeauty::addBeautySticker(file_path.toUtf8String().c_str());
-
-#endif
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, removeBeautySticker)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 0)
-    int ret = -1; 
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-#ifdef WIN32
-        ret = instance->rtc_engine_->removeBeautySticker();
-#else
-       //mac
-        ret = nertc::RtcBeauty::removeBeautySticker();
-
-#endif
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, addBeautyMakeup)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 1)
-    int ret = -1; 
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        auto status = napi_ok;
-        UTF8String file_path;
-        GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
-        if (status != napi_ok)
-        {
-            break;
-        }
-#ifdef WIN32
-        std::wstring wstr = StringToWString(file_path.toUtf8String());
-        ret = instance->rtc_engine_->addBeautyMakeup(UTF16ToString(wstr).c_str());
-#else
-       //mac
-        ret = nertc::RtcBeauty::addBeautyMakeup(file_path.toUtf8String().c_str());
-
-#endif
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, removeBeautyMakeup)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 0)
-    int ret = -1; 
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-#ifdef WIN32
-        ret = instance->rtc_engine_->removeBeautyMakeup();
-#else
-        //mac
-        ret = nertc::RtcBeauty::removeBeautyMakeup();
-
-#endif
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
-
-NIM_SDK_NODE_API_DEF(NertcNodeEngine, addTemplate)
-{
-    CHECK_API_FUNC(NertcNodeEngine, 1)
-    int ret = -1; 
-    do
-    {
-        CHECK_NATIVE_THIS(instance);
-        auto status = napi_ok;
-        UTF8String file_path;
-        GET_ARGS_VALUE(isolate, 0, utf8string, file_path)
-        if (status != napi_ok)
-        {
-            break;
-        }
-#ifdef WIN32
-
-#else
-        ret = nertc::RtcBeauty::addTemplate(file_path.toUtf8String().c_str());
-#endif
-    } while (false);
-    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
-}
 
     //请勿删除，开发调试参数使用
     // Logger::Instance()->initPath("D:/nertc_node_log.txt");
     // Logger::Instance()->debug("joinChannel" + Logger::int32ToStr(1990));
+
+
 
 }

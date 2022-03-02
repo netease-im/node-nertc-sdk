@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { IRenderer } from '../renderer';
-import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcAudioStreamType, NERtcVideoStreamType, NERtcInstallCastAudioDriverResult, NERtcBeautyEffectType } from './defs';
+import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcAudioStreamType, NERtcVideoStreamType, NERtcScreenCaptureStatus, NERtcAudioRecordingCode, NERtcMediaPriorityType, NERtcScreenCaptureWindowParam, NERtcAudioRecordingQuality } from './defs';
 import { EventEmitter } from 'events';
 /**
  * @class NERtcEngine
@@ -1911,27 +1911,6 @@ declare class NERtcEngine extends EventEmitter {
      */
     setRemoteHighPriorityAudioStream(enable: boolean, uid: number, streamType: NERtcAudioStreamType): number;
     /**
-     * 取消或恢复订阅指定远端用户的音频辅流
-     * @since 4.1.110
-     * <pre>
-     * - 加入房间时，默认不订阅所有远端用户的音频辅流流，您可以通过此方法取消或恢复订阅指定远端用户的音频辅流。
-     * <b>NOTE:</b>
-     * - 该方法需要在加入房间，远端用户开启音频后调用。
-     * </pre>
-     * @param  {number} uid 指定用户的 ID
-     * @param  {boolean} subscribe
-     * <pre>
-     * - true: 订阅指定音频流
-     * - false: 取消订阅指定音频流（默认）
-     * </pre>
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    subscribeRemoteAudioSubStream(uid: number, subscribe: boolean): number;
-    /**
      * 检查mac虚拟声卡是否安装。
      * <pre>
      * only for macOS。
@@ -1962,43 +1941,6 @@ declare class NERtcEngine extends EventEmitter {
      */
     enableLocalAudioStream(enable: boolean, streamType: NERtcAudioStreamType): number;
     /**
-     * 开启声卡采集
-     * @since 4.1.110
-     * <pre>
-     * - 启用声卡采集功能后，声卡播放的声音会被合到本地音频流中，从而可以发送到远端。
-     * <b>NOTE:</b>
-     * - 该方法仅适用于 macOS 和 Windows 平台。
-     * - macOS 系统默认声卡不支持采集功能，如需开启此功能需要 App 自己启用一个虚拟声卡，并将该虚拟声卡的名字作为 deviceName 传入 SDK。
-     * - 该方法在加入频道前后都能调用。
-     * </pre>
-     * @param  {boolean} enable
-     * <pre>
-     * - true: 开启声卡采集
-     * - false: 关闭声卡采集（默认）
-     * </pre>
-     * @param  {String} deviceName 声卡的设备名。默认设为空，即使用当前声卡采集。如果用户使用虚拟声卡，如 “NeCastAudio”，可以将虚拟声卡名称 “NeCastAudio” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集，若参数为空则在 macOS 下默认使用 NeCastAudio设备名称 。
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    enableLoopbackRecording(enable: boolean, deviceName?: String): number;
-    /**
-     * 调节声卡采集信号音量。
-     * @since 4.1.110
-     * <pre>
-     * - 调用 {@link nertc::IRtcEngineEx::enableLoopbackRecording} "enableLoopbackRecording" 开启声卡采集后，你可以调用该方法调节声卡采集的信号音量。
-     * </pre>
-     * @param  {number} volume 声卡采集信号音量。取值范围为 [0,100]。默认值为 100，表示原始音量 。
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    adjustLoopbackRecordingSignalVolume(volume: number): number;
-    /**
      * 调节本地播放的指定远端用户的指定流类型的信号音量
      * @since 4.1.110
      * <pre>
@@ -2026,204 +1968,109 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     adjustUserPlaybackSignalVolume(uid: number, volume: number, streamType: NERtcAudioStreamType): number;
-    checkNECastAudioDriver(): number;
     /**
-     * 开启美颜功能模块
-     * @since 4.1.114
-     * <pre>
-     * - 调用此接口后，开启美颜引擎。如果后续不再需要使用美颜功能，可以调用 `stopBeauty`
-     * - 结束美颜功能模块，销毁美颜引擎并释放资源。
-     * - 开启美颜功能模块后，默认无美颜效果，需要通过 `setBeautyEffect` 或其他滤镜、贴纸相关接口设置美颜或滤镜效果。
-     * </pre>
-     * @param file_path 文件绝对路径。例如：xxx/data/beauty/nebeauty
-     * <b>NOTE:</b>
-     * - 该方法macOS下传空字符串即可，windows下传文件绝对路径。
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 30001: kNERtcErrFatal 方法调用失败。
-     * - 30004: kNERtcErrNotSupported 不支持美颜功能。
-     * </pre>
-     */
-    startBeauty(filePath: String): number;
+ * 快速切换音视频房间。
+ * @since 4.2.5
+ * <pre>
+ * - 房间场景为直播场景时，房间中角色为观众的成员可以调用该方法从当前房间快速切换至另一个房间。
+ * - 成功调用该方切换房间后，本端会先收到离开房间的回调 onLeaveChannel，再收到成功加入新房间的回调 onJoinChannel。远端用户会收到 onUserLeave 和 onUserJoined 的回调。
+ * <b>NOTE:</b>
+ * - 快速切换房间功能默认关闭。如需使用，请联系技术支持免费开通。
+ * - 该方法仅适用于直播场景中，角色为观众的音视频房间成员。即已通过接口 setchannelprofile 设置房间场景为直播，通过 setClientRole 设置房间成员的角色为观众。
+ * - 房间成员成功切换房间后，默认订阅房间内所有其他成员的音频流，因此产生用量并影响计费。如果想取消订阅，可以通过调用相应的 subscribeRemoteAudio 方法传入 false 实现。
+ * </pre>
+ * @param[in] token 安全认证签名（NERTC Token）。
+ * <pre>
+ * - null。非安全模式下可设置为 null。安全性不高，建议在产品正式上线前联系对应商务经理转为安全模式。
+ * - 已获取的NERTC Token。安全模式下必须设置为获取到的 Token 。若未传入正确的 Token 将无法进入房间。推荐使用安全模式。
+ * </pre>
+ * @param[in] channel_name 期望切换到的目标房间名称。
+ * @return {number}
+ * <pre>
+ * - 0: 方法调用成功
+ * - 其他：方法调用失败
+ * </pre>
+ */
+    switchChannel(token: String, channelName: String): number;
     /**
-     * 结束美颜功能模块
-     * @since 4.1.114
-     * <pre>
-     * - 如果后续不再需要使用美颜功能，可以调用 `stopBeauty` 结束美颜功能模块，SDK 会自动销毁美颜引擎并释放资源。
-     * </pre>
-     */
-    stopBeauty(): void;
+* 设置本地用户的媒体流优先级。
+* @since 4.2.5
+* <pre>
+* - 如果某个用户的优先级为高，那么该用户媒体流的优先级就会高于其他用户，弱网环境下 SDK 会优先保证其他用户收到的、高优先级用户的媒体流的质量。
+* <b>NOTE:</b>
+* - 请在加入房间（joinChannel）前调用此方法。
+* - 快速切换房间 （switchChannel） 后，媒体优先级会恢复为默认值，即普通优先级。
+* - 一个音视频房间中只有一个高优先级的用户。建议房间中只有一位用户调用 setLocalMediaPriority 将本端媒体流设为高优先级，否则需要开启抢占模式，保证本地用户的高优先级设置生效。
+* </pre>
+* @param[in] priority 本地用户的媒体流优先级
+* <pre>
+* - 默认为 #kNERtcMediaPriorityNormal。详细信息请参考 #NERtcMediaPriorityType。
+* </pre>
+* @param[in] preemptive 是否开启抢占模式。默认为 false，即不开启。
+* <pre>
+* - 抢占模式开启后，本地用户可以抢占其他用户的高优先级，被抢占的用户的媒体优先级变为普通优先级，在抢占者退出房间后，其他用户的优先级仍旧维持普通优先级。
+* - 抢占模式关闭时，如果房间中已有高优先级用户，则本地用户的高优先级设置不生效，仍旧为普通优先级。
+* </pre
+* @return {number}
+* <pre>
+* - 0: 方法调用成功
+* - 其他：方法调用失败
+* </pre>
+*/
+    setLocalMediaPriority(priority: NERtcMediaPriorityType, preemptive: boolean): number;
     /**
-     * 开启或关闭美颜功能
-     * @since 4.1.114
-     * <pre>
-     * - 美颜功能默认为禁用状态，您可以调用此接口开启或关闭美颜功能。启用美颜功能之后，默认开启全局美颜效果，您也可以通过
-     * - `setBeautyEffect` 调整美颜效果，或通过相关方法增加滤镜、贴纸、美妆等效果。
-     * - 美颜功能关闭后，包括全局美颜、滤镜、贴纸和美妆在内的所有美颜效果都会暂时关闭，直至重新启用美颜功能。
-     * <b>NOTE:</b>
-     * - 该方法需要在 `startBeauty` 之后调用。
-     * </pre>
-     * <pre>
-     * - true：表示启用美颜功能。
-     * - false: 表示不启用美颜功能。
-     * </pre>
-     * @param  {number} enabled 是否暂停美颜功能，默认为false
-     */
-    enableBeauty(enabled: boolean): void;
+    * 设置屏幕捕捉时需屏蔽的窗口列表, 该方法在捕捉过程中可动态调用。
+    * @since 4.2.5
+    * @param[in] window_list 需屏蔽的窗口ID列表
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    setExcludeWindowList(param: NERtcScreenCaptureWindowParam): number;
     /**
-     * 启用美颜时，启用或关闭镜像模式
-     * @since 4.1.114
-     * <pre>
-     * - 美颜功能启用时，此接口用于开启或关闭镜像模式。默认为关闭状态。美颜功能暂停或结束后，此接口不再生效。
-     * - 启用镜像模式之后，本端画面会呈现为左右翻转的视觉效果。
-     * <pre>
-     * - true：表示美颜时启用镜像模式。
-     * - false: 表示美颜时取消镜像模式。
-     * </pre>
-     * @param  {number} enabled 美颜时是否启用镜像模式，默认为true
-     */
-    enableBeautyMirrorMode(enabled: boolean): void;
+    * 开始客户端录音。
+    * @since 4.2.5
+    * <pre>
+    * - 调用该方法后，客户端会录制房间内所有用户混音后的音频流，并将其保存在本地一个录音文件中。录制开始或结束时，自动触发 onAudioRecording() 回调。
+    * - 指定的录音音质不同，录音文件会保存为不同格式：
+    * - WAV：音质保真度高，文件大。
+    * - AAC：音质保真度低，文件小。
+    * <b>NOTE:</b>
+    * - 请在加入房间后调用此方法。
+    * - 客户端只能同时运行一个录音任务，正在录音时，如果重复调用 startAudioRecording，会结束当前录制任务，并重新开始新的录音任务。
+    * - 当前用户离开房间时，自动停止录音。您也可以在通话中随时调用 stopAudioRecording 手动停止录音。
+    * </pre>
+    * @param[in] filePath 录音文件在本地保存的绝对路径，需要精确到文件名及格式。例如：sdcard/xxx/audio.aac。
+    * <pre>
+    * - 请确保指定的路径存在并且可写。
+    * - 目前仅支持 WAV 或 AAC 文件格式。
+    * </pre>
+    * @param[in] sampleRate 录音采样率（Hz），可以设为 16000、32000（默认）、44100 或 48000。
+    * @param[in] quality 录音音质，只在 AAC 格式下有效。详细说明请参考 NERtcAudioRecordingQuality。
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number;
     /**
-     * 获取指定美颜类型的强度设置。
-     * @since 4.1.114
-     * <pre>
-     * - 通过接口 `setBeautyEffect` 设置美颜效果及强度后，可以通过此接口查看指定美颜效果的强度设置。
-     * </pre>
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用成功，浮点型，范围为 [0,1]。
-     * </pre>
-     */
-    getBeautyEffect(type: NERtcBeautyEffectType): number;
-    /**
-     * 设置指定美颜类型的强度。
-     * @since 4.1.114
-     * <pre>
-     * - 此方法可用于设置磨皮、美白、大眼等多种全局美颜类型。
-     * - 多次调用此接口可以叠加多种全局美颜效果，也可以通过相关方法叠加滤镜、贴纸、美妆等自定义效果。
-     * </pre>
-     * @param  {NERtcBeautyEffectType} type 美颜类型。
-     * @param  {number} level 对应美颜类型的强度。取值范围为 [0, 1]，各种美颜效果的默认值不同。
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    setBeautyEffect(type: NERtcBeautyEffectType, level: number): number;
-    /**
-     * 添加滤镜效果。
-     * @since 4.1.114
-     * <pre>
-     * - 此接口用于加载滤镜资源，并添加对应的滤镜效果。需要更换滤镜时，重复调用此接口使用新的滤镜资源即可。
-     * <b>NOTE:</b>
-     * - 使用滤镜、贴纸和美妆等自定义美颜效果之前，需要先准备好对应的美颜资源或模型。
-     * - 滤镜效果可以和全局美颜、贴纸、美妆等效果互相叠加，但是不支持叠加多个滤镜。
-     * </pre>
-     * @param  {String} filePath 滤镜资源或模型所在路径。例如：`e:\Resources\Filters\filters.bundle\filter_style_白皙\template.json`。
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    addBeautyFilter(filePath: String): number;
-    /**
-     * 取消滤镜效果。
-     * @since 4.1.114
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    removeBeautyFilter(): number;
-    /**
-     * 设置滤镜强度。
-     * @since 4.1.114
-     * <pre>
-     * - 取值越大，滤镜强度越大，开发者可以根据业务需求自定义设置滤镜强度。
-     * - 滤镜强度设置实时生效，更换滤镜后需要重新设置滤镜强度，否则强度取默认值
-     * @param  {number} level 滤镜强度。取值范围为 [0 - 1]，默认值为 0.5。
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    setBeautyFilterLevel(level: number): number;
-    /**
-     * 添加贴纸效果。
-     * @since 4.1.114
-     * <pre>
-     * - 此接口用于加载贴纸资源，添加对应的贴纸效果。需要更换贴纸时，重复调用此接口使用新的贴纸资源即可。
-     * <b>NOTE:</b>
-     * - 使用滤镜、贴纸和美妆等自定义美颜效果之前，需要先准备好对应的美颜资源或模型。
-     * - 贴纸效果可以和全局美颜、滤镜、美妆等效果互相叠加，但是不支持叠加多个贴纸。
-     * </pre>
-     * @param  {String} filePath 贴纸资源或模型所在路径。例如：`e:\Resources\StickerZipAndIcons\2d_sticker.bundle\bunny\template.json`。
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    addBeautySticker(filePath: String): number;
-    /**
-     * 取消贴纸效果。
-     * @since 4.1.114
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    removeBeautySticker(): number;
-    /**
-     * 添加美妆效果。
-     * @since 4.1.114
-     * <pre>
-     * - 此接口用于加载美妆模型，添加对应的美妆效果。需要更换美妆效果时，重复调用此接口使用新的美妆模型即可。
-     * <b>NOTE:</b>
-     * - 使用滤镜、贴纸和美妆等自定义美颜效果之前，需要先准备好对应的美颜资源或模型。
-     * - 美妆效果可以和全局美颜、滤镜、贴纸等效果互相叠加，但是不支持叠加多个美妆效果。
-     * </pre>
-     * @param  {String} filePath 美妆模型所在路径。例如：`e:\Resources\StickerZipAndIcons\makeup_sticker.bundle\makeup\template.json`。
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    addBeautyMakeup(filePath: String): number;
-    /**
-     * 取消美妆效果。
-     * @since 4.1.114
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    removeBeautyMakeup(): number;
-    /**
-     * 导入美颜资源或模型。
-     * @since 4.1.114
-     * <pre>
-     * - 在 macOS 平台中使用自定义美颜效果之前，需要先通过此方法导入美颜资源或模型。
-     * <b>NOTE:</b>
-     * - 美颜功能模块开启过程中，如果资源路径或名称没有变更，则只需导入一次。如需更换资源，需要调用此接口重新导入。
-     * </pre>
-     * @param  {String} filePath 美妆模型所在路径。例如：`e:\Resources\StickerZipAndIcons\makeup_sticker.bundle\makeup\template.json`。
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    addTemplate(filePath: String): number;
+    * 停止客户端录音。
+    * @since 4.2.5
+    * <pre>
+    * - 本端离开房间时自动停止录音，您也可以在通话中随时调用 stopAudioRecording 手动停止录音。
+    * <b>NOTE:</b>
+    * - 该接口需要在 leaveChannel 之前调用。
+    * </pre>
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他：方法调用失败
+    * </pre>
+    */
+    stopAudioRecording(): number;
     /**
      * init event handler
      * @private
@@ -2648,9 +2495,13 @@ declare interface NERtcEngine {
      */
     on(event: 'onReceSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
     /** 安装声卡回调。
-
-     @param result  返回结果。
+     * @param result  返回结果。
      */
-    on(event: 'onCheckNECastAudioDriverResult', cb: (result: NERtcInstallCastAudioDriverResult) => void): this;
+    on(event: 'onScreenCaptureStatus', cb: (status: NERtcScreenCaptureStatus) => void): this;
+    /** 音频录制状态回调。
+     * @param code 音频录制状态码。详细信息请参考 NERtcAudioRecordingCode。
+    * @param file_path 音频录制文件保存路径。
+    */
+    on(event: 'onAudioRecording', cb: (status: NERtcAudioRecordingCode, file_path: string) => void): this;
 }
 export default NERtcEngine;

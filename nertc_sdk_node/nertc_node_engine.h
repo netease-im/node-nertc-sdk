@@ -1,4 +1,4 @@
-#ifndef NERTC_NODE_ENGINE_H
+﻿#ifndef NERTC_NODE_ENGINE_H
 #define NERTC_NODE_ENGINE_H
 
 #include "nertc_engine_ex.h"
@@ -40,6 +40,13 @@ public:
     NIM_SDK_NODE_API(onVideoFrame);
     NIM_SDK_NODE_API(onEvent);
 
+    // 4.2.124
+    NIM_SDK_NODE_API(switchChannel);
+    NIM_SDK_NODE_API(setLocalMediaPriority);
+    NIM_SDK_NODE_API(setExcludeWindowList);
+    NIM_SDK_NODE_API(startAudioRecording);
+    NIM_SDK_NODE_API(stopAudioRecording);
+
     // 3.9
     NIM_SDK_NODE_API(setClientRole);
     NIM_SDK_NODE_API(setupSubStreamVideoCanvas);
@@ -62,14 +69,8 @@ public:
 
     // 4.1.110
     NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);
-    NIM_SDK_NODE_API(subscribeRemoteAudioSubStream);
     NIM_SDK_NODE_API(enableLocalAudioStream);
-    NIM_SDK_NODE_API(enableLoopbackRecording);
-    NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);
     NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);
-
-    // 4.1.112
-    NIM_SDK_NODE_API(checkNECastAudioDriver);
 
     // ex
     NIM_SDK_NODE_API(getConnectionState);
@@ -165,23 +166,6 @@ public:
     NIM_SDK_NODE_API(startSystemAudioLoopbackCapture);
     NIM_SDK_NODE_API(stopSystemAudioLoopbackCapture);
     NIM_SDK_NODE_API(setSystemAudioLoopbackCaptureVolume);
-
-    // 4.1.114 Beauty
-    NIM_SDK_NODE_API(startBeauty);
-    NIM_SDK_NODE_API(stopBeauty);
-    NIM_SDK_NODE_API(enableBeauty);
-    NIM_SDK_NODE_API(enableBeautyMirrorMode);
-    NIM_SDK_NODE_API(getBeautyEffect);
-    NIM_SDK_NODE_API(setBeautyEffect);
-    NIM_SDK_NODE_API(addBeautyFilter);
-    NIM_SDK_NODE_API(removeBeautyFilter);
-    NIM_SDK_NODE_API(setBeautyFilterLevel);
-    NIM_SDK_NODE_API(addBeautySticker);
-    NIM_SDK_NODE_API(removeBeautySticker);
-    NIM_SDK_NODE_API(addBeautyMakeup);
-    NIM_SDK_NODE_API(removeBeautyMakeup);
-    NIM_SDK_NODE_API(addTemplate);
-
 
 protected:
     NertcNodeEngine(Isolate *isolate);

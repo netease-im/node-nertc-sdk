@@ -1,10 +1,12 @@
-#ifndef NERTC_NODE_SDK_ENGINE_HELPER_H
+﻿#ifndef NERTC_NODE_SDK_ENGINE_HELPER_H
 #define NERTC_NODE_SDK_ENGINE_HELPER_H
 
 #include <node.h>
 #include <node_api.h>
 #include <list>
 #include "nertc_engine.h"
+#include <list>
+#include <set>
 
 using v8::Context;
 using v8::Integer;
@@ -26,7 +28,7 @@ napi_status nertc_audio_mixing_option_obj_to_struct(Isolate* isolate, const Loca
 napi_status nertc_audio_effect_option_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcCreateAudioEffectOption* option);
 napi_status nertc_rectangle_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcRectangle& rect);
 napi_status nertc_video_dimensions_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcVideoDimensions& dimen);
-napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcScreenCaptureParameters& params);
+napi_status nertc_screen_capture_params_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcScreenCaptureParameters& params, std::set<int64_t>& list);
 napi_status nertc_ls_task_info_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcLiveStreamTaskInfo& info);
 
 napi_status nertc_stats_to_obj(Isolate* isolate, const nertc::NERtcStats& config, Local<Object>& obj);
@@ -36,6 +38,8 @@ napi_status nertc_video_send_stats_to_obj(Isolate* isolate, const nertc::NERtcVi
 napi_status nertc_video_recv_stats_to_obj(Isolate* isolate, const nertc::NERtcVideoRecvStats& config, Local<Object>& obj);
 napi_status nertc_network_quality_to_obj(Isolate* isolate, const nertc::NERtcNetworkQualityInfo& config, Local<Object>& obj);
 napi_status nertc_audio_volume_info_to_obj(Isolate* isolate, const nertc::NERtcAudioVolumeInfo& config, Local<Object>& obj);
+
+napi_status nertc_window_id_list_obj_to_struct(Isolate* isolate, const Local<Object>& obj, std::set<int64_t>& list);
 
 }
 
