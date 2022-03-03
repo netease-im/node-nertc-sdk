@@ -21,7 +21,7 @@ using v8::Array;
 
 namespace nertc_node {
 
-napi_status nertc_engine_context_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcEngineContext& context, bool enable_private = false);
+napi_status nertc_engine_context_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcEngineContext& context);
 napi_status nertc_video_config_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcVideoConfig& config);
 napi_status nertc_audio_frame_rf_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcAudioFrameRequestFormat& format);
 napi_status nertc_audio_mixing_option_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcCreateAudioMixingOption& option);

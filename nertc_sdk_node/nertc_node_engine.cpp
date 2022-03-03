@@ -236,24 +236,36 @@ void NertcNodeEngine::New(const FunctionCallbackInfo<Value> &args)
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, initialize)
 {
-    CHECK_API_FUNC(NertcNodeEngine, 2)
+    CHECK_API_FUNC(NertcNodeEngine, 1)
     int ret = -1; bool log_ret = false;
     do
     {
         CHECK_NATIVE_THIS(instance);
         auto status = napi_ok;
         nertc::NERtcEngineContext context = {0};
-        context.server_config = {0};
         context.video_use_exnternal_render = true;
         context.video_prefer_hw_decoder = false;
         context.video_prefer_hw_encoder = false;
         context.log_level = nertc::kNERtcLogLevelInfo;
         context.log_file_max_size_KBytes = 20 * 1024;
         context.event_handler = NertcNodeEventHandler::GetInstance();
-        bool enabled_server_config;
-        GET_ARGS_VALUE(isolate, 1, bool, enabled_server_config)
-        if (nertc_engine_context_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), context, enabled_server_config) != napi_ok) {
-            break;
+        UTF8String app_key, log_dir_path;
+        if (nim_napi_get_object_value_utf8string(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "app_key", app_key) == napi_ok)
+        {
+            context.app_key = (const char *)app_key.get();
+        }
+        if (nim_napi_get_object_value_utf8string(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "log_dir_path", log_dir_path) == napi_ok)
+        {
+            context.log_dir_path = (const char *)log_dir_path.get();
+        }
+        uint32_t logLevel = 3, log_file_max_size_KBytes = 20 * 1024;
+        if (nim_napi_get_object_value_uint32(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "log_level", logLevel) == napi_ok)
+        {
+            context.log_level = (nertc::NERtcLogLevel)logLevel;
+        }
+        if (nim_napi_get_object_value_uint32(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), "log_file_max_size_KBytes", log_file_max_size_KBytes) == napi_ok)
+        {
+            context.log_file_max_size_KBytes = log_file_max_size_KBytes;
         }
         ret = instance->rtc_engine_->initialize(context);
         if (ret == 0)
