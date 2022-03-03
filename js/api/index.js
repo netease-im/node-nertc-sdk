@@ -57,7 +57,8 @@ class NERtcEngine extends events_1.EventEmitter {
      * </pre>
      */
     initialize(context) {
-        return this.nertcEngine.initialize(context);
+        let server_config = context.hasOwnProperty('server_config');
+        return this.nertcEngine.initialize(context, server_config);
     }
     /**
      * 释放资源。

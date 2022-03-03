@@ -1,5 +1,6 @@
 ﻿#include "nertc_node_engine_helper.h"
 #include "../shared/sdk_helper/nim_node_helper.h"
+#include "../shared/util/Logger.h"
 
 namespace nertc_node
 {
@@ -42,7 +43,7 @@ namespace nertc_node
 		return napi_ok;
 	}
 
-napi_status nertc_engine_context_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcEngineContext& context)
+napi_status nertc_engine_context_obj_to_struct(Isolate* isolate, const Local<Object>& obj, nertc::NERtcEngineContext& context, bool enable_private)
 {
 	uint32_t out_u;
 	int32_t out_i;
@@ -64,11 +65,15 @@ napi_status nertc_engine_context_obj_to_struct(Isolate* isolate, const Local<Obj
 	{
 		context.log_file_max_size_KBytes = log_file_max_size_KBytes;
 	}
-	Local<Value> so;
-	if (nim_napi_get_object_value(isolate, obj, "server_config", so) == napi_ok)
-	{
-		return nertc_private_conf_obj_to_struct(isolate, so.As<Object>(), context.server_config);
-	}
+
+    if (enable_private) {
+        Local<Value> so;
+        if (nim_napi_get_object_value(isolate, obj, "server_config", so) == napi_ok)
+        {
+            return nertc_private_conf_obj_to_struct(isolate, so.As<Object>(), context.server_config);
+        }
+    }
+	
 	return napi_ok;
 }
 

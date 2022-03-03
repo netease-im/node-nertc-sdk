@@ -236,8 +236,7 @@ void NertcNodeEngine::New(const FunctionCallbackInfo<Value> &args)
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, initialize)
 {
-    Logger::Instance()->initPath("D:/nertc_node_log1.txt");
-    CHECK_API_FUNC(NertcNodeEngine, 1)
+    CHECK_API_FUNC(NertcNodeEngine, 2)
     int ret = -1; bool log_ret = false;
     do
     {
@@ -251,7 +250,9 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, initialize)
         context.log_level = nertc::kNERtcLogLevelInfo;
         context.log_file_max_size_KBytes = 20 * 1024;
         context.event_handler = NertcNodeEventHandler::GetInstance();
-       if (nertc_engine_context_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), context) != napi_ok) {
+        bool enabled_server_config;
+        GET_ARGS_VALUE(isolate, 1, bool, enabled_server_config)
+        if (nertc_engine_context_obj_to_struct(isolate, args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked(), context, enabled_server_config) != napi_ok) {
             break;
         }
         ret = instance->rtc_engine_->initialize(context);
@@ -2527,7 +2528,6 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, switchChannel)
         if(channel_name.length() == 0){
             break;
         }
-        Logger::Instance()->debug("joinChannel" + token.toUtf8String() +  " " + channel_name.toUtf8String());
         ret = instance->rtc_engine_->switchChannel(token.get(), channel_name.get());
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2535,23 +2535,17 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, switchChannel)
 
 NIM_SDK_NODE_API_DEF(NertcNodeEngine, setLocalMediaPriority)
 {
-    Logger::Instance()->debug("setLocalMediaPriority 1" );
     CHECK_API_FUNC(NertcNodeEngine, 2)
-    Logger::Instance()->debug("setLocalMediaPriority 2");
     int ret = -1;
     do
     {
         CHECK_NATIVE_THIS(instance);
-        Logger::Instance()->debug("setLocalMediaPriority 3"); 
         auto status = napi_ok;
         uint32_t priority;
         GET_ARGS_VALUE(isolate, 0, uint32, priority)
-        Logger::Instance()->debug("setLocalMediaPriority 4");
         bool enabled;
         GET_ARGS_VALUE(isolate, 1, bool, enabled)
-        Logger::Instance()->debug("setLocalMediaPriority 5");
         ret = instance->rtc_engine_->setLocalMediaPriority((nertc::NERtcMediaPriorityType)priority, enabled);
-        Logger::Instance()->debug("setLocalMediaPriority 6" + Logger::int32ToStr(ret));
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
