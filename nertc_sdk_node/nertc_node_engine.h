@@ -10,8 +10,6 @@
 #include "nertc_node_engine_event_handler.h"
 #ifdef WIN32
 #include "../shared/util/windows_helper.h"
-#else
-#include "nertc_beauty_ex.h"
 #endif
 
 namespace nertc_node

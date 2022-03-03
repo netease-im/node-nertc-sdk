@@ -16,12 +16,12 @@ module.exports = ({
     if (fs.existsSync(extractPath)) {
       fs.rmdirSync(extractPath, { recursive: true })
     }
-    // var exstrip = 0;
-    // if (platform != 'win32'){
-    //   exstrip = 1
-    // }
+    var exstrip = 2;
+    if (platform != 'win32'){
+      exstrip = 1
+    }
     const temporaryPath = path.join(extractPath, 'temporary')
-    download(fetchUrl, temporaryPath, { extract: true, strip: 2 }).then(() => {
+    download(fetchUrl, temporaryPath, { extract: true, strip: exstrip }).then(() => {
       if (platform === 'win32') {
         let binaryDirectory = ''
         let libraryDirectory = ''
@@ -75,8 +75,9 @@ module.exports = ({
         copyFiles(libraryDirectory, path.join(extractPath, 'lib'), '.lib')
         copyFiles(headersDirectory, path.join(extractPath, 'api'), '.h')
       } else if (platform === 'darwin') {
+        console.log(`-----------start darwin copy----------`)
         let frameworkDirectory = ''
-        const marchFramework = new RegExp(/.+\.framework|\.driver|\.a|\.sh$/)
+        const marchFramework = new RegExp(/.+\.framework$/)
         const exceptRegex = new RegExp('/.+sdk\/demo/')
         function readDirectory(rootDir, arch) {
           const dirs = fs.readdirSync(rootDir)
@@ -91,7 +92,7 @@ module.exports = ({
           })
         }
         //copy driver
-        var marchDriver = new RegExp(/.+\.driver$/)
+        // var marchDriver = new RegExp(/.+\.driver$/)
         readDirectory(temporaryPath, arch)
         logger.info('[fetch] framework directory: ', frameworkDirectory)
         const list = fs.readdirSync(frameworkDirectory)
@@ -102,17 +103,17 @@ module.exports = ({
             logger.info(`[fetch] copy file: ${copied} to ${dst}`)
             fsExtra.copySync(copied, dst)
           }
-          if(marchDriver.test(framework)){
-            let srcDriverPath = path.join(frameworkDirectory, framework)
-            let distDriverPath =  "/private/tmp/NeCastAudio/NeCastAudio.driver"
-            let delDriverPath =  "/private/tmp/NeCastAudio"
-            if(fs.existsSync(delDriverPath)){
-              var ret = fs.rmdirSync(delDriverPath, { recursive: true })
-              console.log("-------fetch wrapper delete pre deriver------"+ret)
-            }
-            console.log("-------fetch wrapper copySync deriver------")
-            fsExtra.copySync(srcDriverPath, distDriverPath)
-          }
+          // if(marchDriver.test(framework)){
+          //   let srcDriverPath = path.join(frameworkDirectory, framework)
+          //   let distDriverPath =  "/private/tmp/NeCastAudio/NeCastAudio.driver"
+          //   let delDriverPath =  "/private/tmp/NeCastAudio"
+          //   if(fs.existsSync(delDriverPath)){
+          //     var ret = fs.rmdirSync(delDriverPath, { recursive: true })
+          //     console.log("-------fetch wrapper delete pre deriver------"+ret)
+          //   }
+          //   console.log("-------fetch wrapper copySync deriver------")
+          //   fsExtra.copySync(srcDriverPath, distDriverPath)
+          // }
         })
       } else {
         return reject(new Error('Unsupported platform.'))
