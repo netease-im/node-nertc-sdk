@@ -564,23 +564,56 @@ napi_status nertc_stats_to_obj(Isolate* isolate, const nertc::NERtcStats& config
 
 napi_status nertc_audio_send_stats_to_obj(Isolate* isolate, const nertc::NERtcAudioSendStats& config, Local<Object>& obj)
 {
-    nim_napi_set_object_value_int32(isolate, obj, "num_channels", config.num_channels);
-    nim_napi_set_object_value_int32(isolate, obj, "sent_sample_rate", config.sent_sample_rate);
-    nim_napi_set_object_value_int32(isolate, obj, "sent_bitrate", config.sent_bitrate);
-    nim_napi_set_object_value_int32(isolate, obj, "audio_loss_rate", config.audio_loss_rate);
-    nim_napi_set_object_value_int64(isolate, obj, "rtt", config.rtt);
-    nim_napi_set_object_value_uint32(isolate, obj, "volume", config.volume);
+    nim_napi_set_object_value_uint32(isolate, obj, "audio_layers_count", config.audio_layers_count);
+    Local<Array> s = Array::New(isolate);
+    for (int index = 0; index < config.audio_layers_count; index++)
+    {
+        Local<Object> o = Object::New(isolate);
+        nim_napi_set_object_value_int32(isolate, o, "stream_type", config.audio_layers_list[index].stream_type);
+        nim_napi_set_object_value_int32(isolate, o, "num_channels", config.audio_layers_list[index].num_channels);
+        nim_napi_set_object_value_int32(isolate, o, "sent_sample_rate", config.audio_layers_list[index].sent_sample_rate);
+        nim_napi_set_object_value_int32(isolate, o, "sent_bitrate", config.audio_layers_list[index].sent_bitrate);
+        nim_napi_set_object_value_int32(isolate, o, "audio_loss_rate", config.audio_layers_list[index].audio_loss_rate);
+        nim_napi_set_object_value_int64(isolate, o, "rtt", config.audio_layers_list[index].rtt);
+        nim_napi_set_object_value_uint32(isolate, o, "volume", config.audio_layers_list[index].volume);
+        s->Set(isolate->GetCurrentContext(), index, o);
+    }
+    obj->Set(isolate->GetCurrentContext(), nim_napi_new_utf8string(isolate, "audio_layers_list"), s);
+
+    // nim_napi_set_object_value_int32(isolate, obj, "num_channels", config.num_channels);
+    // nim_napi_set_object_value_int32(isolate, obj, "sent_sample_rate", config.sent_sample_rate);
+    // nim_napi_set_object_value_int32(isolate, obj, "sent_bitrate", config.sent_bitrate);
+    // nim_napi_set_object_value_int32(isolate, obj, "audio_loss_rate", config.audio_loss_rate);
+    // nim_napi_set_object_value_int64(isolate, obj, "rtt", config.rtt);
+    // nim_napi_set_object_value_uint32(isolate, obj, "volume", config.volume);
     return napi_ok;
 }
 
 napi_status nertc_audio_recv_stats_to_obj(Isolate* isolate, const nertc::NERtcAudioRecvStats& config, Local<Object>& obj)
 {
+    nim_napi_set_object_value_uint32(isolate, obj, "audio_layers_count", config.audio_layers_count);
     nim_napi_set_object_value_uint64(isolate, obj, "uid", config.uid);
-    nim_napi_set_object_value_int32(isolate, obj, "received_bitrate", config.received_bitrate);
-    nim_napi_set_object_value_int32(isolate, obj, "total_frozen_time", config.total_frozen_time);
-    nim_napi_set_object_value_int32(isolate, obj, "frozen_rate", config.frozen_rate);
-    nim_napi_set_object_value_int32(isolate, obj, "audio_loss_rate", config.audio_loss_rate);
-    nim_napi_set_object_value_uint32(isolate, obj, "volume", config.volume);
+    Local<Array> s = Array::New(isolate);
+    for (int index = 0; index < config.audio_layers_count; index++)
+    {
+        Local<Object> o = Object::New(isolate);
+        nim_napi_set_object_value_int32(isolate, o, "stream_type", config.audio_layers_list[index].stream_type);
+        nim_napi_set_object_value_int32(isolate, o, "received_bitrate", config.audio_layers_list[index].received_bitrate);
+        nim_napi_set_object_value_int32(isolate, o, "total_frozen_time", config.audio_layers_list[index].total_frozen_time);
+        nim_napi_set_object_value_int32(isolate, o, "frozen_rate", config.audio_layers_list[index].frozen_rate);
+        nim_napi_set_object_value_int32(isolate, o, "audio_loss_rate", config.audio_layers_list[index].audio_loss_rate);
+        nim_napi_set_object_value_uint32(isolate, o, "volume", config.audio_layers_list[index].volume);
+        s->Set(isolate->GetCurrentContext(), index, o);
+    }
+    obj->Set(isolate->GetCurrentContext(), nim_napi_new_utf8string(isolate, "audio_layers_list"), s);
+    
+    //4.1.124
+    // nim_napi_set_object_value_uint64(isolate, obj, "uid", config.uid);
+    // nim_napi_set_object_value_int32(isolate, obj, "received_bitrate", config.received_bitrate);
+    // nim_napi_set_object_value_int32(isolate, obj, "total_frozen_time", config.total_frozen_time);
+    // nim_napi_set_object_value_int32(isolate, obj, "frozen_rate", config.frozen_rate);
+    // nim_napi_set_object_value_int32(isolate, obj, "audio_loss_rate", config.audio_loss_rate);
+    // nim_napi_set_object_value_uint32(isolate, obj, "volume", config.volume);
     return napi_ok;
 }
 
