@@ -347,8 +347,20 @@ void NertcNodeRtcMediaStatsHandler::onRtcStats(const nertc::NERtcStats &stats)
 
 void NertcNodeRtcMediaStatsHandler::onLocalAudioStats(const nertc::NERtcAudioSendStats &stats)
 {
+    if (stats.audio_layers_count <= 0)
+    {
+        return;
+    }
+        
+    nertc::NERtcAudioSendStats ss;
+    ss.audio_layers_count = stats.audio_layers_count;
+    ss.audio_layers_list = new nertc::NERtcAudioLayerSendStats[ss.audio_layers_count];
+    for (auto i = 0; i < ss.audio_layers_count; i++) {
+        ss.audio_layers_list[i] = stats.audio_layers_list[i];
+    }
+
     nim_node::node_async_call::async_call([=]() {
-        NertcNodeRtcMediaStatsHandler::GetInstance()->Node_onLocalAudioStats(stats);
+        NertcNodeRtcMediaStatsHandler::GetInstance()->Node_onLocalAudioStats(ss);
     });   
 }
 
