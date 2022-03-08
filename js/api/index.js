@@ -1,9 +1,15 @@
 "use strict";
+var UNDEFINED = 'undefined'
+const mocha_test = typeof window === UNDEFINED? true: false
+console.log(`${mocha_test}`)
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const renderer_1 = require("../renderer");
+var renderer_1 = null
+if(!mocha_test){
+    renderer_1 = require("../renderer");
+}
 const defs_1 = require("./defs");
 const events_1 = require("events");
 const process_1 = __importDefault(require("process"));
@@ -23,8 +29,12 @@ class NERtcEngine extends events_1.EventEmitter {
         this.initEventHandler();
         this.renderers = new Map();
         this.substreamRenderers = new Map();
-        this.renderMode = this._checkWebGL() ? 1 : 2;
-        this.customRenderer = renderer_1.CustomRenderer;
+        this.renderMode = null;
+        this.customRenderer = null;
+        if(!mocha_test){
+            this.renderMode = this._checkWebGL() ? 1 : 2;
+            this.customRenderer = renderer_1.CustomRenderer;
+        }
     }
     /**
      * 初始化 NERTC SDK 服务。

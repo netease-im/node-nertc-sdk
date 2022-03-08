@@ -1,5 +1,4 @@
 #include "nertc_node_video_frame_provider.h"
-// #include "../shared/sdk_helper/nim_node_helper.h"
 #include "../shared/sdk_helper/nim_node_async_queue.h"
 #include <chrono>
 #include <string>
@@ -33,16 +32,16 @@ bool NodeVideoFrameTransporter::initialize(Napi::FunctionReference&& function)
         deinitialize();
     }
     m_stopFlag = false;
-    // env = isolate;
-    // js_callback = std::move(function);
     m_pFrameDataCallback = new FrameDataCallback();
     m_pFrameDataCallback->function = std::move(function);
-    // env = callback.Env();
-    // callback.Reset(isolate, callbackinfo[0].As<Function>());
-    // js_this.Reset(isolate, callbackinfo.This());
-    m_thread.reset(new std::thread(&NodeVideoFrameTransporter::FlushVideo, this));
+    // m_thread.reset(new std::thread(&NodeVideoFrameTransporter::FlushVideo, this));
     init = true;
     return true;
+}
+
+void NodeVideoFrameTransporter::startFlushVideo() 
+{
+    m_thread.reset(new std::thread(&NodeVideoFrameTransporter::FlushVideo, this));
 }
 
 bool NodeVideoFrameTransporter::deinitialize()
@@ -55,9 +54,6 @@ bool NodeVideoFrameTransporter::deinitialize()
     init = false;
     m_thread.reset();
     m_pFrameDataCallback = nullptr;
-    // env = nullptr;
-    // js_callback.Reset();
-    // js_this.Reset();
     return true;
 }
 
@@ -282,6 +278,7 @@ void NodeVideoFrameTransporter::FlushVideo()
             nim_node::node_async_call::async_call([this]() {
                 
                 auto env = m_pFrameDataCallback->function.Env();
+                Napi::HandleScope scope(env);
                 Napi::Array infos = Napi::Array::New(env);
                 uint32_t i = 0;
 

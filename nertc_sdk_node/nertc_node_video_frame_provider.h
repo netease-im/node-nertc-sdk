@@ -109,6 +109,7 @@ namespace nertc_node
 
         void setLocalVideoMirrorMode(uint32_t mirrorMode) { m_localVideoMirrorMode = mirrorMode; }
         bool initialize(Napi::FunctionReference&& function);
+        void startFlushVideo();
         int deliverFrame_I420(NodeRenderType type, nertc::uid_t uid, std::string channelId, const IVideoFrame &videoFrame, int rotation, bool mirrored);
         int setVideoDimension(NodeRenderType, nertc::uid_t uid, std::string channelId, uint32_t width, uint32_t height);
         static void onFrameDataCallback(

@@ -720,6 +720,7 @@ napi_status nertc_encry_obj_to_struct(const Napi::Env& env, const Napi::Object& 
         memset(config.key, 0, kNERtcMaxTokenLength);
         strncpy(config.key, out.c_str(), kNERtcMaxTokenLength);
     }
+    return napi_ok;
 }
 
 

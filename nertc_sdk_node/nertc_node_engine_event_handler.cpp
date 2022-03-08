@@ -3,6 +3,13 @@
 #include "../shared/sdk_helper/nim_node_async_queue.h"
 #include "../shared/sdk_helper/node_api_helper.h"
 #include "../shared/util/logger.h"
+#include "nertc_node_video_frame_provider.h"
+
+#define INIT_ENV_HANDLE_SCOPE \
+    auto function_reference = it->second; \
+    auto env = function_reference->function.Env(); \
+    Napi::HandleScope scope(env);
+
 namespace nertc_node
 {
 
@@ -31,20 +38,6 @@ int EventHandler::removeAll()
     return 0;
 }
 
-//todo检查所有Number长度是否有超过32
-
-// void NertcNodeEventHandler::addEvent(const std::string& eventName, Napi::FunctionReference&& function) {
-//     auto callback = new EventCallback();
-//     callback->function = std::move(function);
-//     _callbacks[eventName] = callback;
-// }
-
-// int NertcNodeEventHandler::removeAll()
-// {
-//     _callbacks.clear();
-//     return 0;
-// }
-
 void NertcNodeEventHandler::onError(int error_code, const char* msg)
 {
     std::string str_msg = msg;
@@ -57,8 +50,8 @@ void NertcNodeEventHandler::Node_onError(int error_code, std::string msg){
     auto it = _callbacks.find("onError");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, error_code);
         auto param2 = Napi::String::New(env, msg);
         const std::vector<napi_value> args = {param1, param2};
@@ -79,8 +72,7 @@ void NertcNodeEventHandler::Node_onWarning(int warn_code, std::string msg)
     auto it = _callbacks.find("onWarning");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, warn_code);
         auto param2 = Napi::String::New(env, msg);
         const std::vector<napi_value> args = {param1, param2};
@@ -100,8 +92,7 @@ void NertcNodeEventHandler::Node_onReleasedHwResources(nertc::NERtcErrorCode res
     auto it = _callbacks.find("onReleasedHwResources");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, result);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -120,8 +111,12 @@ void NertcNodeEventHandler::Node_onJoinChannel(nertc::channel_id_t cid, nertc::u
     auto it = _callbacks.find("onJoinChannel");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+        if (pTransporter)
+        {
+            pTransporter->startFlushVideo();
+        }
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, cid);
         auto param2 = Napi::Number::New(env, uid);
         auto param3 = Napi::Number::New(env, result);
@@ -129,7 +124,7 @@ void NertcNodeEventHandler::Node_onJoinChannel(nertc::channel_id_t cid, nertc::u
         const std::vector<napi_value> args = {param1, param2, param3, param4};
         function_reference->function.Call(args);
     }
-
+    
 }
 
 void NertcNodeEventHandler::onConnectionStateChange(nertc::NERtcConnectionStateType state, nertc::NERtcReasonConnectionChangedType reason)
@@ -144,8 +139,7 @@ void NertcNodeEventHandler::Node_onConnectionStateChange(nertc::NERtcConnectionS
     auto it = _callbacks.find("onConnectionStateChange");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, state);
         auto param2 = Napi::Number::New(env, reason);
         const std::vector<napi_value> args = {param1, param2};
@@ -165,8 +159,7 @@ void NertcNodeEventHandler::Node_onReconnectingStart(nertc::channel_id_t cid, ne
     auto it = _callbacks.find("onReconnectingStart");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, cid);
         auto param2 = Napi::Number::New(env, uid);
         const std::vector<napi_value> args = {param1, param2};
@@ -186,8 +179,7 @@ void NertcNodeEventHandler::Node_onRejoinChannel(nertc::channel_id_t cid, nertc:
     auto it = _callbacks.find("onRejoinChannel");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, cid);
         auto param2 = Napi::Number::New(env, uid);
         auto param3 = Napi::Number::New(env, result);
@@ -209,8 +201,7 @@ void NertcNodeEventHandler::Node_onLeaveChannel(nertc::NERtcErrorCode result)
     auto it = _callbacks.find("onLeaveChannel");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, result);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -229,8 +220,7 @@ void NertcNodeEventHandler::Node_onDisconnect(nertc::NERtcErrorCode reason)
     auto it = _callbacks.find("onDisconnect");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, reason);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -249,8 +239,7 @@ void NertcNodeEventHandler::Node_onClientRoleChanged(nertc::NERtcClientRole oldR
     auto it = _callbacks.find("onClientRoleChanged");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, oldRole);
         auto param2 = Napi::Number::New(env, newRole);
         const std::vector<napi_value> args = {param1, param2};
@@ -271,8 +260,7 @@ void NertcNodeEventHandler::Node_onUserJoined(nertc::uid_t uid, std::string user
     auto it = _callbacks.find("onUserJoined");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         auto param2 = Napi::String::New(env, user_name);
         const std::vector<napi_value> args = {param1, param2};
@@ -293,8 +281,7 @@ void NertcNodeEventHandler::Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessio
     auto it = _callbacks.find("onUserLeft");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         auto param2 = Napi::Number::New(env, reason);
         const std::vector<napi_value> args = {param1, param2};
@@ -314,8 +301,7 @@ void NertcNodeEventHandler::Node_onUserAudioStart(nertc::uid_t uid)
     auto it = _callbacks.find("onUserAudioStart");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -334,8 +320,7 @@ void NertcNodeEventHandler::Node_onUserAudioStop(nertc::uid_t uid)
     auto it = _callbacks.find("onUserAudioStop");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -354,8 +339,7 @@ void NertcNodeEventHandler::Node_onUserVideoStart(nertc::uid_t uid, nertc::NERtc
     auto it = _callbacks.find("onUserVideoStart");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         auto param2 = Napi::Number::New(env, max_profile);
         const std::vector<napi_value> args = {param1, param2};
@@ -375,8 +359,7 @@ void NertcNodeEventHandler::Node_onUserVideoStop(nertc::uid_t uid)
     auto it = _callbacks.find("onUserVideoStop");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -396,8 +379,7 @@ void NertcNodeEventHandler::Node_onUserSubStreamVideoStart(nertc::uid_t uid, ner
     auto it = _callbacks.find("onUserSubStreamVideoStart");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         auto param2 = Napi::Number::New(env, max_profile);
         const std::vector<napi_value> args = {param1, param2};
@@ -417,8 +399,7 @@ void NertcNodeEventHandler::Node_onUserSubStreamVideoStop(nertc::uid_t uid)
     auto it = _callbacks.find("onUserSubStreamVideoStop");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -437,8 +418,7 @@ void NertcNodeEventHandler::Node_onUserVideoProfileUpdate(nertc::uid_t uid, nert
     auto it = _callbacks.find("onUserVideoProfileUpdate");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         auto param2 = Napi::Number::New(env, max_profile);
         const std::vector<napi_value> args = {param1, param2};
@@ -458,8 +438,7 @@ void NertcNodeEventHandler::Node_onUserAudioMute(nertc::uid_t uid, bool mute)
     auto it = _callbacks.find("onUserAudioMute");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         auto param2 = Napi::Boolean::New(env, mute);
         const std::vector<napi_value> args = {param1, param2};
@@ -479,8 +458,7 @@ void NertcNodeEventHandler::Node_onUserVideoMute(nertc::uid_t uid, bool mute)
     auto it = _callbacks.find("onUserVideoMute");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         auto param2 = Napi::Boolean::New(env, mute);
         const std::vector<napi_value> args = {param1, param2};
@@ -503,8 +481,7 @@ void NertcNodeEventHandler::Node_onAudioDeviceStateChanged(std::string device_id
         auto it = _callbacks.find("onAudioDeviceStateChanged");
         if (it != _callbacks.end())
         {
-            auto function_reference = it->second;
-            auto env = function_reference->function.Env();
+            INIT_ENV_HANDLE_SCOPE
             auto param1 = Napi::String::New(env, device_id);
             auto param2 = Napi::Number::New(env, device_type);
             auto param3 = Napi::Number::New(env, device_state);
@@ -527,8 +504,7 @@ void NertcNodeEventHandler::Node_onAudioDefaultDeviceChanged(std::string device_
     auto it = _callbacks.find("onAudioDefaultDeviceChanged");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::String::New(env, device_id);
         auto param2 = Napi::Number::New(env, device_type);
         const std::vector<napi_value> args = {param1, param2};
@@ -553,8 +529,7 @@ void NertcNodeEventHandler::Node_onVideoDeviceStateChanged(std::string device_id
     auto it = _callbacks.find("onVideoDeviceStateChanged");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::String::New(env, device_id);
         auto param2 = Napi::Number::New(env, device_type);
         auto param3 = Napi::Number::New(env, device_state);
@@ -575,8 +550,7 @@ void NertcNodeEventHandler::Node_onFirstAudioDataReceived(nertc::uid_t uid)
     auto it = _callbacks.find("onFirstAudioDataReceived");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -595,8 +569,7 @@ void NertcNodeEventHandler::Node_onFirstVideoDataReceived(nertc::uid_t uid)
     auto it = _callbacks.find("onFirstVideoDataReceived");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -615,8 +588,7 @@ void NertcNodeEventHandler::Node_onFirstAudioFrameDecoded(nertc::uid_t uid)
     auto it = _callbacks.find("onFirstAudioFrameDecoded");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -635,8 +607,7 @@ void NertcNodeEventHandler::Node_onFirstVideoFrameDecoded(nertc::uid_t uid, uint
     auto it = _callbacks.find("onFirstVideoFrameDecoded");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         auto param2 = Napi::Number::New(env, width);
         auto param3 = Napi::Number::New(env, height);
@@ -669,8 +640,7 @@ void NertcNodeEventHandler::Node_onAudioMixingStateChanged(nertc::NERtcAudioMixi
     auto it = _callbacks.find("onAudioMixingStateChanged");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, state);
         auto param2 = Napi::Number::New(env, error_code);
         const std::vector<napi_value> args = {param1, param2};
@@ -690,8 +660,7 @@ void NertcNodeEventHandler::Node_onAudioMixingTimestampUpdate(uint64_t timestamp
     auto it = _callbacks.find("onAudioMixingTimestampUpdate");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, timestamp_ms); 
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -710,8 +679,7 @@ void NertcNodeEventHandler::Node_onAudioEffectFinished(uint32_t effect_id)
     auto it = _callbacks.find("onAudioEffectFinished");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, effect_id);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -730,8 +698,7 @@ void NertcNodeEventHandler::Node_onLocalAudioVolumeIndication(int volume)
     auto it = _callbacks.find("onLocalAudioVolumeIndication");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, volume);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -756,8 +723,7 @@ void NertcNodeEventHandler::Node_onRemoteAudioVolumeIndication(const nertc::NERt
     auto it = _callbacks.find("onRemoteAudioVolumeIndication");
     if (it != _callbacks.end())
     {  
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         Napi::Array param1 = Napi::Array::New(env);
         for (auto i = 0; i < (int)speaker_number; i++)
         {
@@ -789,8 +755,7 @@ void NertcNodeEventHandler::Node_onAddLiveStreamTask(std::string task_id, std::s
     auto it = _callbacks.find("onAddLiveStreamTask");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::String::New(env, task_id);
         auto param2 = Napi::String::New(env, url);
         auto param3 = Napi::Number::New(env, error_code);
@@ -813,8 +778,7 @@ void NertcNodeEventHandler::Node_onUpdateLiveStreamTask(std::string task_id, std
     auto it = _callbacks.find("onUpdateLiveStreamTask");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::String::New(env, task_id);
         auto param2 = Napi::String::New(env, url);
         auto param3 = Napi::Number::New(env, error_code);
@@ -836,8 +800,7 @@ void NertcNodeEventHandler::Node_onRemoveLiveStreamTask(std::string task_id, int
     auto it = _callbacks.find("onRemoveLiveStreamTask");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::String::New(env, task_id);
         auto param2 = Napi::Number::New(env, error_code);
         const std::vector<napi_value> args = {param1,param2};
@@ -859,8 +822,7 @@ void NertcNodeEventHandler::Node_onLiveStreamState(std::string task_id, std::str
     auto it = _callbacks.find("onLiveStreamState");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
          auto param1 = Napi::String::New(env, task_id);
         auto param2 = Napi::String::New(env, url);
         auto param3 = Napi::Number::New(env, state);
@@ -881,8 +843,7 @@ void NertcNodeEventHandler::Node_onAudioHowling(bool howling)
     auto it = _callbacks.find("onAudioHowling");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Boolean::New(env, howling);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -904,8 +865,7 @@ void NertcNodeEventHandler::Node_onRecvSEIMsg(nertc::uid_t uid, const char* data
     auto it = _callbacks.find("onRecvSEIMsg");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, length);
         memcpy(arrayBuffer.Data(), data, length);
@@ -928,8 +888,7 @@ void NertcNodeEventHandler::Node_onScreenCaptureStatus(nertc::NERtcScreenCapture
     auto it = _callbacks.find("onScreenCaptureStatus");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, status);
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
@@ -949,8 +908,7 @@ void NertcNodeEventHandler::Node_onAudioRecording(nertc::NERtcAudioRecordingCode
     auto it = _callbacks.find("onAudioRecording");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, code);
         auto param2 = Napi::String::New(env, file_path);
         const std::vector<napi_value> args = {param1, param2};
@@ -971,8 +929,7 @@ void NertcNodeEventHandler::Node_onMediaRelayStateChanged(nertc::NERtcChannelMed
     auto it = _callbacks.find("onMediaRelayStateChanged");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, state);
         auto param2 = Napi::String::New(env, channel_name);
         const std::vector<napi_value> args = {param1, param2};
@@ -993,8 +950,7 @@ void NertcNodeEventHandler::Node_onMediaRelayEvent(nertc::NERtcChannelMediaRelay
     auto it = _callbacks.find("onMediaRelayEvent");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, event);
         auto param2 = Napi::String::New(env, channel_name);
         auto param3 = Napi::Number::New(env, error);
@@ -1015,8 +971,7 @@ void NertcNodeEventHandler::Node_onLocalPublishFallbackToAudioOnly(bool is_fallb
     auto it = _callbacks.find("onLocalPublishFallbackToAudioOnly");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Boolean::New(env, is_fallback);
         auto param2 = Napi::Number::New(env, stream_type);
         const std::vector<napi_value> args = {param1, param2};
@@ -1036,8 +991,7 @@ void NertcNodeEventHandler::Node_onRemoteSubscribeFallbackToAudioOnly(nertc::uid
     auto it = _callbacks.find("onRemoteSubscribeFallbackToAudioOnly");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         auto param1 = Napi::Number::New(env, uid);
         auto param2 = Napi::Boolean::New(env, is_fallback);
         auto param3 = Napi::Number::New(env, stream_type);
@@ -1073,8 +1027,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onRtcStats(const nertc::NERtcStats & st
     auto it = _callbacks.find("onRtcStats");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         Napi::Object param1 = Napi::Object::New(env);
         nertc_stats_to_obj(env, stats, param1);
         const std::vector<napi_value> args = {param1};
@@ -1094,8 +1047,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onLocalAudioStats(const nertc::NERtcAud
     auto it = _callbacks.find("onLocalAudioStats");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         Napi::Object param1 = Napi::Object::New(env);
         nertc_audio_send_stats_to_obj(env, stats, param1);
         const std::vector<napi_value> args = {param1};
@@ -1123,8 +1075,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onRemoteAudioStats(const nertc::NERtcAu
     auto it = _callbacks.find("onRemoteAudioStats");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         Napi::Array s = Napi::Array::New(env);
         for (auto i = 0; i < (int)user_count; i++)
         {
@@ -1163,8 +1114,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onLocalVideoStats(const nertc::NERtcVid
     auto it = _callbacks.find("onLocalVideoStats");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         Napi::Object s = Napi::Object::New(env);
         nertc_video_send_stats_to_obj(env, ss, s);
         const std::vector<napi_value> args = {s};
@@ -1198,8 +1148,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onRemoteVideoStats(const nertc::NERtcVi
     auto it = _callbacks.find("onRemoteVideoStats");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         Napi::Array s = Napi::Array::New(env);
         for (auto i = 0; i < (int)user_count; i++)
         {
@@ -1244,8 +1193,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onNetworkQuality(const nertc::NERtcNetw
     auto it = _callbacks.find("onNetworkQuality");
     if (it != _callbacks.end())
     {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
+        INIT_ENV_HANDLE_SCOPE
         Napi::Array s = Napi::Array::New(env);
         for (auto i = 0; i < (int)user_count; i++)
         {
