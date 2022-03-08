@@ -44,6 +44,7 @@
     "build:win32:ia32": "node-pre-build build -r electron -rv 10.4.7 11.5.0 13.6.9 14.2.5 15.3.6 16.0.8 -a ia32 -p",
     "build:darwin": "node-pre-build build -r electron -rv 10.4.7 11.5.0 13.6.9 14.2.5 15.3.6 16.0.8 -a x64 -p",
     "build:api": "jsdoc -c ./scripts/conf.json -t ./node_modules/ink-docstrap/template",
+    "build:test": "node-pre-build build -r electron -rv 16.0.2 -a x64",
     "test": "mocha"
   },
   "node_pre_build": {
