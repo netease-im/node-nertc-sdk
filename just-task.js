@@ -122,7 +122,7 @@ task('install', () => {
       console.log('[install] del release dir')
       fs.rmdirSync(buildReleasePath, { recursive: true })
     }
-    download(`${host}/123/${remotePath}/${packageName}`, path.join(__dirname, localPath), {
+    download(`${host}/${remotePath}/${packageName}`, path.join(__dirname, localPath), {
       extract: true
     }).then(() => {
       logger.info(`[install] Download prebuilt binaries from ${host}/${remotePath}/${packageName}`)
