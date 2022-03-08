@@ -18,8 +18,8 @@ option('download_url')
 const includePath = 'nertc_sdk'
 const tempPath = 'temporary'
 const packageMeta = require(path.join(__dirname, 'package.json'))
-const nativeWinUrl = `http://yx-web.nos.netease.com/package/1646362748404/NERTC_Windows_SDK_V4.2.128.zip`
-const nativeMacUrl = `http://yx-web.nos.netease.com/package/1646362754104/NERTC_MacOS_SDK_V4.2.128.zip`
+const nativeWinUrl = `https://yx-web-nosdn.netease.im/package/1646721942/NERTC_Windows_SDK_V4.2.128.zip?download=NERTC_Windows_SDK_V4.2.128.zip`
+const nativeMacUrl = `https://yx-web-nosdn.netease.im/package/1646721999/NERTC_MacOS_SDK_V4.2.128.zip?download=NERTC_MacOS_SDK_V4.2.128.zip`
 
 task('fetch-wrapper', () => {
   const platform = argv().target_platform
@@ -122,7 +122,7 @@ task('install', () => {
       console.log('[install] del release dir')
       fs.rmdirSync(buildReleasePath, { recursive: true })
     }
-    download(`${host}/${remotePath}/${packageName}`, path.join(__dirname, localPath), {
+    download(`${host}/123/${remotePath}/${packageName}`, path.join(__dirname, localPath), {
       extract: true
     }).then(() => {
       logger.info(`[install] Download prebuilt binaries from ${host}/${remotePath}/${packageName}`)
