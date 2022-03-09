@@ -63,9 +63,9 @@ function addlog(log){
 }
 
 let ret = 0
-describe('nertc test', ()=>{
-  describe('start test', ()=>{
-    it('initialize', ()=>{
+describe('nertc test', function(){
+  describe('start test', function(){
+    it('initialize', function(){
       let context = {}
       context.app_key = g_app_key
       context.log_dir_path = './'
@@ -78,7 +78,7 @@ describe('nertc test', ()=>{
     });
 
 /*************************加入通话前接口******************************/
-    it('startRecordDeviceTest', ()=>{
+    it('startRecordDeviceTest', function(){
       // nertcEngine.once('onLocalAudioVolumeIndication', function (volume) {
       //   addlog(`onLocalAudioVolumeIndication, result:${volume}`)
       //   done()
@@ -92,30 +92,30 @@ describe('nertc test', ()=>{
       assert.strictEqual(ret, 0)
     });
 
-    // it('startPlayoutDeviceTest', ()=>{
+    // it('startPlayoutDeviceTest', function(){
     //   ret = nertcEngine.startPlayoutDeviceTest()
 
     // });
 
 
-    it('setClientRole', ()=>{
+    it('setClientRole', function(){
       ret = nertcEngine.setClientRole(1)
       addlog(`nertcEngine.setClientRole:${ret}`)
       assert.strictEqual(ret, 0)
     });
 
-    it('setChannelProfile', ()=>{
+    it('setChannelProfile', function(){
       ret = nertcEngine.setChannelProfile(0)
       addlog(`nertcEngine.setChannelProfile:${ret}`)
       assert.strictEqual(ret, 0)
     });
 
-    it('setAudioProfile',()=>{
+    it('setAudioProfile',function(){
       addlog(`nertcEngine.setAudioProfile:${nertcEngine.setAudioProfile(3, 1)}`)
       assert.strictEqual(0, 0)
     });
 
-    it('enumerateVideoCaptureDevices',()=>{
+    it('enumerateVideoCaptureDevices',function(){
       let video_capture_devices = nertcEngine.enumerateVideoCaptureDevices()
       g_video_capture_devices = JSON.stringify(video_capture_devices, null, 2)
       addlog(`nertcEngine.enumerateVideoCaptureDevices:${g_video_capture_devices}`)
@@ -129,7 +129,7 @@ describe('nertc test', ()=>{
       assert.strictEqual(ret, 0)
     });
 
-    it('setParameters', ()=>{
+    it('setParameters', function(){
       let param = {
         'record_host_enabled': false,
         'record_audio_enabled': false,
@@ -155,7 +155,7 @@ describe('nertc test', ()=>{
 
 
 /*************************加入通话后接口******************************/
-    it('getToken', async ()=>{
+    it('getToken', async function(){
       await getToken()      
     });
 
@@ -180,13 +180,13 @@ describe('nertc test', ()=>{
       //要加延时，不然回调会出现句柄错误(回调中出现)
     }).timeout(5000);
     
-    it('enableLocalAudio', ()=>{
+    it('enableLocalAudio', function(){
       ret = nertcEngine.enableLocalAudio(true)
       addlog(`nertcEngine.enableLocalAudio:${ret}`)
       assert.strictEqual(ret, 0)
     });
 
-    it('enumerateScreenCaptureSourceInfo', ()=>{
+    it('enumerateScreenCaptureSourceInfo', function(){
       let thumbWidth = '320'
       let thumbHeight = '180'
       let iconWidth = '32'
@@ -196,25 +196,25 @@ describe('nertc test', ()=>{
       assert.strictEqual(ret, 0)
     });
 
-    it('startAudioDump', ()=>{
+    it('startAudioDump', function(){
       ret = nertcEngine.startAudioDump()
       addlog(`nertcEngine.startAudioDump:${ret}`)
       assert.strictEqual(ret, 0)
     });
 
-    it('stopAudioDump', ()=>{
+    it('stopAudioDump', function(){
       ret = nertcEngine.stopAudioDump()
       addlog(`nertcEngine.stopAudioDump:${ret}`)
       assert.strictEqual(ret, 0)
     });
 
-    it('enableLocalVideo', ()=>{
+    it('enableLocalVideo', function(){
       ret = nertcEngine.enableLocalVideo(true)
       addlog(`nertcEngine.enableLocalVideo:${ret}`)
       assert.strictEqual(ret, 0)
     });
 
-    it('startAudioRecording', ()=>{
+    it('startAudioRecording', function(){
       let fileDir = process.platform === 'darwin' ? path.join(process.env.HOME, 'nertc_logs') : path.join(process.cwd(), 'nertc_logs')
       let fileName = path.join(fileDir, 'audio.aac')
       addlog(`startAudioRecording fileName:${fileName}`)
@@ -226,7 +226,7 @@ describe('nertc test', ()=>{
       assert.strictEqual(ret, 0)
     });
 
-    it('audioMixing', ()=>{
+    it('audioMixing', function(){
       let opt = {}
       opt.path = `http://music.163.com/song/media/outer/url?id=5274363.mp3`
       opt.loop_count = 1
@@ -269,7 +269,7 @@ describe('nertc test', ()=>{
       assert.strictEqual(ret, 0)
     });
 
-    it('effect', ()=>{
+    it('effect', function(){
       let opt = [{
         'path': `http://music.163.com/song/media/outer/url?id=1433584979.mp3`,
         'loop_count': 2,
@@ -329,7 +329,7 @@ describe('nertc test', ()=>{
       assert.strictEqual(ret, 0)
     });
 
-    it('enableEarback', ()=>{
+    it('enableEarback', function(){
       ret = nertcEngine.enableEarback(true, 70)
       addlog(`nertcEngine.enableEarback. ret:${ret}`)
 
@@ -339,33 +339,33 @@ describe('nertc test', ()=>{
       assert.strictEqual(ret, 0)
     });
 
-    it('enableAudioVolumeIndication', ()=>{
+    it('enableAudioVolumeIndication', function(){
       ret = nertcEngine.enableAudioVolumeIndication(true, 100)
       addlog(`nertcEngine.enableAudioVolumeIndication. ret:${ret}`)
       assert.strictEqual(ret, 0)
     });
 
     //必须伴随视频流一起发送 sendSEIMsgEx一样
-    // it('sendSEIMsg', ()=>{
+    // it('sendSEIMsg', function(){
     //   const u8string = new TextEncoder().encode('test send seimsg')
     //   ret = nertcEngine.sendSEIMsg(u8string.buffer)
     //   addlog(`nertcEngine.sendSEIMsg. ret:${ret}`)
     //   assert.strictEqual(ret, 0)
     // });
 
-    it('getVersion', ()=>{
+    it('getVersion', function(){
       addlog(`nertcEngine.getVersion. ret:${nertcEngine.getVersion()}`)
       assert.strictEqual(ret, 0)
     });
 
-    // it('uploadSdkInfo', ()=>{
+    // it('uploadSdkInfo', function(){
     //   ret= nertcEngine.uploadSdkInfo()
     //   addlog(`nertcEngine.uploadSdkInfo. ret:${ret}`)
     //   assert.strictEqual(0, 0)
     // });
 
 
-    it('recordDevices', ()=>{
+    it('recordDevices', function(){
       let recordDevices = nertcEngine.enumerateRecordDevices()
       addlog(`nertcEngine.enumerateRecordDevices. ret:${recordDevices}`)
       if(recordDevices.length > 0){
@@ -398,7 +398,7 @@ describe('nertc test', ()=>{
       assert.strictEqual(ret, 0)
     });
 
-    it('playoutDevice', ()=>{
+    it('playoutDevice', function(){
       let devices = nertcEngine.enumeratePlayoutDevices()
       addlog(`nertcEngine.enumeratePlayoutDevices. ret:${devices}`)
 
@@ -431,23 +431,23 @@ describe('nertc test', ()=>{
       }
     });
 
-    it('muteLocalVideoStream',()=>{
+    it('muteLocalVideoStream',function(){
       ret = nertcEngine.muteLocalVideoStream(true)
       addlog(`nertcEngine.muteLocalVideoStream:${ret}`)
       assert.strictEqual(ret, 0)
     });
 
-    it('getConnectionState',()=>{
+    it('getConnectionState',function(){
       addlog(`nertcEngine.getConnectionState:${nertcEngine.getConnectionState()}`)
       assert.strictEqual(0, 0)
     });
 
-    it('muteLocalAudioStream',()=>{
+    it('muteLocalAudioStream',function(){
       addlog(`nertcEngine.muteLocalAudioStream:${nertcEngine.muteLocalAudioStream(true)}`)
       assert.strictEqual(0, 0)
     });
 
-    it('setVideoConfig',()=>{
+    it('setVideoConfig',function(){
       let cfg = {
         'max_profile': 2,
         'width': 0,
@@ -463,12 +463,12 @@ describe('nertc test', ()=>{
       assert.strictEqual(0, 0)
     });
 
-    it('enableDualStreamMode',()=>{
+    it('enableDualStreamMode',function(){
       addlog(`nertcEngine.enableDualStreamMode:${nertcEngine.enableDualStreamMode(true)}`)
       assert.strictEqual(0, 0)
     });
 
-    it('setLocalVideoMirrorMode',()=>{
+    it('setLocalVideoMirrorMode',function(){
       addlog(`nertcEngine.setLocalVideoMirrorMode:${nertcEngine.setLocalVideoMirrorMode(1)}`)
       assert.strictEqual(0, 0)
     });
@@ -526,7 +526,7 @@ describe('nertc test', ()=>{
 
 /*************************加入通话后接口end******************************/
 
-    it('release', ()=>{
+    it('release', function(){
       nertcEngine.release()
       assert.strictEqual(0, 0)
     });
