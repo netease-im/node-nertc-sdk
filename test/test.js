@@ -1,4 +1,4 @@
-var UNDEFINED = 'undefined';
+// var UNDEFINED = 'undefined';
 const NERtcEngine = require('../js/api/index').default
 const nertcEngine = new NERtcEngine
 // const nertcEngine2 = new NERtcEngine
@@ -119,7 +119,7 @@ describe('nertc test', ()=>{
       let video_capture_devices = nertcEngine.enumerateVideoCaptureDevices()
       g_video_capture_devices = JSON.stringify(video_capture_devices, null, 2)
       addlog(`nertcEngine.enumerateVideoCaptureDevices:${g_video_capture_devices}`)
-      if (g_video_capture_devices.length > 0) {
+      if (video_capture_devices.length > 0) {
         ret = nertcEngine.setVideoDevice(video_capture_devices[0].device_id)
         addlog(`nertcEngine.setVideoDevice. ret:${ret}`)
 
