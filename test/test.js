@@ -517,7 +517,6 @@ describe('nertc test', ()=>{
           done();
         }
       })
-
       ret = nertcEngine.leaveChannel()
       addlog(`do leave channel ret: ${ret}`)
     });
@@ -527,16 +526,13 @@ describe('nertc test', ()=>{
 
 /*************************加入通话后接口end******************************/
 
-    // it('release', ()=>{
-    //   ret = 0;
-    //   nertcEngine.release() //todo 异步
-    //   addlog(`release ret: ${ret}`)
-    //   assert.strictEqual(ret, 0)
-    // });
+    it('release', ()=>{
+      nertcEngine.release()
+      assert.strictEqual(0, 0)
+    });
 
 
 
   });
-})
-addlog(`test end`)
+}).timeout(50000);
 
