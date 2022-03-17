@@ -2,111 +2,16 @@ const NERtcEngine = require('../js/api/index').default
 const nertcEngine = new NERtcEngine
 const assert = require('assert');
 const axios = require('axios');
-const { add } = require('lodash');
-const { stringify } = require('querystring');
 const path = require('path')
-
-var generateID = (len) => {
-  if (typeof (len) === 'undefined' || len == null || typeof (len) !== 'number') {
-    len = 6
-  }
-  let code = ''
-  let codeLength = len
-  let random = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-  for (var i = 0; i < codeLength; i++) {
-    let index = Math.floor(Math.random() * 9)
-    code += random[index]
-  }
-  return code
-}
 
 var gToken = ''
 const gAppKey = `d60ed3e24a542526ada4f3bb23f14ac2`
 const gPrdServer = "https://nrtc.netease.im/demo/getChecksum.action";
-var gUid = 258369//parseInt(generateID(6))
+var gUid = 258369
 var remoteUid = 158362
-var gChannelName = "159369"//generateID(6)
-var gChannelName2 = "152858"//generateID(6)
+var gChannelName = "159369"
+var gChannelName2 = "152858"
 var g_video_capture_devices = ""
-
-//功能
-var NERtcRemoteVideoStreamType = {
-  kNERtcRemoteVideoStreamTypeHigh: 0, //默认大流
-  kNERtcRemoteVideoStreamTypeLow: 1, //小流
-  kNERtcRemoteVideoStreamTypeNone: 2, //不订阅
-};
-
-var NERtcAudioProfileType = {
-  kNERtcAudioProfileDefault: 0,			    /**< 0: 默认设置。Speech场景下为 kNERtcAudioProfileStandardExtend，Music场景下为 kNERtcAudioProfileHighQuality */
-  kNERtcAudioProfileStandard: 1,			    /**< 1: 普通质量的音频编码，16000Hz，20Kbps */
-  kNERtcAudioProfileStandardExtend: 2,       /**< 2: 普通质量的音频编码，16000Hz，32Kbps */
-  kNERtcAudioProfileMiddleQuality: 3,		/**< 3: 中等质量的音频编码，48000Hz，64Kbps */
-  kNERtcAudioProfileMiddleQualityStereo: 4,  /**< 4: 中等质量的立体声编码，48000Hz * 2，80Kbps  */
-  kNERtcAudioProfileHighQuality: 5,          /**< 5: 高质量的音频编码，48000Hz，96Kbps  */
-  kNERtcAudioProfileHighQualityStereo: 6,    /**< 6: 高质量的立体声编码，48000Hz * 2，128Kbps  */
-}
-
-/** 音频应用场景。不同的场景设置对应不同的音频采集模式、播放模式*/
-var NERtcAudioScenarioType = {
-  /** 0: 默认设置
-     - kNERtcChannelProfileCommunication下为kNERtcAudioScenarioSpeech，
-     - kNERtcChannelProfileLiveBroadcasting下为kNERtcAudioScenarioMusic。
-   */
-  kNERtcAudioScenarioDefault: 0,
-  /** 1: 语音场景. NERtcAudioProfileType 推荐使用 kNERtcAudioProfileMiddleQuality 及以下 */
-  kNERtcAudioScenarioSpeech: 1,
-  /** 2: 音乐场景。NERtcAudioProfileType 推荐使用 kNERtcAudioProfileMiddleQualityStereo 及以上 */
-  kNERtcAudioScenarioMusic: 2,
-} ;
-
-/** 变声 预设值 */
-var NERtcVoiceChangerType = {
-  kNERtcVoiceChangerOff           :  0,    /**< 默认关闭 */
-  kNERtcVoiceChangerRobot         :  1,    /**< 机器人 */
-  kNERtcVoiceChangerGaint         :  2,    /**< 巨人 */
-  kNERtcVoiceChangerHorror        :  3,    /**< 恐怖 */
-  kNERtcVoiceChangerMature        :  4,    /**< 成熟 */
-  kNERtcVoiceChangerManToWoman    :  5,    /**< 男变女 */
-  kNERtcVoiceChangerWomanToMan    :  6,    /**< 女变男 */
-  kNERtcVoiceChangerManToLoli     :  7,    /**< 男变萝莉 */
-  kNERtcVoiceChangerWomanToLoli   :  8,    /**< 女变萝莉 */
-};
-
-/** 预设的美声效果 */
-var NERtcVoiceBeautifierType = {
-  kNERtcVoiceBeautifierOff : 0,             /**< 默认关闭 */
-  kNERtcVoiceBeautifierMuffled : 1,         /**< 低沉 */
-  kNERtcVoiceBeautifierMellow : 2,          /**< 圆润 */
-  kNERtcVoiceBeautifierClear : 3,           /**< 清澈 */
-  kNERtcVoiceBeautifierMagnetic : 4,        /**< 磁性 */
-  kNERtcVoiceBeautifierRecordingstudio : 5, /**< 录音棚 */
-  kNERtcVoiceBeautifierNature : 6,          /**< 天籁 */
-  kNERtcVoiceBeautifierKTV : 7,             /**< KTV */
-  kNERtcVoiceBeautifierRemote : 8,          /**< 悠远 */
-  kNERtcVoiceBeautifierChurch : 9,          /**< 教堂 */
-  kNERtcVoiceBeautifierBedroom : 10,        /**< 卧室 */
-  kNERtcVoiceBeautifierLive : 11,           /**< Live */
-};
-
-/** 音效均衡波段的中心频率 */
-var NERtcVoiceEqualizationBand = {
-  kNERtcVoiceEqualizationBand_31  : 0, /**<  31 Hz */
-  kNERtcVoiceEqualizationBand_62  : 1, /**<  62 Hz */
-  kNERtcVoiceEqualizationBand_125 : 2, /**<  125 Hz */
-  kNERtcVoiceEqualizationBand_250 : 3, /**<  250 Hz */
-  kNERtcVoiceEqualizationBand_500 : 4, /**<  500 Hz */
-  kNERtcVoiceEqualizationBand_1K  : 5, /**<  1 kHz */
-  kNERtcVoiceEqualizationBand_2K  : 6, /**<  2 kHz */
-  kNERtcVoiceEqualizationBand_4K  : 7, /**<  4 kHz */
-  kNERtcVoiceEqualizationBand_8K  : 8, /**<  8 kHz */
-  kNERtcVoiceEqualizationBand_16K : 9, /**<  16 kHz */
-} ;
-
- 
-const remoteVideoStreamType = 0 // 0:默认大流 1:小流 2:不订阅
-
-
-
 
 async function getToken(uid, appKey, server){
   let url = server + "?uid=" + uid + "&appkey=" + appKey
@@ -147,13 +52,7 @@ describe('nertc test', function(){
       assert.strictEqual(ret, 0)
     });
 
-/*************************加入通话前接口******************************/
     it('startRecordDeviceTest', function(){
-      // nertcEngine.once('onLocalAudioVolumeIndication', function (volume) {
-      //   addlog(`onLocalAudioVolumeIndication, result:${volume}`)
-      //   done()
-      // })
-
       ret = nertcEngine.startRecordDeviceTest(100)
       addlog(`nertcEngine.startRecordDeviceTest. ret:${ret}`)
 
@@ -161,11 +60,6 @@ describe('nertc test', function(){
       addlog(`nertcEngine.stopRecordDeviceTest. ret:${ret}`)
       assert.strictEqual(ret, 0)
     });
-
-    // it('startPlayoutDeviceTest', function(){
-    //   ret = nertcEngine.startPlayoutDeviceTest()
-
-    // });
 
     it('setLocalMediaPriority', function(){
       ret = nertcEngine.setLocalMediaPriority(50, false)
@@ -186,7 +80,7 @@ describe('nertc test', function(){
     });
 
     it('setAudioProfile', function(){
-      addlog(`nertcEngine.setAudioProfile:${nertcEngine.setAudioProfile(NERtcAudioProfileType.kNERtcAudioProfileMiddleQuality, NERtcAudioScenarioType.kNERtcAudioScenarioSpeech)}`)
+      addlog(`nertcEngine.setAudioProfile:${nertcEngine.setAudioProfile(3, 1)}`)
       assert.strictEqual(0, 0)
     });
 
@@ -227,13 +121,13 @@ describe('nertc test', function(){
     });
 
     it('setAudioEffectPreset', function() {
-      ret = nertcEngine.setAudioEffectPreset(NERtcVoiceChangerType.kNERtcVoiceChangerOff)
+      ret = nertcEngine.setAudioEffectPreset(0)
       addlog(`setAudioEffectPreset ret: ${ret}`)
       assert.strictEqual(ret, 0)
     });
 
     it('setVoiceBeautifierPreset', function(){
-      ret = nertcEngine.setVoiceBeautifierPreset(NERtcVoiceBeautifierType.kNERtcVoiceBeautifierMuffled)
+      ret = nertcEngine.setVoiceBeautifierPreset(1)
       addlog(`setVoiceBeautifierPreset ret: ${ret}`)
       assert.strictEqual(ret, 0)
     });
@@ -245,16 +139,11 @@ describe('nertc test', function(){
     });
 
     it('setLocalVoiceEqualization', function(){
-      ret = nertcEngine.setLocalVoiceEqualization(NERtcVoiceEqualizationBand.kNERtcVoiceEqualizationBand_31, 0)
+      ret = nertcEngine.setLocalVoiceEqualization(0, 0)
       addlog(`setLocalVoiceEqualization ret: ${ret}`)
       assert.strictEqual(ret, 0)
     });
 
-
-/*************************加入通话前接口end******************************/
-
-
-/*************************加入通话后接口******************************/
     it('getToken', async function(){
       await getToken(gUid, gAppKey, gPrdServer)      
     });
@@ -299,7 +188,6 @@ describe('nertc test', function(){
 
       ret = nertcEngine.joinChannel(gToken, gChannelName, gUid)
       addlog(`do join channel ret:${ret}`)
-      //要加延时，不然回调会出现句柄错误(回调中出现)
     }).timeout(5000);
     
     it('enableLocalAudio', function(){
@@ -315,7 +203,7 @@ describe('nertc test', function(){
     });
 
     it('subscribeRemoteVideoStream', function(){
-      ret = nertcEngine.subscribeRemoteVideoStream(remoteUid, NERtcRemoteVideoStreamType.kNERtcRemoteVideoStreamTypeHigh, true)
+      ret = nertcEngine.subscribeRemoteVideoStream(remoteUid, 0, true)
       addlog(`subscribeRemoteVideoStream ret: ${ret}`)
       assert.strictEqual(ret, 0)
     });
@@ -513,25 +401,10 @@ describe('nertc test', function(){
       })      
     });
 
-    //必须伴随视频流一起发送 sendSEIMsgEx一样
-    // it('sendSEIMsg', function(){
-    //   const u8string = new TextEncoder().encode('test send seimsg')
-    //   ret = nertcEngine.sendSEIMsg(u8string.buffer)
-    //   addlog(`nertcEngine.sendSEIMsg. ret:${ret}`)
-    //   assert.strictEqual(ret, 0)
-    // });
-
     it('getVersion', function(){
       addlog(`nertcEngine.getVersion. ret:${nertcEngine.getVersion()}`)
       assert.strictEqual(ret, 0)
     });
-
-    // it('uploadSdkInfo', function(){
-    //   ret= nertcEngine.uploadSdkInfo()
-    //   addlog(`nertcEngine.uploadSdkInfo. ret:${ret}`)
-    //   assert.strictEqual(0, 0)
-    // });
-
 
     it('recordDevices', function(){
       let recordDevices = nertcEngine.enumerateRecordDevices()
@@ -648,13 +521,6 @@ describe('nertc test', function(){
       })
     }).timeout(5000);
 
-    // it('onLocalAudioStats',(done)=>{
-    //   nertcEngine.once('onLocalAudioStats', (stats)=>{
-    //     addlog(`onLocalAudioStats, stats:${JSON.stringify(stats, null, 2)}`)
-    //     done()
-    //   })
-    // }).timeout(5000);
-
     it('onClientRoleChanged', (done)=>{
       nertcEngine.once('onClientRoleChanged', (oldRole, newRole)=>{
         addlog(`onClientRoleChanged, oldRole:${oldRole} newRole:${newRole}`)
@@ -665,7 +531,6 @@ describe('nertc test', function(){
       addlog(`nertcEngine.setClientOldRole:${ret}`)
       ret = nertcEngine.setClientRole(1)
       addlog(`nertcEngine.setClientNewRole:${ret}`)
-      // assert.strictEqual(ret, 0)
     });
 
     it('switchChannel', async function(){
@@ -677,8 +542,6 @@ describe('nertc test', function(){
       ret = nertcEngine.switchChannel(gToken, gChannelName2)
       addlog(`switchChannel ret:${ret}`)
     });
-
-/*************************加入通话后接口end******************************/
 
     it('leaveChannel', function(done){
       nertcEngine.once('onReleasedHwResources', function (result) {
@@ -704,9 +567,6 @@ describe('nertc test', function(){
       nertcEngine.release()
       assert.strictEqual(0, 0)
     });
-
-
-
   });
 }).timeout(50000);
 
