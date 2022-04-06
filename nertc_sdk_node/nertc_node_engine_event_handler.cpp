@@ -675,9 +675,16 @@ void NertcNodeEventHandler::onLocalAudioVolumeIndication(int volume)
 
 void NertcNodeEventHandler::onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume)
 {
-    nim_node::node_async_call::async_call([=]() {
-        NertcNodeEventHandler::GetInstance()->Node_onRemoteAudioVolumeIndication(speakers, speaker_number, total_volume);
-    });
+    nertc::NERtcAudioVolumeInfo* dst_speakers = (nertc::NERtcAudioVolumeInfo*)malloc(sizeof(nertc::NERtcAudioVolumeInfo) * (1 + speaker_number));
+    memset(dst_speakers, 0, sizeof(nertc::NERtcAudioVolumeInfo) * (1 + speaker_number)) ;
+    unsigned int temp_speaker_number = speaker_number;
+    int temp_total_volume = total_volume;
+    if(temp_speaker_number > 0){
+        memcpy(dst_speakers, speakers, sizeof(nertc::NERtcAudioVolumeInfo) * (speaker_number));
+         nim_node::node_async_call::async_call([=]() {
+            NertcNodeEventHandler::GetInstance()->Node_onRemoteAudioVolumeIndication(dst_speakers, temp_speaker_number, temp_total_volume);
+        });
+    }
 }
 
 void NertcNodeEventHandler::onAddLiveStreamTask(const char* task_id, const char* url, int error_code)
