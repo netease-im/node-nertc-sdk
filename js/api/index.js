@@ -737,33 +737,6 @@ class NERtcEngine extends events_1.EventEmitter {
     setParameters(parameters) {
         return this.nertcEngine.setParameters(parameters);
     }
-    // /** 设置录制的声音格式。该方法设置 \ref nertc::INERtcAudioFrameObserver::onAudioFrameDidRecord "onAudioFrameDidRecord" 回调的录制声音格式。
-    //  - joinChannel 前/后都允许更改设置。
-    //  - 取消监听，重置为空。
-    //  @param format 指定 *onAudioFrameDidRecord* 中返回数据的采样率和数据的通道数。允许传入 NULL，默认为 NULL。
-    //  * @returns {number}
-    //  * <pre>
-    //  * - 0: 方法调用成功；
-    //  * - 其他: 方法调用失败。
-    //  * </pre>
-    //  */
-    // setRecordingAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number {
-    //     return this.nertcEngine.setRecordingAudioFrameParameters(format);      
-    // }
-    // /** 设置播放的声音格式。该方法设置 \ref nertc::INERtcAudioFrameObserver::onAudioFrameWillPlayback "onAudioFrameWillPlayback" 回调的播放声音格式。
-    //  <b>NOTE:</b>
-    //  - joinChannel 前/后都允许更改设置。
-    //  - 取消监听，重置为空。
-    //  @param format 指定 *onAudioFrameWillPlayback* 中返回数据的采样率和数据的通道数。允许传入 NULL，默认为 NULL。
-    //  * @returns {number}
-    //  * <pre>
-    //  * - 0: 方法调用成功；
-    //  * - 其他: 方法调用失败。
-    //  * </pre>
-    //  */
-    // setPlaybackAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number {
-    //     return this.nertcEngine.setPlaybackAudioFrameParameters(format);      
-    // }
     /**
      * 开启音频dump。
      * @returns {number}
@@ -1147,17 +1120,6 @@ class NERtcEngine extends events_1.EventEmitter {
     setEarbackVolume(volume) {
         return this.nertcEngine.setEarbackVolume(volume);
     }
-    // /** 注册统计信息观测器。
-    // @param {} eventName NERtcMediaStatsEventName
-    // @param {} enabled 是否开启
-    // @param {} callback 回调函数
-    // @returns {number}
-    // - 0: 方法调用成功；
-    // - 其他: 方法调用失败。
-    // */
-    // onStatsObserver(eventName: NERtcMediaStatsEventName, enabled: boolean, callback: Function): void {
-    //     return this.nertcEngine.onStatsObserver(eventName, enabled, callback);         
-    // }
     /**
      * 启用说话者音量提示。该方法允许 SDK 定期向 App 反馈当前谁在说话以及说话者的音量。
      * <pre>
@@ -2594,12 +2556,6 @@ class NERtcEngine extends events_1.EventEmitter {
     enableEncryption(enable, config) {
         return this.nertcEngine.enableEncryption(enable, config);
     }
-    // setMixedAudioFrameParameters(samplerate: number): number {
-    //     return this.nertcEngine.setMixedAudioFrameParameters(samplerate);      
-    // }
-    // setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number {
-    //     return this.nertcEngine.setExternalAudioSource(enabled, samplerate, channel);      
-    // }
     /**
      * init event handler
      * @private
@@ -3039,6 +2995,7 @@ class NERtcEngine extends events_1.EventEmitter {
          * - 如果volume 为 0，表示该用户没有说话。
          * - 如果speakers 数组为空，则表示此时远端没有人说话。
          * </pre>
+         * @event NERtcEngine#onRemoteAudioVolumeIndication
          * @param {object[]} speakers 每个说话者的用户 ID 和音量信息的数组:
          * @param {number} speakers[].uid 说话者的用户 ID。如果返回的 uid 为 0，则默认为本地用户
          * @param {number} speakers[].volume 说话者的音量，范围为 0（最低）- 100（最高）
