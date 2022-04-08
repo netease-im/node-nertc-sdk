@@ -3364,6 +3364,22 @@ class NERtcEngine extends events_1.EventEmitter {
     /**
      * @private
      * @ignore
+     * sdk test interface
+     * @returns {number} {boolean}
+     */
+    setupLocalVideoCanvasTest(bind) {
+        let canvas = {}
+        canvas.mode = 0
+        if(bind){
+            canvas.view = document.getElementById('localView')
+        }else {
+            canvas.view = null
+        }
+        return this.setupLocalVideoCanvas(canvas)  
+    }
+    /**
+     * @private
+     * @ignore
      * check if WebGL will be available with appropriate features
      * @returns {number} {boolean}
      */
