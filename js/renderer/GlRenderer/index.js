@@ -287,7 +287,7 @@ const GlRender = function () {
         try {
             // Try to grab the standard context. If it fails, fallback to experimental.
             gl =
-                that.canvas.getContext('webgl', { preserveDrawingBuffer: true }) ||
+                that.canvas.getContext('webgl', { preserveDrawingBuffer: true, failIfMajorPerformanceCaveat: true }) ||
                     that.canvas.getContext('experimental-webgl');
         }
         catch (e) {
