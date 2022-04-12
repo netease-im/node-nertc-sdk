@@ -3364,7 +3364,7 @@ class NERtcEngine extends events_1.EventEmitter {
     /**
      * @private
      * @ignore
-     * sdk test interface
+     * sdk test interface, external cannot be used
      * @returns {number} {boolean}
      */
     setupLocalVideoCanvasTest(bind) {
@@ -3376,6 +3376,15 @@ class NERtcEngine extends events_1.EventEmitter {
             canvas.view = null
         }
         return this.setupLocalVideoCanvas(canvas)  
+    }
+    /**
+     * @private
+     * @ignore
+     * sdk test interface, external cannot be used
+     * @returns {number}
+     */
+     appQuitTest() {
+        this.emit('onAppQuit', 0, 'app quit');
     }
     /**
      * @private
