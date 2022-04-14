@@ -3379,6 +3379,39 @@ class NERtcEngine extends events_1.EventEmitter {
     }
     /**
      * @private
+     * @ignore 
+     * sdk test interface, external cannot be used
+     * @returns {number} {boolean}
+     */
+    setupRemoteVideoCanvasTest(uid, bind) {
+        let canvas = {}
+        canvas.mode = 0
+        if(bind){
+            canvas.view = document.getElementById('remoteView')
+        }else {
+            canvas.view = null
+        }
+        return this.setupRemoteVideoCanvas(uid, canvas)  
+    }
+    /**
+     * @private
+     * @ignore 
+     * sdk test interface, external cannot be used
+     * @returns {number} {boolean}
+     */
+    setupRemoteSubVideoCanvasTest(uid, bind) {
+        let canvas = {}
+        canvas.mode = 0
+        if(bind){
+            canvas.view = document.getElementById('remoteSubView')
+        }else {
+            canvas.view = null
+        }
+        return this.setupRemoteSubStreamVideoCanvas(uid, canvas)  
+    }
+
+    /**
+     * @private
      * @ignore
      * sdk test interface, external cannot be used
      * @returns {number}
