@@ -22,6 +22,7 @@ napi_status nertc_video_config_obj_to_struct(const Napi::Env& env, const Napi::O
 napi_status nertc_media_relay_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcChannelMediaRelayConfiguration* config);
 napi_status nertc_encry_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcEncryptionConfig& config);
 napi_status nertc_channel_media_relay_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcChannelMediaRelayInfo& config);
+napi_status nertc_lastmile_probe_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcLastmileProbeConfig& config);
 
 //set object field
 napi_status nertc_stats_to_obj(const Napi::Env env, const nertc::NERtcStats& config,  Napi::Object& obj);
@@ -31,7 +32,7 @@ napi_status nertc_video_send_stats_to_obj(const Napi::Env env, const nertc::NERt
 napi_status nertc_video_recv_stats_to_obj(const Napi::Env env, const nertc::NERtcVideoRecvStats& config,  Napi::Object& obj);
 napi_status nertc_network_quality_to_obj(const Napi::Env env, const nertc::NERtcNetworkQualityInfo& config,  Napi::Object& obj);
 napi_status nertc_audio_volume_info_to_obj(const Napi::Env env, const nertc::NERtcAudioVolumeInfo& config,  Napi::Object& obj);
-
+napi_status nertc_lastmile_probe_result_to_obj(const Napi::Env env, const nertc::NERtcLastmileProbeResult& config,  Napi::Object& obj);
 }
 
 //饿汉模式

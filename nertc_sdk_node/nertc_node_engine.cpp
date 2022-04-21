@@ -87,6 +87,8 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(setRemoteSubscribeFallbackOption),
         SET_PROTOTYPE(enableSuperResolution),
         SET_PROTOTYPE(enableEncryption),
+        SET_PROTOTYPE(startLastmileProbeTest),
+        SET_PROTOTYPE(stopLastmileProbeTest),
 
         SET_PROTOTYPE(getConnectionState),
         SET_PROTOTYPE(muteLocalAudioStream),
@@ -763,7 +765,7 @@ NIM_SDK_NODE_API_DEF(startChannelMediaRelay)
         const Napi::Object obj = info[0].As<Napi::Object>();
         if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"src_infos"))))
         {
-            nertc::NERtcChannelMediaRelayInfo src = {0};
+            nertc::NERtcChannelMediaRelayInfo src;
             Napi::Object o = obj.Get(static_cast<napi_value>(Napi::String::New(env,"src_infos"))).As<Napi::Object>();
             nertc_channel_media_relay_obj_to_struct(env, o, src_info[0]);
         }
@@ -855,7 +857,7 @@ NIM_SDK_NODE_API_DEF(updateChannelMediaRelay)
 		const Napi::Object obj = info[0].As<Napi::Object>();
 		if (obj.Has(static_cast<napi_value>(Napi::String::New(env, "src_infos"))))
 		{
-			nertc::NERtcChannelMediaRelayInfo src = { 0 };
+			nertc::NERtcChannelMediaRelayInfo src;
 			Napi::Object o = obj.Get(static_cast<napi_value>(Napi::String::New(env, "src_infos"))).As<Napi::Object>();
 			nertc_channel_media_relay_obj_to_struct(env, o, src_info[0]);
 		}
@@ -918,7 +920,7 @@ NIM_SDK_NODE_API_DEF(setLocalPublishFallbackOption)
     {
         int opt;
         napi_get_value_int32(info[0], opt);
-        ret = rtc_engine_->setLocalPublishFallbackOption(opt);
+        ret = rtc_engine_->setLocalPublishFallbackOption((nertc::NERtcStreamFallbackOption)opt);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -930,7 +932,7 @@ NIM_SDK_NODE_API_DEF(setRemoteSubscribeFallbackOption)
     {
         int opt;
         napi_get_value_int32(info[0], opt);
-        ret = rtc_engine_->setRemoteSubscribeFallbackOption(opt);
+        ret = rtc_engine_->setRemoteSubscribeFallbackOption((nertc::NERtcStreamFallbackOption)opt);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -970,6 +972,29 @@ NIM_SDK_NODE_API_DEF(enableEncryption)
             memcpy(config.key, out.c_str(), out.size() * sizeof(char));
         }
         ret = rtc_engine_->enableEncryption(enable, config);
+    } while (false);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(startLastmileProbeTest)
+{
+    INIT_ENV
+    do
+    {
+        Napi::Object obj = info[0].As<Napi::Object>();
+        nertc::NERtcLastmileProbeConfig config;
+        nertc_lastmile_probe_obj_to_struct(env, obj, config);
+        ret = rtc_engine_->startLastmileProbeTest(config);
+    } while (false);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(stopLastmileProbeTest)
+{
+    INIT_ENV
+    do
+    {
+        ret = rtc_engine_->stopLastmileProbeTest();
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -1173,7 +1198,7 @@ NIM_SDK_NODE_API_DEF(startAudioMixing)
     INIT_ENV
     do
     {
-        nertc::NERtcCreateAudioMixingOption config = {0};
+        nertc::NERtcCreateAudioMixingOption config;
         nertc_audio_mixing_option_obj_to_struct(env, info[0].As<Napi::Object>(), config);
         ret = rtc_engine_->startAudioMixing(&config);
     } while (false);
@@ -1738,7 +1763,7 @@ NIM_SDK_NODE_API_DEF(addLiveStreamTask)
     do
     {
         Napi::Object obj = info[0].As<Napi::Object>();
-        nertc::NERtcLiveStreamTaskInfo info = {0};
+        nertc::NERtcLiveStreamTaskInfo info;
         nertc_ls_task_info_obj_to_struct(env, obj, info);
         memset(info.extraInfo, 0, kNERtcMacSEIBufferLength);
         // info.config = {0};
@@ -1764,7 +1789,7 @@ NIM_SDK_NODE_API_DEF(updateLiveStreamTask)
     do
     {
         Napi::Object obj = info[0].As<Napi::Object>();
-        nertc::NERtcLiveStreamTaskInfo info = {0};
+        nertc::NERtcLiveStreamTaskInfo info;
 
         nertc_ls_task_info_obj_to_struct(env, obj, info);
         ret = rtc_engine_->updateLiveStreamTask(info);

@@ -682,6 +682,32 @@ napi_status nertc_channel_media_relay_obj_to_struct(const Napi::Env& env, const 
     return napi_ok;
 }
 
+napi_status nertc_lastmile_probe_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcLastmileProbeConfig& config)
+{
+    int32_t out_32;
+    bool enable;
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"probe_uplink"))))
+    {
+        enable = obj.Get(static_cast<napi_value>(Napi::String::New(env,"probe_uplink"))).As<Napi::Boolean>().Value();
+        config.probe_uplink = enable;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"probe_downlink"))))
+    {
+        enable = obj.Get(static_cast<napi_value>(Napi::String::New(env,"probe_downlink"))).As<Napi::Boolean>().Value();
+        config.probe_downlink = enable;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"expected_uplink_bitratebps"))))
+    {
+        out_32 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"expected_uplink_bitratebps"))).As<Napi::Number>().Int32Value();
+        config.expected_uplink_bitratebps = out_32;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"expected_downlink_bitratebps"))))
+    {
+        out_32 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"expected_downlink_bitratebps"))).As<Napi::Number>().Int32Value();
+        config.expected_downlink_bitratebps = out_32;
+    }
+    return napi_ok;
+}
 
 napi_status nertc_media_relay_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcChannelMediaRelayConfiguration* config)
 {
@@ -764,5 +790,23 @@ napi_status nertc_audio_volume_info_to_obj(const Napi::Env env, const nertc::NER
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"volume")), (uint32_t)config.volume);
     return napi_ok;
 }
+
+napi_status nertc_lastmile_probe_result_to_obj(const Napi::Env env, const nertc::NERtcLastmileProbeResult& config,  Napi::Object& obj)
+{
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"rtt")), config.rtt);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"state")), (uint32_t)config.state);
+    Napi::Object obj_uplink_report = Napi::Object::New(env);
+    obj_uplink_report.Set(static_cast<napi_value>(Napi::String::New(env,"jitter")), config.uplink_report.jitter);
+    obj_uplink_report.Set(static_cast<napi_value>(Napi::String::New(env,"packet_loss_rate")), config.uplink_report.packet_loss_rate);
+    obj_uplink_report.Set(static_cast<napi_value>(Napi::String::New(env,"available_band_width")), config.uplink_report.available_band_width);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"uplink_report")), obj_uplink_report);
+    Napi::Object obj_downlink_report = Napi::Object::New(env);
+    obj_downlink_report.Set(static_cast<napi_value>(Napi::String::New(env,"jitter")), config.downlink_report.jitter);
+    obj_downlink_report.Set(static_cast<napi_value>(Napi::String::New(env,"packet_loss_rate")), config.downlink_report.packet_loss_rate);
+    obj_downlink_report.Set(static_cast<napi_value>(Napi::String::New(env,"available_band_width")), config.downlink_report.available_band_width);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"downlink_report")), obj_downlink_report);
+    return napi_ok;
+}
+
 
 }
