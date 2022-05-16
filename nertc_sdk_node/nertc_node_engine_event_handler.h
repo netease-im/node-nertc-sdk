@@ -413,9 +413,6 @@ public:
      */
     virtual void onRemoteSubscribeFallbackToAudioOnly(nertc::uid_t uid, bool is_fallback, nertc::NERtcVideoStreamType stream_type) override;
 
-    virtual void onLastmileQuality(nertc::NERtcNetworkQualityType quality) override;
-
-    virtual void onLastmileProbeResult(const nertc::NERtcLastmileProbeResult& result) override;
 
 public:
     void onPullExternalAudioFrame(Napi::FunctionReference&& function, const std::shared_ptr<unsigned char>& data, uint32_t length);
@@ -518,9 +515,6 @@ private:
 
     void Node_onRemoteSubscribeFallbackToAudioOnly(nertc::uid_t uid, bool is_fallback, nertc::NERtcVideoStreamType stream_type);
     
-    void Node_onLastmileQuality(nertc::NERtcNetworkQualityType quality);
-
-    void Node_onLastmileProbeResult(const nertc::NERtcLastmileProbeResult& result);
 };
 
 class NertcNodeRtcMediaStatsHandler : public EventHandler, public nertc::IRtcMediaStatsObserver

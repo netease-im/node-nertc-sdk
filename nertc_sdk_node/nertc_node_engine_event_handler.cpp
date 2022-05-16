@@ -1046,48 +1046,6 @@ void NertcNodeEventHandler::Node_onRemoteSubscribeFallbackToAudioOnly(nertc::uid
     }
 }
 
-void NertcNodeEventHandler::onLastmileQuality(nertc::NERtcNetworkQualityType quality)
-{
-    nim_node::node_async_call::async_call([=]() {
-        Node_onLastmileQuality(quality);
-    });
-}
-
-void NertcNodeEventHandler::Node_onLastmileQuality(nertc::NERtcNetworkQualityType quality)
-{
-    int qualityType = quality;
-    auto it = _callbacks.find("onLastmileQuality");
-    if (it != _callbacks.end())
-    {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
-        auto param1 = Napi::Number::New(env, qualityType);
-        const std::vector<napi_value> args = {param1};
-        function_reference->function.Call(args);
-    }
-}
-
-void NertcNodeEventHandler::onLastmileProbeResult(const nertc::NERtcLastmileProbeResult& result)
-{
-    nim_node::node_async_call::async_call([=]() {
-        Node_onLastmileProbeResult(result);
-    });
-}
-
-void NertcNodeEventHandler::Node_onLastmileProbeResult(const nertc::NERtcLastmileProbeResult& result)
-{
-    auto it = _callbacks.find("onLastmileProbeResult");
-    if (it != _callbacks.end())
-    {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
-        Napi::Object o = Napi::Object::New(env);
-        nertc_lastmile_probe_result_to_obj(env, result, o);
-        const std::vector<napi_value> args = {o};
-        function_reference->function.Call(args);
-    }
-}
-
 void NertcNodeEventHandler::onPullExternalAudioFrame(Napi::FunctionReference&& function, const std::shared_ptr<unsigned char>& data, uint32_t length)
 {
     // auto callback = new EventCallback();
