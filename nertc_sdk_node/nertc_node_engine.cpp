@@ -296,10 +296,10 @@ NIM_SDK_NODE_API_DEF(joinChannel)
         std::string token = "";
         std::string channel_name = "";
         // nertc::uid_t uid = 0;
-        unsigned int uid = 0;
+        int64_t uid = 0;
         napi_get_value_utf8_string(info[0], token);
         napi_get_value_utf8_string(info[1], channel_name);
-        napi_get_value_uint32(info[2], uid);
+        napi_get_value_int64(info[2], uid);
         ret = rtc_engine_->joinChannel(token.length() == 0 ? "" : token.c_str(), channel_name.c_str(), uid);
     }while(false);
     return Napi::Number::New(env, ret);
@@ -345,10 +345,10 @@ NIM_SDK_NODE_API_DEF(subscribeRemoteVideoStream)
     do
     {
         // nertc::uid_t uid;
-        unsigned int uid;
+        int64_t uid;
         uint32_t type;
         bool sub;
-        napi_get_value_uint32(info[0], uid);
+        napi_get_value_int64(info[0], uid);
         napi_get_value_uint32(info[1], type);
         napi_get_value_bool(info[2], sub);
         ret = rtc_engine_->subscribeRemoteVideoStream(uid, (nertc::NERtcRemoteVideoStreamType)type, sub);
@@ -361,10 +361,10 @@ NIM_SDK_NODE_API_DEF(setupVideoCanvas)
     INIT_ENV
     do{
         // nertc::uid_t uid = 0;
-        uint32_t uid;
+        int64_t uid;
         bool lossless = true;
         bool enable;
-        napi_get_value_uint32(info[0], uid);
+        napi_get_value_int64(info[0], uid);
         // napi_get_value_bigint_uint64(env, info[0], &uid, &lossless);
         napi_get_value_bool(info[1], enable);
         nertc::NERtcVideoCanvas canvas;
@@ -427,9 +427,9 @@ NIM_SDK_NODE_API_DEF(setupSubStreamVideoCanvas)
     do
     {
         // uint64_t uid;
-        unsigned int uid;
+        int64_t uid;
         bool enable;
-        napi_get_value_uint32(info[0], uid);
+        napi_get_value_int64(info[0], uid);
         napi_get_value_bool(info[1], enable);
         nertc::NERtcVideoCanvas canvas;
         canvas.cb = enable ? NodeVideoFrameTransporter::onSubstreamFrameDataCallback : nullptr;
@@ -450,8 +450,8 @@ NIM_SDK_NODE_API_DEF(subscribeRemoteVideoSubStream)
     {
         bool sub;
         // nertc::uid_t uid;
-        unsigned int uid;
-        napi_get_value_uint32(info[0], uid);
+        int64_t uid;
+        napi_get_value_int64(info[0], uid);
         napi_get_value_bool(info[1], sub);
         ret = rtc_engine_->subscribeRemoteVideoSubStream(uid, sub);
     } while (false);
@@ -629,9 +629,9 @@ NIM_SDK_NODE_API_DEF(adjustUserPlaybackSignalVolume)
     INIT_ENV
     do
     {
-        uint32_t uid = 0;
+        int64_t uid = 0;
         int volume = 0;
-        napi_get_value_uint32(info[0], uid);
+        napi_get_value_int64(info[0], uid);
         napi_get_value_int32(info[1], volume);
         ret = rtc_engine_->adjustUserPlaybackSignalVolume(uid, volume);
     } while (false);
@@ -1014,9 +1014,9 @@ NIM_SDK_NODE_API_DEF(subscribeRemoteAudioStream)
     INIT_ENV
     do
     {
-        uint32_t uid;
+        int64_t uid;
         bool enable;
-        napi_get_value_uint32(info[0], uid);
+        napi_get_value_int64(info[0], uid);
         napi_get_value_bool(info[1], enable);
         ret = rtc_engine_->subscribeRemoteAudioStream(uid, enable);
     } while (false);
