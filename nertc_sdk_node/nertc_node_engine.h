@@ -84,8 +84,8 @@ public:
     NIM_SDK_NODE_API(startChannelMediaRelay);
     NIM_SDK_NODE_API(updateChannelMediaRelay);
     NIM_SDK_NODE_API(stopChannelMediaRelay);
-    NIM_SDK_NODE_API(setLocalPublishFallbackOption);
-    NIM_SDK_NODE_API(setRemoteSubscribeFallbackOption);
+    //NIM_SDK_NODE_API(setLocalPublishFallbackOption);
+    //NIM_SDK_NODE_API(setRemoteSubscribeFallbackOption);
     NIM_SDK_NODE_API(enableSuperResolution);
     NIM_SDK_NODE_API(enableEncryption);
 

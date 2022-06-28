@@ -4,6 +4,7 @@
 #include <chrono>
 #include <string>
 #include "libyuv.h"
+#include "../shared/util/logger.h"
 
 using namespace libyuv;
 namespace nertc_node
@@ -344,6 +345,7 @@ void NodeVideoFrameTransporter::onFrameDataCallback(
     uint32_t rotation,
     void *user_data)
 {
+    Logger::Instance()->debug("-------------------onFrameDataCallback-----------------------" );
     int rotate = 0;
     switch (rotation)
     {

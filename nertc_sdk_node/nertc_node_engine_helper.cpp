@@ -453,6 +453,7 @@ napi_status nertc_stats_to_obj(const Napi::Env env, const nertc::NERtcStats& con
     return napi_ok;
 }
 
+#if 0
 napi_status nertc_audio_send_stats_to_obj(const Napi::Env env, const nertc::NERtcAudioSendStats& config,  Napi::Object& obj)
 {
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"num_channels")), config.num_channels);
@@ -464,6 +465,7 @@ napi_status nertc_audio_send_stats_to_obj(const Napi::Env env, const nertc::NERt
     return napi_ok;
 }
 
+
 napi_status nertc_audio_recv_stats_to_obj(const Napi::Env env, const  nertc::NERtcAudioRecvStats& config,  Napi::Object& obj)
 {
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"uid")), config.uid);
@@ -474,6 +476,8 @@ napi_status nertc_audio_recv_stats_to_obj(const Napi::Env env, const  nertc::NER
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"volume")), config.volume);
     return napi_ok;
 }
+
+#endif
 
 napi_status nertc_video_send_stats_to_obj(const Napi::Env env, const nertc::NERtcVideoSendStats& config,  Napi::Object& obj)
 {

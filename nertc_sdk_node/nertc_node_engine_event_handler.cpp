@@ -1091,6 +1091,7 @@ void NertcNodeRtcMediaStatsHandler::onLocalAudioStats(const nertc::NERtcAudioSen
 
 void NertcNodeRtcMediaStatsHandler::Node_onLocalAudioStats(const nertc::NERtcAudioSendStats & stats)
 {
+    #if 0
     auto it = _callbacks.find("onLocalAudioStats");
     if (it != _callbacks.end())
     {
@@ -1101,6 +1102,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onLocalAudioStats(const nertc::NERtcAud
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    #endif
 }
 
 void NertcNodeRtcMediaStatsHandler::onRemoteAudioStats(const nertc::NERtcAudioRecvStats *stats, unsigned int user_count)
@@ -1118,6 +1120,7 @@ void NertcNodeRtcMediaStatsHandler::onRemoteAudioStats(const nertc::NERtcAudioRe
 
 void NertcNodeRtcMediaStatsHandler::Node_onRemoteAudioStats(const nertc::NERtcAudioRecvStats *stats, unsigned int user_count)
 {
+    #if 0
     if (user_count <= 0)
         return;
     auto it = _callbacks.find("onRemoteAudioStats");
@@ -1142,6 +1145,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onRemoteAudioStats(const nertc::NERtcAu
         delete[] stats;
         stats = nullptr;
     }
+    #endif
 }
 
 void NertcNodeRtcMediaStatsHandler::onLocalVideoStats(const nertc::NERtcVideoSendStats &stats)

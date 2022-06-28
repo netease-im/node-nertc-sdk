@@ -1,6 +1,6 @@
 {
   "name": "nertc-electron-sdk",
-  "version": "4.4.8-rc-957",
+  "version": "4.4.8-rc-953",
   "description": "nertc-electron-sdk",
   "main": "js/nertc_sdk.js",
   "types": "types/nertc_sdk.d.ts",
@@ -10,12 +10,13 @@
   },
   "dependencies": {
     "bindings": "^1.5.0",
-    "node-pre-build": "^0.1.16",
-    "node-addon-api": "^4.2.0",
-    "yuv-buffer": "^1.0.0",
-    "yuv-canvas": "^1.2.6",
+    "cmake-js": "^6.3.2",
     "lodash.isequal": "^4.5.0",
-    "node-gyp": "^8.2.0"
+    "node-addon-api": "^4.2.0",
+    "node-gyp": "^8.2.0",
+    "node-pre-build": "^0.1.16",
+    "yuv-buffer": "^1.0.0",
+    "yuv-canvas": "^1.2.6"
   },
   "devDependencies": {
     "@types/node": "^12.12.22",
@@ -31,6 +32,7 @@
     "tar": "^6.1.11"
   },
   "scripts": {
+    "cmake:build": "cmake-js compile -r electron -v 16.0.2 -a x86_64",
     "build:dts": "rimraf ./types && tsc -p config_dts.json",
     "prebuild:ts": "npm run build:dts",
     "build:ts": "rimraf ./js && tsc -p config_ts.json",

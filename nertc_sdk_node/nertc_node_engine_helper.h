@@ -25,8 +25,8 @@ napi_status nertc_channel_media_relay_obj_to_struct(const Napi::Env& env, const 
 
 //set object field
 napi_status nertc_stats_to_obj(const Napi::Env env, const nertc::NERtcStats& config,  Napi::Object& obj);
-napi_status nertc_audio_send_stats_to_obj(const Napi::Env env, const nertc::NERtcAudioSendStats& config,  Napi::Object& obj);
-napi_status nertc_audio_recv_stats_to_obj(const Napi::Env env, const nertc::NERtcAudioRecvStats& config,  Napi::Object& obj);
+//napi_status nertc_audio_send_stats_to_obj(const Napi::Env env, const nertc::NERtcAudioSendStats& config,  Napi::Object& obj);
+//napi_status nertc_audio_recv_stats_to_obj(const Napi::Env env, const nertc::NERtcAudioRecvStats& config,  Napi::Object& obj);
 napi_status nertc_video_send_stats_to_obj(const Napi::Env env, const nertc::NERtcVideoSendStats& config,  Napi::Object& obj);
 napi_status nertc_video_recv_stats_to_obj(const Napi::Env env, const nertc::NERtcVideoRecvStats& config,  Napi::Object& obj);
 napi_status nertc_network_quality_to_obj(const Napi::Env env, const nertc::NERtcNetworkQualityInfo& config,  Napi::Object& obj);
