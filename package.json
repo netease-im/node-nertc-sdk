@@ -32,7 +32,7 @@
     "tar": "^6.1.11"
   },
   "scripts": {
-    "cmake:build": "cmake-js compile -r electron -v 16.0.2 -a x86_64",
+    "cmake": "cmake-js compile -r electron -v 16.0.2 -a x86_64",
     "build:dts": "rimraf ./types && tsc -p config_dts.json",
     "prebuild:ts": "npm run build:dts",
     "build:ts": "rimraf ./js && tsc -p config_ts.json",

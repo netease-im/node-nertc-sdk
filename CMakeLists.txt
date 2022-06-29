@@ -1,11 +1,12 @@
 message(STATUS  "===========nertc-electron-sdk============")
+message(STATUS "======================================= ${CMAKE_JS_LIB}")
 
 cmake_minimum_required(VERSION 3.10)
 set(TARGET_NAME nertc-electron-sdk)
 project(${TARGET_NAME})
 set(CMAKE_CXX_STANDARD 11)
 
-message(STATUS "===========NODE_ADDON_API_DIR============")
+# get NODE_ADDON_API_DIR
 add_definitions(-DNAPI_VERSION=4)
 execute_process(COMMAND node -p "require('node-addon-api').include"
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
@@ -13,6 +14,7 @@ execute_process(COMMAND node -p "require('node-addon-api').include"
 string(REPLACE "\n" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
 string(REPLACE "\"" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
 message(STATUS "NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR}")
+
 
 include_directories(${CMAKE_JS_INC}
 ${NODE_ADDON_API_DIR}
@@ -23,6 +25,8 @@ ${CMAKE_CURRENT_LIST_DIR}/nertc_sdk/nertc_sdk_Mac.framework/Headers
 ${CMAKE_CURRENT_LIST_DIR}/shared/libyuv/include
 ${CMAKE_CURRENT_LIST_DIR}/shared/libyuv/include/libyuv
 )
+
+message(STATUS  "=====================111111=====================")
 message(STATUS  ${CMAKE_JS_INC})
 
 file(GLOB_RECURSE NERTC_NODE_SOURCE 
@@ -46,9 +50,18 @@ link_directories(${TARGET_NAME}  PRIVATE
 #生成链接文件(.node)
 add_library(${TARGET_NAME} SHARED ${NERTC_NODE_SOURCE} ${CMAKE_JS_SRC})
 
+
+
+
 #目标文件属性设置
 set_target_properties(${TARGET_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 
+#设置链接库目录
+# link_directories(${TARGET_NAME}  
+# ${CMAKE_CURRENT_LIST_DIR}/nertc_sdk/lib
+# )
+
+message("===============  ${CMAKE_JS_LIB}")
 
 if(APPLE)
     set_target_properties( ${TARGET_NAME}
@@ -56,6 +69,10 @@ if(APPLE)
         BUILD_WITH_INSTALL_RPATH 1
         INSTALL_RPATH "@loader_path")
 endif ()
+
+
+
+
 
 if (WIN32)
       target_link_libraries(${TARGET_NAME} ${CMAKE_JS_LIB}  ${CMAKE_CURRENT_LIST_DIR}/nertc_sdk/lib/nertc_sdk.lib Ws2_32)
