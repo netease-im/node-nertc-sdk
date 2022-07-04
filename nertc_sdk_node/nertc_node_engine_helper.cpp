@@ -213,6 +213,7 @@ napi_status nertc_screen_capture_params_obj_to_struct(const Napi::Env& env, cons
             }
         }
     }
+    return napi_ok;
 }
 
 napi_status nertc_ls_users_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcLiveStreamUserTranscoding& user)
@@ -723,6 +724,7 @@ napi_status nertc_encry_obj_to_struct(const Napi::Env& env, const Napi::Object& 
         memset(config.key, 0, kNERtcMaxTokenLength);
         strncpy(config.key, out.c_str(), kNERtcMaxTokenLength);
     }
+    return napi_ok;
 }
 
 

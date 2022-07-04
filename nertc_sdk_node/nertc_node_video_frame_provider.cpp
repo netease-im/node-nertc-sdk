@@ -162,6 +162,7 @@ void NodeVideoFrameTransporter::setupFrameHeader(image_header_type*header, int s
     header->right = htons((uint16_t)(stride - width - left));
     header->bottom = htons((uint16_t)0);
     header->timestamp = 0;
+    return;
 }
 
 void NodeVideoFrameTransporter::copyFrame(const IVideoFrame& videoFrame, VideoFrameInfo& info, int dest_stride, int src_stride, int width, int height)
@@ -198,6 +199,7 @@ void NodeVideoFrameTransporter::copyFrame(const IVideoFrame& videoFrame, VideoFr
 
     info.m_bufferList[3].buffer = v;
     info.m_bufferList[3].length = width2 * heigh2;
+    return;
 }
 
 void NodeVideoFrameTransporter::copyAndCentreYuv(const unsigned char* srcYPlane, const unsigned char* srcUPlane, const unsigned char* srcVPlane, int width, int height, int srcStride,
@@ -234,6 +236,8 @@ unsigned char* dstYPlane, unsigned char* dstUPlane, unsigned char* dstVPlane, in
             dstVPlane += dstStride >> 1;
         }
     }
+
+    return;
 }
 
 #define NODE_SET_OBJ_PROP_HEADER(obj, it) \
@@ -331,6 +335,8 @@ void NodeVideoFrameTransporter::FlushVideo()
             std::this_thread::sleep_for(std::chrono::milliseconds(1000 / m_FPS));
         }
     }
+
+    return;
 }
 
 void NodeVideoFrameTransporter::onFrameDataCallback(
@@ -391,6 +397,8 @@ void NodeVideoFrameTransporter::onFrameDataCallback(
     {
         pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, frame.uid == 0);
     }
+
+    return;
 }
 
 void NodeVideoFrameTransporter::onSubstreamFrameDataCallback(
@@ -450,5 +458,7 @@ void NodeVideoFrameTransporter::onSubstreamFrameDataCallback(
     {
         pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, false);
     }
+
+    return;
 }
 }

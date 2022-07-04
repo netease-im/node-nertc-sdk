@@ -13,6 +13,7 @@ void EventHandler::addEvent(const std::string& eventName, Napi::FunctionReferenc
     std::shared_ptr<EventCallback> callback = std::make_shared<EventCallback>();// auto callback = new EventCallback();
     callback->function = std::move(function);
     _callbacks[eventName] = callback;
+    return;
 }
 
 int EventHandler::removeEventHandler(const std::string &eventName)
@@ -51,6 +52,7 @@ void NertcNodeEventHandler::onError(int error_code, const char* msg)
     nim_node::node_async_call::async_call([=]() {
         Node_onError(error_code, str_msg);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onError(int error_code, std::string msg){
@@ -64,6 +66,7 @@ void NertcNodeEventHandler::Node_onError(int error_code, std::string msg){
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onWarning(int warn_code, const char* msg)
@@ -72,6 +75,7 @@ void NertcNodeEventHandler::onWarning(int warn_code, const char* msg)
     nim_node::node_async_call::async_call([=]() {
         Node_onWarning(warn_code, str_msg);
     });    
+    return;
 }
 
 void NertcNodeEventHandler::Node_onWarning(int warn_code, std::string msg)
@@ -86,6 +90,7 @@ void NertcNodeEventHandler::Node_onWarning(int warn_code, std::string msg)
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onReleasedHwResources(nertc::NERtcErrorCode result)
@@ -93,6 +98,7 @@ void NertcNodeEventHandler::onReleasedHwResources(nertc::NERtcErrorCode result)
     nim_node::node_async_call::async_call([=]() {
         Node_onReleasedHwResources(result);
     });        
+    return;
 }
 
 void NertcNodeEventHandler::Node_onReleasedHwResources(nertc::NERtcErrorCode result)
@@ -106,6 +112,7 @@ void NertcNodeEventHandler::Node_onReleasedHwResources(nertc::NERtcErrorCode res
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }       
+    return;
 }
 
 void NertcNodeEventHandler::onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed)
@@ -113,6 +120,7 @@ void NertcNodeEventHandler::onJoinChannel(nertc::channel_id_t cid, nertc::uid_t 
     nim_node::node_async_call::async_call([=]() {
         Node_onJoinChannel(cid, uid, result, elapsed);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed)
@@ -129,7 +137,7 @@ void NertcNodeEventHandler::Node_onJoinChannel(nertc::channel_id_t cid, nertc::u
         const std::vector<napi_value> args = {param1, param2, param3, param4};
         function_reference->function.Call(args);
     }
-
+    return;
 }
 
 void NertcNodeEventHandler::onConnectionStateChange(nertc::NERtcConnectionStateType state, nertc::NERtcReasonConnectionChangedType reason)
@@ -137,6 +145,7 @@ void NertcNodeEventHandler::onConnectionStateChange(nertc::NERtcConnectionStateT
     nim_node::node_async_call::async_call([=]() {
         Node_onConnectionStateChange(state, reason);
     });     
+    return;
 }
 
 void NertcNodeEventHandler::Node_onConnectionStateChange(nertc::NERtcConnectionStateType state, nertc::NERtcReasonConnectionChangedType reason)
@@ -151,6 +160,7 @@ void NertcNodeEventHandler::Node_onConnectionStateChange(nertc::NERtcConnectionS
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onReconnectingStart(nertc::channel_id_t cid, nertc::uid_t uid)
@@ -158,6 +168,7 @@ void NertcNodeEventHandler::onReconnectingStart(nertc::channel_id_t cid, nertc::
     nim_node::node_async_call::async_call([=]() {
         Node_onReconnectingStart(cid, uid);
     });       
+    return;
 }
 
 void NertcNodeEventHandler::Node_onReconnectingStart(nertc::channel_id_t cid, nertc::uid_t uid)
@@ -172,6 +183,7 @@ void NertcNodeEventHandler::Node_onReconnectingStart(nertc::channel_id_t cid, ne
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onRejoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed)
@@ -179,6 +191,7 @@ void NertcNodeEventHandler::onRejoinChannel(nertc::channel_id_t cid, nertc::uid_
     nim_node::node_async_call::async_call([=]() {
         Node_onRejoinChannel(cid, uid, result, elapsed);
     });        
+    return;
 }
 
 void NertcNodeEventHandler::Node_onRejoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed)
@@ -195,13 +208,15 @@ void NertcNodeEventHandler::Node_onRejoinChannel(nertc::channel_id_t cid, nertc:
         const std::vector<napi_value> args = {param1, param2, param3, param4};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onLeaveChannel(nertc::NERtcErrorCode result)
 {
     nim_node::node_async_call::async_call([=]() {
         Node_onLeaveChannel(result);
-    });         
+    });       
+    return;  
 }
 
 void NertcNodeEventHandler::Node_onLeaveChannel(nertc::NERtcErrorCode result)
@@ -215,6 +230,7 @@ void NertcNodeEventHandler::Node_onLeaveChannel(nertc::NERtcErrorCode result)
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onDisconnect(nertc::NERtcErrorCode reason)
@@ -222,6 +238,7 @@ void NertcNodeEventHandler::onDisconnect(nertc::NERtcErrorCode reason)
     nim_node::node_async_call::async_call([=]() {
         Node_onDisconnect(reason);
     });      
+    return;
 }
 
 void NertcNodeEventHandler::Node_onDisconnect(nertc::NERtcErrorCode reason)
@@ -235,13 +252,15 @@ void NertcNodeEventHandler::Node_onDisconnect(nertc::NERtcErrorCode reason)
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onClientRoleChanged(nertc::NERtcClientRole oldRole, nertc::NERtcClientRole newRole)
 {
     nim_node::node_async_call::async_call([=]() {
         Node_onClientRoleChanged(oldRole, newRole);
-    });        
+    });     
+    return;   
 }
 
 void NertcNodeEventHandler::Node_onClientRoleChanged(nertc::NERtcClientRole oldRole, nertc::NERtcClientRole newRole)
@@ -256,6 +275,7 @@ void NertcNodeEventHandler::Node_onClientRoleChanged(nertc::NERtcClientRole oldR
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onUserJoined(nertc::uid_t uid, const char * user_name)
@@ -264,6 +284,7 @@ void NertcNodeEventHandler::onUserJoined(nertc::uid_t uid, const char * user_nam
     nim_node::node_async_call::async_call([=]() {
         Node_onUserJoined(uid, str_user_name);
     });         
+    return;
 }
 
 void NertcNodeEventHandler::Node_onUserJoined(nertc::uid_t uid, std::string user_name)
@@ -278,14 +299,15 @@ void NertcNodeEventHandler::Node_onUserJoined(nertc::uid_t uid, std::string user
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
-
+    return;
 }
 
 void NertcNodeEventHandler::onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason)
 {
     nim_node::node_async_call::async_call([=]() {
         Node_onUserLeft(uid, reason);
-    });       
+    });      
+    return; 
 }
 
 void NertcNodeEventHandler::Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason)
@@ -300,6 +322,7 @@ void NertcNodeEventHandler::Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessio
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onUserAudioStart(nertc::uid_t uid)
@@ -307,6 +330,7 @@ void NertcNodeEventHandler::onUserAudioStart(nertc::uid_t uid)
     nim_node::node_async_call::async_call([=]() {
         Node_onUserAudioStart(uid);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onUserAudioStart(nertc::uid_t uid)
@@ -320,6 +344,7 @@ void NertcNodeEventHandler::Node_onUserAudioStart(nertc::uid_t uid)
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onUserAudioStop(nertc::uid_t uid)
@@ -327,6 +352,7 @@ void NertcNodeEventHandler::onUserAudioStop(nertc::uid_t uid)
     nim_node::node_async_call::async_call([=]() {
         Node_onUserAudioStop(uid);
     });     
+    return;
 }
 
 void NertcNodeEventHandler::Node_onUserAudioStop(nertc::uid_t uid)
@@ -340,6 +366,7 @@ void NertcNodeEventHandler::Node_onUserAudioStop(nertc::uid_t uid)
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile)
@@ -347,6 +374,7 @@ void NertcNodeEventHandler::onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideo
     nim_node::node_async_call::async_call([=]() {
         Node_onUserVideoStart(uid, max_profile);
     });    
+    return;
 }
 
 void NertcNodeEventHandler::Node_onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile)
@@ -361,13 +389,15 @@ void NertcNodeEventHandler::Node_onUserVideoStart(nertc::uid_t uid, nertc::NERtc
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onUserVideoStop(nertc::uid_t uid)
 {
     nim_node::node_async_call::async_call([=]() {
         Node_onUserVideoStop(uid);
-    });     
+    });
+    return;     
 }
 
 void NertcNodeEventHandler::Node_onUserVideoStop(nertc::uid_t uid)
@@ -381,6 +411,7 @@ void NertcNodeEventHandler::Node_onUserVideoStop(nertc::uid_t uid)
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 
@@ -389,6 +420,7 @@ void NertcNodeEventHandler::onUserSubStreamVideoStart(nertc::uid_t uid, nertc::N
     nim_node::node_async_call::async_call([=]() {
         Node_onUserSubStreamVideoStart(uid, max_profile);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile)
@@ -403,6 +435,7 @@ void NertcNodeEventHandler::Node_onUserSubStreamVideoStart(nertc::uid_t uid, ner
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onUserSubStreamVideoStop(nertc::uid_t uid)
@@ -410,6 +443,7 @@ void NertcNodeEventHandler::onUserSubStreamVideoStop(nertc::uid_t uid)
     nim_node::node_async_call::async_call([=]() {
         Node_onUserSubStreamVideoStop(uid);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onUserSubStreamVideoStop(nertc::uid_t uid)
@@ -423,6 +457,7 @@ void NertcNodeEventHandler::Node_onUserSubStreamVideoStop(nertc::uid_t uid)
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onUserVideoProfileUpdate(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile)
@@ -430,6 +465,7 @@ void NertcNodeEventHandler::onUserVideoProfileUpdate(nertc::uid_t uid, nertc::NE
     nim_node::node_async_call::async_call([=]() {
         Node_onUserVideoProfileUpdate(uid, max_profile);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onUserVideoProfileUpdate(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile)
@@ -444,6 +480,7 @@ void NertcNodeEventHandler::Node_onUserVideoProfileUpdate(nertc::uid_t uid, nert
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onUserAudioMute(nertc::uid_t uid, bool mute)
@@ -451,6 +488,7 @@ void NertcNodeEventHandler::onUserAudioMute(nertc::uid_t uid, bool mute)
     nim_node::node_async_call::async_call([=]() {
         Node_onUserAudioMute(uid, mute);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onUserAudioMute(nertc::uid_t uid, bool mute)
@@ -465,6 +503,7 @@ void NertcNodeEventHandler::Node_onUserAudioMute(nertc::uid_t uid, bool mute)
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onUserVideoMute(nertc::uid_t uid, bool mute)
@@ -472,6 +511,7 @@ void NertcNodeEventHandler::onUserVideoMute(nertc::uid_t uid, bool mute)
     nim_node::node_async_call::async_call([=]() {
         Node_onUserVideoMute(uid, mute);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onUserVideoMute(nertc::uid_t uid, bool mute)
@@ -486,6 +526,7 @@ void NertcNodeEventHandler::Node_onUserVideoMute(nertc::uid_t uid, bool mute)
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onAudioDeviceStateChanged(const char device_id[kNERtcMaxDeviceIDLength],
@@ -496,6 +537,7 @@ void NertcNodeEventHandler::onAudioDeviceStateChanged(const char device_id[kNERt
     nim_node::node_async_call::async_call([=]() {
         Node_onAudioDeviceStateChanged(str_device_id, device_type, device_state);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onAudioDeviceStateChanged(std::string device_id, nertc::NERtcAudioDeviceType device_type, nertc::NERtcAudioDeviceState device_state)
@@ -511,6 +553,7 @@ void NertcNodeEventHandler::Node_onAudioDeviceStateChanged(std::string device_id
             const std::vector<napi_value> args = {param1, param2, param3};
             function_reference->function.Call(args);
         }
+        return;
 }
 
 void NertcNodeEventHandler::onAudioDefaultDeviceChanged(const char device_id[kNERtcMaxDeviceIDLength],
@@ -520,6 +563,7 @@ void NertcNodeEventHandler::onAudioDefaultDeviceChanged(const char device_id[kNE
     nim_node::node_async_call::async_call([=]() {
         Node_onAudioDefaultDeviceChanged(str_device_id, device_type);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onAudioDefaultDeviceChanged(std::string device_id, nertc::NERtcAudioDeviceType device_type)
@@ -534,6 +578,7 @@ void NertcNodeEventHandler::Node_onAudioDefaultDeviceChanged(std::string device_
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onVideoDeviceStateChanged(const char device_id[kNERtcMaxDeviceIDLength],
@@ -544,6 +589,7 @@ void NertcNodeEventHandler::onVideoDeviceStateChanged(const char device_id[kNERt
     nim_node::node_async_call::async_call([=]() {
         Node_onVideoDeviceStateChanged(str_device_id, device_type, device_state);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onVideoDeviceStateChanged(std::string device_id,
@@ -561,6 +607,7 @@ void NertcNodeEventHandler::Node_onVideoDeviceStateChanged(std::string device_id
         const std::vector<napi_value> args = {param1, param2, param3};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onFirstAudioDataReceived(nertc::uid_t uid)
@@ -568,6 +615,7 @@ void NertcNodeEventHandler::onFirstAudioDataReceived(nertc::uid_t uid)
     nim_node::node_async_call::async_call([=]() {
         Node_onFirstAudioDataReceived(uid);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onFirstAudioDataReceived(nertc::uid_t uid)
@@ -581,6 +629,7 @@ void NertcNodeEventHandler::Node_onFirstAudioDataReceived(nertc::uid_t uid)
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onFirstVideoDataReceived(nertc::uid_t uid)
@@ -588,6 +637,7 @@ void NertcNodeEventHandler::onFirstVideoDataReceived(nertc::uid_t uid)
     nim_node::node_async_call::async_call([=]() {
         Node_onFirstVideoDataReceived(uid);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onFirstVideoDataReceived(nertc::uid_t uid)
@@ -601,6 +651,7 @@ void NertcNodeEventHandler::Node_onFirstVideoDataReceived(nertc::uid_t uid)
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onFirstAudioFrameDecoded(nertc::uid_t uid)
@@ -608,6 +659,7 @@ void NertcNodeEventHandler::onFirstAudioFrameDecoded(nertc::uid_t uid)
     nim_node::node_async_call::async_call([=]() {
         Node_onFirstAudioFrameDecoded(uid);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onFirstAudioFrameDecoded(nertc::uid_t uid)
@@ -621,6 +673,7 @@ void NertcNodeEventHandler::Node_onFirstAudioFrameDecoded(nertc::uid_t uid)
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onFirstVideoFrameDecoded(nertc::uid_t uid, uint32_t width, uint32_t height)
@@ -628,6 +681,7 @@ void NertcNodeEventHandler::onFirstVideoFrameDecoded(nertc::uid_t uid, uint32_t 
     nim_node::node_async_call::async_call([=]() {
         Node_onFirstVideoFrameDecoded(uid, width, height);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onFirstVideoFrameDecoded(nertc::uid_t uid, uint32_t width, uint32_t height)
@@ -643,6 +697,7 @@ void NertcNodeEventHandler::Node_onFirstVideoFrameDecoded(nertc::uid_t uid, uint
         const std::vector<napi_value> args = {param1, param2, param3};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onCaptureVideoFrame(void *data,
@@ -655,6 +710,7 @@ void NertcNodeEventHandler::onCaptureVideoFrame(void *data,
                                                 nertc::NERtcVideoRotation rotation)
 {
     //TODO(litianyi)
+    return;
 }
 
 void NertcNodeEventHandler::onAudioMixingStateChanged(nertc::NERtcAudioMixingState state, nertc::NERtcAudioMixingErrorCode error_code)
@@ -662,6 +718,7 @@ void NertcNodeEventHandler::onAudioMixingStateChanged(nertc::NERtcAudioMixingSta
     nim_node::node_async_call::async_call([=]() {
         Node_onAudioMixingStateChanged(state, error_code);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onAudioMixingStateChanged(nertc::NERtcAudioMixingState state, nertc::NERtcAudioMixingErrorCode error_code)
@@ -676,6 +733,7 @@ void NertcNodeEventHandler::Node_onAudioMixingStateChanged(nertc::NERtcAudioMixi
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onAudioMixingTimestampUpdate(uint64_t timestamp_ms)
@@ -683,6 +741,7 @@ void NertcNodeEventHandler::onAudioMixingTimestampUpdate(uint64_t timestamp_ms)
     nim_node::node_async_call::async_call([=]() {
         Node_onAudioMixingTimestampUpdate(timestamp_ms);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onAudioMixingTimestampUpdate(uint64_t timestamp_ms)
@@ -696,6 +755,7 @@ void NertcNodeEventHandler::Node_onAudioMixingTimestampUpdate(uint64_t timestamp
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onAudioEffectFinished(uint32_t effect_id)
@@ -703,6 +763,7 @@ void NertcNodeEventHandler::onAudioEffectFinished(uint32_t effect_id)
     nim_node::node_async_call::async_call([=]() {
         Node_onAudioEffectFinished(effect_id);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onAudioEffectFinished(uint32_t effect_id)
@@ -716,6 +777,7 @@ void NertcNodeEventHandler::Node_onAudioEffectFinished(uint32_t effect_id)
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onLocalAudioVolumeIndication(int volume)
@@ -723,6 +785,7 @@ void NertcNodeEventHandler::onLocalAudioVolumeIndication(int volume)
     nim_node::node_async_call::async_call([=]() {
         Node_onLocalAudioVolumeIndication(volume);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onLocalAudioVolumeIndication(int volume)
@@ -736,6 +799,7 @@ void NertcNodeEventHandler::Node_onLocalAudioVolumeIndication(int volume)
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume)
@@ -749,6 +813,7 @@ void NertcNodeEventHandler::onRemoteAudioVolumeIndication(const nertc::NERtcAudi
     nim_node::node_async_call::async_call([=]() {
         Node_onRemoteAudioVolumeIndication(dst_speakers, speaker_number, total_volume);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume)
@@ -773,6 +838,7 @@ void NertcNodeEventHandler::Node_onRemoteAudioVolumeIndication(const nertc::NERt
     }
     free((void*)speakers);
     speakers = nullptr;
+    return;
 }
 
 void NertcNodeEventHandler::onAddLiveStreamTask(const char* task_id, const char* url, int error_code)
@@ -782,6 +848,7 @@ void NertcNodeEventHandler::onAddLiveStreamTask(const char* task_id, const char*
     nim_node::node_async_call::async_call([=]() {
         Node_onAddLiveStreamTask(str_task_id, str_url, error_code);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onAddLiveStreamTask(std::string task_id, std::string url, int error_code)
@@ -797,6 +864,7 @@ void NertcNodeEventHandler::Node_onAddLiveStreamTask(std::string task_id, std::s
         const std::vector<napi_value> args = {param1, param2, param3};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onUpdateLiveStreamTask(const char* task_id, const char* url, int error_code)
@@ -806,6 +874,7 @@ void NertcNodeEventHandler::onUpdateLiveStreamTask(const char* task_id, const ch
     nim_node::node_async_call::async_call([=]() {
         Node_onUpdateLiveStreamTask(str_task_id, str_url, error_code);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onUpdateLiveStreamTask(std::string task_id, std::string url, int error_code)
@@ -821,6 +890,7 @@ void NertcNodeEventHandler::Node_onUpdateLiveStreamTask(std::string task_id, std
         const std::vector<napi_value> args = {param1,param2,param3};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onRemoveLiveStreamTask(const char* task_id, int error_code)
@@ -829,6 +899,7 @@ void NertcNodeEventHandler::onRemoveLiveStreamTask(const char* task_id, int erro
     nim_node::node_async_call::async_call([=]() {
         Node_onRemoveLiveStreamTask(str_task_id, error_code);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onRemoveLiveStreamTask(std::string task_id, int error_code)
@@ -843,6 +914,7 @@ void NertcNodeEventHandler::Node_onRemoveLiveStreamTask(std::string task_id, int
         const std::vector<napi_value> args = {param1,param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onLiveStreamState(const char* task_id, const char* url, nertc::NERtcLiveStreamStateCode state)
@@ -852,6 +924,7 @@ void NertcNodeEventHandler::onLiveStreamState(const char* task_id, const char* u
     nim_node::node_async_call::async_call([=]() {
         Node_onLiveStreamState(str_task_id, str_url, state);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onLiveStreamState(std::string task_id, std::string url, nertc::NERtcLiveStreamStateCode state)
@@ -867,6 +940,7 @@ void NertcNodeEventHandler::Node_onLiveStreamState(std::string task_id, std::str
         const std::vector<napi_value> args = {param1,param2,param3};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onAudioHowling(bool howling)
@@ -874,6 +948,7 @@ void NertcNodeEventHandler::onAudioHowling(bool howling)
     nim_node::node_async_call::async_call([=]() {
         Node_onAudioHowling(howling);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onAudioHowling(bool howling)
@@ -887,6 +962,7 @@ void NertcNodeEventHandler::Node_onAudioHowling(bool howling)
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize)
@@ -897,6 +973,7 @@ void NertcNodeEventHandler::onRecvSEIMsg(nertc::uid_t uid, const char* data, uin
 	nim_node::node_async_call::async_call([=]() {
 		Node_onRecvSEIMsg(uid, copied, dataSize);
 	});
+    return;
 }
 
 void NertcNodeEventHandler::Node_onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t length)
@@ -914,6 +991,7 @@ void NertcNodeEventHandler::Node_onRecvSEIMsg(nertc::uid_t uid, const char* data
     }
     delete [] data;
     data = nullptr;
+    return;
 }
 
 void NertcNodeEventHandler::onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status)
@@ -921,6 +999,7 @@ void NertcNodeEventHandler::onScreenCaptureStatus(nertc::NERtcScreenCaptureStatu
     nim_node::node_async_call::async_call([=]() {
         Node_onScreenCaptureStatus(status);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status)
@@ -934,6 +1013,7 @@ void NertcNodeEventHandler::Node_onScreenCaptureStatus(nertc::NERtcScreenCapture
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onAudioRecording(nertc::NERtcAudioRecordingCode code, const char* file_path)
@@ -942,6 +1022,7 @@ void NertcNodeEventHandler::onAudioRecording(nertc::NERtcAudioRecordingCode code
     nim_node::node_async_call::async_call([=]() {
         Node_onAudioRecording(code, str_file_path);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onAudioRecording(nertc::NERtcAudioRecordingCode code, std::string file_path)
@@ -956,6 +1037,7 @@ void NertcNodeEventHandler::Node_onAudioRecording(nertc::NERtcAudioRecordingCode
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onMediaRelayStateChanged(nertc::NERtcChannelMediaRelayState state, const char* channel_name)
@@ -964,6 +1046,7 @@ void NertcNodeEventHandler::onMediaRelayStateChanged(nertc::NERtcChannelMediaRel
     nim_node::node_async_call::async_call([=]() {
         Node_onMediaRelayStateChanged(state, str_channel_name);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onMediaRelayStateChanged(nertc::NERtcChannelMediaRelayState state, std::string channel_name)
@@ -978,6 +1061,7 @@ void NertcNodeEventHandler::Node_onMediaRelayStateChanged(nertc::NERtcChannelMed
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onMediaRelayEvent(nertc::NERtcChannelMediaRelayEvent event, const char* channel_name, nertc::NERtcErrorCode error)
@@ -986,6 +1070,7 @@ void NertcNodeEventHandler::onMediaRelayEvent(nertc::NERtcChannelMediaRelayEvent
     nim_node::node_async_call::async_call([=]() {
         Node_onMediaRelayEvent(event, str_channel_name, error);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onMediaRelayEvent(nertc::NERtcChannelMediaRelayEvent event, std::string channel_name, nertc::NERtcErrorCode error)
@@ -1001,6 +1086,7 @@ void NertcNodeEventHandler::Node_onMediaRelayEvent(nertc::NERtcChannelMediaRelay
         const std::vector<napi_value> args = {param1, param2, param3};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onLocalPublishFallbackToAudioOnly(bool is_fallback, nertc::NERtcVideoStreamType stream_type)
@@ -1008,6 +1094,7 @@ void NertcNodeEventHandler::onLocalPublishFallbackToAudioOnly(bool is_fallback, 
     nim_node::node_async_call::async_call([=]() {
         Node_onLocalPublishFallbackToAudioOnly(is_fallback, stream_type);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onLocalPublishFallbackToAudioOnly(bool is_fallback, nertc::NERtcVideoStreamType stream_type)
@@ -1022,6 +1109,7 @@ void NertcNodeEventHandler::Node_onLocalPublishFallbackToAudioOnly(bool is_fallb
         const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onRemoteSubscribeFallbackToAudioOnly(nertc::uid_t uid, bool is_fallback, nertc::NERtcVideoStreamType stream_type)
@@ -1029,6 +1117,7 @@ void NertcNodeEventHandler::onRemoteSubscribeFallbackToAudioOnly(nertc::uid_t ui
     nim_node::node_async_call::async_call([=]() {
         Node_onRemoteSubscribeFallbackToAudioOnly(uid, is_fallback, stream_type);
     });
+    return;
 }
 
 void NertcNodeEventHandler::Node_onRemoteSubscribeFallbackToAudioOnly(nertc::uid_t uid, bool is_fallback, nertc::NERtcVideoStreamType stream_type)
@@ -1044,6 +1133,7 @@ void NertcNodeEventHandler::Node_onRemoteSubscribeFallbackToAudioOnly(nertc::uid
         const std::vector<napi_value> args = {param1, param2, param3};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeEventHandler::onPullExternalAudioFrame(Napi::FunctionReference&& function, const std::shared_ptr<unsigned char>& data, uint32_t length)
@@ -1058,6 +1148,7 @@ void NertcNodeEventHandler::onPullExternalAudioFrame(Napi::FunctionReference&& f
         const std::vector<napi_value> args = {arrayBuffer};
         callback->function.Call(args);
     });
+    return;
 }
 
 
@@ -1066,6 +1157,7 @@ void NertcNodeRtcMediaStatsHandler::onRtcStats(const nertc::NERtcStats &stats)
     nim_node::node_async_call::async_call([=]() {
         Node_onRtcStats(stats);
     });
+    return;
 }
 
 void NertcNodeRtcMediaStatsHandler::Node_onRtcStats(const nertc::NERtcStats & stats)
@@ -1080,6 +1172,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onRtcStats(const nertc::NERtcStats & st
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+    return;
 }
 
 void NertcNodeRtcMediaStatsHandler::onLocalAudioStats(const nertc::NERtcAudioSendStats &stats)
@@ -1087,6 +1180,7 @@ void NertcNodeRtcMediaStatsHandler::onLocalAudioStats(const nertc::NERtcAudioSen
     nim_node::node_async_call::async_call([=]() {
         Node_onLocalAudioStats(stats);
     });
+    return;
 }
 
 void NertcNodeRtcMediaStatsHandler::Node_onLocalAudioStats(const nertc::NERtcAudioSendStats & stats)
@@ -1103,6 +1197,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onLocalAudioStats(const nertc::NERtcAud
         function_reference->function.Call(args);
     }
     #endif
+    return;
 }
 
 void NertcNodeRtcMediaStatsHandler::onRemoteAudioStats(const nertc::NERtcAudioRecvStats *stats, unsigned int user_count)
@@ -1116,6 +1211,7 @@ void NertcNodeRtcMediaStatsHandler::onRemoteAudioStats(const nertc::NERtcAudioRe
     nim_node::node_async_call::async_call([=]() {
         Node_onRemoteAudioStats(ss, user_count);
     });
+    return;
 }
 
 void NertcNodeRtcMediaStatsHandler::Node_onRemoteAudioStats(const nertc::NERtcAudioRecvStats *stats, unsigned int user_count)
@@ -1146,6 +1242,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onRemoteAudioStats(const nertc::NERtcAu
         stats = nullptr;
     }
     #endif
+    return;
 }
 
 void NertcNodeRtcMediaStatsHandler::onLocalVideoStats(const nertc::NERtcVideoSendStats &stats)
@@ -1160,6 +1257,7 @@ void NertcNodeRtcMediaStatsHandler::onLocalVideoStats(const nertc::NERtcVideoSen
     nim_node::node_async_call::async_call([=]() {
         Node_onLocalVideoStats(ss);
     });
+    return;
 }
 
 void NertcNodeRtcMediaStatsHandler::Node_onLocalVideoStats(const nertc::NERtcVideoSendStats& ss)
@@ -1178,6 +1276,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onLocalVideoStats(const nertc::NERtcVid
     {
         delete[] ss.video_layers_list;
     }
+    return;
 }
 
 void NertcNodeRtcMediaStatsHandler::onRemoteVideoStats(const nertc::NERtcVideoRecvStats *stats, unsigned int user_count)
@@ -1195,6 +1294,7 @@ void NertcNodeRtcMediaStatsHandler::onRemoteVideoStats(const nertc::NERtcVideoRe
     nim_node::node_async_call::async_call([=]() {
         Node_onRemoteVideoStats(ss, user_count);
     });
+    return;
 }
 
 void NertcNodeRtcMediaStatsHandler::Node_onRemoteVideoStats(const nertc::NERtcVideoRecvStats *ss, unsigned int user_count)
@@ -1229,6 +1329,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onRemoteVideoStats(const nertc::NERtcVi
         delete[] ss;
         // ss = nullptr;
     }
+    return;
 }
 
 void NertcNodeRtcMediaStatsHandler::onNetworkQuality(const nertc::NERtcNetworkQualityInfo *infos, unsigned int user_count)
@@ -1240,7 +1341,7 @@ void NertcNodeRtcMediaStatsHandler::onNetworkQuality(const nertc::NERtcNetworkQu
     nim_node::node_async_call::async_call([=]() {
         Node_onNetworkQuality(ss, user_count);
     });
-    
+    return;
 }
 
 void NertcNodeRtcMediaStatsHandler::Node_onNetworkQuality(const nertc::NERtcNetworkQualityInfo *ss, unsigned int user_count)
@@ -1267,6 +1368,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onNetworkQuality(const nertc::NERtcNetw
         delete[] ss;
         ss = nullptr;
     }
+    return;
 }
 
 }
