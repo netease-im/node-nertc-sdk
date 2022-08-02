@@ -90,6 +90,7 @@
             },
             'msvs_settings': {
               'VCCLCompilerTool': {
+                'RuntimeLibrary': 0,
                 'AdditionalOptions': [
                   '/utf-8'
                 ]
@@ -115,7 +116,7 @@
               'Release': {
                 'msvs_settings': {
                   'VCCLCompilerTool': {
-                    'RuntimeLibrary': '2',
+                    'RuntimeLibrary': '0',
                     'Optimization': '2',
                     'EnableIntrinsicFunctions': 'true',
                     'DebugInformationFormat': '3',
@@ -127,7 +128,7 @@
               'Debug': {
                 'msvs_settings': {
                   'VCCLCompilerTool': {
-                    'RuntimeLibrary': '3',
+                    'RuntimeLibrary': '0',
                     'AdditionalOptions': [
                     ]
                   }
