@@ -59,12 +59,9 @@
   "files": [
     ".github",
     "js",
-    "nertc_sdk_node",
     "nertc_sdk_ts",
     "types",
     "scripts",
-    "shared",
-    "binding.gyp",
     "config_dts.json",
     "config_ts.json",
     "just-task.js",
