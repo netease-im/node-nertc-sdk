@@ -1,11 +1,12 @@
 const { task, option, logger, argv } = require('just-task')
-const fs = require('fs')
 const download = require('download')
 const path = require('path')
-const fetchWrapper = require('./scripts/fetch_wrapper')
-const buildAddon = require('./scripts/build_addon')
-const packAddon = require('./scripts/pack_addon')
 const fsExtra = require('fs-extra')
+const nodeAbi = require('node-abi')
+const fetch = require('node-fetch')
+const glob = require('glob');
+const shell = require('shelljs')
+const tar = require('tar')
 
 option('target')
 option('target_platform', { default: process.platform, choices: ['darwin', 'win32', 'linux'] })
@@ -15,31 +16,178 @@ option('debug', { default: false, boolean: true })
 option('silent', { default: false, boolean: true })
 option('download_url')
 
-const includePath = 'nertc_sdk'
-const tempPath = 'temporary'
-const packageMeta = require(path.join(__dirname, 'package.json'))
-const nativeWinUrl = `http://yx-web.nos.netease.com/package/1639620445599/NERTC_Windows_SDK_V4.4.8.zip`
-const nativeMacUrl = `http://yx-web.nos.netease.com/package/1639621428/NERTC_MacOS_SDK_V4.4.8.zip`
+const sdkPackageJson = require(path.join(__dirname, 'package.json'))
+const sdkPath = path.join(process.cwd(), sdkPackageJson.node_pre_build['sdk-dir'])
+const binary_dir = `build/Release`
+const package_dir = `packages`
+
+function packageAddon(sdkVersion, target, runtime, platform, arch) {
+  return new Promise((resolve, reject) => {
+    if (!fsExtra.pathExistsSync(process.cwd() + '/' + package_dir)) {
+      fsExtra.mkdirSync(process.cwd() + '/' + package_dir);
+    }
+    const abi_version = nodeAbi.getAbi(target, runtime);
+    tar.create({
+      gzip: true,
+      sync: true,
+      cwd: process.cwd() + '/' + binary_dir,
+      file: `${process.cwd() + '/' + package_dir}/nertc-v${sdkVersion}-abi${abi_version}-${platform}-${arch}.tar.gz`,
+      filter: (path, stat) => {
+        if (path.match(/\.pdb|\.node/g) !== null) { //pre /\.pdb|\.dll|\.node|\.framework|\.dylib/g
+          console.info(`addon path:${path} packed.`)
+          return true
+        }
+      },
+    }, fsExtra.readdirSync(process.cwd() + '/' + binary_dir))
+    return resolve()
+  })
+}
+
+function removeNativeSdk() {
+  if(fsExtra.pathExistsSync(sdkPath)){
+    fsExtra.rmdirSync(sdkPath, { recursive: true })
+    console.log(`[node_pre_build] delecte NertcSdk end`)
+  }
+  let bindingGyp = path.join(process.cwd(), 'binding.gyp')
+  fsExtra.pathExists(bindingGyp, (err, exists) => {
+    if (exists) {
+      fsExtra.removeSync(bindingGyp)
+      console.log(`[node_pre_build] delecte bindingGyp`)
+    }
+  })
+}
+
+function copySDKToBinaryDir() {
+  const temp = glob.sync('/**/+(*.dll|*.framework|*.dylib|*.so|*.node)', {
+    root: sdkPath
+  })
+  const files = []
+  temp.forEach((filepath) => {
+    console.log('pre copySync file:' + path.basename(filepath))
+    if(!filepath.includes('dSYM')){
+      files.push(filepath)
+    }
+  })
+  if (!fsExtra.pathExistsSync(path.join(process.cwd(), binary_dir))) {
+    fsExtra.mkdirSync(path.join(process.cwd(), binary_dir), {recursive: true});
+  }
+  files.forEach((filepath) => {
+    console.log('after copySync file:' + path.basename(filepath))
+    fsExtra.copySync(filepath, path.join(process.cwd(), binary_dir, path.basename(filepath)))
+  })
+  console.log(`[node_pre_buidld] copySDKToBinaryDir end`)
+}
+
+function build(runtime, version, arch) {
+  return new Promise((resolve, reject) => {
+    console.log(`build addon frome sdk`)
+    const msvcVersion = '2017';
+    const silent = false;
+    const distUrl = 'https://electronjs.org/headers';
+    const gypPath = path.join(process.cwd(), '/node_modules/node-gyp/bin/node-gyp.js');
+    const gypExec = `node ${gypPath}`;
+    const command = [`${gypExec} configure`];
+    command.push(`--arch=${arch} --msvs_version=${msvcVersion}`);
+    if (!runtime || !version) {
+      runtime = 'node'
+      version = process.versions.node
+    }
+    if('electron' == runtime){
+      command.push(`--target=${version} --dist-url=${distUrl}`);
+    }
+    command.push(' --openssl_fips=X')
+    shell.exec(`${gypExec} clean`, {silent})
+    shell.exec(command.join(' '), {silent})
+    shell.exec(`${gypExec} build`, {silent})
+    return resolve()
+  })
+}
+
+function downloadSDK (publishJson, targetPlatform, targetArch) {
+  return new Promise((resolve, reject) => {
+    let sdkList = []
+    Object.keys(publishJson[`NERtcSDK`]).forEach((temp) => {
+      if (sdkPackageJson.version.split('-')[0] === temp) {
+        sdkList = publishJson[`NERtcSDK`][temp]
+      }
+    })
+    let sdkUrl = ``
+    sdkList.forEach((member) => {
+      if (member.filename.includes(`nertc`) && 
+        member.filename.includes(targetPlatform) && 
+        member.filename.includes(targetArch)) {
+        sdkUrl = member.cdnlink
+      }
+    })
+    console.log(`sdk url:${sdkUrl}`)
+    download(sdkUrl, sdkPath, {
+      extract: true,
+      filter: (file) => {
+          return !file.path.includes('._')
+      }
+    })
+    .then(() => {
+      console.info(`Downloading sdk complete`)
+      return resolve()
+    })
+    .catch((err) => {
+      console.error(`Downloading sdk error:${err}`)
+      return reject()
+    })
+  })
+}
+
+function downlaodAddon(publishJson, abiVersion, targetPlatform, targetArch) {
+  return new Promise((resolve, reject) => {
+    //download addon
+    let addon_list = []
+    Object.keys(publishJson[`electron`]).forEach((temp) => {
+      if (sdkPackageJson.version.split('-')[0] === temp) {
+        addon_list = publishJson[`electron`][temp]
+      }
+    })
+    let addon_url
+    console.log(`platform:${platform} arch:${arch} abiVersion:${abiVersion}`)
+    addon_list.forEach((member) => {
+      if (member.filename.includes(`nertc`) &&
+        member.filename.includes(targetPlatform) && 
+        member.filename.includes(targetArch) &&
+        member.filename.includes(abiVersion)) {
+        addon_url = member.cdnlink;
+      }
+    })
+    console.log(`addon url:${addon_url}`)
+    if(!addon_url) {
+      return reject()
+    }
+    download(addon_url, sdkPath, {
+      extract: true,
+      filter: (file) => {
+          return !file.path.includes('._')
+      }
+    })
+    .then(() => {
+      console.info(`Downloading prebuilt addon complete`)
+      copySDKToBinaryDir()
+      removeNativeSdk()
+      return resolve()
+    })
+    .catch((err) => {
+      console.error(`Downloading prebuilt addon error:${err}`)
+      return reject()
+    })
+  })
+}
 
 task('fetch-wrapper', () => {
   const platform = argv().target_platform
   const arch = argv().target_arch
-  const temporaryPath = path.join(__dirname, tempPath)
-  const extractPath = path.join(__dirname, includePath)
-  const downloadUrl = argv().download_url
-  let fetchUrl
-  if (platform === 'win32') {
-    fetchUrl = downloadUrl || nativeWinUrl
-  } else if (platform === 'darwin') {
-    fetchUrl = downloadUrl || nativeMacUrl
-  }
-  return fetchWrapper({
-    platform,
-    arch,
-    fetchUrl,
-    temporaryPath,
-    extractPath
-  })
+  fetch('https://admin.netease.im/public-service/free/publish/list')
+    .then((res) => res.json())
+    .then((json) => {
+      let publishJson =json.data
+      downloadSDK(publishJson, platform, arch)
+    })
 })
 
 task('build', () => {
@@ -47,47 +195,18 @@ task('build', () => {
   const platform = argv().target_platform
   const arch = argv().target_arch
   const runtime = argv().runtime
-  const version = packageMeta.version
-  const packageName = packageMeta.name
-  const sourcePath = path.join(__dirname, includePath)
-
+  const sdkVersion = sdkPackageJson.version
   logger.info(JSON.stringify(argv()))
-
-  return new Promise((resolve, reject) => {
-    buildAddon({
-      target,
-      runtime,
-      platform,
-      arch
-    }).then(() => {
-      return packAddon({
-        packageName,
-        version,
-        target,
-        platform,
-        arch,
-        runtime
-      })
-    }).then(() => resolve())
+  build(runtime, target, arch).then(() => {
+    packageAddon(sdkVersion,target,runtime, platform, arch)
   })
 })
 
-task('package', () => {
-  logger.info(JSON.stringify(argv()))
-  const target = argv().target
-  const platform = argv().target_platform
-  const arch = argv().target_arch
-  const runtime = argv().runtime
-  const version = packageMeta.version
-  const packageName = packageMeta.name
-  return packAddon({
-    packageName,
-    version,
-    target,
-    platform,
-    arch,
-    runtime
-  })
+task('clean', () => {
+  if(fsExtra.pathExistsSync(sdkPath)){
+    fsExtra.rmdirSync(sdkPath, { recursive: true })
+    console.log(`[node_pre_build] delecte NertcSdk end`)
+  }
 })
 
 task('install', () => {
@@ -95,60 +214,37 @@ task('install', () => {
     logger.info('[install] Skip downlaod prebuilt libraries.')
     return
   }
-  let target = '5.0.8'
+  let target = '13.0.0'
   let runtime = 'electron'
-  const targetPlatform = process.env.npm_config_target_platform || process.platform
-  const targetArch = process.env.npm_config_target_arch || process.arch
-  const downloadUrl = process.env.npm_config_download_url
-  const curPkgMeta = require(path.join(__dirname, 'package.json'))
-  const rootPkgMeta = require(path.join(process.env.INIT_CWD, 'package.json'))
-  logger.info('------------------ just install --------------------')
-  if (rootPkgMeta.devDependencies && rootPkgMeta.devDependencies.electron) {
+  logger.info('nertc just install')
+  const appPackageJson = require(path.join(process.env.INIT_CWD, 'package.json'))
+  if (appPackageJson.devDependencies && appPackageJson.devDependencies.electron) {
     // v13.1.2 => 13.1.2, remove prefix 'v'
-    target = rootPkgMeta.devDependencies.electron.replace(/^.*?(\d+.+\d).*/, '$1')
+    target = appPackageJson.devDependencies.electron.replace(/^.*?(\d+.+\d).*/, '$1')
   } else {
     target = process.version.match(/^v(\d+\.\d+)/)[1]
     runtime = 'node'
   }
-  // 13.1.2 => 13.1, match major.minor only
-  const nodeAbi = `${runtime}-v${target.replace(/^(\d+.+?\d+).*/, '$1')}`
-  return new Promise((resolve, reject) => {
-    const host = 'https://yx-web-nosdn.netease.im'
-    const remotePath = 'package'
-    const packageName = `${curPkgMeta.name}-v${curPkgMeta.version}-${nodeAbi}-${targetPlatform}-${targetArch}.tar.gz`
-    const localPath = 'build/Release'
-    const buildReleasePath = path.join(__dirname, localPath)
-    console.log('[install] release dir' + buildReleasePath)
-    if(fs.existsSync(buildReleasePath)){
-      console.log('[install] del release dir')
-      fs.rmdirSync(buildReleasePath, { recursive: true })
-    }
-    download(`${host}/${remotePath}/${packageName}`, path.join(__dirname, localPath), {
-      extract: true
-    }).then(() => {
-      logger.info(`[install] Download prebuilt binaries from ${host}/${remotePath}/${packageName}`)
-      resolve()
-    }).catch(err => {
-      let fetchUrl
-      if (targetPlatform === 'win32') {
-        fetchUrl = downloadUrl || nativeWinUrl
-      } else if (targetPlatform === 'darwin') {
-        fetchUrl = downloadUrl || nativeMacUrl
-      }
-      logger.warn(`[install] Failed to download package from: ${host}/${remotePath}/${packageName}, error code: ${err.statusCode}`)
-      logger.info('[install] Start build from local source file.')
-      const extractPath = path.join(__dirname, includePath)
-      fetchWrapper({
-        fetchUrl,
-        extractPath
-      }).then(() => {
-        return buildAddon({
-          target,
-          runtime
+  let abiVersion = ''
+  if (runtime === 'electron') {
+    abiVersion = nodeAbi.getAbi(target, 'electron')
+  } else {
+    abiVersion = nodeAbi.getAbi(process.versions.node, 'node')
+  }
+  logger.info(`abi version:${abiVersion}`)
+  fetch('https://admin.netease.im/public-service/free/publish/list')
+    .then((res) => res.json())
+    .then((json) => {
+      let publishJson =json.data
+      const platform = process.env.npm_config_target_platform || process.platform
+      const arch = process.env.npm_config_target_arch || process.arch
+      logger.info(`just install platform:${platform} arch:${arch}`)
+      downloadSDK(publishJson, platform, arch).then(() => {
+        downlaodAddon(publishJson, abiVersion, platform, arch).catch(()=>{
+          build(runtime, target, arch).then(() => {
+            removeNativeSdk()
+          })
         })
-      }).then(() => resolve()).catch((err) => {
-        reject(err)
       })
     })
-  })
 })
