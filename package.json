@@ -1,6 +1,6 @@
 {
   "name": "nertc-electron-sdk",
-  "version": "4.6.5-rc-960",
+  "version": "4.6.5-rc-965",
   "description": "nertc-electron-sdk",
   "main": "js/nertc_sdk.js",
   "types": "types/nertc_sdk.d.ts",
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "bindings": "^1.5.0",
-    "node-pre-build": "^0.1.17",
+    "node-pre-build": "^0.1.18",
     "node-addon-api": "^4.2.0",
     "yuv-buffer": "^1.0.0",
     "yuv-canvas": "^1.2.6",
@@ -59,12 +59,9 @@
   "files": [
     ".github",
     "js",
-    "nertc_sdk_node",
     "nertc_sdk_ts",
     "types",
     "scripts",
-    "shared",
-    "binding.gyp",
     "config_dts.json",
     "config_ts.json",
     "just-task.js",
