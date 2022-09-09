@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include "node_version.h"
 #include "nertc_node_engine.h"
 #include "nertc_node_engine_helper.h"
@@ -225,7 +225,7 @@ NIM_SDK_NODE_API_DEF(initialize)
     {
         //CHECK_API_FUNC(1);
         Napi::Object obj = info[0].As<Napi::Object>();
-        nertc::NERtcEngineContext context = {0};
+        nertc::NERtcEngineContext context;
         context.video_use_exnternal_render = true;
         context.video_prefer_hw_decoder = false;
         context.video_prefer_hw_encoder = false;
@@ -1765,7 +1765,7 @@ NIM_SDK_NODE_API_DEF(addLiveStreamTask)
         Napi::Object obj = info[0].As<Napi::Object>();
         nertc::NERtcLiveStreamTaskInfo info;
         nertc_ls_task_info_obj_to_struct(env, obj, info);
-        memset(info.extraInfo, 0, kNERtcMacSEIBufferLength);
+        memset(info.extraInfo, 0, kNERtcMaxURILength);
         // info.config = {0};
         ret = rtc_engine_->addLiveStreamTask(info);
         if (info.layout.users)

@@ -1,4 +1,4 @@
-#include "nertc_node_engine_helper.h"
+﻿#include "nertc_node_engine_helper.h"
 #include "./util/js-convert.h"
 #include "./util/json/include/json.h"
 #include "nertc_engine_ex.h"
@@ -455,23 +455,52 @@ napi_status nertc_stats_to_obj(const Napi::Env env, const nertc::NERtcStats& con
 
 napi_status nertc_audio_send_stats_to_obj(const Napi::Env env, const nertc::NERtcAudioSendStats& config,  Napi::Object& obj)
 {
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"num_channels")), config.num_channels);
+    /*obj.Set(static_cast<napi_value>(Napi::String::New(env,"num_channels")), config.num_channels);
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"sent_sample_rate")), config.sent_sample_rate);
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"sent_bitrate")), config.sent_bitrate);
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"audio_loss_rate")), config.audio_loss_rate);
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"rtt")), config.rtt);
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"volume")), config.volume);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"volume")), config.volume);*/
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"audio_layers_count")), config.audio_layers_count);
+    Napi::Array s = Napi::Array::New(env);
+    for (auto i = 0; i < (int)config.audio_layers_count; i++) {
+        Napi::Object o = Napi::Object::New(env);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"stream_type")), config.audio_layers_list[i].stream_type);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"num_channels")), config.audio_layers_list[i].num_channels);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"sent_sample_rate")), config.audio_layers_list[i].sent_sample_rate);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"sent_bitrate")), config.audio_layers_list[i].sent_bitrate);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"audio_loss_rate")), config.audio_layers_list[i].audio_loss_rate);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"rtt")), config.audio_layers_list[i].rtt);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"volume")), config.audio_layers_list[i].volume);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"cap_volume")), config.audio_layers_list[i].cap_volume);
+        s.Set(static_cast<napi_value>(Napi::Number::New(env, i)),  o);
+    }
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"audio_layers_list")), s);
     return napi_ok;
 }
 
 napi_status nertc_audio_recv_stats_to_obj(const Napi::Env env, const  nertc::NERtcAudioRecvStats& config,  Napi::Object& obj)
 {
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"uid")), config.uid);
+   /* obj.Set(static_cast<napi_value>(Napi::String::New(env,"uid")), config.uid);
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"received_bitrate")), config.received_bitrate);
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"total_frozen_time")), config.total_frozen_time);
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"frozen_rate")), config.frozen_rate);
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"audio_loss_rate")), config.audio_loss_rate);
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"volume")), config.volume);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"volume")), config.volume);*/
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"uid")), config.uid);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"audio_layers_count")), config.audio_layers_count);
+    Napi::Array s = Napi::Array::New(env);
+    for (auto i = 0; i < (int)config.audio_layers_count; i++) {
+        Napi::Object o = Napi::Object::New(env);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"stream_type")), config.audio_layers_list[i].stream_type);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"received_bitrate")), config.audio_layers_list[i].received_bitrate);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"total_frozen_time")), config.audio_layers_list[i].total_frozen_time);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"frozen_rate")), config.audio_layers_list[i].frozen_rate);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"audio_loss_rate")), config.audio_layers_list[i].audio_loss_rate);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"volume")), config.audio_layers_list[i].volume);
+        s.Set(static_cast<napi_value>(Napi::Number::New(env, i)),  o);
+    }
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"audio_layers_list")), s);
     return napi_ok;
 }
 
