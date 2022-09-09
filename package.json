@@ -15,7 +15,7 @@
     "yuv-buffer": "^1.0.0",
     "yuv-canvas": "^1.2.6",
     "lodash.isequal": "^4.5.0",
-    "node-gyp": "^8.2.0"
+    "node-gyp": "^9.1.0"
   },
   "devDependencies": {
     "@types/node": "^12.12.22",
