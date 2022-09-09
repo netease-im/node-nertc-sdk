@@ -143,8 +143,12 @@
             'copies': [{
               'destination': '<(PRODUCT_DIR)',
               'files': [
+                './nertc_sdk/NEFundation_Mac.framework',
                 './nertc_sdk/nertc_sdk_Mac.framework',
-                './nertc_sdk/NEFundation_Mac.framework'
+                './nertc_sdk/NERtcBeauty.framework',
+                './nertc_sdk/NERtcFaceDetect.framework',
+                './nertc_sdk/NERtcnn.framework',
+                './nertc_sdk/NERtcPersonSegment.framework'
               ]
             }],
             'defines': [
