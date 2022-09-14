@@ -1,4 +1,4 @@
-#ifndef NERTC_NODE_VIDEO_FRAME_PROVIDER_H
+﻿#ifndef NERTC_NODE_VIDEO_FRAME_PROVIDER_H
 #define NERTC_NODE_VIDEO_FRAME_PROVIDER_H
 
 #include <napi.h>
@@ -107,6 +107,8 @@ namespace nertc_node
         NodeVideoFrameTransporter();
         ~NodeVideoFrameTransporter();
 
+		void stopFlushVideo();
+		void startFlushVideo();
         void setLocalVideoMirrorMode(uint32_t mirrorMode) { m_localVideoMirrorMode = mirrorMode; }
         bool initialize(Napi::FunctionReference&& function);
         int deliverFrame_I420(NodeRenderType type, nertc::uid_t uid, std::string channelId, const IVideoFrame &videoFrame, int rotation, bool mirrored);
@@ -181,6 +183,7 @@ namespace nertc_node
         std::unique_ptr<VideoFrameInfo> m_localSubStreamVideoFrame;
         std::mutex m_lock;
         int m_stopFlag;
+        bool b_stopFlush; // bugfix web reload flushVideo thread dump in Napi::Array infos = Napi::Array::New(env);
         std::unique_ptr<std::thread> m_thread;
         uint32_t m_FPS;
         uint32_t m_localVideoMirrorMode = 0; //0-auto 1-mirror 2-unmirror

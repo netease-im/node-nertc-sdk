@@ -1,4 +1,4 @@
-#include "nertc_node_video_frame_provider.h"
+﻿#include "nertc_node_video_frame_provider.h"
 // #include "../shared/sdk_helper/nim_node_helper.h"
 #include "../shared/sdk_helper/nim_node_async_queue.h"
 #include <chrono>
@@ -33,6 +33,7 @@ bool NodeVideoFrameTransporter::initialize(Napi::FunctionReference&& function)
         deinitialize();
     }
     m_stopFlag = false;
+    b_stopFlush = false;
     // env = isolate;
     // js_callback = std::move(function);
     m_pFrameDataCallback = new FrameDataCallback();
@@ -44,6 +45,17 @@ bool NodeVideoFrameTransporter::initialize(Napi::FunctionReference&& function)
     init = true;
     return true;
 }
+
+void NodeVideoFrameTransporter::stopFlushVideo()
+{
+    b_stopFlush = true;
+}
+
+void NodeVideoFrameTransporter::startFlushVideo()
+{
+	b_stopFlush = false;
+}
+
 
 bool NodeVideoFrameTransporter::deinitialize()
 {
@@ -279,54 +291,62 @@ void NodeVideoFrameTransporter::FlushVideo()
 {
     while (!m_stopFlag) {
         {
-            nim_node::node_async_call::async_call([this]() {
-                
-                auto env = m_pFrameDataCallback->function.Env();
-                Napi::Array infos = Napi::Array::New(env);
-                uint32_t i = 0;
+			if (!b_stopFlush) {
 
-                {
-                    std::lock_guard<std::mutex> lock(m_lock);
-                    for (auto& it : m_remoteVideoFrames) {
-                        if (AddObj(env, infos, i, it.second))
-                        {
-                            ++i;
-                        }else {
-                            ++it.second.m_count;
-                        }
-                    }
-                    if (m_localVideoFrame.get()) {
-                        if (AddObj(env, infos, i, *(m_localVideoFrame.get())))
-                        {
-                            ++i;
-                        }else {
-                            ++m_localVideoFrame->m_count;
-                        }
-                    }
-                    for (auto& it : m_substreamVideoFrame) {
-                        if (AddObj(env, infos, i, it.second))
-                        {
-                            ++i;
-                        }
-                        else {
-                            ++it.second.m_count;
-                        }
-                    } 
-                    if (m_localSubStreamVideoFrame.get()) {
-                        if (AddObj(env, infos, i, *m_localSubStreamVideoFrame.get()))
-                        {
-                            ++i;
-                        }else {
-                            ++m_localSubStreamVideoFrame->m_count;
-                        }
-                    }
-                }
-                
-                if (i > 0) {
-                    const std::vector<napi_value> args = {infos};
-                    m_pFrameDataCallback->function.Call(args);
-                }
-            });
+				nim_node::node_async_call::async_call([this]() {
+
+					auto env = m_pFrameDataCallback->function.Env();
+					Napi::Array infos = Napi::Array::New(env);
+					uint32_t i = 0;
+
+					{
+						std::lock_guard<std::mutex> lock(m_lock);
+						for (auto& it : m_remoteVideoFrames) {
+							if (AddObj(env, infos, i, it.second))
+							{
+								++i;
+							}
+							else {
+								++it.second.m_count;
+							}
+						}
+						if (m_localVideoFrame.get()) {
+							if (AddObj(env, infos, i, *(m_localVideoFrame.get())))
+							{
+								++i;
+							}
+							else {
+								++m_localVideoFrame->m_count;
+							}
+						}
+						for (auto& it : m_substreamVideoFrame) {
+							if (AddObj(env, infos, i, it.second))
+							{
+								++i;
+							}
+							else {
+								++it.second.m_count;
+							}
+						}
+						if (m_localSubStreamVideoFrame.get()) {
+							if (AddObj(env, infos, i, *m_localSubStreamVideoFrame.get()))
+							{
+								++i;
+							}
+							else {
+								++m_localSubStreamVideoFrame->m_count;
+							}
+						}
+					}
+
+					if (i > 0 && (!b_stopFlush)) {
+						const std::vector<napi_value> args = { infos };
+						m_pFrameDataCallback->function.Call(args);
+					}
+				});
+			
+			}
+
             std::this_thread::sleep_for(std::chrono::milliseconds(1000 / m_FPS));
         }
     }

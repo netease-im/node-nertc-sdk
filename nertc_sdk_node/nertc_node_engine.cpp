@@ -263,6 +263,9 @@ NIM_SDK_NODE_API_DEF(release)
     INIT_ENV
     do
     {
+        ret = rtc_engine_->stopVideoPreview();
+		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		pTransporter->stopFlushVideo();
         rtc_engine_->release(true);
         if (rtc_engine_)
         {
@@ -312,6 +315,9 @@ NIM_SDK_NODE_API_DEF(leaveChannel)
     INIT_ENV
     do
     {
+		ret = rtc_engine_->stopVideoPreview();
+		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		pTransporter->stopFlushVideo();
         ret = rtc_engine_->leaveChannel();
     } while (false);
     return Napi::Number::New(env, ret);
@@ -336,6 +342,12 @@ NIM_SDK_NODE_API_DEF(enableLocalVideo)
     {
         bool enabled = false;
         napi_get_value_bool(info[0], enabled);
+		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		if (enabled) {
+			pTransporter->startFlushVideo();
+		} else {
+			pTransporter->stopFlushVideo();
+		}
         ret = rtc_engine_->enableLocalVideo(enabled);
     } while (false);
     return Napi::Number::New(env, ret);
@@ -1096,6 +1108,8 @@ NIM_SDK_NODE_API_DEF(startVideoPreview)
 {
     INIT_ENV
     do{
+		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		pTransporter->startFlushVideo();
         ret = rtc_engine_->startVideoPreview();
     }while(false);
     return Napi::Number::New(env, ret);
@@ -1107,6 +1121,8 @@ NIM_SDK_NODE_API_DEF(stopVideoPreview)
     do
     {
         ret = rtc_engine_->stopVideoPreview();
+		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		pTransporter->stopFlushVideo();
     } while (false);
     return Napi::Number::New(env, ret);
 }
