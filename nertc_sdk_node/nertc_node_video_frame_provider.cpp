@@ -33,7 +33,7 @@ bool NodeVideoFrameTransporter::initialize(Napi::FunctionReference&& function)
         deinitialize();
     }
     m_stopFlag = false;
-    b_stopFlush = false;
+    b_stopFlush = true;
     // env = isolate;
     // js_callback = std::move(function);
     m_pFrameDataCallback = new FrameDataCallback();
