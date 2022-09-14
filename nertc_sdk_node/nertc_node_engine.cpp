@@ -306,6 +306,8 @@ NIM_SDK_NODE_API_DEF(joinChannel)
         napi_get_value_utf8_string(info[1], channel_name);
         napi_get_value_uint32(info[2], uid);
         ret = rtc_engine_->joinChannel(token.length() == 0 ? "" : token.c_str(), channel_name.c_str(), uid);
+        NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		pTransporter->startFlushVideo();
     }while(false);
     return Napi::Number::New(env, ret);
 }
@@ -342,12 +344,6 @@ NIM_SDK_NODE_API_DEF(enableLocalVideo)
     {
         bool enabled = false;
         napi_get_value_bool(info[0], enabled);
-		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
-		if (enabled) {
-			pTransporter->startFlushVideo();
-		} else {
-			pTransporter->stopFlushVideo();
-		}
         ret = rtc_engine_->enableLocalVideo(enabled);
     } while (false);
     return Napi::Number::New(env, ret);
