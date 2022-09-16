@@ -49,6 +49,18 @@ napi_status nertc_engine_context_obj_to_struct(const Napi::Env& env, const Napi:
             memset(context.server_config.statistics_server, 0, kNERtcMaxURILength);
             strncpy(context.server_config.statistics_server, out.c_str(), kNERtcMaxURILength);
         }
+        if(o.Has(static_cast<napi_value>(Napi::String::New(env,"statistics_dispatch_server"))))
+        {
+            out = o.Get(static_cast<napi_value>(Napi::String::New(env,"statistics_dispatch_server"))).As<Napi::String>().Utf8Value();
+            memset(context.server_config.statistics_dispatch_server, 0, kNERtcMaxURILength);
+            strncpy(context.server_config.statistics_dispatch_server, out.c_str(), kNERtcMaxURILength);
+        }
+        if(o.Has(static_cast<napi_value>(Napi::String::New(env,"statistics_backup_server"))))
+        {
+            out = o.Get(static_cast<napi_value>(Napi::String::New(env,"statistics_backup_server"))).As<Napi::String>().Utf8Value();
+            memset(context.server_config.statistics_backup_server, 0, kNERtcMaxURILength);
+            strncpy(context.server_config.statistics_backup_server, out.c_str(), kNERtcMaxURILength);
+        }
         if(o.Has(static_cast<napi_value>(Napi::String::New(env,"room_server"))))
         {
             out = o.Get(static_cast<napi_value>(Napi::String::New(env,"room_server"))).As<Napi::String>().Utf8Value();
@@ -78,6 +90,30 @@ napi_status nertc_engine_context_obj_to_struct(const Napi::Env& env, const Napi:
             out = o.Get(static_cast<napi_value>(Napi::String::New(env,"nos_token_server"))).As<Napi::String>().Utf8Value();
             memset(context.server_config.nos_token_server, 0, kNERtcMaxURILength);
             strncpy(context.server_config.nos_token_server, out.c_str(), kNERtcMaxURILength);
+        }
+        if(o.Has(static_cast<napi_value>(Napi::String::New(env,"cloud_proxy_server"))))
+        {
+            out = o.Get(static_cast<napi_value>(Napi::String::New(env,"cloud_proxy_server"))).As<Napi::String>().Utf8Value();
+            memset(context.server_config.cloud_proxy_server, 0, kNERtcMaxURILength);
+            strncpy(context.server_config.cloud_proxy_server, out.c_str(), kNERtcMaxURILength);
+        }
+        if(o.Has(static_cast<napi_value>(Napi::String::New(env,"websocket_proxy_server"))))
+        {
+            out = o.Get(static_cast<napi_value>(Napi::String::New(env,"websocket_proxy_server"))).As<Napi::String>().Utf8Value();
+            memset(context.server_config.websocket_proxy_server, 0, kNERtcMaxURILength);
+            strncpy(context.server_config.websocket_proxy_server, out.c_str(), kNERtcMaxURILength);
+        }
+        if(o.Has(static_cast<napi_value>(Napi::String::New(env,"quic_proxy_server"))))
+        {
+            out = o.Get(static_cast<napi_value>(Napi::String::New(env,"quic_proxy_server"))).As<Napi::String>().Utf8Value();
+            memset(context.server_config.quic_proxy_server, 0, kNERtcMaxURILength);
+            strncpy(context.server_config.quic_proxy_server, out.c_str(), kNERtcMaxURILength);
+        }
+        if(o.Has(static_cast<napi_value>(Napi::String::New(env,"media_proxy_server"))))
+        {
+            out = o.Get(static_cast<napi_value>(Napi::String::New(env,"media_proxy_server"))).As<Napi::String>().Utf8Value();
+            memset(context.server_config.media_proxy_server, 0, kNERtcMaxURILength);
+            strncpy(context.server_config.media_proxy_server, out.c_str(), kNERtcMaxURILength);
         }
         if(o.Has(static_cast<napi_value>(Napi::String::New(env,"use_ipv6"))))
         {
