@@ -5,6 +5,7 @@
 #include "../shared/sdk_helper/node_api_helper.h"
 #include "nertc_node_video_frame_provider.h"
 #include "../shared/util/logger.h"
+#include "../shared/log/logging/logging.h"
 #ifdef WIN32
 #include "../shared/util/string_util.h"
 using namespace nertc_electron_util;
@@ -249,9 +250,15 @@ NIM_SDK_NODE_API_DEF(initialize)
             rtc_engine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void **)&_adm);
             rtc_engine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void **)&_vdm);
         }
-        std::string s(context.log_dir_path);
-        std::string nodeLogPath = s + "/nertc_node_log.txt";
-        // Logger::Instance()->initPath(nodeLogPath);
+        std::string log_directory(context.log_dir_path);
+        auto error_code = nelog::InitailizeLogFileStream(
+                          log_directory.c_str(),
+                          "addon_log",
+                           false
+                           );
+        nelog::SetMinLoggingSeverity(nelog::LS_INFO);
+        LOG_F(INFO, "%s:%d", "test", 1);
+
     }while (false);
     return Napi::Number::New(env, ret);
 }
@@ -271,6 +278,7 @@ NIM_SDK_NODE_API_DEF(release)
         }
         _event_handler->removeAll();
 
+        nelog::TerminateLogFileStream();
         //todo
         // NertcNodeRtcMediaStatsHandler::GetInstance()->RemoveAll();
     }while (false);
