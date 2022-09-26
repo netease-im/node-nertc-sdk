@@ -183,6 +183,10 @@
                 'Foundation.framework',
                 'nertc_sdk_Mac.framework',
                 'NEFundation_Mac.framework',
+                'NERtcBeauty.framework',
+                'NERtcFaceDetect.framework',
+                'NERtcnn.framework',
+                'NERtcPersonSegment.framework',
                 #'libNERTCPrivilegedTask.a',
                 '-Wl,-rpath,@loader_path',
                 '-ObjC'
