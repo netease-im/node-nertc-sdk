@@ -4,7 +4,6 @@
 #include "nertc_node_engine_helper.h"
 #include "../shared/sdk_helper/node_api_helper.h"
 #include "nertc_node_video_frame_provider.h"
-#include "../shared/util/logger.h"
 #include "../shared/log/logging/logging.h"
 #ifdef WIN32
 #include "../shared/util/string_util.h"

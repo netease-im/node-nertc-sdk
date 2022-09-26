@@ -2,7 +2,6 @@
 #include "nertc_node_engine_helper.h"
 #include "../shared/sdk_helper/nim_node_async_queue.h"
 #include "../shared/sdk_helper/node_api_helper.h"
-#include "../shared/util/logger.h"
 #include "../shared/log/logging/logging.h"
 namespace nertc_node
 {
@@ -49,7 +48,7 @@ int EventHandler::removeAll()
 void NertcNodeEventHandler::onError(int error_code, const char* msg)
 {
     std::string str_msg = msg;
-    LOG_F(INFO, "error_code:%d strMsg:%s", error_code, strMsg.c_str());
+    LOG_F(INFO, "error_code:%d strMsg:%s", error_code, str_msg.c_str());
     nim_node::node_async_call::async_call([=]() {
         Node_onError(error_code, str_msg);
     });
@@ -71,7 +70,7 @@ void NertcNodeEventHandler::Node_onError(int error_code, std::string msg){
 void NertcNodeEventHandler::onWarning(int warn_code, const char* msg)
 {
     std::string str_msg = msg;
-    LOG_F(INFO, "warn_code:%d strMsg:%s", warn_code, strMsg.c_str());
+    LOG_F(INFO, "warn_code:%d strMsg:%s", warn_code, str_msg.c_str());
     nim_node::node_async_call::async_call([=]() {
         Node_onWarning(warn_code, str_msg);
     });    
@@ -272,7 +271,7 @@ void NertcNodeEventHandler::Node_onClientRoleChanged(nertc::NERtcClientRole oldR
 void NertcNodeEventHandler::onUserJoined(nertc::uid_t uid, const char * user_name)
 {
     std::string str_user_name = user_name;
-    LOG_F(INFO, "uid:%llu strUserName:%s", uid, strUserName.c_str());
+    LOG_F(INFO, "uid:%llu strUserName:%s", uid, str_user_name.c_str());
     nim_node::node_async_call::async_call([=]() {
         Node_onUserJoined(uid, str_user_name);
     });         
@@ -516,6 +515,7 @@ void NertcNodeEventHandler::onAudioDeviceStateChanged(const char device_id[kNERt
 {
     std::string str_device_id = device_id;
     LOG_F(INFO, "str_device_id:%s device_type:%d device_state:%d", 
+        str_device_id.c_str(), device_type, device_state);
     nim_node::node_async_call::async_call([=]() {
         Node_onAudioDeviceStateChanged(str_device_id, device_type, device_state);
     });

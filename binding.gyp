@@ -64,6 +64,8 @@
           './shared/libyuv/source/video_common.cc',
           './shared/util/logger.h',
           './shared/util/logger.cpp',
+          './shared/log/logging/logging.h',
+          './shared/log/logging/logging.cc',
           './shared/log/logging/log_file_stream/log_file_stream.h',
           './shared/log/logging/log_file_stream/log_file_stream.cc',
           './shared/log/logging/log_file_stream/ring_buffer_mapping_file/ring_buffer_mapping_file.h',
