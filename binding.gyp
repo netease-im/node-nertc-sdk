@@ -63,7 +63,20 @@
           './shared/libyuv/source/scale.cc',
           './shared/libyuv/source/video_common.cc',
           './shared/util/logger.h',
-          './shared/util/logger.cpp'
+          './shared/util/logger.cpp',
+          './shared/log/logging/log_file_stream/log_file_stream.h',
+          './shared/log/logging/log_file_stream/log_file_stream.cc',
+          './shared/log/logging/log_file_stream/ring_buffer_mapping_file/ring_buffer_mapping_file.h',
+          './shared/log/base/string_utils.h',
+          './shared/log/base/string_utils.cc',
+          './shared/log/base/file_utils.cc',
+          './shared/log/base/file_utils.h',
+          './shared/log/base/synchronization/rw_lock_wrapper.h',
+          './shared/log/base/synchronization/rw_lock_wrapper.cc',
+          './shared/log/base/file/platform_file.h',
+          './shared/log/base/file/platform_file.cc',
+          './shared/log/base/file/file.h',
+          './shared/log/base/file/file.cc'
       ],
       'conditions': [
         [
@@ -110,7 +123,11 @@
               './shared/util/string_util.h',
               './shared/util/string_util.cpp',    
               './shared/util/ConvertUTF.c',
-              './shared/util/ConvertUTF.h'
+              './shared/util/ConvertUTF.h',
+              './shared/log/logging/log_file_stream/ring_buffer_mapping_file/ring_buffer_mapping_file_win.cc',
+              './shared/log/base/synchronization/rw_lock_win.h',
+              './shared/log/base/synchronization/rw_lock_win.cc',
+              './shared/log/base/file/file_win.cc'
             ],
             'configurations': {
               'Release': {
@@ -174,7 +191,11 @@
               './shared/libyuv/source/compare_gcc.cc',
               './shared/libyuv/source/rotate_gcc.cc',
               './shared/libyuv/source/row_gcc.cc',
-              './shared/libyuv/source/scale_gcc.cc'
+              './shared/libyuv/source/scale_gcc.cc',
+              './shared/log/logging/log_file_stream/ring_buffer_mapping_file/ring_buffer_mapping_file_posix.cc',
+              './shared/log/base/synchronization/rw_lock_posix.h',
+              './shared/log/base/synchronization/rw_lock_posix.cc',
+              './shared/log/base/file/file_posix.cc',
             ],
             'xcode_settings': {
               'ARCHS': [ 'x86_64' ],
