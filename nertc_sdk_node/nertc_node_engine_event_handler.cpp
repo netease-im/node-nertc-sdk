@@ -47,7 +47,7 @@ int EventHandler::removeAll()
 void NertcNodeEventHandler::onError(int error_code, const char* msg)
 {
 	std::string strMsg = msg;
-	LOG_F(INFO, "error_code:%d strMsg:%s", error_code, strMsg);
+	LOG_F(INFO, "error_code:%d strMsg:%s", error_code, strMsg.c_str());
 
     std::string str_msg = msg;
     nim_node::node_async_call::async_call([=]() {
@@ -71,7 +71,7 @@ void NertcNodeEventHandler::Node_onError(int error_code, std::string msg){
 void NertcNodeEventHandler::onWarning(int warn_code, const char* msg)
 {
 	std::string strMsg = msg;
-	LOG_F(INFO, "warn_code:%d strMsg:%s", warn_code, strMsg);
+	LOG_F(INFO, "warn_code:%d strMsg:%s", warn_code, strMsg.c_str());
 
     std::string str_msg = msg;
     nim_node::node_async_call::async_call([=]() {
@@ -277,7 +277,7 @@ void NertcNodeEventHandler::Node_onClientRoleChanged(nertc::NERtcClientRole oldR
 void NertcNodeEventHandler::onUserJoined(nertc::uid_t uid, const char * user_name)
 {
 	std::string strUserName = user_name;
-	LOG_F(INFO, "uid:%llu strUserName:%s", uid, strUserName);
+	LOG_F(INFO, "uid:%llu strUserName:%s", uid, strUserName.c_str());
     std::string str_user_name = user_name;
     nim_node::node_async_call::async_call([=]() {
         Node_onUserJoined(uid, str_user_name);
@@ -521,7 +521,8 @@ void NertcNodeEventHandler::onAudioDeviceStateChanged(const char device_id[kNERt
         nertc::NERtcAudioDeviceState device_state)
 {
     std::string str_device_id = device_id;
-	LOG_F(INFO, "str_device_id:%s device_type:%d device_state:%d", str_device_id, device_type, device_state);
+	LOG_F(INFO, "str_device_id:%s device_type:%d device_state:%d", 
+        str_device_id.c_str(), device_type, device_state);
     nim_node::node_async_call::async_call([=]() {
         Node_onAudioDeviceStateChanged(str_device_id, device_type, device_state);
     });
@@ -546,7 +547,7 @@ void NertcNodeEventHandler::onAudioDefaultDeviceChanged(const char device_id[kNE
         nertc::NERtcAudioDeviceType device_type)
 {
     std::string str_device_id = device_id;
-	LOG_F(INFO, "str_device_id:%s device_type:%d", str_device_id, device_type);
+	LOG_F(INFO, "str_device_id:%s device_type:%d", str_device_id.c_str(), device_type);
     nim_node::node_async_call::async_call([=]() {
         Node_onAudioDefaultDeviceChanged(str_device_id, device_type);
     });
@@ -571,7 +572,8 @@ void NertcNodeEventHandler::onVideoDeviceStateChanged(const char device_id[kNERt
         nertc::NERtcVideoDeviceState device_state)
 {
     std::string str_device_id = device_id;
-	LOG_F(INFO, "str_device_id:%s device_type:%d device_state:%d", str_device_id, device_type, device_state);
+	LOG_F(INFO, "str_device_id:%s device_type:%d device_state:%d", 
+        str_device_id.c_str(), device_type, device_state);
     nim_node::node_async_call::async_call([=]() {
         Node_onVideoDeviceStateChanged(str_device_id, device_type, device_state);
     });
@@ -816,7 +818,7 @@ void NertcNodeEventHandler::onAddLiveStreamTask(const char* task_id, const char*
 {
     std::string str_task_id = task_id;
     std::string str_url = url;
-	LOG_F(INFO, "str_task_id:%s str_url:%s error_code:%d", str_task_id, str_url, error_code);
+	LOG_F(INFO, "str_task_id:%s str_url:%s error_code:%d", str_task_id.c_str(), str_url.c_str(), error_code);
     nim_node::node_async_call::async_call([=]() {
         Node_onAddLiveStreamTask(str_task_id, str_url, error_code);
     });
@@ -841,7 +843,7 @@ void NertcNodeEventHandler::onUpdateLiveStreamTask(const char* task_id, const ch
 {
     std::string str_task_id = task_id;
     std::string str_url = url;
-	LOG_F(INFO, "str_task_id:%s str_url:%s error_code:%d", str_task_id, str_url, error_code);
+	LOG_F(INFO, "str_task_id:%s str_url:%s error_code:%d", str_task_id.c_str(), str_url.c_str(), error_code);
     nim_node::node_async_call::async_call([=]() {
         Node_onUpdateLiveStreamTask(str_task_id, str_url, error_code);
     });
@@ -865,7 +867,7 @@ void NertcNodeEventHandler::Node_onUpdateLiveStreamTask(std::string task_id, std
 void NertcNodeEventHandler::onRemoveLiveStreamTask(const char* task_id, int error_code)
 {
     std::string str_task_id = task_id;
-	LOG_F(INFO, "str_task_id:%s error_code:%d", str_task_id, error_code);
+	LOG_F(INFO, "str_task_id:%s error_code:%d", str_task_id.c_str(), error_code);
     nim_node::node_async_call::async_call([=]() {
         Node_onRemoveLiveStreamTask(str_task_id, error_code);
     });
@@ -889,7 +891,7 @@ void NertcNodeEventHandler::onLiveStreamState(const char* task_id, const char* u
 {
     std::string str_task_id = task_id;
     std::string str_url = url;
-	LOG_F(INFO, "str_task_id:%s str_url:%s state:%d", str_task_id, str_url, state);
+	LOG_F(INFO, "str_task_id:%s str_url:%s state:%d", str_task_id.c_str(), str_url.c_str(), state);
     nim_node::node_async_call::async_call([=]() {
         Node_onLiveStreamState(str_task_id, str_url, state);
     });
@@ -934,7 +936,7 @@ void NertcNodeEventHandler::Node_onAudioHowling(bool howling)
 void NertcNodeEventHandler::onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize)
 {
 	std::string strMsg(data, dataSize);
-	LOG_F(INFO, "onRecvSEIMsg:%s", strMsg);
+	LOG_F(INFO, "onRecvSEIMsg:%s", strMsg.c_str());
     auto* copied = new char[dataSize];
     memset(copied, 0, dataSize);
     memcpy(copied, data, dataSize);
@@ -984,7 +986,7 @@ void NertcNodeEventHandler::Node_onScreenCaptureStatus(nertc::NERtcScreenCapture
 void NertcNodeEventHandler::onAudioRecording(nertc::NERtcAudioRecordingCode code, const char* file_path)
 {
     std::string str_file_path = file_path;
-	LOG_F(INFO, "str_file_path:%s", str_file_path);
+	LOG_F(INFO, "str_file_path:%s", str_file_path.c_str());
     nim_node::node_async_call::async_call([=]() {
         Node_onAudioRecording(code, str_file_path);
     });
@@ -1007,7 +1009,7 @@ void NertcNodeEventHandler::Node_onAudioRecording(nertc::NERtcAudioRecordingCode
 void NertcNodeEventHandler::onMediaRelayStateChanged(nertc::NERtcChannelMediaRelayState state, const char* channel_name)
 {
     std::string str_channel_name = channel_name;
-	LOG_F(INFO, "state:%d str_channel_name:%s", state, str_channel_name);
+	LOG_F(INFO, "state:%d str_channel_name:%s", state, str_channel_name.c_str());
     nim_node::node_async_call::async_call([=]() {
         Node_onMediaRelayStateChanged(state, str_channel_name);
     });
@@ -1030,7 +1032,7 @@ void NertcNodeEventHandler::Node_onMediaRelayStateChanged(nertc::NERtcChannelMed
 void NertcNodeEventHandler::onMediaRelayEvent(nertc::NERtcChannelMediaRelayEvent event, const char* channel_name, nertc::NERtcErrorCode error)
 {
     std::string str_channel_name = channel_name;
-	LOG_F(INFO, "error:%d str_channel_name:%s", error, str_channel_name);
+	LOG_F(INFO, "error:%d str_channel_name:%s", error, str_channel_name.c_str());
     nim_node::node_async_call::async_call([=]() {
         Node_onMediaRelayEvent(event, str_channel_name, error);
     });

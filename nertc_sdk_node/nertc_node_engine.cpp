@@ -312,7 +312,7 @@ NIM_SDK_NODE_API_DEF(joinChannel)
         napi_get_value_utf8_string(info[0], token);
         napi_get_value_utf8_string(info[1], channel_name);
         napi_get_value_int64(info[2], uid);
-		LOG_F(INFO, "channel_name:%s, uid:%llu", channel_name, uid);
+		LOG_F(INFO, "channel_name:%s, uid:%llu", channel_name.c_str(), uid);
         ret = rtc_engine_->joinChannel(token.length() == 0 ? "" : token.c_str(), channel_name.c_str(), uid);
 		LOG_F(INFO, "ret:%d", ret);
     }while(false);
@@ -693,7 +693,7 @@ NIM_SDK_NODE_API_DEF(switchChannel)
         std::string token, channel_name;
         napi_get_value_utf8_string(info[0], token);
         napi_get_value_utf8_string(info[1], channel_name);
-		LOG_F(INFO, "channel_name:%s", channel_name);
+		LOG_F(INFO, "channel_name:%s", channel_name.c_str());
         if(channel_name.length() == 0){
             break;
         }
@@ -728,7 +728,7 @@ NIM_SDK_NODE_API_DEF(enableLoopbackRecording)
         napi_get_value_bool(info[0], enable);
         std::string deviveName;
         napi_get_value_utf8_string(info[1], deviveName);
-		LOG_F(INFO, "enable:%d deviveName:%s", enable, deviveName);
+		LOG_F(INFO, "enable:%d deviveName:%s", enable, deviveName.c_str());
         ret = rtc_engine_->enableLoopbackRecording(enable, deviveName.c_str());
 		LOG_F(INFO, "ret:%d", ret);
     } while (false);
@@ -787,7 +787,7 @@ NIM_SDK_NODE_API_DEF(startAudioRecording)
         napi_get_value_utf8_string(info[0], path);
         napi_get_value_uint32(info[1], profile);
         napi_get_value_uint32(info[2], scenario);
-		LOG_F(INFO, "path:%s profile:%d scenario:%d", path, profile, scenario);
+		LOG_F(INFO, "path:%s profile:%d scenario:%d", path.c_str(), profile, scenario);
         ret = rtc_engine_->startAudioRecording(path.c_str(), profile, (nertc::NERtcAudioRecordingQuality)scenario);
     } while (false);
 	LOG_F(INFO, "ret:%d", ret);
@@ -1195,7 +1195,7 @@ NIM_SDK_NODE_API_DEF(setParameters)
     {
         std::string para;
         napi_get_value_utf8_string(info[0], para);
-		LOG_F(INFO, "para:%s", para);
+		LOG_F(INFO, "para:%s", para.c_str());
         if (para.length() == 0)
         {
             break;
@@ -1857,7 +1857,7 @@ NIM_SDK_NODE_API_DEF(getVersion)
     {
         int32_t build;
         ret = (std::string)rtc_engine_->getVersion(&build);
-		LOG_F(INFO, "build:%d, ret:%s", build, ret);
+		LOG_F(INFO, "build:%d, ret:%s", build, ret.c_str());
     } while (false);
     return Napi::String::New(env, ret);
 }
@@ -1873,7 +1873,7 @@ NIM_SDK_NODE_API_DEF(getErrorDescription)
 		LOG_F(INFO, "error:%d", error);
         ret = (std::string)rtc_engine_->getErrorDescription(error);
     } while (false);
-	LOG_F(INFO, "ret:%s", ret);
+	LOG_F(INFO, "ret:%s", ret.c_str());
     return Napi::String::New(env, ret);
 }
 
@@ -1947,7 +1947,7 @@ NIM_SDK_NODE_API_DEF(removeLiveStreamTask)
     {
         std::string task_id;
         napi_get_value_utf8_string(info[0], task_id);
-		LOG_F(INFO, "task_id:%s", task_id);
+		LOG_F(INFO, "task_id:%s", task_id.c_str());
         ret = rtc_engine_->removeLiveStreamTask(task_id.c_str());
     } while (false);
 	LOG_F(INFO, "ret:%d", ret);
@@ -1995,7 +1995,7 @@ NIM_SDK_NODE_API_DEF(setRecordDevice)
         {
             break;
         }
-		LOG_F(INFO, "device:%s", device);
+		LOG_F(INFO, "device:%s", device.c_str());
         ret = _adm->setRecordDevice(device.c_str());
     } while (false);
 	LOG_F(INFO, "ret:%d", ret);
@@ -2241,7 +2241,7 @@ NIM_SDK_NODE_API_DEF(startPlayoutDeviceTest)
         {
             break;
         }
-		LOG_F(INFO, "path:%s", path);
+		LOG_F(INFO, "path:%s", path.c_str());
         ret = _adm->startPlayoutDeviceTest(path.c_str());
     } while (false);
 	LOG_F(INFO, "ret:%d", ret);
@@ -2325,7 +2325,7 @@ NIM_SDK_NODE_API_DEF(setDevice)
         {
             break;
         }
-		LOG_F(INFO, "device:%s", device);
+		//LOG_F(INFO, "device:%s", device);
         ret = _vdm->setDevice(device.c_str());
     } while (false);
 	LOG_F(INFO, "ret:%d", ret);
