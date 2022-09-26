@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include "node_version.h"
 #include "nertc_node_engine.h"
 #include "nertc_node_engine_helper.h"
@@ -257,9 +257,10 @@ NIM_SDK_NODE_API_DEF(initialize)
                            false
                            );
         nelog::SetMinLoggingSeverity(nelog::LS_INFO);
-        LOG_F(INFO, "%s:%d", "test", 1);
-
+        //LOG_F(INFO, "%s:%d", "test", 1);
+        LOG_F(INFO, "-------------initialize ret:%d-------------", ret);
     }while (false);
+    
     return Napi::Number::New(env, ret);
 }
 
@@ -268,6 +269,7 @@ NIM_SDK_NODE_API_DEF(release)
     INIT_ENV
     do
     {
+		LOG_F(INFO, "-------------sdk release-------------");
         rtc_engine_->release(true);
         if (rtc_engine_)
         {
@@ -292,7 +294,9 @@ NIM_SDK_NODE_API_DEF(setChannelProfile)
     {
         uint32_t profile;
         napi_get_value_uint32(info[0], profile);
+		LOG_F(INFO, "profile:%d", profile);
         ret = rtc_engine_->setChannelProfile((nertc::NERtcChannelProfileType)profile);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -308,7 +312,9 @@ NIM_SDK_NODE_API_DEF(joinChannel)
         napi_get_value_utf8_string(info[0], token);
         napi_get_value_utf8_string(info[1], channel_name);
         napi_get_value_int64(info[2], uid);
+		LOG_F(INFO, "channel_name:%s, uid:%llu", channel_name, uid);
         ret = rtc_engine_->joinChannel(token.length() == 0 ? "" : token.c_str(), channel_name.c_str(), uid);
+		LOG_F(INFO, "ret:%d", ret);
     }while(false);
     return Napi::Number::New(env, ret);
 }
@@ -319,6 +325,7 @@ NIM_SDK_NODE_API_DEF(leaveChannel)
     do
     {
         ret = rtc_engine_->leaveChannel();
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -330,7 +337,9 @@ NIM_SDK_NODE_API_DEF(enableLocalAudio)
     {
         bool enabled = false;
         napi_get_value_bool(info[0], enabled);
+		LOG_F(INFO, "enabled:%d", enabled);
         ret = rtc_engine_->enableLocalAudio(enabled);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -342,7 +351,9 @@ NIM_SDK_NODE_API_DEF(enableLocalVideo)
     {
         bool enabled = false;
         napi_get_value_bool(info[0], enabled);
+		LOG_F(INFO, "enabled:%d", enabled);
         ret = rtc_engine_->enableLocalVideo(enabled);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -359,7 +370,9 @@ NIM_SDK_NODE_API_DEF(subscribeRemoteVideoStream)
         napi_get_value_int64(info[0], uid);
         napi_get_value_uint32(info[1], type);
         napi_get_value_bool(info[2], sub);
+		LOG_F(INFO, "uid:%llu, type:%d, sub:%d", uid, type, sub);
         ret = rtc_engine_->subscribeRemoteVideoStream(uid, (nertc::NERtcRemoteVideoStreamType)type, sub);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -375,6 +388,7 @@ NIM_SDK_NODE_API_DEF(setupVideoCanvas)
         napi_get_value_int64(info[0], uid);
         // napi_get_value_bigint_uint64(env, info[0], &uid, &lossless);
         napi_get_value_bool(info[1], enable);
+		LOG_F(INFO, "uid:%llu, enable:%d", uid, enable);
         nertc::NERtcVideoCanvas canvas;
         canvas.cb = enable ? NodeVideoFrameTransporter::onFrameDataCallback : nullptr; //NodeVideoFrameTransporter::onFrameDataCallback;
         canvas.user_data = enable ? (void*)(new nertc::uid_t(uid)) : nullptr;
@@ -385,6 +399,7 @@ NIM_SDK_NODE_API_DEF(setupVideoCanvas)
         }else{
             ret = rtc_engine_->setupRemoteVideoCanvas(uid, &canvas);
         }
+		LOG_F(INFO, "ret:%d", ret);
     }while(false);
     return Napi::Number::New(env, ret);
 }
@@ -411,7 +426,6 @@ NIM_SDK_NODE_API_DEF(onEvent)
     Napi::FunctionReference function;
     napi_get_value_utf8_string(info[0], event_name);
     napi_get_value_function(info[1], function);
-  
     _event_handler->addEvent(event_name, std::move(function));
     auto ret_value = env.Null();
     return ret_value;
@@ -424,7 +438,9 @@ NIM_SDK_NODE_API_DEF(setClientRole)
     {
         uint32_t role;
         napi_get_value_uint32(info[0], role);
+		LOG_F(INFO, "role:%d", role);
         ret = rtc_engine_->setClientRole((nertc::NERtcClientRole)role);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -439,6 +455,7 @@ NIM_SDK_NODE_API_DEF(setupSubStreamVideoCanvas)
         bool enable;
         napi_get_value_int64(info[0], uid);
         napi_get_value_bool(info[1], enable);
+		LOG_F(INFO, "uid:%llu, enable:%d", uid, enable);
         nertc::NERtcVideoCanvas canvas;
         canvas.cb = enable ? NodeVideoFrameTransporter::onSubstreamFrameDataCallback : nullptr;
         canvas.user_data = enable ? (void*)(new nertc::uid_t(uid)) : nullptr;
@@ -448,6 +465,7 @@ NIM_SDK_NODE_API_DEF(setupSubStreamVideoCanvas)
         else
             ret = rtc_engine_->setupRemoteSubStreamVideoCanvas(uid, &canvas);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -461,7 +479,9 @@ NIM_SDK_NODE_API_DEF(subscribeRemoteVideoSubStream)
         int64_t uid;
         napi_get_value_int64(info[0], uid);
         napi_get_value_bool(info[1], sub);
+		LOG_F(INFO, "uid:%llu, sub:%d", uid, sub);
         ret = rtc_engine_->subscribeRemoteVideoSubStream(uid, sub);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -473,7 +493,9 @@ NIM_SDK_NODE_API_DEF(setMixedAudioFrameParameters)
     {
         int samp;
         napi_get_value_int32(info[0], samp);
+		LOG_F(INFO, "samp:%d", samp);
         ret = rtc_engine_->setMixedAudioFrameParameters(samp);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -488,7 +510,9 @@ NIM_SDK_NODE_API_DEF(setExternalAudioSource)
         napi_get_value_bool(info[0], enabled);
         napi_get_value_int32(info[1], samp);
         napi_get_value_int32(info[2], chan);
+		LOG_F(INFO, "enabled:%d samp:%d chan:%d", enabled, samp, chan);
         ret = rtc_engine_->setExternalAudioSource(enabled, samp, chan);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -525,6 +549,7 @@ NIM_SDK_NODE_API_DEF(sendSEIMsg)
         void * data = arrayBuffer.Data();
         size_t len = arrayBuffer.ByteLength();
         ret = rtc_engine_->sendSEIMsg(static_cast<const char*>(data), len);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -543,6 +568,7 @@ NIM_SDK_NODE_API_DEF(sendSEIMsgEx)
         int32_t type;
         napi_get_value_int32(info[1], type);
         ret = rtc_engine_->sendSEIMsg(static_cast<const char*>(data), len, static_cast<nertc::NERtcVideoStreamType>(type));
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -559,7 +585,9 @@ NIM_SDK_NODE_API_DEF(setExternalAudioRender)
         napi_get_value_bool(info[0], enable);
         napi_get_value_int32(info[1], sample_rate);
         napi_get_value_int32(info[2], channels);
+		LOG_F(INFO, "enable:%d sample_rate:%d channels:%d", enable, sample_rate, channels);
         ret = rtc_engine_->setExternalAudioRender(enable, sample_rate, channels);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -577,6 +605,7 @@ NIM_SDK_NODE_API_DEF(pullExternalAudioFrame)
         ret = rtc_engine_->pullExternalAudioFrame(shared_data.get(), length);
         _event_handler->onPullExternalAudioFrame(std::move(function), shared_data, length);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -587,7 +616,9 @@ NIM_SDK_NODE_API_DEF(setAudioEffectPreset)
     {
         int32_t type;
         napi_get_value_int32(info[0], type);
+		LOG_F(INFO, "type:%d", type);
         ret = rtc_engine_->setAudioEffectPreset(static_cast<nertc::NERtcVoiceChangerType>(type));
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -599,7 +630,9 @@ NIM_SDK_NODE_API_DEF(setVoiceBeautifierPreset)
     {
         int32_t type;
         napi_get_value_int32(info[0], type);
+		LOG_F(INFO, "type:%d", type);
         ret = rtc_engine_->setVoiceBeautifierPreset(static_cast<nertc::NERtcVoiceBeautifierType>(type));
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -611,7 +644,9 @@ NIM_SDK_NODE_API_DEF(setLocalVoicePitch)
     {
         double pitch;
         napi_get_value_double(info[0], pitch);
+		LOG_F(INFO, "pitch:%f", pitch);
         ret = rtc_engine_->setLocalVoicePitch(pitch);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -625,9 +660,11 @@ NIM_SDK_NODE_API_DEF(setLocalVoiceEqualization)
         int32_t band_gain;
         napi_get_value_int32(info[0], band_frequency);
         napi_get_value_int32(info[1], band_gain);
+		LOG_F(INFO, "band_frequency:%d band_gain:%d", band_frequency, band_gain);
         ret = rtc_engine_->setLocalVoiceEqualization(
             static_cast<nertc::NERtcVoiceEqualizationBand>(band_frequency), 
             band_gain);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -641,7 +678,9 @@ NIM_SDK_NODE_API_DEF(adjustUserPlaybackSignalVolume)
         int volume = 0;
         napi_get_value_int64(info[0], uid);
         napi_get_value_int32(info[1], volume);
+		LOG_F(INFO, "uid:%llu volume:%d", uid, volume);
         ret = rtc_engine_->adjustUserPlaybackSignalVolume(uid, volume);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -654,10 +693,12 @@ NIM_SDK_NODE_API_DEF(switchChannel)
         std::string token, channel_name;
         napi_get_value_utf8_string(info[0], token);
         napi_get_value_utf8_string(info[1], channel_name);
+		LOG_F(INFO, "channel_name:%s", channel_name);
         if(channel_name.length() == 0){
             break;
         }
         ret = rtc_engine_->switchChannel(token.c_str(), channel_name.c_str());
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -671,7 +712,9 @@ NIM_SDK_NODE_API_DEF(setLocalMediaPriority)
         bool enable;
         napi_get_value_int32(info[0], priority);
         napi_get_value_bool(info[1], enable);
+		LOG_F(INFO, "priority:%d enable:%d", priority, enable);
         ret = rtc_engine_->setLocalMediaPriority((nertc::NERtcMediaPriorityType)priority, enable);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -685,7 +728,9 @@ NIM_SDK_NODE_API_DEF(enableLoopbackRecording)
         napi_get_value_bool(info[0], enable);
         std::string deviveName;
         napi_get_value_utf8_string(info[1], deviveName);
+		LOG_F(INFO, "enable:%d deviveName:%s", enable, deviveName);
         ret = rtc_engine_->enableLoopbackRecording(enable, deviveName.c_str());
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -697,7 +742,9 @@ NIM_SDK_NODE_API_DEF(adjustLoopbackRecordingSignalVolume)
     {
         int volume;
         napi_get_value_int32(info[0], volume);
+		LOG_F(INFO, "volume:%d", volume);
         ret = rtc_engine_->adjustLoopbackRecordingSignalVolume(volume);
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -725,6 +772,7 @@ NIM_SDK_NODE_API_DEF(setExcludeWindowList)
           delete[] wnd_list;
         }
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -739,8 +787,10 @@ NIM_SDK_NODE_API_DEF(startAudioRecording)
         napi_get_value_utf8_string(info[0], path);
         napi_get_value_uint32(info[1], profile);
         napi_get_value_uint32(info[2], scenario);
+		LOG_F(INFO, "path:%s profile:%d scenario:%d", path, profile, scenario);
         ret = rtc_engine_->startAudioRecording(path.c_str(), profile, (nertc::NERtcAudioRecordingQuality)scenario);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -749,8 +799,10 @@ NIM_SDK_NODE_API_DEF(stopAudioRecording)
     INIT_ENV
     do
     {
+		LOG_F(INFO, "stopAudioRecording in");
         ret = rtc_engine_->stopAudioRecording();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -843,6 +895,7 @@ NIM_SDK_NODE_API_DEF(startChannelMediaRelay)
         // }
         
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -906,6 +959,7 @@ NIM_SDK_NODE_API_DEF(updateChannelMediaRelay)
 		}
 
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -914,8 +968,10 @@ NIM_SDK_NODE_API_DEF(stopChannelMediaRelay)
     INIT_ENV
     do
     {
+		LOG_F(INFO, "stopChannelMediaRelay in");
         ret = rtc_engine_->stopChannelMediaRelay();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -926,8 +982,10 @@ NIM_SDK_NODE_API_DEF(setLocalPublishFallbackOption)
     {
         int opt;
         napi_get_value_int32(info[0], opt);
+		LOG_F(INFO, "opt:%d", opt);
         ret = rtc_engine_->setLocalPublishFallbackOption(opt);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -938,8 +996,10 @@ NIM_SDK_NODE_API_DEF(setRemoteSubscribeFallbackOption)
     {
         int opt;
         napi_get_value_int32(info[0], opt);
+		LOG_F(INFO, "opt:%d", opt);
         ret = rtc_engine_->setRemoteSubscribeFallbackOption(opt);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -950,8 +1010,10 @@ NIM_SDK_NODE_API_DEF(enableSuperResolution)
     {
         bool enable;
         napi_get_value_bool(info[0], enable);
+		LOG_F(INFO, "enable:%d", enable);
         ret = rtc_engine_->enableSuperResolution(enable);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -979,6 +1041,7 @@ NIM_SDK_NODE_API_DEF(enableEncryption)
         }
         ret = rtc_engine_->enableEncryption(enable, config);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -987,8 +1050,10 @@ NIM_SDK_NODE_API_DEF(getConnectionState)
     INIT_ENV
     do
     {
+		LOG_F(INFO, "getConnectionState in");
         ret = rtc_engine_->getConnectionState();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -999,8 +1064,10 @@ NIM_SDK_NODE_API_DEF(muteLocalAudioStream)
     {
         bool enabled;
         napi_get_value_bool(info[0], enabled);
+		LOG_F(INFO, "enabled:%d", enabled);
         ret = rtc_engine_->muteLocalAudioStream(enabled);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1012,8 +1079,10 @@ NIM_SDK_NODE_API_DEF(setAudioProfile)
         uint32_t profile, scenario;
         napi_get_value_uint32(info[0], profile);
         napi_get_value_uint32(info[1], scenario);
+		LOG_F(INFO, "profile:%d scenario:%d", profile, scenario);
         ret = rtc_engine_->setAudioProfile((nertc::NERtcAudioProfileType)profile, (nertc::NERtcAudioScenarioType)scenario);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1026,8 +1095,10 @@ NIM_SDK_NODE_API_DEF(subscribeRemoteAudioStream)
         bool enable;
         napi_get_value_int64(info[0], uid);
         napi_get_value_bool(info[1], enable);
+		LOG_F(INFO, "uid:%llu enable:%d", uid, enable);
         ret = rtc_engine_->subscribeRemoteAudioStream(uid, enable);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1045,6 +1116,7 @@ NIM_SDK_NODE_API_DEF(setVideoConfig)
         }
         ret = rtc_engine_->setVideoConfig(config);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1054,8 +1126,10 @@ NIM_SDK_NODE_API_DEF(enableDualStreamMode)
     do{
         bool enabled;
         napi_get_value_bool(info[0], enabled);
+		LOG_F(INFO, "enabled:%d", enabled);
         ret = rtc_engine_->enableDualStreamMode(enabled);
     }while(false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1065,6 +1139,7 @@ NIM_SDK_NODE_API_DEF(setLocalVideoMirrorMode)
     do{
         uint32_t mode;
         napi_get_value_uint32(info[0], mode);
+		LOG_F(INFO, "mode:%d", mode);
         NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
         if (pTransporter)
         {
@@ -1072,6 +1147,7 @@ NIM_SDK_NODE_API_DEF(setLocalVideoMirrorMode)
             ret = 0;
         }
     }while(false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1079,8 +1155,10 @@ NIM_SDK_NODE_API_DEF(startVideoPreview)
 {
     INIT_ENV
     do{
+		LOG_F(INFO, "startVideoPreview in");
         ret = rtc_engine_->startVideoPreview();
     }while(false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1089,8 +1167,10 @@ NIM_SDK_NODE_API_DEF(stopVideoPreview)
     INIT_ENV
     do
     {
+		LOG_F(INFO, "stopVideoPreview in");
         ret = rtc_engine_->stopVideoPreview();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1101,8 +1181,10 @@ NIM_SDK_NODE_API_DEF(muteLocalVideoStream)
     {
         bool enabled;
         napi_get_value_bool(info[0], enabled);
+		LOG_F(INFO, "enabled:%d", enabled);
         ret = rtc_engine_->muteLocalVideoStream(enabled);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1113,12 +1195,14 @@ NIM_SDK_NODE_API_DEF(setParameters)
     {
         std::string para;
         napi_get_value_utf8_string(info[0], para);
+		LOG_F(INFO, "para:%s", para);
         if (para.length() == 0)
         {
             break;
         }
         ret = rtc_engine_->setParameters(para.c_str());
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1136,6 +1220,7 @@ NIM_SDK_NODE_API_DEF(setRecordingAudioFrameParameters)
         }
         ret = rtc_engine_->setRecordingAudioFrameParameters(&config);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1153,6 +1238,7 @@ NIM_SDK_NODE_API_DEF(setPlaybackAudioFrameParameters)
         }
         ret = rtc_engine_->setPlaybackAudioFrameParameters(&config);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1161,8 +1247,10 @@ NIM_SDK_NODE_API_DEF( startAudioDump)
     INIT_ENV
     do
     {
+		LOG_F(INFO, "startAudioDump in");
         ret = rtc_engine_->startAudioDump();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1171,8 +1259,10 @@ NIM_SDK_NODE_API_DEF(stopAudioDump)
     INIT_ENV
     do
     {
+		LOG_F(INFO, "stopAudioDump in");
         ret = rtc_engine_->stopAudioDump();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1185,6 +1275,7 @@ NIM_SDK_NODE_API_DEF(startAudioMixing)
         nertc_audio_mixing_option_obj_to_struct(env, info[0].As<Napi::Object>(), config);
         ret = rtc_engine_->startAudioMixing(&config);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1193,8 +1284,10 @@ NIM_SDK_NODE_API_DEF(stopAudioMixing)
     INIT_ENV
     do
     {
+		LOG_F(INFO, "stopAudioMixing in");
         ret = rtc_engine_->stopAudioMixing();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1203,8 +1296,10 @@ NIM_SDK_NODE_API_DEF(pauseAudioMixing)
     INIT_ENV
     do
     {
+		LOG_F(INFO, "pauseAudioMixing in");
         ret = rtc_engine_->pauseAudioMixing();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1213,8 +1308,10 @@ NIM_SDK_NODE_API_DEF(resumeAudioMixing)
     INIT_ENV
     do
     {
+		LOG_F(INFO, "resumeAudioMixing in");
         ret = rtc_engine_->resumeAudioMixing();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1225,8 +1322,10 @@ NIM_SDK_NODE_API_DEF(setAudioMixingSendVolume)
     {
         uint32_t param;
         napi_get_value_uint32(info[0], param);
+		LOG_F(INFO, "param:%d", param);
         ret = rtc_engine_->setAudioMixingSendVolume(param);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1238,6 +1337,7 @@ NIM_SDK_NODE_API_DEF(getAudioMixingSendVolume)
     {
         ret = rtc_engine_->getAudioMixingSendVolume(&volume);
     } while (false);
+	LOG_F(INFO, "volume:%d ret:%d", volume, ret);
     return Napi::Number::New(env, ret == 0 ? volume : ret);
 }
 
@@ -1248,8 +1348,10 @@ NIM_SDK_NODE_API_DEF(setAudioMixingPlaybackVolume)
     {
         uint32_t param;
         napi_get_value_uint32(info[0], param);
+		LOG_F(INFO, "param:%d", param);
         ret = rtc_engine_->setAudioMixingPlaybackVolume(param);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1259,8 +1361,10 @@ NIM_SDK_NODE_API_DEF(getAudioMixingPlaybackVolume)
     uint32_t volume = 0;
     do
     {
+		LOG_F(INFO, "getAudioMixingPlaybackVolume in");
         ret = rtc_engine_->getAudioMixingPlaybackVolume(&volume);
     } while (false);
+	LOG_F(INFO, "volume:%d ret:%d", volume, ret);
     return Napi::Number::New(env, ret == 0 ? volume : ret);
 }
 
@@ -1270,8 +1374,10 @@ NIM_SDK_NODE_API_DEF(getAudioMixingDuration)
     uint64_t dur = 0;
     do
     {
+		LOG_F(INFO, "getAudioMixingDuration in");
         ret = rtc_engine_->getAudioMixingDuration(&dur);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret == 0 ? dur : ret);
 }
 
@@ -1283,7 +1389,8 @@ NIM_SDK_NODE_API_DEF(getAudioMixingCurrentPosition)
     {
         ret = rtc_engine_->getAudioMixingCurrentPosition(&volume);
     } while (false);
-     return Napi::Number::New(env, ret == 0 ? (uint32_t)volume : ret);
+	LOG_F(INFO, "volume:%llu ret:%d", volume, ret);
+    return Napi::Number::New(env, ret == 0 ? (uint32_t)volume : ret);
 }
 
 NIM_SDK_NODE_API_DEF(setAudioMixingPosition)
@@ -1294,6 +1401,7 @@ NIM_SDK_NODE_API_DEF(setAudioMixingPosition)
         uint32_t param;
         napi_get_value_uint32(info[0], param);
         ret = rtc_engine_->setAudioMixingPosition(param);
+		LOG_F(INFO, "param:%d ret:%d", param, ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -1305,12 +1413,13 @@ NIM_SDK_NODE_API_DEF(playEffect)
     {
         uint32_t effect_id;
         napi_get_value_uint32(info[0], effect_id);
-
+		LOG_F(INFO, "effect_id:%llu", effect_id);
         Napi::Array objs = info[1].As<Napi::Array>();
         nertc::NERtcCreateAudioEffectOption *config = new nertc::NERtcCreateAudioEffectOption[objs.Length()];
         nertc_audio_effect_option_obj_to_struct(env, info[1].As<Napi::Object>(), config);
         ret = rtc_engine_->playEffect(effect_id, config);
         delete[] config;
+		LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -1322,8 +1431,10 @@ NIM_SDK_NODE_API_DEF(stopEffect)
     {
         uint32_t effect_id;
         napi_get_value_uint32(info[0], effect_id);
+		LOG_F(INFO, "effect_id:%llu", effect_id);
         ret = rtc_engine_->stopEffect(effect_id);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1332,8 +1443,10 @@ NIM_SDK_NODE_API_DEF(stopAllEffects)
     INIT_ENV
     do
     {
+		LOG_F(INFO, "stopAllEffects in");
         ret = rtc_engine_->stopAllEffects();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1344,8 +1457,10 @@ NIM_SDK_NODE_API_DEF(pauseEffect)
     {
         uint32_t effect_id;
         napi_get_value_uint32(info[0], effect_id);
+		LOG_F(INFO, "effect_id:%llu", effect_id);
         ret = rtc_engine_->pauseEffect(effect_id);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1356,8 +1471,10 @@ NIM_SDK_NODE_API_DEF(resumeEffect)
     {
         uint32_t effect_id;
         napi_get_value_uint32(info[0], effect_id);
+		LOG_F(INFO, "effect_id:%llu", effect_id);
         ret = rtc_engine_->resumeEffect(effect_id);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1366,8 +1483,10 @@ NIM_SDK_NODE_API_DEF(pauseAllEffects)
     INIT_ENV
     do
     {
+		LOG_F(INFO, "pauseAllEffects in");
         ret = rtc_engine_->pauseAllEffects();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1376,8 +1495,10 @@ NIM_SDK_NODE_API_DEF(resumeAllEffects)
     INIT_ENV
     do
     {
+		LOG_F(INFO, "resumeAllEffects in");
         ret = rtc_engine_->resumeAllEffects();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1389,8 +1510,10 @@ NIM_SDK_NODE_API_DEF(setEffectSendVolume)
         uint32_t effect_id, volume;
         napi_get_value_uint32(info[0], effect_id);
         napi_get_value_uint32(info[1], volume);
+		LOG_F(INFO, "effect_id:%llu volume:%d", effect_id, volume);
         ret = rtc_engine_->setEffectSendVolume(effect_id, volume);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1402,8 +1525,10 @@ NIM_SDK_NODE_API_DEF(getEffectSendVolume)
     {
         uint32_t effect_id;
         napi_get_value_uint32(info[0], effect_id);
+		LOG_F(INFO, "effect_id:%llu", effect_id);
         ret = rtc_engine_->getEffectSendVolume(effect_id, &volume);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret == 0 ? volume : ret);
 }
 
@@ -1415,8 +1540,10 @@ NIM_SDK_NODE_API_DEF(setEffectPlaybackVolume)
         uint32_t effect_id, volume;
         napi_get_value_uint32(info[0], effect_id);
         napi_get_value_uint32(info[1], volume);
+		LOG_F(INFO, "effect_id:%llu volume:%d", effect_id, volume);
         ret = rtc_engine_->setEffectPlaybackVolume(effect_id, volume);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1428,8 +1555,10 @@ NIM_SDK_NODE_API_DEF(getEffectPlaybackVolume)
     {
         uint32_t effect_id;
         napi_get_value_uint32(info[0], effect_id);
+		LOG_F(INFO, "effect_id:%llu", effect_id);
         ret = rtc_engine_->getEffectPlaybackVolume(effect_id, &vol);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret == 0 ? vol : ret);
 }
 
@@ -1442,8 +1571,10 @@ NIM_SDK_NODE_API_DEF(enableEarback)
         uint32_t volume;
         napi_get_value_bool(info[0], enabled);
         napi_get_value_uint32(info[1], volume);
+		LOG_F(INFO, "enabled:%d volume:%d", enabled, volume);
         ret = rtc_engine_->enableEarback(enabled, volume);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1454,8 +1585,10 @@ NIM_SDK_NODE_API_DEF(setEarbackVolume)
     {
         uint32_t volume;
         napi_get_value_uint32(info[0], volume);
+		LOG_F(INFO, "volume:%d", volume);
         ret = rtc_engine_->setEarbackVolume(volume);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1511,8 +1644,10 @@ NIM_SDK_NODE_API_DEF(enableAudioVolumeIndication)
         uint32_t interval;
         napi_get_value_bool(info[0], enabled);
         napi_get_value_uint32(info[1], interval);
+		LOG_F(INFO, "enabled:%d interval:%d", enabled, interval);
         ret = rtc_engine_->enableAudioVolumeIndication(enabled, interval);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1543,6 +1678,7 @@ NIM_SDK_NODE_API_DEF(startScreenCaptureByScreenRect)
             param.excluded_window_list = nullptr;
         }
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1578,6 +1714,7 @@ NIM_SDK_NODE_API_DEF(startScreenCaptureByWindowId)
             param.excluded_window_list = nullptr;
         }
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1596,6 +1733,7 @@ NIM_SDK_NODE_API_DEF(updateScreenCaptureRegion)
         }
         ret = rtc_engine_->updateScreenCaptureRegion(region_rect);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1659,6 +1797,7 @@ NIM_SDK_NODE_API_DEF(startScreenCaptureByDisplayId)
             }
 
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1670,6 +1809,7 @@ NIM_SDK_NODE_API_DEF(stopScreenCapture)
     {
         ret = rtc_engine_->stopScreenCapture();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1680,6 +1820,7 @@ NIM_SDK_NODE_API_DEF(pauseScreenCapture)
     {
         ret = rtc_engine_->pauseScreenCapture();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1690,6 +1831,7 @@ NIM_SDK_NODE_API_DEF(resumeScreenCapture)
     {
         ret = rtc_engine_->resumeScreenCapture();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1700,8 +1842,10 @@ NIM_SDK_NODE_API_DEF(setExternalVideoSource)
     {
         bool enabled;
         napi_get_value_bool(info[0], enabled);
+		LOG_F(INFO, "enabled:%d", enabled);
         ret = rtc_engine_->setExternalVideoSource(enabled);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1713,6 +1857,7 @@ NIM_SDK_NODE_API_DEF(getVersion)
     {
         int32_t build;
         ret = (std::string)rtc_engine_->getVersion(&build);
+		LOG_F(INFO, "build:%d, ret:%s", build, ret);
     } while (false);
     return Napi::String::New(env, ret);
 }
@@ -1725,8 +1870,10 @@ NIM_SDK_NODE_API_DEF(getErrorDescription)
     {
         int32_t error;
         napi_get_value_int32(info[0], error);
+		LOG_F(INFO, "error:%d", error);
         ret = (std::string)rtc_engine_->getErrorDescription(error);
     } while (false);
+	LOG_F(INFO, "ret:%s", ret);
     return Napi::String::New(env, ret);
 }
 
@@ -1735,6 +1882,7 @@ NIM_SDK_NODE_API_DEF(uploadSdkInfo)
     INIT_ENV
     do
     {
+        LOG_F(INFO, "uploadSdkInfo in");
         rtc_engine_->uploadSdkInfo();
     } while (false);
     return Napi::Number::New(env, ret);
@@ -1762,6 +1910,7 @@ NIM_SDK_NODE_API_DEF(addLiveStreamTask)
             info.layout.bg_image = nullptr;
         }
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1787,6 +1936,7 @@ NIM_SDK_NODE_API_DEF(updateLiveStreamTask)
             info.layout.bg_image = nullptr;
         }
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1797,8 +1947,10 @@ NIM_SDK_NODE_API_DEF(removeLiveStreamTask)
     {
         std::string task_id;
         napi_get_value_utf8_string(info[0], task_id);
+		LOG_F(INFO, "task_id:%s", task_id);
         ret = rtc_engine_->removeLiveStreamTask(task_id.c_str());
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1843,8 +1995,10 @@ NIM_SDK_NODE_API_DEF(setRecordDevice)
         {
             break;
         }
+		LOG_F(INFO, "device:%s", device);
         ret = _adm->setRecordDevice(device.c_str());
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1856,6 +2010,7 @@ NIM_SDK_NODE_API_DEF(getRecordDevice)
     {
         ret = _adm->getRecordDevice(id);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::String::New(env, ret== 0 ? (char*)id : "");
 }
 
@@ -1903,6 +2058,7 @@ NIM_SDK_NODE_API_DEF(setPlayoutDevice)
         }
         ret = _adm->setPlayoutDevice(device.c_str());
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1924,8 +2080,10 @@ NIM_SDK_NODE_API_DEF(setRecordDeviceVolume)
     {
         uint32_t volume;
         napi_get_value_uint32(info[0], volume);
+		LOG_F(INFO, "volume:%d", volume);
         ret = _adm->setRecordDeviceVolume(volume);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1937,6 +2095,7 @@ NIM_SDK_NODE_API_DEF(getRecordDeviceVolume)
     {
         ret = _adm->getRecordDeviceVolume(&volume);
     } while (false);
+	LOG_F(INFO, "volume:%d ret:%d", volume, ret);
     return Napi::Number::New(env, ret == 0 ? volume : ret);
 }
 
@@ -1947,8 +2106,10 @@ NIM_SDK_NODE_API_DEF(setPlayoutDeviceVolume)
     {
         uint32_t volume;
         napi_get_value_uint32(info[0], volume);
+		LOG_F(INFO, "volume:%d", volume);
         ret = _adm->setPlayoutDeviceVolume(volume);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1960,6 +2121,7 @@ NIM_SDK_NODE_API_DEF(getPlayoutDeviceVolume)
     {
         ret = _adm->getPlayoutDeviceVolume(&volume);
     } while (false);
+	LOG_F(INFO, "volume:%d ret:%d", volume, ret);
     return Napi::Number::New(env, ret == 0 ? volume : ret);
 }
 
@@ -1971,8 +2133,10 @@ NIM_SDK_NODE_API_DEF(setPlayoutDeviceMute)
     {
         bool mute;
         napi_get_value_bool(info[0], mute);
+		LOG_F(INFO, "mute:%d", mute);
         ret = _adm->setPlayoutDeviceMute(mute);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
 
@@ -1983,6 +2147,7 @@ NIM_SDK_NODE_API_DEF(getPlayoutDeviceMute)
     {
         _adm->getPlayoutDeviceMute(&ret);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Boolean ::New(env, ret);
 }
 
@@ -1993,8 +2158,10 @@ NIM_SDK_NODE_API_DEF(setRecordDeviceMute)
     {
         bool mute;
         napi_get_value_bool(info[0], mute);
+		LOG_F(INFO, "mute:%d", mute);
         ret = _adm->setRecordDeviceMute(mute);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number ::New(env, ret);
 }
 
@@ -2005,6 +2172,7 @@ NIM_SDK_NODE_API_DEF(getRecordDeviceMute)
     {
         _adm->getRecordDeviceMute(&ret);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Boolean ::New(env, ret);
 }
 
@@ -2015,8 +2183,10 @@ NIM_SDK_NODE_API_DEF(adjustRecordingSignalVolume)
     {
         uint32_t volume;
         napi_get_value_uint32(info[0], volume);
+		LOG_F(INFO, "volume:%d", volume);
         ret = _adm->adjustRecordingSignalVolume(volume);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number ::New(env, ret);
 }
 
@@ -2027,8 +2197,10 @@ NIM_SDK_NODE_API_DEF(adjustPlaybackSignalVolume)
     {
         uint32_t volume;
         napi_get_value_uint32(info[0], volume);
+		LOG_F(INFO, "volume:%d", volume);
         ret = _adm->adjustPlaybackSignalVolume(volume);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number ::New(env, ret);
 }
 
@@ -2040,8 +2212,10 @@ NIM_SDK_NODE_API_DEF(startRecordDeviceTest)
     { 
         uint32_t interval; // todo uint64
         napi_get_value_uint32(info[0], interval);
+		LOG_F(INFO, "interval:%d", interval);
         ret = _adm->startRecordDeviceTest(interval);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number ::New(env, ret);
 }
 
@@ -2052,6 +2226,7 @@ NIM_SDK_NODE_API_DEF(stopRecordDeviceTest)
     {
         ret = _adm->stopRecordDeviceTest();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number ::New(env, ret);
 }
 
@@ -2066,8 +2241,10 @@ NIM_SDK_NODE_API_DEF(startPlayoutDeviceTest)
         {
             break;
         }
+		LOG_F(INFO, "path:%s", path);
         ret = _adm->startPlayoutDeviceTest(path.c_str());
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number ::New(env, ret);
 }
 
@@ -2078,6 +2255,7 @@ NIM_SDK_NODE_API_DEF(stopPlayoutDeviceTest)
     {
         ret = _adm->stopPlayoutDeviceTest();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number ::New(env, ret);
 }
 
@@ -2088,8 +2266,10 @@ NIM_SDK_NODE_API_DEF(startAudioDeviceLoopbackTest)
     {
         uint32_t interval;  // todo uint64
         napi_get_value_uint32(info[0], interval);
+		LOG_F(INFO, "interval:%d", interval);
         ret = _adm->startAudioDeviceLoopbackTest(interval);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number ::New(env, ret);
 }
 
@@ -2100,6 +2280,7 @@ NIM_SDK_NODE_API_DEF(stopAudioDeviceLoopbackTest)
     {
         ret = _adm->stopAudioDeviceLoopbackTest();
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number ::New(env, ret);
 }
 
@@ -2144,8 +2325,10 @@ NIM_SDK_NODE_API_DEF(setDevice)
         {
             break;
         }
+		LOG_F(INFO, "device:%s", device);
         ret = _vdm->setDevice(device.c_str());
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number ::New(env, ret);
 }
 
@@ -2157,6 +2340,7 @@ NIM_SDK_NODE_API_DEF(getDevice)
     {
         ret = _vdm->getDevice(id);
     } while (false);
+	LOG_F(INFO, "ret:%d", ret);
     return Napi::String ::New(env,  ret== 0 ? (char*)id : "");
 }
 
