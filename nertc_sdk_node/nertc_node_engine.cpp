@@ -270,6 +270,9 @@ NIM_SDK_NODE_API_DEF(release)
     do
     {
 		LOG_F(INFO, "-------------sdk release-------------");
+        ret = rtc_engine_->stopVideoPreview();
+		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		pTransporter->stopFlushVideo();
         rtc_engine_->release(true);
         if (rtc_engine_)
         {
@@ -314,6 +317,8 @@ NIM_SDK_NODE_API_DEF(joinChannel)
         napi_get_value_int64(info[2], uid);
 		LOG_F(INFO, "channel_name:%s, uid:%llu", channel_name.c_str(), uid);
         ret = rtc_engine_->joinChannel(token.length() == 0 ? "" : token.c_str(), channel_name.c_str(), uid);
+        NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		pTransporter->startFlushVideo();
 		LOG_F(INFO, "ret:%d", ret);
     }while(false);
     return Napi::Number::New(env, ret);
@@ -324,6 +329,9 @@ NIM_SDK_NODE_API_DEF(leaveChannel)
     INIT_ENV
     do
     {
+        ret = rtc_engine_->stopVideoPreview();
+		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		pTransporter->stopFlushVideo();
         ret = rtc_engine_->leaveChannel();
 		LOG_F(INFO, "ret:%d", ret);
     } while (false);
@@ -1156,6 +1164,8 @@ NIM_SDK_NODE_API_DEF(startVideoPreview)
     INIT_ENV
     do{
 		LOG_F(INFO, "startVideoPreview in");
+        NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		pTransporter->startFlushVideo();
         ret = rtc_engine_->startVideoPreview();
     }while(false);
 	LOG_F(INFO, "ret:%d", ret);
@@ -1169,6 +1179,8 @@ NIM_SDK_NODE_API_DEF(stopVideoPreview)
     {
 		LOG_F(INFO, "stopVideoPreview in");
         ret = rtc_engine_->stopVideoPreview();
+        NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		pTransporter->stopFlushVideo();
     } while (false);
 	LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
