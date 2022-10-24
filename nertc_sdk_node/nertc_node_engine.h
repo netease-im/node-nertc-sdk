@@ -23,18 +23,23 @@
 namespace nertc_node
 {
 
+class NertcNodeEngine : public Napi::ObjectWrap<NertcNodeEngine> {
+
 #define NIM_SDK_NODE_API(m) \
     Napi::Value (m)(const Napi::CallbackInfo& info)
 
-class NertcNodeEngine : public Napi::ObjectWrap<NertcNodeEngine> {
 
 public:
 #if NAPI_VERSION < 6
     static Napi::FunctionReference constructor;
 #endif
-    static Napi::Object Init(Napi::Env env, Napi::Object exports);
+    
     NertcNodeEngine(const Napi::CallbackInfo& info);
     virtual ~NertcNodeEngine();
+
+public:
+    static Napi::Object Init(Napi::Env env, Napi::Object exports);
+    static nertc::IRtcEngineEx * getNertcEngine();
 
 public:
     NIM_SDK_NODE_API(initialize);
@@ -188,7 +193,7 @@ public:
     NIM_SDK_NODE_API(setSystemAudioLoopbackCaptureVolume);
 
 private:
-    nertc::IRtcEngineEx *rtc_engine_ = nullptr;
+    //nertc::IRtcEngineEx *rtc_engine_ = nullptr;
     nertc::IAudioDeviceManager *_adm = nullptr;
     nertc::IVideoDeviceManager *_vdm = nullptr;
     std::shared_ptr<NertcNodeEventHandler> _event_handler;

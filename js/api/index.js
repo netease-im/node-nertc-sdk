@@ -9,6 +9,20 @@ const events_1 = require("events");
 const process_1 = __importDefault(require("process"));
 // const nertc = require('bindings')('nertc-electron-sdk');
 const nertc = require('../../build/Release/nertc-electron-sdk.node');
+
+class NERtcChannel extends events_1.EventEmitter {
+    constructor(name, rtcChannel) {
+        super();
+        this.channelName = name;
+        this.rtcChannel = rtcChannel;  
+    }
+
+    getChannelName() {
+        return this.rtcChannel.getChannelName(this.channelName);
+    }
+
+}
+
 /**
  * @class NERtcEngine
  */
@@ -26,6 +40,12 @@ class NERtcEngine extends events_1.EventEmitter {
         this.renderMode = this._checkWebGL() ? 1 : 2;
         this.customRenderer = renderer_1.CustomRenderer;
     }
+
+    createChannel(name) {
+        let nertcChannel = new nertc.NertcNodeChannel(name);
+        return new NERtcChannel(name, nertcChannel);
+    }
+
     /**
      * 初始化 NERTC SDK 服务。
      * <pre>

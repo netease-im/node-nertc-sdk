@@ -32,6 +32,11 @@ using namespace nertc_electron_util;
 namespace nertc_node
 {
 
+nertc::IRtcEngineEx *rtc_engine_ = nullptr;
+nertc::IRtcEngineEx * NertcNodeEngine::getNertcEngine() {
+    return rtc_engine_;
+}
+
 #if NAPI_VERSION < 6
 Napi::FunctionReference NertcNodeEngine::constructor;
 #endif
