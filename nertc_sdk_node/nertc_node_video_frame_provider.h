@@ -79,18 +79,18 @@ namespace nertc_node
         uint32_t m_destWidth;
         uint32_t m_destHeight;
         bool m_needUpdate;
-        //uint32_t m_count;
+        uint32_t m_count;
         std::string m_channelId;
         VideoFrameInfo()
-            : m_renderType(NODE_RENDER_TYPE_REMOTE), m_uid(0), m_destWidth(0), m_destHeight(0), m_needUpdate(false), m_channelId("")
+            : m_renderType(NODE_RENDER_TYPE_REMOTE), m_uid(0), m_destWidth(0), m_destHeight(0), m_needUpdate(false), m_count(0), m_channelId("")
         {
         }
         VideoFrameInfo(NodeRenderType type)
-            : m_renderType(type), m_uid(0), m_destWidth(0), m_destHeight(0), m_needUpdate(false), m_channelId("")
+            : m_renderType(type), m_uid(0), m_destWidth(0), m_destHeight(0), m_needUpdate(false), m_count(0), m_channelId("")
         {
         }
         VideoFrameInfo(NodeRenderType type, nertc::uid_t uid, std::string channelId)
-            : m_renderType(type), m_uid(uid), m_destWidth(0), m_destHeight(0), m_needUpdate(false), m_channelId(channelId)
+            : m_renderType(type), m_uid(uid), m_destWidth(0), m_destHeight(0), m_needUpdate(false), m_count(0), m_channelId(channelId)
         {
         }
     };
@@ -107,14 +107,10 @@ namespace nertc_node
         NodeVideoFrameTransporter();
         ~NodeVideoFrameTransporter();
 
-		void stopFlushVideo();
-		void startFlushVideo();
         void setLocalVideoMirrorMode(uint32_t mirrorMode) { m_localVideoMirrorMode = mirrorMode; }
         bool initialize(Napi::FunctionReference&& function);
         int deliverFrame_I420(NodeRenderType type, nertc::uid_t uid, std::string channelId, const IVideoFrame &videoFrame, int rotation, bool mirrored);
         int setVideoDimension(NodeRenderType, nertc::uid_t uid, std::string channelId, uint32_t width, uint32_t height);
-        void resetUpdateFlag();
-
         static void onFrameDataCallback(
             nertc::uid_t uid,
             void *data,
@@ -185,7 +181,6 @@ namespace nertc_node
         std::unique_ptr<VideoFrameInfo> m_localSubStreamVideoFrame;
         std::mutex m_lock;
         int m_stopFlag;
-        bool b_stopFlush; // bugfix web reload flushVideo thread dump in Napi::Array infos = Napi::Array::New(env);
         std::unique_ptr<std::thread> m_thread;
         uint32_t m_FPS;
         uint32_t m_localVideoMirrorMode = 0; //0-auto 1-mirror 2-unmirror
@@ -193,7 +188,7 @@ namespace nertc_node
 
     };
 
-    NodeVideoFrameTransporter *getNodeVideoFrameTransporter();
+    // NodeVideoFrameTransporter *getNodeVideoFrameTransporter();
 
 } // namespace nertc_node
 

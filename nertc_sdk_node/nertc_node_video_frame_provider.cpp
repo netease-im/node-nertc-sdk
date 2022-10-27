@@ -8,11 +8,11 @@
 using namespace libyuv;
 namespace nertc_node
 {
-NodeVideoFrameTransporter g_transport;
-NodeVideoFrameTransporter* getNodeVideoFrameTransporter()
-{
-    return &g_transport;
-}
+// NodeVideoFrameTransporter g_transport;
+// NodeVideoFrameTransporter* getNodeVideoFrameTransporter()
+// {
+//     return &g_transport;
+// }
 
 NodeVideoFrameTransporter::NodeVideoFrameTransporter()
 : init(false)
@@ -33,7 +33,6 @@ bool NodeVideoFrameTransporter::initialize(Napi::FunctionReference&& function)
         deinitialize();
     }
     m_stopFlag = false;
-    b_stopFlush = true;
     // env = isolate;
     // js_callback = std::move(function);
     m_pFrameDataCallback = new FrameDataCallback();
@@ -45,17 +44,6 @@ bool NodeVideoFrameTransporter::initialize(Napi::FunctionReference&& function)
     init = true;
     return true;
 }
-
-void NodeVideoFrameTransporter::stopFlushVideo()
-{
-    b_stopFlush = true;
-}
-
-void NodeVideoFrameTransporter::startFlushVideo()
-{
-	b_stopFlush = false;
-}
-
 
 bool NodeVideoFrameTransporter::deinitialize()
 {
@@ -116,17 +104,10 @@ VideoFrameInfo& NodeVideoFrameTransporter::getVideoFrameInfo(NodeRenderType type
 int NodeVideoFrameTransporter::deliverFrame_I420(NodeRenderType type, nertc::uid_t uid, std::string channelId, const IVideoFrame& videoFrame, int rotation, bool mirrored)
 {
     if (!init)
-    {
         return -1;
-    }
         
     std::lock_guard<std::mutex> lck(m_lock);
     VideoFrameInfo& info = getVideoFrameInfo(type, uid, channelId);
-    if(info.m_needUpdate) 
-    {
-        return -1;
-    }
-
     int destStride = info.m_destWidth ? info.m_destWidth : videoFrame.stride[0];
     int destWidth = info.m_destWidth ? info.m_destWidth : videoFrame.width;
     int destHeight = info.m_destHeight ? info.m_destHeight : videoFrame.height;
@@ -158,6 +139,7 @@ int NodeVideoFrameTransporter::deliverFrame_I420(NodeRenderType type, nertc::uid
     hdr->rotation = htons(rotation);
     setupFrameHeader(hdr, destStride, destWidth, destHeight);
     copyFrame(videoFrame, info, destStride, videoFrame.stride[0], destWidth, destHeight);
+    info.m_count = 0;
     info.m_needUpdate = true;
     // if (videoFrame.data)
     // {
@@ -256,30 +238,21 @@ unsigned char* dstYPlane, unsigned char* dstUPlane, unsigned char* dstVPlane, in
 #define NODE_SET_OBJ_PROP_HEADER(obj, it) \
     { \
         Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, (it)->buffer, (it)->length); \
-        Napi::MaybeOrValue<bool> ret = obj.Set(Napi::String::New(env, "header"), arrayBuffer); \
-        if(!ret){\
-            break;\
-        }\
+        obj.Set(Napi::String::New(env, "header"), arrayBuffer); \
     }
 
 #define NODE_SET_OBJ_PROP_DATA(obj, name, it) \
     { \
         Napi::ArrayBuffer arrayBuffer1 = Napi::ArrayBuffer::New(env, (it)->buffer, (it)->length);  \
         Napi::Uint8Array buff = Napi::TypedArrayOf<uint8_t>::New(env, arrayBuffer1.ByteLength(), arrayBuffer1, 0, napi_uint8_array);\
-        Napi::MaybeOrValue<bool> ret = obj.Set(Napi::String::New(env, name), buff); \
-        if(!ret){\
-            break;\
-        }\
+        obj.Set(Napi::String::New(env, name), buff); \
     }
 
 bool AddObj(Napi::Env& env, Napi::Array& infos, int index, VideoFrameInfo& info)
 {
     if (!info.m_needUpdate)
-    {
         return false;
-    }
-    //info.m_needUpdate = false;
-
+    info.m_needUpdate = false;
     bool result = false;
     do {
         Napi::Object obj = Napi::Object::New(env);
@@ -306,73 +279,57 @@ void NodeVideoFrameTransporter::FlushVideo()
 {
     while (!m_stopFlag) {
         {
-			if (!b_stopFlush) {
+            nim_node::node_async_call::async_call([this]() {
+                
+                auto env = m_pFrameDataCallback->function.Env();
+                Napi::Array infos = Napi::Array::New(env);
+                uint32_t i = 0;
 
-				nim_node::node_async_call::async_call([this]() {
-
-					auto env = m_pFrameDataCallback->function.Env();
-					Napi::Array infos = Napi::Array::New(env);
-					uint32_t i = 0;
-
-					{
-						std::lock_guard<std::mutex> lock(m_lock);
-						for (auto& it : m_remoteVideoFrames) {
-							if (AddObj(env, infos, i, it.second))
-							{
-								++i;
-							}
-						}
-						if (m_localVideoFrame.get()) {
-							if (AddObj(env, infos, i, *(m_localVideoFrame.get())))
-							{
-								++i;
-							}
-						}
-						for (auto& it : m_substreamVideoFrame) {
-							if (AddObj(env, infos, i, it.second))
-							{
-								++i;
-							}
-						}
-						if (m_localSubStreamVideoFrame.get()) {
-							if (AddObj(env, infos, i, *m_localSubStreamVideoFrame.get()))
-							{
-								++i;
-							}
-						}
-
-                        if (i > 0 && (!b_stopFlush)) {
-						    const std::vector<napi_value> args = { infos };
-						    m_pFrameDataCallback->function.Call(args);
-                            resetUpdateFlag();
-					    }
-					}
-
-				});
-			
-			}
-
+                {
+                    std::lock_guard<std::mutex> lock(m_lock);
+                    for (auto& it : m_remoteVideoFrames) {
+                        if (AddObj(env, infos, i, it.second))
+                        {
+                            ++i;
+                        }else {
+                            ++it.second.m_count;
+                        }
+                    }
+                    if (m_localVideoFrame.get()) {
+                        if (AddObj(env, infos, i, *(m_localVideoFrame.get())))
+                        {
+                            ++i;
+                        }else {
+                            ++m_localVideoFrame->m_count;
+                        }
+                    }
+                    for (auto& it : m_substreamVideoFrame) {
+                        if (AddObj(env, infos, i, it.second))
+                        {
+                            ++i;
+                        }
+                        else {
+                            ++it.second.m_count;
+                        }
+                    } 
+                    if (m_localSubStreamVideoFrame.get()) {
+                        if (AddObj(env, infos, i, *m_localSubStreamVideoFrame.get()))
+                        {
+                            ++i;
+                        }else {
+                            ++m_localSubStreamVideoFrame->m_count;
+                        }
+                    }
+                }
+                
+                if (i > 0) {
+                    const std::vector<napi_value> args = {infos};
+                    m_pFrameDataCallback->function.Call(args);
+                }
+            });
             std::this_thread::sleep_for(std::chrono::milliseconds(1000 / m_FPS));
         }
     }
-}
-
-void NodeVideoFrameTransporter::resetUpdateFlag() 
-{
-    for (auto& it : m_remoteVideoFrames) {
-		it.second.m_needUpdate = false;
-	}
-    if (m_localVideoFrame.get()) {
-		m_localVideoFrame.get()->m_needUpdate = false;
-	}
-
-	for (auto& it : m_substreamVideoFrame) {
-		it.second.m_needUpdate = false;
-	}
-
-	if (m_localSubStreamVideoFrame.get()) {
-		m_localSubStreamVideoFrame.get()->m_needUpdate = false;
-	}
 }
 
 void NodeVideoFrameTransporter::onFrameDataCallback(
@@ -387,51 +344,51 @@ void NodeVideoFrameTransporter::onFrameDataCallback(
     uint32_t rotation,
     void *user_data)
 {
-    int rotate = 0;
-    switch (rotation)
-    {
-    case nertc::kNERtcVideoRotation_0:
-    {
-    }
-    break;
-    case nertc::kNERtcVideoRotation_90:
-    {
-        rotate = 90;
-    }
-    break;
-    case nertc::kNERtcVideoRotation_180:
-    {
-        rotate = 180;
-    }
-    break;
-    case nertc::kNERtcVideoRotation_270:
-    {
-        rotate = 270;
-    }
-    break;
-    }
+    // int rotate = 0;
+    // switch (rotation)
+    // {
+    // case nertc::kNERtcVideoRotation_0:
+    // {
+    // }
+    // break;
+    // case nertc::kNERtcVideoRotation_90:
+    // {
+    //     rotate = 90;
+    // }
+    // break;
+    // case nertc::kNERtcVideoRotation_180:
+    // {
+    //     rotate = 180;
+    // }
+    // break;
+    // case nertc::kNERtcVideoRotation_270:
+    // {
+    //     rotate = 270;
+    // }
+    // break;
+    // }
 
-    IVideoFrame frame;
-    frame.data = reinterpret_cast<uint8_t *>(data);
-    frame.rotation = rotate;
-    frame.count = count;
+    // IVideoFrame frame;
+    // frame.data = reinterpret_cast<uint8_t *>(data);
+    // frame.rotation = rotate;
+    // frame.count = count;
 
-    for (auto i = 0; i < count; i++)
-    {
-        frame.offset[i] = offset[i];
-        frame.stride[i] = stride[i];
-    }
+    // for (auto i = 0; i < count; i++)
+    // {
+    //     frame.offset[i] = offset[i];
+    //     frame.stride[i] = stride[i];
+    // }
 
-    frame.uid = *((nertc::uid_t *)user_data);
-    frame.width = width;
-    frame.height = height;
+    // frame.uid = *((nertc::uid_t *)user_data);
+    // frame.width = width;
+    // frame.height = height;
     
-    NodeRenderType nrt = frame.uid == 0 ? NODE_RENDER_TYPE_LOCAL : NODE_RENDER_TYPE_REMOTE;
-    auto *pTransporter = getNodeVideoFrameTransporter();
-    if (pTransporter)
-    {
-        pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, frame.uid == 0);
-    }
+    // NodeRenderType nrt = frame.uid == 0 ? NODE_RENDER_TYPE_LOCAL : NODE_RENDER_TYPE_REMOTE;
+    // auto *pTransporter = getNodeVideoFrameTransporter();
+    // if (pTransporter)
+    // {
+    //     pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, frame.uid == 0);
+    // }
 }
 
 void NodeVideoFrameTransporter::onSubstreamFrameDataCallback(
@@ -446,50 +403,50 @@ void NodeVideoFrameTransporter::onSubstreamFrameDataCallback(
     uint32_t rotation,
     void *user_data)
 {
-    int rotate = 0;
-    switch (rotation)
-    {
-    case nertc::kNERtcVideoRotation_0:
-    {
-    }
-    break;
-    case nertc::kNERtcVideoRotation_90:
-    {
-        rotate = 90;
-    }
-    break;
-    case nertc::kNERtcVideoRotation_180:
-    {
-        rotate = 180;
-    }
-    break;
-    case nertc::kNERtcVideoRotation_270:
-    {
-        rotate = 270;
-    }
-    break;
-    }
+    // int rotate = 0;
+    // switch (rotation)
+    // {
+    // case nertc::kNERtcVideoRotation_0:
+    // {
+    // }
+    // break;
+    // case nertc::kNERtcVideoRotation_90:
+    // {
+    //     rotate = 90;
+    // }
+    // break;
+    // case nertc::kNERtcVideoRotation_180:
+    // {
+    //     rotate = 180;
+    // }
+    // break;
+    // case nertc::kNERtcVideoRotation_270:
+    // {
+    //     rotate = 270;
+    // }
+    // break;
+    // }
 
-    IVideoFrame frame;
-    frame.data = reinterpret_cast<uint8_t *>(data);
-    frame.rotation = rotate;
-    frame.count = count;
+    // IVideoFrame frame;
+    // frame.data = reinterpret_cast<uint8_t *>(data);
+    // frame.rotation = rotate;
+    // frame.count = count;
 
-    for (auto i = 0; i < count; i++)
-    {
-        frame.offset[i] = offset[i];
-        frame.stride[i] = stride[i];
-    }
+    // for (auto i = 0; i < count; i++)
+    // {
+    //     frame.offset[i] = offset[i];
+    //     frame.stride[i] = stride[i];
+    // }
 
-    frame.uid = *((nertc::uid_t *)user_data);
-    frame.width = width;
-    frame.height = height;
+    // frame.uid = *((nertc::uid_t *)user_data);
+    // frame.width = width;
+    // frame.height = height;
 
-    NodeRenderType nrt = frame.uid == 0 ? NODE_RENDER_TYPE_LOCAL_SUBSTREAM : NODE_RENDER_TYPE_REMOTE_SUBSTREAM;
-    auto *pTransporter = getNodeVideoFrameTransporter();
-    if (pTransporter)
-    {
-        pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, false);
-    }
+    // NodeRenderType nrt = frame.uid == 0 ? NODE_RENDER_TYPE_LOCAL_SUBSTREAM : NODE_RENDER_TYPE_REMOTE_SUBSTREAM;
+    // auto *pTransporter = getNodeVideoFrameTransporter();
+    // if (pTransporter)
+    // {
+    //     pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, false);
+    // }
 }
 }

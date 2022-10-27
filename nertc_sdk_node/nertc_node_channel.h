@@ -44,7 +44,11 @@ public:
     NIM_SDK_NODE_API(resumeScreenCapture);
     // NIM_SDK_NODE_API(); setExcludeWindowList
     // NIM_SDK_NODE_API(); updateScreenCaptureParameters
-    // NIM_SDK_NODE_API();setupLocalVideoCanvas
+    // NIM_SDK_NODE_API(setupLocalVideoCanvas); -->setupVideoCanvas
+
+    NIM_SDK_NODE_API(onVideoFrame);
+    NIM_SDK_NODE_API(setupVideoCanvas);
+
     // NIM_SDK_NODE_API(); setupLocalSubStreamVideoCanvas
     // NIM_SDK_NODE_API(setLocalVideoMirrorMode);
     // NIM_SDK_NODE_API();  int setLocalVideoMirrorMode(NERtcVideoStreamType type, NERtcVideoMirrorMode mirror_mode)

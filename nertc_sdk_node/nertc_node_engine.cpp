@@ -10,6 +10,7 @@
 using namespace nertc_electron_util;
 #endif
 #include <string>
+#include <unordered_map>
 
 #define SET_PROTOTYPE(name) InstanceMethod(#name,  &NertcNodeEngine::name)
 
@@ -31,6 +32,127 @@ using namespace nertc_electron_util;
 
 namespace nertc_node
 {
+
+/****************************************************************************************************************************/
+	std::unordered_map<uint64_t, NodeVideoFrameTransporter *> g_transporter_map;
+	void EngineOnFrameDataCallback(nertc::uid_t uid, void *data, uint32_t type, uint32_t width, uint32_t height,
+		uint32_t count, uint32_t offset[4], uint32_t stride[4], uint32_t rotation, void *user_data)
+	{
+		int rotate = 0;
+		switch (rotation)
+		{
+		case nertc::kNERtcVideoRotation_0:
+		{
+		}
+		break;
+		case nertc::kNERtcVideoRotation_90:
+		{
+			rotate = 90;
+		}
+		break;
+		case nertc::kNERtcVideoRotation_180:
+		{
+			rotate = 180;
+		}
+		break;
+		case nertc::kNERtcVideoRotation_270:
+		{
+			rotate = 270;
+		}
+		break;
+		}
+
+		IVideoFrame frame;
+		frame.data = reinterpret_cast<uint8_t *>(data);
+		frame.rotation = rotate;
+		frame.count = count;
+
+		for (auto i = 0; i < count; i++)
+		{
+			frame.offset[i] = offset[i];
+			frame.stride[i] = stride[i];
+		}
+
+		frame.uid = uid;//*((nertc::uid_t *)user_data);
+		frame.width = width;
+		frame.height = height;
+
+		NodeRenderType nrt = frame.uid == 0 ? NODE_RENDER_TYPE_LOCAL : NODE_RENDER_TYPE_REMOTE;
+		/*auto *pTransporter = getNodeVideoFrameTransporter();
+		if (pTransporter)
+		{
+			pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, frame.uid == 0);
+		}*/
+        uint64_t thisAddr = *((nertc::uid_t *)user_data);
+		NodeVideoFrameTransporter * pTransporter = g_transporter_map[thisAddr];
+		if (pTransporter) {
+			pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, frame.uid == 0);
+		}
+	}
+
+    void NodeOnSubstreamFrameDataCallback(
+    nertc::uid_t uid,
+    void *data,
+    uint32_t type,
+    uint32_t width,
+    uint32_t height,
+    uint32_t count,
+    uint32_t offset[4],
+    uint32_t stride[4],
+    uint32_t rotation,
+    void *user_data)
+    {
+        int rotate = 0;
+        switch (rotation)
+        {
+        case nertc::kNERtcVideoRotation_0:
+        {
+        }
+        break;
+        case nertc::kNERtcVideoRotation_90:
+        {
+            rotate = 90;
+        }
+        break;
+        case nertc::kNERtcVideoRotation_180:
+        {
+            rotate = 180;
+        }
+        break;
+        case nertc::kNERtcVideoRotation_270:
+        {
+            rotate = 270;
+        }
+        break;
+        }
+    
+        IVideoFrame frame;
+        frame.data = reinterpret_cast<uint8_t *>(data);
+        frame.rotation = rotate;
+        frame.count = count;
+    
+        for (auto i = 0; i < count; i++)
+        {
+            frame.offset[i] = offset[i];
+            frame.stride[i] = stride[i];
+        }
+    
+        frame.uid = uid;//*((nertc::uid_t *)user_data);
+        frame.width = width;
+        frame.height = height;
+    
+        NodeRenderType nrt = frame.uid == 0 ? NODE_RENDER_TYPE_LOCAL_SUBSTREAM : NODE_RENDER_TYPE_REMOTE_SUBSTREAM;
+        //auto *pTransporter = getNodeVideoFrameTransporter();
+        uint64_t thisAddr = *((nertc::uid_t *)user_data);
+		NodeVideoFrameTransporter * pTransporter = g_transporter_map[thisAddr];
+        if (pTransporter)
+        {
+            pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, false);
+        }
+    }
+/****************************************************************************************************************************/
+
+
 
 nertc::IRtcEngineEx *rtc_engine_ = nullptr;
 nertc::IRtcEngineEx * NertcNodeEngine::getNertcEngine() {
@@ -203,6 +325,8 @@ NertcNodeEngine::NertcNodeEngine(const Napi::CallbackInfo& info)
     window_capture_helper_.reset(new WindowCaptureHelper());
     screen_capture_helper_.reset(new ScreenCaptureHelper());
 #endif
+    uint64_t thisAddr = (uint64_t)this;
+    g_transporter_map[thisAddr] = new NodeVideoFrameTransporter();
 }
 
 NertcNodeEngine::~NertcNodeEngine() {
@@ -276,8 +400,8 @@ NIM_SDK_NODE_API_DEF(release)
     {
         LOG_F(INFO, "-------------sdk release-------------");
         ret = rtc_engine_->stopVideoPreview();
-		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
-		pTransporter->stopFlushVideo();
+		// NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		// pTransporter->stopFlushVideo();
         rtc_engine_->release(true);
         if (rtc_engine_)
         {
@@ -321,8 +445,8 @@ NIM_SDK_NODE_API_DEF(joinChannel)
         napi_get_value_uint32(info[2], uid);
         LOG_F(INFO, "channel_name:%s, uid:%llu", channel_name.c_str(), uid);
         ret = rtc_engine_->joinChannel(token.length() == 0 ? "" : token.c_str(), channel_name.c_str(), uid);
-        NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
-		pTransporter->startFlushVideo();
+        // NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		// pTransporter->startFlushVideo();
         LOG_F(INFO, "ret:%d", ret);
     }while(false);
     return Napi::Number::New(env, ret);
@@ -334,8 +458,8 @@ NIM_SDK_NODE_API_DEF(leaveChannel)
     do
     {
 		ret = rtc_engine_->stopVideoPreview();
-		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
-		pTransporter->stopFlushVideo();
+		// NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		// pTransporter->stopFlushVideo();
         ret = rtc_engine_->leaveChannel();
         LOG_F(INFO, "ret:%d", ret);
     } while (false);
@@ -402,8 +526,9 @@ NIM_SDK_NODE_API_DEF(setupVideoCanvas)
         napi_get_value_bool(info[1], enable);
         LOG_F(INFO, "uid:%llu, enable:%d", uid, enable);
         nertc::NERtcVideoCanvas canvas;
-        canvas.cb = enable ? NodeVideoFrameTransporter::onFrameDataCallback : nullptr; //NodeVideoFrameTransporter::onFrameDataCallback;
-        canvas.user_data = enable ? (void*)(new nertc::uid_t(uid)) : nullptr;
+        canvas.cb = enable ? EngineOnFrameDataCallback : nullptr; //NodeVideoFrameTransporter::onFrameDataCallback;
+        uint64_t thisAddr = (uint64_t)this;
+        canvas.user_data = (void*)(new nertc::uid_t(thisAddr));//enable ? (void*)(new nertc::uid_t(uid)) : nullptr;
         canvas.window = nullptr;
         if (uid == 0)
         {
@@ -420,13 +545,14 @@ NIM_SDK_NODE_API_DEF(onVideoFrame)
 {
     INIT_ENV
     do{
-        Napi::FunctionReference function;
-        napi_get_value_function(info[0], function);
-        NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
-        if (pTransporter)
-        {
-            ret = pTransporter->initialize(std::move(function));
-        }
+        // Napi::FunctionReference function;
+        // napi_get_value_function(info[0], function);
+        // uint64_t thisAddr = (uint64_t)this;
+        // NodeVideoFrameTransporter * pTransporter = g_transporter_map[thisAddr];
+		// if (pTransporter)
+        // {
+        //     ret = pTransporter->initialize(std::move(function));
+        // }
     }while(false);
     return Napi::Number::New(env, ret);
 }
@@ -470,8 +596,9 @@ NIM_SDK_NODE_API_DEF(setupSubStreamVideoCanvas)
         napi_get_value_bool(info[1], enable);
         LOG_F(INFO, "uid:%llu, enable:%d", uid, enable);
         nertc::NERtcVideoCanvas canvas;
-        canvas.cb = enable ? NodeVideoFrameTransporter::onSubstreamFrameDataCallback : nullptr;
-        canvas.user_data = enable ? (void*)(new nertc::uid_t(uid)) : nullptr;
+        canvas.cb = enable ? NodeOnSubstreamFrameDataCallback : nullptr;
+        uint64_t thisAddr = (uint64_t)this;
+        canvas.user_data = (void*)(new nertc::uid_t(thisAddr));//enable ? (void*)(new nertc::uid_t(uid)) : nullptr;
         canvas.window = nullptr;
         if (uid == 0)
             ret = rtc_engine_->setupLocalSubStreamVideoCanvas(&canvas);
@@ -1176,8 +1303,9 @@ NIM_SDK_NODE_API_DEF(setLocalVideoMirrorMode)
         uint32_t mode;
         napi_get_value_uint32(info[0], mode);
         LOG_F(INFO, "mode:%d", mode);
-        NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
-        if (pTransporter)
+        uint64_t thisAddr = (uint64_t)this;
+        NodeVideoFrameTransporter * pTransporter = g_transporter_map[thisAddr];
+		if (pTransporter)
         {
             pTransporter->setLocalVideoMirrorMode(mode);
             ret = 0;
@@ -1192,8 +1320,8 @@ NIM_SDK_NODE_API_DEF(startVideoPreview)
     INIT_ENV
     do{
         LOG_F(INFO, "startVideoPreview in");
-		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
-		pTransporter->startFlushVideo();
+		// NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		// pTransporter->startFlushVideo();
         ret = rtc_engine_->startVideoPreview();
     }while(false);
     LOG_F(INFO, "ret:%d", ret);
@@ -1207,8 +1335,8 @@ NIM_SDK_NODE_API_DEF(stopVideoPreview)
     {
         LOG_F(INFO, "stopVideoPreview in");
         ret = rtc_engine_->stopVideoPreview();
-		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
-		pTransporter->stopFlushVideo();
+		// NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
+		// pTransporter->stopFlushVideo();
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);

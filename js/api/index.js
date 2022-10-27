@@ -14,11 +14,274 @@ class NERtcChannel extends events_1.EventEmitter {
     constructor(name, rtcChannel) {
         super();
         this.channelName = name;
-        this.rtcChannel = rtcChannel;  
+        this.rtcChannel = rtcChannel;
+        this.renderers = new Map();
+        this.substreamRenderers = new Map();
+        this.renderMode = 1;// this._checkWebGL() ? 1 : 2;
+        this.customRenderer = renderer_1.CustomRenderer;
     }
 
     getChannelName() {
         return this.rtcChannel.getChannelName(this.channelName);
+    }
+
+    setupLocalVideoCanvas(canvas) {
+        if (canvas.view) {
+            //bind
+            this.initRender('local', canvas.view);
+            this.setRenderMode('local', canvas.mode);
+            return this.rtcChannel.setupVideoCanvas(0, true);
+        }
+        else {
+            //unbind
+            this.destroyRender('local');
+            return this.rtcChannel.setupVideoCanvas(0, false);
+        }
+    }
+
+    enableLocalVideo(enabled) {
+        return this.rtcChannel.enableLocalVideo(enabled);
+    }
+
+    joinChannel(token) {
+        return this.rtcChannel.joinChannel(token);
+    }
+
+    setRenderMode(uid, mode) {
+        if (this.renderers.has(String(uid))) {
+            let renderer = this.renderers.get(String(uid));
+            renderer.setContentMode(mode);
+            return 0;
+        }
+        else {
+            return -1;
+        }
+    }
+
+    initEventHandler() {
+        this.rtcChannel.onVideoFrame((infos)=>{
+            this.doVideoFrameReceived(infos);
+        });
+
+    }
+
+    _checkWebGL() {
+        const canvas = document.createElement('canvas');
+        let gl;
+        canvas.width = 1;
+        canvas.height = 1;
+        const options = {
+            // Turn off things we don't need
+            alpha: false,
+            depth: false,
+            stencil: false,
+            antialias: false,
+            preferLowPowerToHighPerformance: true
+            // Still dithering on whether to use this.
+            // Recommend avoiding it, as it's overly conservative
+            // failIfMajorPerformanceCaveat: true
+        };
+        try {
+            gl =
+                canvas.getContext('webgl', options) ||
+                    canvas.getContext('experimental-webgl', options);
+        }
+        catch (e) {
+            return false;
+        }
+        if (gl) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    _getRenderer(type, uid) {
+        if (type === 0) {
+            return this.renderers.get('local');
+        }
+        else if (type === 1) {
+            return this.renderers.get(String(uid));
+        }
+        else if (type === 2) {
+            return this.substreamRenderers.get('local');
+        }
+        else if (type === 3) {
+            return this.substreamRenderers.get(String(uid));
+        }
+        else {
+            console.warn('Invalid type for getRenderer, only accept 0~3.');
+            return;
+        }
+    }
+
+    _checkData(header, ydata, udata, vdata) {
+        if (header.byteLength != 20) {
+            console.error('invalid image header ' + header.byteLength);
+            return false;
+        }
+        if (ydata.byteLength === 20) {
+            console.error('invalid image yplane ' + ydata.byteLength);
+            return false;
+        }
+        if (udata.byteLength === 20) {
+            console.error('invalid image uplanedata ' + udata.byteLength);
+            return false;
+        }
+        if (ydata.byteLength != udata.byteLength * 4 ||
+            udata.byteLength != vdata.byteLength) {
+            console.error('invalid image header ' +
+                ydata.byteLength +
+                ' ' +
+                udata.byteLength +
+                ' ' +
+                vdata.byteLength);
+            return false;
+        }
+        return true;
+    }
+
+    doVideoFrameReceived(infos) {
+        const len = infos.length;
+        for (let i = 0; i < len; i++) {
+            const info = infos[i];
+            const { type, uid, channelId, header, ydata, udata, vdata } = info;
+            if (!header || !ydata || !udata || !vdata) {
+                console.log('Invalid data param : ' +
+                    header +
+                    ' ' +
+                    ydata +
+                    ' ' +
+                    udata +
+                    ' ' +
+                    vdata);
+                continue;
+            }
+            console.log(`-----channel frame-------2`)
+            let renderer = this._getRenderer(type, uid);
+            if (!renderer) {
+                console.warn(`Can't find renderer for uid : ${uid}`);
+                continue;
+            }
+            if (this._checkData(header, ydata, udata, vdata)) {
+                renderer.drawFrame({
+                    header,
+                    yUint8Array: ydata,
+                    uUint8Array: udata,
+                    vUint8Array: vdata
+                });
+            }
+        }
+    }
+
+    initRender(key, view) {
+        if (this.renderers.has(String(key))) {
+            this.destroyRender(key);
+        }
+        let renderer;
+        if (this.renderMode === 1) {
+            renderer = new renderer_1.GlRenderer();
+        }
+        else if (this.renderMode === 2) {
+            renderer = new renderer_1.SoftwareRenderer();
+        }
+        else if (this.renderMode === 3) {
+            renderer = new this.customRenderer();
+        }
+        else {
+            console.warn('Unknown render mode, fallback to 1');
+            renderer = new renderer_1.GlRenderer();
+        }
+        renderer.bind(view);
+        this.renderers.set(String(key), renderer);
+    }
+
+    initSubStreamRender(key, view) {
+        if (this.substreamRenderers.has(String(key))) {
+            this.destroySubStreamRender(key);
+        }
+        let renderer;
+        if (this.renderMode === 1) {
+            renderer = new renderer_1.GlRenderer();
+        }
+        else if (this.renderMode === 2) {
+            renderer = new renderer_1.SoftwareRenderer();
+        }
+        else if (this.renderMode === 3) {
+            renderer = new this.customRenderer();
+        }
+        else {
+            console.warn('Unknown render mode, fallback to 1');
+            renderer = new renderer_1.GlRenderer();
+        }
+        renderer.bind(view);
+        this.substreamRenderers.set(String(key), renderer);
+    }
+
+    captureRender(key, streamType = defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
+        if (streamType === defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
+            if (!this.renderers.has(String(key))) {
+                return '';
+            }
+        }
+        else {
+            if (!this.substreamRenderers.has(String(key))) {
+                return '';
+            }
+        }
+        let renderer = null;
+        if (streamType === defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
+            renderer = this.renderers.get(String(key));
+        }
+        else {
+            renderer = this.substreamRenderers.get(String(key));
+        }
+        try {
+            return renderer.captureImage();
+        }
+        catch (err) {
+            console.error(`${err.stack}`);
+            return '';
+        }
+    }
+
+    destroyRender(key, onFailure) {
+        if (!this.renderers.has(String(key))) {
+            return;
+        }
+        let exception = null;
+        let renderer = this.renderers.get(String(key));
+        try {
+            renderer.unbind();
+            this.renderers.delete(String(key));
+        }
+        catch (err) {
+            exception = err;
+            console.error(`${err.stack}`);
+        }
+        if (exception) {
+            onFailure && onFailure(exception);
+        }
+    }
+
+    destroySubStreamRender(key, onFailure) {
+        if (!this.substreamRenderers.has(String(key))) {
+            return;
+        }
+        let exception = null;
+        let renderer = this.substreamRenderers.get(String(key));
+        try {
+            renderer.unbind();
+            this.substreamRenderers.delete(String(key));
+        }
+        catch (err) {
+            exception = err;
+            console.error(`${err.stack}`);
+        }
+        if (exception) {
+            onFailure && onFailure(exception);
+        }
     }
 
 }
@@ -3643,7 +3906,7 @@ class NERtcEngine extends events_1.EventEmitter {
             const info = infos[i];
             const { type, uid, channelId, header, ydata, udata, vdata } = info;
             if (!header || !ydata || !udata || !vdata) {
-                console.log('Invalid data param ： ' +
+                console.log('Invalid data param : ' +
                     header +
                     ' ' +
                     ydata +

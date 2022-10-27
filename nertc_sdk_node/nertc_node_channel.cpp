@@ -24,6 +24,126 @@
 namespace nertc_node
 {
 
+/****************************************************************************************************************************/
+	std::unordered_map<uint64_t, NodeVideoFrameTransporter *> g_channel_transporter_map;
+	void ChannelOnFrameDataCallback(nertc::uid_t uid, void *data, uint32_t type, uint32_t width, uint32_t height,
+		uint32_t count, uint32_t offset[4], uint32_t stride[4], uint32_t rotation, void *user_data)
+	{
+		int rotate = 0;
+		switch (rotation)
+		{
+		case nertc::kNERtcVideoRotation_0:
+		{
+		}
+		break;
+		case nertc::kNERtcVideoRotation_90:
+		{
+			rotate = 90;
+		}
+		break;
+		case nertc::kNERtcVideoRotation_180:
+		{
+			rotate = 180;
+		}
+		break;
+		case nertc::kNERtcVideoRotation_270:
+		{
+			rotate = 270;
+		}
+		break;
+		}
+
+		IVideoFrame frame;
+		frame.data = reinterpret_cast<uint8_t *>(data);
+		frame.rotation = rotate;
+		frame.count = count;
+
+		for (auto i = 0; i < count; i++)
+		{
+			frame.offset[i] = offset[i];
+			frame.stride[i] = stride[i];
+		}
+
+		frame.uid = uid;//*((nertc::uid_t *)user_data);
+		frame.width = width;
+		frame.height = height;
+
+		NodeRenderType nrt = frame.uid == 0 ? NODE_RENDER_TYPE_LOCAL : NODE_RENDER_TYPE_REMOTE;
+		/*auto *pTransporter = getNodeVideoFrameTransporter();
+		if (pTransporter)
+		{
+			pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, frame.uid == 0);
+		}*/
+		uint64_t thisAddr = *((nertc::uid_t *)user_data);
+		NodeVideoFrameTransporter * pTransporter = g_channel_transporter_map[thisAddr];
+		if (pTransporter) {
+			pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, frame.uid == 0);
+		}
+	}
+
+	void ChannelOnSubstreamFrameDataCallback(
+		nertc::uid_t uid,
+		void *data,
+		uint32_t type,
+		uint32_t width,
+		uint32_t height,
+		uint32_t count,
+		uint32_t offset[4],
+		uint32_t stride[4],
+		uint32_t rotation,
+		void *user_data)
+	{
+		int rotate = 0;
+		switch (rotation)
+		{
+		case nertc::kNERtcVideoRotation_0:
+		{
+		}
+		break;
+		case nertc::kNERtcVideoRotation_90:
+		{
+			rotate = 90;
+		}
+		break;
+		case nertc::kNERtcVideoRotation_180:
+		{
+			rotate = 180;
+		}
+		break;
+		case nertc::kNERtcVideoRotation_270:
+		{
+			rotate = 270;
+		}
+		break;
+		}
+
+		IVideoFrame frame;
+		frame.data = reinterpret_cast<uint8_t *>(data);
+		frame.rotation = rotate;
+		frame.count = count;
+
+		for (auto i = 0; i < count; i++)
+		{
+			frame.offset[i] = offset[i];
+			frame.stride[i] = stride[i];
+		}
+
+		frame.uid = uid;//*((nertc::uid_t *)user_data);
+		frame.width = width;
+		frame.height = height;
+
+		NodeRenderType nrt = frame.uid == 0 ? NODE_RENDER_TYPE_LOCAL_SUBSTREAM : NODE_RENDER_TYPE_REMOTE_SUBSTREAM;
+		//auto *pTransporter = getNodeVideoFrameTransporter();
+		uint64_t thisAddr = *((nertc::uid_t *)user_data);
+		NodeVideoFrameTransporter * pTransporter = g_channel_transporter_map[thisAddr];
+		if (pTransporter)
+		{
+			pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, false);
+		}
+	}
+/****************************************************************************************************************************/
+
+
 #if NAPI_VERSION < 6
 Napi::FunctionReference NertcNodeChannel::constructor;
 #endif
@@ -43,6 +163,8 @@ Napi::Object NertcNodeChannel::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(stopScreenCapture),
         SET_PROTOTYPE(pauseScreenCapture),
         SET_PROTOTYPE(resumeScreenCapture),
+        SET_PROTOTYPE(onVideoFrame),
+		SET_PROTOTYPE(setupVideoCanvas),
         SET_PROTOTYPE(setClientRole),
         SET_PROTOTYPE(setLocalMediaPriority),
         SET_PROTOTYPE(getConnectionState),
@@ -79,11 +201,62 @@ NertcNodeChannel::NertcNodeChannel(const Napi::CallbackInfo& info)
     napi_get_value_utf8_string(info[0], channelName);
     nertc::IRtcEngineEx * rtc_engine_ = NertcNodeEngine::getNertcEngine();
     _channel = rtc_engine_->createChannel(channelName.c_str());
+    // _channel_event_handler = std::make_shared<NertcChannelEventHandler>();
+    // // _channel->setChannelEventHandler(_channel_event_handler.get());
+    // _stats_observer = std::make_shared<NertcChannelRtcMediaStatsHandler>();
+    // _channel->setStatsObserver(_stats_observer.get());
+
+    uint64_t thisAddr = (uint64_t)this;
+    g_channel_transporter_map[thisAddr] = new NodeVideoFrameTransporter();
 }
 
 NertcNodeChannel::~NertcNodeChannel() {
      //todo
 };
+
+// NIM_SDK_NODE_API_DEF(onEvent)
+// {
+//     auto env = info.Env();
+//     std::string event_name = "";
+//     Napi::FunctionReference function;
+//     napi_get_value_utf8_string(info[0], event_name);
+//     napi_get_value_function(info[1], function);
+  
+//     _channel_event_handler->addEvent(event_name, std::move(function));
+//     auto ret_value = env.Null();
+//     return ret_value;
+// }
+
+// NIM_SDK_NODE_API_DEF(onStatsObserver)
+// {
+//     INIT_ENV
+//     do
+//     {
+//         std::string eventName;
+//         bool enable;
+//         napi_get_value_utf8_string(info[0], eventName);
+//         napi_get_value_bool(info[1], enable);
+//         if (eventName.length() == 0)
+//         {
+//             break;
+//         }
+//         if (!enable)
+//         {
+//             auto sz = _stats_observer->removeEventHandler(eventName);
+//             if (sz == 0)
+//             {
+//                 _channel->setStatsObserver(nullptr);
+//             }
+//         }
+//         else
+//         {
+//             Napi::FunctionReference function;
+//             napi_get_value_function(info[2], function);
+//             _stats_observer->addEvent(eventName, std::move(function));
+//         }
+//     } while (false);
+// 	return Napi::Number::New(env, ret);
+// }
 
 NIM_SDK_NODE_API_DEF(getChannelName)
 {
@@ -255,6 +428,51 @@ NIM_SDK_NODE_API_DEF(resumeScreenCapture)
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
+
+NIM_SDK_NODE_API_DEF(onVideoFrame)
+{
+    INIT_ENV
+    do{
+        Napi::FunctionReference function;
+        napi_get_value_function(info[0], function);
+        uint64_t thisAddr = (uint64_t)this;
+        NodeVideoFrameTransporter * pTransporter = g_channel_transporter_map[thisAddr];
+		if (pTransporter)
+        {
+            ret = pTransporter->initialize(std::move(function));
+        }
+    }while(false);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setupVideoCanvas)
+{
+    INIT_ENV
+    do{
+        // nertc::uid_t uid = 0;
+        uint32_t uid;
+        bool lossless = true;
+        bool enable;
+        napi_get_value_uint32(info[0], uid);
+        // napi_get_value_bigint_uint64(env, info[0], &uid, &lossless);
+        napi_get_value_bool(info[1], enable);
+        LOG_F(INFO, "uid:%llu, enable:%d", uid, enable);
+        nertc::NERtcVideoCanvas canvas;
+        canvas.cb = enable ? ChannelOnFrameDataCallback : nullptr; //NodeVideoFrameTransporter::onFrameDataCallback;
+        uint64_t thisAddr = (uint64_t)this;
+        canvas.user_data = (void*)(new nertc::uid_t(thisAddr));//enable ? (void*)(new nertc::uid_t(uid)) : nullptr;
+        canvas.window = nullptr;
+        if (uid == 0)
+        {
+            ret = _channel->setupLocalVideoCanvas(&canvas);
+        }else{
+            ret = _channel->setupRemoteVideoCanvas(uid, &canvas);
+        }
+        LOG_F(INFO, "ret:%d", ret);
+    }while(false);
+    return Napi::Number::New(env, ret);
+}
+
 
 NIM_SDK_NODE_API_DEF(setClientRole)
 {

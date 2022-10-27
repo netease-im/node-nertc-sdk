@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file meeting-engine.cpp
  * @brief nertc-electron-sdk导出类
  * @copyright Copyright (c) 2021 NetEase, Inc.  All rights reserved.\n
@@ -19,6 +19,7 @@
 #ifdef WIN32
 #include "../shared/util/windows_helper.h"
 #endif
+#include "nertc_node_video_frame_provider.h"
 
 namespace nertc_node
 {
@@ -204,7 +205,6 @@ private:
     std::unique_ptr<nertc_electron_util::WindowCaptureHelper> window_capture_helper_;
     std::unique_ptr<nertc_electron_util::ScreenCaptureHelper> screen_capture_helper_;
 #endif
-
 };
 
 }

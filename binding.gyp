@@ -25,6 +25,8 @@
       ],
       "sources": [
           "./nertc_sdk_node/addon.cc", 
+          './nertc_sdk_node/nertc_node_channel_event_handler.cpp',
+          './nertc_sdk_node/nertc_node_channel_event_handler.h',
           "./nertc_sdk_node/nertc_node_channel.h",
           "./nertc_sdk_node/nertc_node_channel.cpp",
           "./nertc_sdk_node/nertc_node_engine.h",
