@@ -116,17 +116,10 @@ VideoFrameInfo& NodeVideoFrameTransporter::getVideoFrameInfo(NodeRenderType type
 int NodeVideoFrameTransporter::deliverFrame_I420(NodeRenderType type, nertc::uid_t uid, std::string channelId, const IVideoFrame& videoFrame, int rotation, bool mirrored)
 {
     if (!init)
-    {
         return -1;
-    }
         
     std::lock_guard<std::mutex> lck(m_lock);
     VideoFrameInfo& info = getVideoFrameInfo(type, uid, channelId);
-    if(info.m_needUpdate) 
-    {
-        return -1;
-    }
-
     int destStride = info.m_destWidth ? info.m_destWidth : videoFrame.stride[0];
     int destWidth = info.m_destWidth ? info.m_destWidth : videoFrame.width;
     int destHeight = info.m_destHeight ? info.m_destHeight : videoFrame.height;
@@ -158,6 +151,7 @@ int NodeVideoFrameTransporter::deliverFrame_I420(NodeRenderType type, nertc::uid
     hdr->rotation = htons(rotation);
     setupFrameHeader(hdr, destStride, destWidth, destHeight);
     copyFrame(videoFrame, info, destStride, videoFrame.stride[0], destWidth, destHeight);
+    info.m_count = 0;
     info.m_needUpdate = true;
     // if (videoFrame.data)
     // {
@@ -256,29 +250,21 @@ unsigned char* dstYPlane, unsigned char* dstUPlane, unsigned char* dstVPlane, in
 #define NODE_SET_OBJ_PROP_HEADER(obj, it) \
     { \
         Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, (it)->buffer, (it)->length); \
-        Napi::MaybeOrValue<bool> ret = obj.Set(Napi::String::New(env, "header"), arrayBuffer); \
-        if(!ret){\
-            break;\
-        }\
+        obj.Set(Napi::String::New(env, "header"), arrayBuffer); \
     }
 
 #define NODE_SET_OBJ_PROP_DATA(obj, name, it) \
     { \
         Napi::ArrayBuffer arrayBuffer1 = Napi::ArrayBuffer::New(env, (it)->buffer, (it)->length);  \
         Napi::Uint8Array buff = Napi::TypedArrayOf<uint8_t>::New(env, arrayBuffer1.ByteLength(), arrayBuffer1, 0, napi_uint8_array);\
-        Napi::MaybeOrValue<bool> ret = obj.Set(Napi::String::New(env, name), buff); \
-        if(!ret){\
-            break;\
-        }\
+        obj.Set(Napi::String::New(env, name), buff); \
     }
 
 bool AddObj(Napi::Env& env, Napi::Array& infos, int index, VideoFrameInfo& info)
 {
     if (!info.m_needUpdate)
-    {
         return false;
-    }
-    //info.m_needUpdate = false;
+    info.m_needUpdate = false;
 
     bool result = false;
     do {
@@ -314,38 +300,43 @@ void NodeVideoFrameTransporter::FlushVideo()
 					Napi::Array infos = Napi::Array::New(env);
 					uint32_t i = 0;
 
-					{
-						std::lock_guard<std::mutex> lock(m_lock);
-						for (auto& it : m_remoteVideoFrames) {
-							if (AddObj(env, infos, i, it.second))
-							{
-								++i;
-							}
+					std::lock_guard<std::mutex> lock(m_lock);
+					for (auto& it : m_remoteVideoFrames) {
+						if (AddObj(env, infos, i, it.second))
+						{
+							++i;
+						} else {
+							++it.second.m_count;
 						}
-						if (m_localVideoFrame.get()) {
-							if (AddObj(env, infos, i, *(m_localVideoFrame.get())))
-							{
-								++i;
-							}
+					}
+					if (m_localVideoFrame.get()) {
+						if (AddObj(env, infos, i, *(m_localVideoFrame.get())))
+						{
+							++i;
+						} else {
+							++m_localVideoFrame->m_count;
 						}
-						for (auto& it : m_substreamVideoFrame) {
-							if (AddObj(env, infos, i, it.second))
-							{
-								++i;
-							}
+					}
+					for (auto& it : m_substreamVideoFrame) {
+						if (AddObj(env, infos, i, it.second))
+						{
+							++i;
+						} else {
+							++it.second.m_count;
 						}
-						if (m_localSubStreamVideoFrame.get()) {
-							if (AddObj(env, infos, i, *m_localSubStreamVideoFrame.get()))
-							{
-								++i;
-							}
+					}
+					if (m_localSubStreamVideoFrame.get()) {
+						if (AddObj(env, infos, i, *m_localSubStreamVideoFrame.get()))
+						{
+							++i;
+						} else {
+							++m_localSubStreamVideoFrame->m_count;
 						}
+					}
 
-                        if (i > 0 && (!b_stopFlush)) {
-						    const std::vector<napi_value> args = { infos };
-						    m_pFrameDataCallback->function.Call(args);
-                            resetUpdateFlag();
-					    }
+                    if (i > 0 && (!b_stopFlush)) {
+					    const std::vector<napi_value> args = { infos };
+					    m_pFrameDataCallback->function.Call(args);
 					}
 
 				});
@@ -355,24 +346,6 @@ void NodeVideoFrameTransporter::FlushVideo()
             std::this_thread::sleep_for(std::chrono::milliseconds(1000 / m_FPS));
         }
     }
-}
-
-void NodeVideoFrameTransporter::resetUpdateFlag() 
-{
-    for (auto& it : m_remoteVideoFrames) {
-		it.second.m_needUpdate = false;
-	}
-    if (m_localVideoFrame.get()) {
-		m_localVideoFrame.get()->m_needUpdate = false;
-	}
-
-	for (auto& it : m_substreamVideoFrame) {
-		it.second.m_needUpdate = false;
-	}
-
-	if (m_localSubStreamVideoFrame.get()) {
-		m_localSubStreamVideoFrame.get()->m_needUpdate = false;
-	}
 }
 
 void NodeVideoFrameTransporter::onFrameDataCallback(
