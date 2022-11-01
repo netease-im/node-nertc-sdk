@@ -8,7 +8,6 @@
   "engines": {
     "node": "~10 >=10.20 || >=12.17"
   },
-  "type":"module",
   "dependencies": {
     "bindings": "^1.5.0",
     "node-pre-build": "^0.1.18",
