@@ -3627,6 +3627,24 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onLastmileProbeResult', function (result) {
             fire('onLastmileProbeResult', result);
         });
+
+        this.nertcEngine.onEvent('onMediaRightChange', function (is_audio_banned, is_video_banned) {
+            fire('onMediaRightChange', is_audio_banned, is_video_banned);
+        });
+
+        this.nertcEngine.onEvent('onCheckNECastAudioDriverResult', function (result) {
+            fire('onCheckNECastAudioDriverResult', result);
+        });
+
+        this.nertcEngine.onEvent('onVirtualBackgroundSourceEnabled', function (enabled, reason) {
+            fire('onVirtualBackgroundSourceEnabled', enabled, reason);
+        });
+
+        this.nertcEngine.onEvent('onLocalVideoWatermarkState', function (videoStreamType, state) {
+            fire('onLocalVideoWatermarkState', videoStreamType, state);
+        });
+
+
     }
     // /**
     //  * Decide whether to use webgl/software/custom rendering.
