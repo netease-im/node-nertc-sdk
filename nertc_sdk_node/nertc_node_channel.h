@@ -77,9 +77,6 @@ public:
     NIM_SDK_NODE_API(sendSEIMsg);
     NIM_SDK_NODE_API(sendSEIMsgEx);
 
-    //takeLocalSnapshot(NERtcVideoStreamType stream_type, NERtcTakeSnapshotCallback *callback) //js层
-    //int takeRemoteSnapshot(uid_t uid, NERtcVideoStreamType stream_type, NERtcTakeSnapshotCallback *callback) //js层
-
     NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);
     NIM_SDK_NODE_API(startChannelMediaRelay);
     NIM_SDK_NODE_API(updateChannelMediaRelay);

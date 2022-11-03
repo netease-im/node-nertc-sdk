@@ -156,7 +156,7 @@ public:
     NIM_SDK_NODE_API(startLastmileProbeTest);
     NIM_SDK_NODE_API(stopLastmileProbeTest);
 
-    // // adm
+    // adm
     NIM_SDK_NODE_API(enumerateRecordDevices);
     NIM_SDK_NODE_API(setRecordDevice);
     NIM_SDK_NODE_API(getRecordDevice);
@@ -193,7 +193,7 @@ public:
     NIM_SDK_NODE_API(stopSystemAudioLoopbackCapture);
     NIM_SDK_NODE_API(setSystemAudioLoopbackCaptureVolume);
 
-    //4.6.20
+    // 4.6.20
     NIM_SDK_NODE_API(enableLocalVideoEx);
     NIM_SDK_NODE_API(enableLocalSubStreamAudio);
     NIM_SDK_NODE_API(muteLocalSubStreamAudio);
@@ -206,11 +206,6 @@ public:
     NIM_SDK_NODE_API(setCameraCaptureConfigEx);
     NIM_SDK_NODE_API(setVideoConfigEx);
     NIM_SDK_NODE_API(setLocalVideoMirrorModeEx);
-    //setLocalSubStreamRenderMode(NERtcVideoScalingMode scaling_mode)
-    //setLocalRenderMode(NERtcVideoScalingMode scaling_mode)
-    //int setLocalVideoMirrorMode(NERtcVideoStreamType type, NERtcVideoMirrorMode mirror_mode)
-    // setRemoteRenderMode(uid_t uid, NERtcVideoScalingMode scaling_mode)
-    //setRemoteSubSteamRenderMode(uid_t uid, NERtcVideoScalingMode scaling_mode)
     NIM_SDK_NODE_API(startVideoPreviewEx);
     NIM_SDK_NODE_API(stopVideoPreviewEx);
     NIM_SDK_NODE_API(muteLocalVideoStreamEx);
