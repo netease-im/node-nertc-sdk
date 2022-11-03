@@ -193,6 +193,52 @@ public:
     NIM_SDK_NODE_API(stopSystemAudioLoopbackCapture);
     NIM_SDK_NODE_API(setSystemAudioLoopbackCaptureVolume);
 
+    //4.6.20
+    NIM_SDK_NODE_API(enableLocalVideoEx);
+    NIM_SDK_NODE_API(enableLocalSubStreamAudio);
+    NIM_SDK_NODE_API(muteLocalSubStreamAudio);
+    NIM_SDK_NODE_API(subscribeRemoteSubStreamAudio);
+    NIM_SDK_NODE_API(subscribeAllRemoteAudioStream);
+    NIM_SDK_NODE_API(setAudioSubscribeOnlyBy);
+    NIM_SDK_NODE_API(setStreamAlignmentProperty);
+    NIM_SDK_NODE_API(getNtpTimeOffset);
+    NIM_SDK_NODE_API(setCameraCaptureConfig);
+    NIM_SDK_NODE_API(setCameraCaptureConfigEx);
+    NIM_SDK_NODE_API(setVideoConfigEx);
+    NIM_SDK_NODE_API(setLocalVideoMirrorModeEx);
+    //setLocalSubStreamRenderMode(NERtcVideoScalingMode scaling_mode)
+    //setLocalRenderMode(NERtcVideoScalingMode scaling_mode)
+    //int setLocalVideoMirrorMode(NERtcVideoStreamType type, NERtcVideoMirrorMode mirror_mode)
+    // setRemoteRenderMode(uid_t uid, NERtcVideoScalingMode scaling_mode)
+    //setRemoteSubSteamRenderMode(uid_t uid, NERtcVideoScalingMode scaling_mode)
+    NIM_SDK_NODE_API(startVideoPreviewEx);
+    NIM_SDK_NODE_API(stopVideoPreviewEx);
+    NIM_SDK_NODE_API(muteLocalVideoStreamEx);
+    NIM_SDK_NODE_API(startAudioDumpEx);
+    NIM_SDK_NODE_API(setScreenCaptureMouseCursor);
+    NIM_SDK_NODE_API(updateScreenCaptureParameters);
+    NIM_SDK_NODE_API(setExternalVideoSourceEx);
+    NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);
+    NIM_SDK_NODE_API(checkNECastAudioDriver);
+    NIM_SDK_NODE_API(enableFaceEnhance);
+    NIM_SDK_NODE_API(enableVirtualBackground);
+    NIM_SDK_NODE_API(setCloudProxy);
+    NIM_SDK_NODE_API(startBeauty);
+    NIM_SDK_NODE_API(stopBeauty);
+    NIM_SDK_NODE_API(enableBeauty);
+    NIM_SDK_NODE_API(enableBeautyMirrorMode);
+    NIM_SDK_NODE_API(getBeautyEffect);
+    NIM_SDK_NODE_API(setBeautyEffect);
+    NIM_SDK_NODE_API(addBeautyFilter);
+    NIM_SDK_NODE_API(removeBeautyFilter);
+    NIM_SDK_NODE_API(setBeautyFilterLevel);
+    NIM_SDK_NODE_API(addBeautySticker);
+    NIM_SDK_NODE_API(removeBeautySticker);
+    NIM_SDK_NODE_API(addBeautyMakeup);
+    NIM_SDK_NODE_API(removeBeautyMakeup);
+    NIM_SDK_NODE_API(setLocalVoiceReverbParam);
+    NIM_SDK_NODE_API(enableMediaPub);
+
 private:
     //nertc::IRtcEngineEx *rtc_engine_ = nullptr;
     nertc::IAudioDeviceManager *_adm = nullptr;

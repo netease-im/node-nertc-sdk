@@ -83,11 +83,13 @@ namespace nertc_node
 		{
 			pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, frame.uid == 0);
 		}*/
-        uint64_t thisAddr = *((nertc::uid_t *)user_data);
-		NodeVideoFrameTransporter * pTransporter = g_transporter_map[thisAddr];
-		if (pTransporter) {
-			pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, frame.uid == 0);
-		}
+        if(user_data) {
+            uint64_t thisAddr = *((nertc::uid_t *)user_data);
+		    NodeVideoFrameTransporter * pTransporter = g_transporter_map[thisAddr];
+		    if (pTransporter) {
+			    pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, frame.uid == 0);
+		    }
+        }
 	}
 
     void NodeOnSubstreamFrameDataCallback(
@@ -300,7 +302,48 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(enumerateScreenCaptureSourceInfo),
         SET_PROTOTYPE(startSystemAudioLoopbackCapture),
         SET_PROTOTYPE(stopSystemAudioLoopbackCapture),
-        SET_PROTOTYPE(setSystemAudioLoopbackCaptureVolume)
+        SET_PROTOTYPE(setSystemAudioLoopbackCaptureVolume),
+
+        //4.6.20
+        SET_PROTOTYPE(enableLocalVideoEx),
+        SET_PROTOTYPE(enableLocalSubStreamAudio),
+        SET_PROTOTYPE(muteLocalSubStreamAudio),
+        SET_PROTOTYPE(subscribeRemoteSubStreamAudio),
+        SET_PROTOTYPE(subscribeAllRemoteAudioStream),
+        SET_PROTOTYPE(setAudioSubscribeOnlyBy),
+        SET_PROTOTYPE(setStreamAlignmentProperty),
+        SET_PROTOTYPE(getNtpTimeOffset),
+        SET_PROTOTYPE(setCameraCaptureConfig),
+        SET_PROTOTYPE(setCameraCaptureConfigEx),
+        SET_PROTOTYPE(setVideoConfigEx),
+        SET_PROTOTYPE(setLocalVideoMirrorModeEx),
+        SET_PROTOTYPE(startVideoPreviewEx),
+        SET_PROTOTYPE(stopVideoPreviewEx),
+        SET_PROTOTYPE(muteLocalVideoStreamEx),
+        SET_PROTOTYPE(startAudioDumpEx),
+        SET_PROTOTYPE(setScreenCaptureMouseCursor),
+        SET_PROTOTYPE(updateScreenCaptureParameters),
+        SET_PROTOTYPE(setExternalVideoSourceEx),
+        SET_PROTOTYPE(setRemoteHighPriorityAudioStream),
+        SET_PROTOTYPE(checkNECastAudioDriver),
+        SET_PROTOTYPE(enableFaceEnhance),
+        SET_PROTOTYPE(enableVirtualBackground),
+        SET_PROTOTYPE(setCloudProxy),
+        SET_PROTOTYPE(startBeauty),
+        SET_PROTOTYPE(stopBeauty),
+        SET_PROTOTYPE(enableBeauty),
+        SET_PROTOTYPE(enableBeautyMirrorMode),
+        SET_PROTOTYPE(getBeautyEffect),
+        SET_PROTOTYPE(setBeautyEffect),
+        SET_PROTOTYPE(addBeautyFilter),
+        SET_PROTOTYPE(removeBeautyFilter),
+        SET_PROTOTYPE(setBeautyFilterLevel),
+        SET_PROTOTYPE(addBeautySticker),
+        SET_PROTOTYPE(removeBeautySticker),
+        SET_PROTOTYPE(addBeautyMakeup),
+        SET_PROTOTYPE(removeBeautyMakeup),
+        SET_PROTOTYPE(setLocalVoiceReverbParam),
+        SET_PROTOTYPE(enableMediaPub),
     });
 
 #if NAPI_VERSION < 6
@@ -494,6 +537,22 @@ NIM_SDK_NODE_API_DEF(enableLocalVideo)
     return Napi::Number::New(env, ret);
 }
 
+NIM_SDK_NODE_API_DEF(enableLocalVideoEx)
+{
+    INIT_ENV
+    do
+    {
+        int type = 0;
+        bool enabled = false;
+        napi_get_value_int32(info[0], type);
+        napi_get_value_bool(info[1], enabled);
+        LOG_F(INFO, "type:%d enabled:%d", type, enabled);
+        ret = rtc_engine_->enableLocalVideo((nertc::NERtcVideoStreamType)type, enabled);
+        LOG_F(INFO, "ret:%d", ret);
+    } while (false);
+    return Napi::Number::New(env, ret);
+}
+
 NIM_SDK_NODE_API_DEF(subscribeRemoteVideoStream)
 {
     INIT_ENV
@@ -528,7 +587,7 @@ NIM_SDK_NODE_API_DEF(setupVideoCanvas)
         nertc::NERtcVideoCanvas canvas;
         canvas.cb = enable ? EngineOnFrameDataCallback : nullptr; //NodeVideoFrameTransporter::onFrameDataCallback;
         uint64_t thisAddr = (uint64_t)this;
-        canvas.user_data = (void*)(new nertc::uid_t(thisAddr));//enable ? (void*)(new nertc::uid_t(uid)) : nullptr;
+        canvas.user_data = enable ? (void*)(new nertc::uid_t(thisAddr)) : nullptr;//enable ? (void*)(new nertc::uid_t(uid)) : nullptr;
         canvas.window = nullptr;
         if (uid == 0)
         {
@@ -545,14 +604,14 @@ NIM_SDK_NODE_API_DEF(onVideoFrame)
 {
     INIT_ENV
     do{
-        // Napi::FunctionReference function;
-        // napi_get_value_function(info[0], function);
-        // uint64_t thisAddr = (uint64_t)this;
-        // NodeVideoFrameTransporter * pTransporter = g_transporter_map[thisAddr];
-		// if (pTransporter)
-        // {
-        //     ret = pTransporter->initialize(std::move(function));
-        // }
+        Napi::FunctionReference function;
+        napi_get_value_function(info[0], function);
+        uint64_t thisAddr = (uint64_t)this;
+        NodeVideoFrameTransporter * pTransporter = g_transporter_map[thisAddr];
+		if (pTransporter)
+        {
+            ret = pTransporter->initialize(std::move(function));
+        }
     }while(false);
     return Napi::Number::New(env, ret);
 }
@@ -598,7 +657,7 @@ NIM_SDK_NODE_API_DEF(setupSubStreamVideoCanvas)
         nertc::NERtcVideoCanvas canvas;
         canvas.cb = enable ? NodeOnSubstreamFrameDataCallback : nullptr;
         uint64_t thisAddr = (uint64_t)this;
-        canvas.user_data = (void*)(new nertc::uid_t(thisAddr));//enable ? (void*)(new nertc::uid_t(uid)) : nullptr;
+        canvas.user_data = enable ? (void*)(new nertc::uid_t(thisAddr)) : nullptr;//enable ? (void*)(new nertc::uid_t(uid)) : nullptr;
         canvas.window = nullptr;
         if (uid == 0)
             ret = rtc_engine_->setupLocalSubStreamVideoCanvas(&canvas);
@@ -1315,6 +1374,28 @@ NIM_SDK_NODE_API_DEF(setLocalVideoMirrorMode)
     return Napi::Number::New(env, ret);
 }
 
+NIM_SDK_NODE_API_DEF(setLocalVideoMirrorModeEx)
+{
+    INIT_ENV
+    do{
+        //todo
+        // uint32_t type;
+        // uint32_t mode;
+        // napi_get_value_uint32(info[0], type);
+        // napi_get_value_uint32(info[1], mode);
+        // LOG_F(INFO, "mode:%d", mode);
+        // uint64_t thisAddr = (uint64_t)this;
+        // NodeVideoFrameTransporter * pTransporter = g_channel_transporter_map[thisAddr];
+		// if (pTransporter)
+        // {
+        //     pTransporter->setLocalVideoMirrorMode(type, mode);
+        //     ret = 0;
+        // }
+    }while(false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
 NIM_SDK_NODE_API_DEF(startVideoPreview)
 {
     INIT_ENV
@@ -1810,10 +1891,12 @@ NIM_SDK_NODE_API_DEF(enableAudioVolumeIndication)
     {
         bool enabled;
         uint32_t interval;
+        bool enableVad;
         napi_get_value_bool(info[0], enabled);
         napi_get_value_uint32(info[1], interval);
-        LOG_F(INFO, "enabled:%d interval:%d", enabled, interval);
-        ret = rtc_engine_->enableAudioVolumeIndication(enabled, interval);
+        napi_get_value_bool(info[2], enableVad);
+        LOG_F(INFO, "enabled:%d interval:%d enableVad:%d", enabled, interval, enableVad);
+        ret = rtc_engine_->enableAudioVolumeIndication(enabled, interval, enableVad);
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
@@ -2676,8 +2759,579 @@ NIM_SDK_NODE_API_DEF(setSystemAudioLoopbackCaptureVolume)
     return Napi::Number ::New(env, ret);
 }
 
-    //请勿删除，开发调试参数使用
-    // Logger::Instance()->initPath("D:/nertc_node_log.txt");
-    // Logger::Instance()->debug("joinChannel" + Logger::int32ToStr(1990));
-
+NIM_SDK_NODE_API_DEF(enableLocalSubStreamAudio)
+{
+    INIT_ENV
+    do
+    {
+        bool enabled = false;
+        napi_get_value_bool(info[0], enabled);
+        LOG_F(INFO, "enabled:%d", enabled);
+        ret = rtc_engine_->enableLocalSubStreamAudio(enabled);
+        LOG_F(INFO, "ret:%d", ret);
+    } while (false);
+    return Napi::Number::New(env, ret);
 }
+
+NIM_SDK_NODE_API_DEF(muteLocalSubStreamAudio)
+{
+    INIT_ENV
+    do
+    {
+        bool mute;
+        napi_get_value_bool(info[0], mute);
+        LOG_F(INFO, "mute:%d", mute);
+        ret = rtc_engine_->muteLocalSubStreamAudio(mute);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(subscribeRemoteSubStreamAudio)
+{
+    INIT_ENV
+    do
+    {
+        uint32_t uid;
+        bool subscribe;
+        napi_get_value_uint32(info[0], uid);
+        napi_get_value_bool(info[1], subscribe);
+        LOG_F(INFO, "uid:%llu subscribe:%d", uid, subscribe);
+        ret = rtc_engine_->subscribeRemoteSubStreamAudio(uid, subscribe);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(subscribeAllRemoteAudioStream)
+{
+    INIT_ENV
+    do
+    {
+        bool subscribe;
+        napi_get_value_bool(info[0], subscribe);
+        LOG_F(INFO, "enable:%d", subscribe);
+        ret = rtc_engine_->subscribeAllRemoteAudioStream(subscribe);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setAudioSubscribeOnlyBy)
+{
+    INIT_ENV
+    do
+    {
+        std::set<uint64_t> set_uids;
+        Napi::Object obj = info[0].As<Napi::Object>();
+        nertc_uid_list_to_struct(env, obj, set_uids);
+        nertc::uid_t* uid_array = NULL;
+        int index = 0;
+        if (!set_uids.empty()) {
+            uid_array = new nertc::uid_t[set_uids.size()];
+            for (auto e : set_uids) {
+                *(uid_array + index++) = e;
+            }
+        }
+        int size;
+        napi_get_value_int32(info[1], size);
+        LOG_F(INFO, "size:%d", size);
+        ret = rtc_engine_->setAudioSubscribeOnlyBy(uid_array, size);
+        if (rtc_engine_) {
+          delete[] uid_array;
+        }
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setStreamAlignmentProperty)
+{
+    INIT_ENV
+    do
+    {
+        bool enable;
+        napi_get_value_bool(info[0], enable);
+        LOG_F(INFO, "enable:%d", enable);
+        rtc_engine_->setStreamAlignmentProperty(enable);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(getNtpTimeOffset)
+{
+    INIT_ENV
+    do
+    {
+        ret = rtc_engine_->getNtpTimeOffset();
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setCameraCaptureConfig)
+{
+    INIT_ENV
+    Napi::Object obj = Napi::Object::New(env);
+    do
+    {
+        LOG_F(INFO, "setCameraCaptureConfig in");
+        Napi::Object obj = info[0].As<Napi::Object>();
+        nertc::NERtcCameraCaptureConfig config;
+        nertc_camera_capture_obj_to_struct(env,obj,config);
+        ret = rtc_engine_->setCameraCaptureConfig(config);
+
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);;
+}
+
+NIM_SDK_NODE_API_DEF(setCameraCaptureConfigEx)
+{
+    INIT_ENV
+    Napi::Object obj = Napi::Object::New(env);
+    do
+    {
+        LOG_F(INFO, "setCameraCaptureConfig in");
+        int type;
+        napi_get_value_int32(info[0], type);
+        Napi::Object obj = info[1].As<Napi::Object>();
+        nertc::NERtcCameraCaptureConfig config;
+        nertc_camera_capture_obj_to_struct(env,obj,config);
+        ret = rtc_engine_->setCameraCaptureConfig((nertc::NERtcVideoStreamType)type, config);
+
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);;
+}
+
+NIM_SDK_NODE_API_DEF(setVideoConfigEx)
+{
+    INIT_ENV
+    do
+    {
+        int type;
+        napi_get_value_int32(info[0], type);
+        auto status = napi_ok;
+        nertc::NERtcVideoConfig config = {};
+        status = nertc_video_config_obj_to_struct(env, info[1].As<Napi::Object>(), config);
+        if (status != napi_ok)
+        {
+            break;
+        }
+        ret = rtc_engine_->setVideoConfig((nertc::NERtcVideoStreamType)type, config);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(startVideoPreviewEx)
+{
+    INIT_ENV
+    do
+    {
+        int type;
+        napi_get_value_int32(info[0], type);
+        ret = rtc_engine_->startVideoPreview((nertc::NERtcVideoStreamType)type);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(stopVideoPreviewEx)
+{
+    INIT_ENV
+    do
+    {
+        int type;
+        napi_get_value_int32(info[0], type);
+        ret = rtc_engine_->stopVideoPreview((nertc::NERtcVideoStreamType)type);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(muteLocalVideoStreamEx)
+{
+    INIT_ENV
+    do
+    {
+        uint32_t type;
+        bool enabled = false;
+        napi_get_value_uint32(info[0], type);
+        napi_get_value_bool(info[1], enabled);
+        LOG_F(INFO, "enabled:%d", enabled);
+        ret = rtc_engine_->muteLocalVideoStream((nertc::NERtcVideoStreamType)type, enabled);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(startAudioDumpEx)
+{
+    INIT_ENV
+    do
+    {
+        uint32_t type;
+        napi_get_value_uint32(info[0], type);
+        LOG_F(INFO, "type:%d", type);
+        ret = rtc_engine_->startAudioDump((nertc::NERtcAudioDumpType)type);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setScreenCaptureMouseCursor)
+{
+    INIT_ENV
+    do
+    {
+        bool enabled = false;
+        napi_get_value_bool(info[0], enabled);
+        LOG_F(INFO, "enabled:%d", enabled);
+        ret = rtc_engine_->setScreenCaptureMouseCursor(enabled);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(updateScreenCaptureParameters)
+{
+    Napi::Env env = info.Env();
+    int ret = -1;
+    do
+    {
+        nertc::NERtcScreenCaptureParameters param = {};
+        std::set<int64_t> vsWindowId;
+        nertc_screen_capture_params_obj_to_struct(env, info[0].As<Napi::Object>(), param, vsWindowId);
+        intptr_t* wnd_list = nullptr;
+        int index = 0;
+        if (!vsWindowId.empty()) {
+            wnd_list = new intptr_t[vsWindowId.size()];
+            for (auto e : vsWindowId) {
+                *(wnd_list + index++) = e;
+            }
+        }
+        param.excluded_window_list = (nertc::source_id_t*)wnd_list;
+        ret = rtc_engine_->updateScreenCaptureParameters(param);
+        if (param.excluded_window_list != nullptr)
+        {
+            delete[] param.excluded_window_list;
+            param.excluded_window_list = nullptr;
+        }
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setExternalVideoSourceEx)
+{
+    INIT_ENV
+    do
+    {
+        int type = 0;
+        bool enabled;
+        napi_get_value_int32(info[0], type);
+        napi_get_value_bool(info[1], enabled);
+        LOG_F(INFO, "type:%d enabled:%d", type, enabled);
+        ret = rtc_engine_->setExternalVideoSource((nertc::NERtcVideoStreamType)type, enabled);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setRemoteHighPriorityAudioStream)
+{
+    INIT_ENV
+    do
+    {
+        bool enabled;
+        napi_get_value_bool(info[0], enabled);
+        unsigned int uid = 0;
+        napi_get_value_uint32(info[1], uid);
+        LOG_F(INFO, "enabled:%d uid:%d", enabled, uid);
+        ret = rtc_engine_->setRemoteHighPriorityAudioStream(enabled, uid);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(checkNECastAudioDriver)
+{
+    INIT_ENV
+    do
+    {
+        ret = rtc_engine_->checkNECastAudioDriver();
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(enableFaceEnhance)
+{
+    INIT_ENV
+    do
+    {
+        bool enabled = false;
+        napi_get_value_bool(info[0], enabled);
+        LOG_F(INFO, "enabled:%d", enabled);
+        ret = rtc_engine_->enableFaceEnhance(enabled);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(enableVirtualBackground)
+{
+    INIT_ENV
+    do
+    {
+        bool enabled = false;
+        napi_get_value_bool(info[0], enabled);
+        LOG_F(INFO, "enabled:%d", enabled);
+
+        nertc::VirtualBackgroundSource param = {};
+        nertc_virtual_backgroup_source_obj_to_struct(env, info[1].As<Napi::Object>(), param);
+        Napi::Object obj = info[1].As<Napi::Object>();
+        if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"source"))))
+        {
+            std::string strSource = obj.Get(static_cast<napi_value>(Napi::String::New(env,"source"))).As<Napi::String>().Utf8Value();
+            param.source = const_cast<char*>(strSource.c_str());
+        }
+        ret = rtc_engine_->enableVirtualBackground(enabled, param);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setCloudProxy)
+{
+    INIT_ENV
+    do
+    {
+        int proxyType = false;
+        napi_get_value_int32(info[0], proxyType);
+        LOG_F(INFO, "proxyType:%d", proxyType);
+        ret = rtc_engine_->setCloudProxy(proxyType);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(startBeauty)
+{
+    INIT_ENV
+    do
+    {
+        std::string path;
+        napi_get_value_utf8_string(info[0], path);
+        if (path.length() == 0)
+        {
+            break;
+        }
+        LOG_F(INFO, "path:%s", path);
+        ret = rtc_engine_->startBeauty(path.c_str());
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(stopBeauty)
+{
+    INIT_ENV
+    do
+    {
+        ret = 0;
+        rtc_engine_->stopBeauty();
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(enableBeauty)
+{
+    INIT_ENV
+    do
+    {
+        bool enable = false;
+        napi_get_value_bool(info[0], enable);
+        LOG_F(INFO, "enable:%d", enable);
+        rtc_engine_->enableBeauty(enable);
+        ret = 0;
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(enableBeautyMirrorMode)
+{
+    INIT_ENV
+    do
+    {
+        bool enable = false;
+        napi_get_value_bool(info[0], enable);
+        LOG_F(INFO, "enable:%d", enable);
+        rtc_engine_->enableBeautyMirrorMode(enable);
+        ret = 0;
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(getBeautyEffect)
+{
+    INIT_ENV
+    do
+    {
+        int type;
+        napi_get_value_int32(info[0], type);
+        LOG_F(INFO, "type:%d", type);
+        ret = rtc_engine_->getBeautyEffect((nertc::NERtcBeautyEffectType)type);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setBeautyEffect)
+{
+    INIT_ENV
+    do
+    {
+        int type;
+        napi_get_value_int32(info[0], type);
+        int level;
+        napi_get_value_int32(info[1], level);
+        LOG_F(INFO, "type:%d level:%d", type, level);
+        float flevel = level/100.0;
+        ret = rtc_engine_->setBeautyEffect((nertc::NERtcBeautyEffectType)type, flevel);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(addBeautyFilter)
+{
+    INIT_ENV
+    do
+    {
+        std::string path;
+        napi_get_value_utf8_string(info[0], path);
+        if (path.length() == 0)
+        {
+            break;
+        }
+        LOG_F(INFO, "path:%s", path);
+        ret = rtc_engine_->addBeautyFilter(path.c_str());
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(removeBeautyFilter)
+{
+    INIT_ENV
+    do
+    {
+        ret = rtc_engine_->removeBeautyFilter();
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setBeautyFilterLevel)
+{
+    INIT_ENV
+    do
+    {
+        int level;
+        napi_get_value_int32(info[0], level);
+        LOG_F(INFO, "level:%d", level);
+        float flevel = level/100.0;
+        ret = rtc_engine_->setBeautyFilterLevel(flevel);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(addBeautySticker)
+{
+    INIT_ENV
+    do
+    {
+        std::string path;
+        napi_get_value_utf8_string(info[0], path);
+        LOG_F(INFO, "path:%s", path);
+        ret = rtc_engine_->addBeautySticker(path.c_str());
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(removeBeautySticker)
+{
+    INIT_ENV
+    do
+    {
+        ret = rtc_engine_->removeBeautySticker();
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(addBeautyMakeup)
+{
+    INIT_ENV
+    do
+    {
+        std::string path;
+        napi_get_value_utf8_string(info[0], path);
+        LOG_F(INFO, "path:%s", path);
+        ret = rtc_engine_->addBeautyMakeup(path.c_str());
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(removeBeautyMakeup)
+{
+    INIT_ENV
+    do
+    {
+        ret = rtc_engine_->removeBeautyMakeup();
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setLocalVoiceReverbParam)
+{
+    INIT_ENV
+    do
+    {
+        //todo
+        nertc::NERtcReverbParam param;
+        nertc_rever_param_obj_to_struct(env, info[0].As<Napi::Object>(), param);
+        ret = rtc_engine_->setLocalVoiceReverbParam(param);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(enableMediaPub)
+{
+    INIT_ENV
+    do
+    {
+        bool enable = false;
+        napi_get_value_bool(info[0], enable);
+        int type;
+        napi_get_value_int32(info[1], type);
+        LOG_F(INFO, "enable:%d type:%d", enable, type);
+        ret = rtc_engine_->enableMediaPub(enable, (nertc::NERtcMediaPubType)type);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+} //namespace nertc_node

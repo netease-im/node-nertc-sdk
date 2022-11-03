@@ -7,21 +7,8 @@
 using namespace nemeeting_util;
 namespace nertc_node
 {
-napi_status nertc_engine_context_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcEngineContext& context){
-    // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"app_key"))))
-    //     {
-    //         app_key_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"app_key"))).As<Napi::String>().Utf8Value();
-    //         context.app_key = new char[kNERtcMaxURILength];
-    //         std::memset(context.app_key, 0, kNERtcMaxURILength);
-    //         std::strncpy(context.app_key, app_key_.c_str(), kNERtcMaxURILength);
-    //     }
-    //     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"log_dir_path"))))
-    //     {
-    //         log_path_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"log_dir_path"))).As<Napi::String>().Utf8Value();
-    //         context.log_dir_path = new char[kNERtcMaxURILength];
-    //         std::memset(context.log_dir_path, 0, kNERtcMaxURILength);
-    //         strncpy(context.log_dir_path, log_path_.c_str(), kNERtcMaxURILength);
-    //     }
+napi_status nertc_engine_context_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcEngineContext& context)
+{
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"log_level"))))
     {
         int log_level_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"log_level"))).As<Napi::Number>().Int32Value();
@@ -565,6 +552,8 @@ napi_status nertc_video_send_stats_to_obj(const Napi::Env env, const nertc::NERt
         o.Set(static_cast<napi_value>(Napi::String::New(env,"layer_type")), config.video_layers_list[i].layer_type);
         o.Set(static_cast<napi_value>(Napi::String::New(env,"width")), config.video_layers_list[i].width);
         o.Set(static_cast<napi_value>(Napi::String::New(env,"height")), config.video_layers_list[i].height);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"capture_width")), config.video_layers_list[i].capture_width);
+        o.Set(static_cast<napi_value>(Napi::String::New(env,"capture_height")), config.video_layers_list[i].capture_height);
         o.Set(static_cast<napi_value>(Napi::String::New(env,"capture_frame_rate")), config.video_layers_list[i].capture_frame_rate);
         o.Set(static_cast<napi_value>(Napi::String::New(env,"render_frame_rate")), config.video_layers_list[i].render_frame_rate);
         o.Set(static_cast<napi_value>(Napi::String::New(env,"encoder_frame_rate")), config.video_layers_list[i].encoder_frame_rate);
@@ -573,7 +562,7 @@ napi_status nertc_video_send_stats_to_obj(const Napi::Env env, const nertc::NERt
         o.Set(static_cast<napi_value>(Napi::String::New(env,"target_bitrate")), config.video_layers_list[i].target_bitrate);
         o.Set(static_cast<napi_value>(Napi::String::New(env,"encoder_bitrate")), config.video_layers_list[i].encoder_bitrate);
         o.Set(static_cast<napi_value>(Napi::String::New(env,"codec_name")), config.video_layers_list[i].codec_name);
-        // s[i] = o;
+        o.Set(static_cast<napi_value>(Napi::Boolean::New(env,"drop_bandwidth_strategy_enabled")), config.video_layers_list[i].drop_bandwidth_strategy_enabled);
         s.Set(static_cast<napi_value>(Napi::Number::New(env, i)),  o);
     }
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"video_layers_list")), s);
@@ -683,6 +672,11 @@ napi_status nertc_audio_frame_rf_obj_to_struct(const Napi::Env& env, const Napi:
     {
         out_u = obj.Get(static_cast<napi_value>(Napi::String::New(env,"sample_rate"))).As<Napi::Number>().Uint32Value();
         format.sample_rate = out_u;
+    } 
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"mode"))))
+    {
+        out_u = obj.Get(static_cast<napi_value>(Napi::String::New(env,"mode"))).As<Napi::Number>().Uint32Value();
+        format.mode = (nertc::NERtcRawAudioFrameOpModeType)out_u;
     } 
     return napi_ok; 
 }
@@ -886,6 +880,105 @@ napi_status nertc_lastmile_probe_result_to_obj(const Napi::Env env, const nertc:
     obj_downlink_report.Set(static_cast<napi_value>(Napi::String::New(env,"packet_loss_rate")), config.downlink_report.packet_loss_rate);
     obj_downlink_report.Set(static_cast<napi_value>(Napi::String::New(env,"available_band_width")), config.downlink_report.available_band_width);
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"downlink_report")), obj_downlink_report);
+    return napi_ok;
+}
+
+
+//channnel
+napi_status nertc_camera_capture_obj_to_struct(const Napi::Env env, Napi::Object& obj, nertc::NERtcCameraCaptureConfig& config)
+{
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"captureWidth"))))
+    {
+        int captureWidthTemp = obj.Get(static_cast<napi_value>(Napi::String::New(env,"captureWidth"))).As<Napi::Number>().Int32Value();
+        config.captureWidth =  captureWidthTemp;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"captureHeight"))))
+    {
+        int captureHeightTemp = obj.Get(static_cast<napi_value>(Napi::String::New(env,"captureHeight"))).As<Napi::Number>().Int32Value();
+        config.captureHeight =  captureHeightTemp;
+    }
+    return napi_ok;
+}
+
+napi_status nertc_uid_list_to_struct(const Napi::Env& env, const Napi::Object& obj, std::set<uint64_t>& list) //obj:['123', '456']}
+{
+    if(obj.IsArray())
+    {
+        Napi::Array wl = obj.As<Napi::Array>();
+        for (auto i = 0; i < wl.Length(); i++)
+        {
+			int64_t id  = wl.Get(i).As<Napi::Number>().Int64Value();
+			list.insert(id);
+        }
+    }
+
+    return napi_ok;
+}
+
+napi_status nertc_virtual_backgroup_source_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::VirtualBackgroundSource& config)
+{
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"background_source_type"))))
+    {
+        int iBgSourceType = obj.Get(static_cast<napi_value>(Napi::String::New(env,"background_source_type"))).As<Napi::Number>().Int32Value();
+        config.background_source_type =  (nertc::VirtualBackgroundSource::NERtcBackgroundSourceType)iBgSourceType;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"color"))))
+    {
+        int iColor = obj.Get(static_cast<napi_value>(Napi::String::New(env,"color"))).As<Napi::Number>().Int32Value();
+        config.color =  iColor;
+    }
+
+    //todo source
+
+    return napi_ok;
+}
+
+napi_status nertc_rever_param_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcReverbParam& param)
+{
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wetGain"))))
+    {
+        int wetGain_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wetGain"))).As<Napi::Number>().Int32Value();
+        param.wetGain =  wetGain_/100.0;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"dryGain"))))
+    {
+        int dryGain_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"dryGain"))).As<Napi::Number>().Int32Value();
+        param.dryGain =  dryGain_/100.0;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"damping"))))
+    {
+        int damping_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"damping"))).As<Napi::Number>().Int32Value();
+        param.damping =  damping_/100.0;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"roomSize"))))
+    {
+        int roomSize_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"roomSize"))).As<Napi::Number>().Int32Value();
+        param.roomSize =  roomSize_/100.0;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"decayTime"))))
+    {
+        int decayTime_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"decayTime"))).As<Napi::Number>().Int32Value();
+        param.decayTime =  decayTime_/100.0;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"preDelay"))))
+    {
+        int preDelay_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"preDelay"))).As<Napi::Number>().Int32Value();
+        param.preDelay =  preDelay_/100.0;
+    }
+
+    return napi_ok;
+}
+
+ napi_status nertc_camera_capture_struct_to_obj(const Napi::Env env, nertc::NERtcCameraCaptureConfig& config,  Napi::Object& obj)
+ {
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"captureWidth")), config.captureWidth);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"captureWidth")), config.captureWidth);
     return napi_ok;
 }
 

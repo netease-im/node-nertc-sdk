@@ -9,282 +9,7 @@ const events_1 = require("events");
 const process_1 = __importDefault(require("process"));
 // const nertc = require('bindings')('nertc-electron-sdk');
 const nertc = require('../../build/Release/nertc-electron-sdk.node');
-
-class NERtcChannel extends events_1.EventEmitter {
-    constructor(name, rtcChannel) {
-        super();
-        this.channelName = name;
-        this.rtcChannel = rtcChannel;
-        this.renderers = new Map();
-        this.substreamRenderers = new Map();
-        this.renderMode = 1;// this._checkWebGL() ? 1 : 2;
-        this.customRenderer = renderer_1.CustomRenderer;
-    }
-
-    getChannelName() {
-        return this.rtcChannel.getChannelName(this.channelName);
-    }
-
-    setupLocalVideoCanvas(canvas) {
-        if (canvas.view) {
-            //bind
-            this.initRender('local', canvas.view);
-            this.setRenderMode('local', canvas.mode);
-            return this.rtcChannel.setupVideoCanvas(0, true);
-        }
-        else {
-            //unbind
-            this.destroyRender('local');
-            return this.rtcChannel.setupVideoCanvas(0, false);
-        }
-    }
-
-    enableLocalVideo(enabled) {
-        return this.rtcChannel.enableLocalVideo(enabled);
-    }
-
-    joinChannel(token) {
-        return this.rtcChannel.joinChannel(token);
-    }
-
-    setRenderMode(uid, mode) {
-        if (this.renderers.has(String(uid))) {
-            let renderer = this.renderers.get(String(uid));
-            renderer.setContentMode(mode);
-            return 0;
-        }
-        else {
-            return -1;
-        }
-    }
-
-    initEventHandler() {
-        this.rtcChannel.onVideoFrame((infos)=>{
-            this.doVideoFrameReceived(infos);
-        });
-
-    }
-
-    _checkWebGL() {
-        const canvas = document.createElement('canvas');
-        let gl;
-        canvas.width = 1;
-        canvas.height = 1;
-        const options = {
-            // Turn off things we don't need
-            alpha: false,
-            depth: false,
-            stencil: false,
-            antialias: false,
-            preferLowPowerToHighPerformance: true
-            // Still dithering on whether to use this.
-            // Recommend avoiding it, as it's overly conservative
-            // failIfMajorPerformanceCaveat: true
-        };
-        try {
-            gl =
-                canvas.getContext('webgl', options) ||
-                    canvas.getContext('experimental-webgl', options);
-        }
-        catch (e) {
-            return false;
-        }
-        if (gl) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    _getRenderer(type, uid) {
-        if (type === 0) {
-            return this.renderers.get('local');
-        }
-        else if (type === 1) {
-            return this.renderers.get(String(uid));
-        }
-        else if (type === 2) {
-            return this.substreamRenderers.get('local');
-        }
-        else if (type === 3) {
-            return this.substreamRenderers.get(String(uid));
-        }
-        else {
-            console.warn('Invalid type for getRenderer, only accept 0~3.');
-            return;
-        }
-    }
-
-    _checkData(header, ydata, udata, vdata) {
-        if (header.byteLength != 20) {
-            console.error('invalid image header ' + header.byteLength);
-            return false;
-        }
-        if (ydata.byteLength === 20) {
-            console.error('invalid image yplane ' + ydata.byteLength);
-            return false;
-        }
-        if (udata.byteLength === 20) {
-            console.error('invalid image uplanedata ' + udata.byteLength);
-            return false;
-        }
-        if (ydata.byteLength != udata.byteLength * 4 ||
-            udata.byteLength != vdata.byteLength) {
-            console.error('invalid image header ' +
-                ydata.byteLength +
-                ' ' +
-                udata.byteLength +
-                ' ' +
-                vdata.byteLength);
-            return false;
-        }
-        return true;
-    }
-
-    doVideoFrameReceived(infos) {
-        const len = infos.length;
-        for (let i = 0; i < len; i++) {
-            const info = infos[i];
-            const { type, uid, channelId, header, ydata, udata, vdata } = info;
-            if (!header || !ydata || !udata || !vdata) {
-                console.log('Invalid data param : ' +
-                    header +
-                    ' ' +
-                    ydata +
-                    ' ' +
-                    udata +
-                    ' ' +
-                    vdata);
-                continue;
-            }
-            console.log(`-----channel frame-------2`)
-            let renderer = this._getRenderer(type, uid);
-            if (!renderer) {
-                console.warn(`Can't find renderer for uid : ${uid}`);
-                continue;
-            }
-            if (this._checkData(header, ydata, udata, vdata)) {
-                renderer.drawFrame({
-                    header,
-                    yUint8Array: ydata,
-                    uUint8Array: udata,
-                    vUint8Array: vdata
-                });
-            }
-        }
-    }
-
-    initRender(key, view) {
-        if (this.renderers.has(String(key))) {
-            this.destroyRender(key);
-        }
-        let renderer;
-        if (this.renderMode === 1) {
-            renderer = new renderer_1.GlRenderer();
-        }
-        else if (this.renderMode === 2) {
-            renderer = new renderer_1.SoftwareRenderer();
-        }
-        else if (this.renderMode === 3) {
-            renderer = new this.customRenderer();
-        }
-        else {
-            console.warn('Unknown render mode, fallback to 1');
-            renderer = new renderer_1.GlRenderer();
-        }
-        renderer.bind(view);
-        this.renderers.set(String(key), renderer);
-    }
-
-    initSubStreamRender(key, view) {
-        if (this.substreamRenderers.has(String(key))) {
-            this.destroySubStreamRender(key);
-        }
-        let renderer;
-        if (this.renderMode === 1) {
-            renderer = new renderer_1.GlRenderer();
-        }
-        else if (this.renderMode === 2) {
-            renderer = new renderer_1.SoftwareRenderer();
-        }
-        else if (this.renderMode === 3) {
-            renderer = new this.customRenderer();
-        }
-        else {
-            console.warn('Unknown render mode, fallback to 1');
-            renderer = new renderer_1.GlRenderer();
-        }
-        renderer.bind(view);
-        this.substreamRenderers.set(String(key), renderer);
-    }
-
-    captureRender(key, streamType = defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
-        if (streamType === defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
-            if (!this.renderers.has(String(key))) {
-                return '';
-            }
-        }
-        else {
-            if (!this.substreamRenderers.has(String(key))) {
-                return '';
-            }
-        }
-        let renderer = null;
-        if (streamType === defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
-            renderer = this.renderers.get(String(key));
-        }
-        else {
-            renderer = this.substreamRenderers.get(String(key));
-        }
-        try {
-            return renderer.captureImage();
-        }
-        catch (err) {
-            console.error(`${err.stack}`);
-            return '';
-        }
-    }
-
-    destroyRender(key, onFailure) {
-        if (!this.renderers.has(String(key))) {
-            return;
-        }
-        let exception = null;
-        let renderer = this.renderers.get(String(key));
-        try {
-            renderer.unbind();
-            this.renderers.delete(String(key));
-        }
-        catch (err) {
-            exception = err;
-            console.error(`${err.stack}`);
-        }
-        if (exception) {
-            onFailure && onFailure(exception);
-        }
-    }
-
-    destroySubStreamRender(key, onFailure) {
-        if (!this.substreamRenderers.has(String(key))) {
-            return;
-        }
-        let exception = null;
-        let renderer = this.substreamRenderers.get(String(key));
-        try {
-            renderer.unbind();
-            this.substreamRenderers.delete(String(key));
-        }
-        catch (err) {
-            exception = err;
-            console.error(`${err.stack}`);
-        }
-        if (exception) {
-            onFailure && onFailure(exception);
-        }
-    }
-
-}
+const NERtcChannel = require('./channel').default
 
 /**
  * @class NERtcEngine
@@ -560,6 +285,11 @@ class NERtcEngine extends events_1.EventEmitter {
     enableLocalVideo(enabled) {
         return this.nertcEngine.enableLocalVideo(enabled);
     }
+
+    enableLocalVideoEx(type, enabled) {
+        return this.nertcEngine.enableLocalVideoEx(type, enabled);
+    }
+
     /**
      * 订阅 / 取消订阅指定远端用户的视频流。对方打开视频后需要主动订阅
      * @param {number} uid 指定用户的用户 ID。
@@ -616,6 +346,15 @@ class NERtcEngine extends events_1.EventEmitter {
     muteLocalAudioStream(enabled) {
         return this.nertcEngine.muteLocalAudioStream(enabled);
     }
+
+    enableLocalSubStreamAudio(enabled) {
+        return this.nertcEngine.enableLocalSubStreamAudio(enabled);
+    }
+
+    muteLocalSubStreamAudio(enabled) {
+        return this.nertcEngine.muteLocalSubStreamAudio(enabled);
+    }
+
     /**
      * 设置音频编码属性。
      * <pre>
@@ -664,6 +403,35 @@ class NERtcEngine extends events_1.EventEmitter {
     subscribeRemoteAudioStream(uid, enabled) {
         return this.nertcEngine.subscribeRemoteAudioStream(uid, enabled);
     }
+
+    subscribeRemoteSubStreamAudio(uid, enabled) {
+        return this.nertcEngine.subscribeRemoteSubStreamAudio(uid, enabled);
+    }
+
+    subscribeAllRemoteAudioStream(subscribe) {
+        return this.nertcEngine.subscribeAllRemoteAudioStream(subscribe);
+    }
+
+    setAudioSubscribeOnlyBy(uids, size) { //['12', '34', '56']
+        return this.nertcEngine.setAudioSubscribeOnlyBy(uids, size);
+    }
+
+    setStreamAlignmentProperty(enable) {
+        return this.nertcEngine.setStreamAlignmentProperty(enable);
+    }
+
+    getNtpTimeOffset() {
+        return this.nertcEngine.getNtpTimeOffset();
+    }
+
+    setCameraCaptureConfig(config) {
+        return this.nertcEngine.setCameraCaptureConfig(config);
+    }
+
+    setCameraCaptureConfigEx(type, config) {
+        return this.nertcEngine.setCameraCaptureConfigEx(type, config);
+    }
+
     /**
      * 设置视频配置。
      * <pre>
@@ -723,6 +491,9 @@ class NERtcEngine extends events_1.EventEmitter {
      */
     setVideoConfig(config) {
         return this.nertcEngine.setVideoConfig(config);
+    }
+    setVideoConfigEx(type, config) {
+        return this.nertcEngine.setVideoConfigEx(type, config);
     }
     /**
      * 设置视频双流发送。
@@ -859,6 +630,9 @@ class NERtcEngine extends events_1.EventEmitter {
     setLocalVideoMirrorMode(mode) {
         return this.nertcEngine.setLocalVideoMirrorMode(mode);
     }
+    setLocalVideoMirrorModeEx(type, mode) {
+        return this.nertcEngine.setLocalVideoMirrorModeEx(type, mode);
+    }
     /**
      * 设置远端用户辅流视图。
      * <pre>
@@ -935,6 +709,9 @@ class NERtcEngine extends events_1.EventEmitter {
     startVideoPreview() {
         return this.nertcEngine.startVideoPreview();
     }
+    startVideoPreviewEx(type) {
+        return this.nertcEngine.startVideoPreviewEx(type);
+    }
     /**
      * 停止视频预览。
      * @returns {number}
@@ -945,6 +722,9 @@ class NERtcEngine extends events_1.EventEmitter {
      */
     stopVideoPreview() {
         return this.nertcEngine.stopVideoPreview();
+    }
+    stopVideoPreviewEx(type) {
+        return this.nertcEngine.stopVideoPreviewEx(type);
     }
     /**
      * 开关本地视频发送。
@@ -964,6 +744,9 @@ class NERtcEngine extends events_1.EventEmitter {
      */
     muteLocalVideoStream(enabled) {
         return this.nertcEngine.muteLocalVideoStream(enabled);
+    }
+    muteLocalVideoStreamEx(type, enabled) {
+        return this.nertcEngine.muteLocalVideoStreamEx(type, enabled);
     }
     /**
      * 通过 JSON 配置 SDK 提供技术预览或特别定制功能。以标准化方式公开 JSON 选项。
@@ -1020,6 +803,15 @@ class NERtcEngine extends events_1.EventEmitter {
     setParameters(parameters) {
         return this.nertcEngine.setParameters(parameters);
     }
+    setRecordingAudioFrameParameters(format) {
+        return this.nertcEngine.setRecordingAudioFrameParameters(format);
+    }
+    setPlaybackAudioFrameParameters(format) {
+        return this.nertcEngine.setPlaybackAudioFrameParameters(format);
+    }
+    setMixedAudioFrameParameters(sample_rate) {
+        return this.nertcEngine.setMixedAudioFrameParameters(sample_rate);
+    }
     /**
      * 开启音频dump。
      * @returns {number}
@@ -1030,6 +822,9 @@ class NERtcEngine extends events_1.EventEmitter {
      */
     startAudioDump() {
         return this.nertcEngine.startAudioDump();
+    }
+    startAudioDumpEx(type) {
+        return this.nertcEngine.startAudioDumpEx(type);
     }
     /**
      * 结束音频dump。
@@ -1416,8 +1211,8 @@ class NERtcEngine extends events_1.EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    enableAudioVolumeIndication(enabled, interval) {
-        return this.nertcEngine.enableAudioVolumeIndication(enabled, interval);
+    enableAudioVolumeIndication(enabled, interval, enable_vad) {
+        return this.nertcEngine.enableAudioVolumeIndication(enabled, interval, enable_vad);
     }
     /**
      * 通过指定区域共享屏幕。共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕区域。
@@ -1589,6 +1384,11 @@ class NERtcEngine extends events_1.EventEmitter {
     updateScreenCaptureRegion(regionRect) {
         return this.nertcEngine.updateScreenCaptureRegion(regionRect);
     }
+
+    setScreenCaptureMouseCursor(capture_cursor) {
+        return this.nertcEngine.setScreenCaptureMouseCursor(capture_cursor);
+    }
+
     /**
      * 停止屏幕共享。
      * @returns {number}
@@ -2616,6 +2416,19 @@ class NERtcEngine extends events_1.EventEmitter {
     setExcludeWindowList(param) {
         return this.nertcEngine.setExcludeWindowList(param);
     }
+
+    updateScreenCaptureParameters(param) {
+        return this.nertcEngine.updateScreenCaptureParameters(param);
+    }
+
+    setExternalVideoSource(enabled) {
+        return this.nertcEngine.setExternalVideoSource(enabled);
+    }
+
+    setExternalVideoSourceEx(type, enabled) {
+        return this.nertcEngine.setExternalVideoSourceEx(type, enabled);
+    }
+
     /**
     * 开始客户端录音。
     * @since 4.4.8
@@ -2883,6 +2696,83 @@ class NERtcEngine extends events_1.EventEmitter {
     stopLastmileProbeTest() {
         return this.nertcEngine.stopLastmileProbeTest();
     }
+
+    setRemoteHighPriorityAudioStream(enable, uid) {
+        return this.nertcEngine.setRemoteHighPriorityAudioStream(enable, uid);
+    }
+
+    checkNECastAudioDriver() {
+        return this.nertcEngine.checkNECastAudioDriver();
+    }
+
+    enableVirtualBackground(enable, config) {
+        return this.nertcEngine.enableVirtualBackground(enable, config);
+    }
+
+    setCloudProxy(proxyType) {
+        return this.nertcEngine.setCloudProxy(proxyType);
+    }
+
+    startBeauty(file_path) {
+        return this.nertcEngine.startBeauty(file_path);
+    }
+
+    stopBeauty() {
+        return this.nertcEngine.stopBeauty();
+    }
+
+    enableBeauty(enable) {
+        return this.nertcEngine.enableBeauty(enable);
+    }
+
+    enableBeautyMirrorMode(enable) {
+        return this.nertcEngine.enableBeautyMirrorMode(enable);
+    }
+
+    getBeautyEffect(type) {
+        return this.nertcEngine.getBeautyEffect(type);
+    }
+
+    setBeautyEffect(type, level) { //level *100
+        return this.nertcEngine.setBeautyEffect(type, level);
+    }
+
+    addBeautyFilter(file_path) {
+        return this.nertcEngine.addBeautyFilter(file_path);
+    }
+
+    removeBeautyFilter() {
+        return this.nertcEngine.removeBeautyFilter();
+    }
+
+    setBeautyFilterLevel(level) { //level *100
+        return this.nertcEngine.setBeautyFilterLevel(level);
+    }
+
+    addBeautySticker(file_path) {
+        return this.nertcEngine.addBeautySticker(file_path);
+    }
+
+    removeBeautySticker() {
+        return this.nertcEngine.removeBeautySticker();
+    }
+
+    addBeautyMakeup(file_path) {
+        return this.nertcEngine.addBeautyMakeup(file_path);
+    }
+
+    removeBeautyMakeup() {
+        return this.nertcEngine.removeBeautyMakeup();
+    }
+
+    setLocalVoiceReverbParam(param) {
+        return this.nertcEngine.setLocalVoiceReverbParam(param);
+    }
+
+    enableMediaPub(enabled, media_type) {
+        return this.nertcEngine.enableMediaPub(enabled, media_type);
+    }
+
 
 
     /**
@@ -3164,6 +3054,11 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onUserVideoMute', function (uid, mute) {
             fire('onUserVideoMute', uid, mute);
         });
+
+        this.nertcEngine.onEvent('onUserVideoMuteEx', function (videoStreamType, uid, mute) {
+            fire('onUserVideoMuteEx', videoStreamType, uid, mute);
+        });
+
         /**
          * 音频设备状态更改回调。
          * @event NERtcEngine#onAudioDeviceStateChanged
@@ -3505,8 +3400,21 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onRemoteSubscribeFallbackToAudioOnly', function (uid, is_fallback, stream_type) {
             fire('onRemoteSubscribeFallbackToAudioOnly', uid, is_fallback, stream_type);
         });
-        this.nertcEngine.onVideoFrame(function (infos) {
-            self.doVideoFrameReceived(infos);
+
+        this.nertcEngine.onEvent('onUserSubStreamAudioStart', function (uid) {
+            fire('onUserSubStreamAudioStart', uid);
+        });
+
+        this.nertcEngine.onEvent('onUserSubStreamAudioStop', function (uid) {
+            fire('onUserSubStreamAudioStop', uid);
+        });
+
+        this.nertcEngine.onEvent('onUserSubStreamAudioMute', function (uid, mute) {
+            fire('onUserSubStreamAudioMute', uid, mute);
+        });
+
+        this.nertcEngine.onVideoFrame( (infos)=>{ //function
+            this.doVideoFrameReceived(infos);
         });
         /**
          * 当前通话统计回调。

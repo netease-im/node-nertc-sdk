@@ -4,6 +4,7 @@
 #include <napi.h>
 #include <stdio.h>
 #include "nertc_engine.h"
+#include "nertc_engine_defines.h"
 #include <list>
 #include <set>
 
@@ -33,6 +34,18 @@ napi_status nertc_video_recv_stats_to_obj(const Napi::Env env, const nertc::NERt
 napi_status nertc_network_quality_to_obj(const Napi::Env env, const nertc::NERtcNetworkQualityInfo& config,  Napi::Object& obj);
 napi_status nertc_audio_volume_info_to_obj(const Napi::Env env, const nertc::NERtcAudioVolumeInfo& config,  Napi::Object& obj);
 napi_status nertc_lastmile_probe_result_to_obj(const Napi::Env env, const nertc::NERtcLastmileProbeResult& config,  Napi::Object& obj);
+
+// channel helper
+//obj->struct
+napi_status nertc_camera_capture_obj_to_struct(const Napi::Env env, Napi::Object& obj, nertc::NERtcCameraCaptureConfig& config);
+napi_status nertc_uid_list_to_struct(const Napi::Env& env, const Napi::Object& obj, std::set<uint64_t>& list);
+napi_status nertc_virtual_backgroup_source_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::VirtualBackgroundSource& config);
+napi_status nertc_rever_param_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcReverbParam& param);
+
+//struct->obj
+napi_status nertc_camera_capture_struct_to_obj(const Napi::Env env,  nertc::NERtcCameraCaptureConfig& config,  Napi::Object& obj);
+
+
 }
 
 //饿汉模式

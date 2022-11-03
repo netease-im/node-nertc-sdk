@@ -285,40 +285,38 @@ void NodeVideoFrameTransporter::FlushVideo()
                 Napi::Array infos = Napi::Array::New(env);
                 uint32_t i = 0;
 
-                {
-                    std::lock_guard<std::mutex> lock(m_lock);
-                    for (auto& it : m_remoteVideoFrames) {
-                        if (AddObj(env, infos, i, it.second))
-                        {
-                            ++i;
-                        }else {
-                            ++it.second.m_count;
-                        }
+                std::lock_guard<std::mutex> lock(m_lock);
+                for (auto& it : m_remoteVideoFrames) {
+                    if (AddObj(env, infos, i, it.second))
+                    {
+                        ++i;
+                    }else {
+                        ++it.second.m_count;
                     }
-                    if (m_localVideoFrame.get()) {
-                        if (AddObj(env, infos, i, *(m_localVideoFrame.get())))
-                        {
-                            ++i;
-                        }else {
-                            ++m_localVideoFrame->m_count;
-                        }
+                }
+                if (m_localVideoFrame.get()) {
+                    if (AddObj(env, infos, i, *(m_localVideoFrame.get())))
+                    {
+                        ++i;
+                    }else {
+                        ++m_localVideoFrame->m_count;
                     }
-                    for (auto& it : m_substreamVideoFrame) {
-                        if (AddObj(env, infos, i, it.second))
-                        {
-                            ++i;
-                        }
-                        else {
-                            ++it.second.m_count;
-                        }
-                    } 
-                    if (m_localSubStreamVideoFrame.get()) {
-                        if (AddObj(env, infos, i, *m_localSubStreamVideoFrame.get()))
-                        {
-                            ++i;
-                        }else {
-                            ++m_localSubStreamVideoFrame->m_count;
-                        }
+                }
+                for (auto& it : m_substreamVideoFrame) {
+                    if (AddObj(env, infos, i, it.second))
+                    {
+                        ++i;
+                    }
+                    else {
+                        ++it.second.m_count;
+                    }
+                } 
+                if (m_localSubStreamVideoFrame.get()) {
+                    if (AddObj(env, infos, i, *m_localSubStreamVideoFrame.get()))
+                    {
+                        ++i;
+                    }else {
+                        ++m_localSubStreamVideoFrame->m_count;
                     }
                 }
                 

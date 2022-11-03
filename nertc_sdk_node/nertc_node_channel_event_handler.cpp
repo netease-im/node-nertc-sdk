@@ -446,6 +446,29 @@ void NertcChannelEventHandler::Node_onUserVideoMute(nertc::uid_t uid, bool mute)
     }
 }
 
+void NertcChannelEventHandler::onUserVideoMute(nertc::NERtcVideoStreamType videoStreamType, nertc::uid_t uid, bool mute)
+{
+    LOG_F(INFO, "uid:%llu mute:%d", uid, mute);
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUserVideoMuteEx(videoStreamType, uid, mute);
+    });
+}
+
+void NertcChannelEventHandler::Node_onUserVideoMuteEx(nertc::NERtcVideoStreamType type, nertc::uid_t uid, bool mute)
+{
+    auto it = _callbacks.find("onUserVideoMuteEx");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::Number::New(env, type);
+        auto param2 = Napi::Number::New(env, uid);
+        auto param3 = Napi::Boolean::New(env, mute);
+        const std::vector<napi_value> args = {param1, param2, param3};
+        function_reference->function.Call(args);
+    }
+}
+
 void NertcChannelEventHandler::onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile)
 {
     LOG_F(INFO, "uid:%llu max_profile:%d", uid, max_profile);
@@ -552,6 +575,28 @@ void NertcChannelEventHandler::Node_onFirstVideoDataReceived(nertc::uid_t uid)
     }
 }
 
+void NertcChannelEventHandler::onFirstVideoDataReceived(nertc::NERtcVideoStreamType type, nertc::uid_t uid)
+{
+    LOG_F(INFO, "uid:%llu", uid);
+    nim_node::node_async_call::async_call([=]() {
+        Node_onFirstVideoDataReceivedEx(type, uid);
+    });
+}
+
+void NertcChannelEventHandler::Node_onFirstVideoDataReceivedEx(nertc::NERtcVideoStreamType type, nertc::uid_t uid)
+{
+    auto it = _callbacks.find("onFirstVideoDataReceivedEx");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::Number::New(env, type);
+        auto param2 = Napi::Number::New(env, uid);
+        const std::vector<napi_value> args = {param1, param2};
+        function_reference->function.Call(args);
+    }
+}
+
 void NertcChannelEventHandler::onFirstAudioFrameDecoded(nertc::uid_t uid)
 {
     LOG_F(INFO, "uid:%llu", uid);
@@ -596,6 +641,30 @@ void NertcChannelEventHandler::Node_onFirstVideoFrameDecoded(nertc::uid_t uid, u
     }
 }
 
+void NertcChannelEventHandler::onFirstVideoFrameDecoded(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height)
+{
+    LOG_F(INFO, "uid:%llu width:%d height:%d", uid, width, height);
+    nim_node::node_async_call::async_call([=]() {
+        Node_onFirstVideoFrameDecodedEx(type, uid, width, height);
+    });
+}
+
+void NertcChannelEventHandler::Node_onFirstVideoFrameDecodedEx(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height)
+{
+    auto it = _callbacks.find("onFirstVideoFrameDecodedEx");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param0 = Napi::Number::New(env, type);
+        auto param1 = Napi::Number::New(env, uid);
+        auto param2 = Napi::Number::New(env, width);
+        auto param3 = Napi::Number::New(env, height);
+        const std::vector<napi_value> args = {param0, param1, param2, param3};
+        function_reference->function.Call(args);
+    }
+}
+
 void NertcChannelEventHandler::onLocalAudioVolumeIndication(int volume)
 {
     nim_node::node_async_call::async_call([=]() {
@@ -612,6 +681,27 @@ void NertcChannelEventHandler::Node_onLocalAudioVolumeIndication(int volume)
         auto env = function_reference->function.Env();
         auto param1 = Napi::Number::New(env, volume);
         const std::vector<napi_value> args = {param1};
+        function_reference->function.Call(args);
+    }
+}
+
+void NertcChannelEventHandler::onLocalAudioVolumeIndication(int volume, bool enable_vad)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onLocalAudioVolumeIndicationEx(volume, enable_vad);
+    });
+}
+
+void NertcChannelEventHandler::Node_onLocalAudioVolumeIndicationEx(int volume, bool enable_vad)
+{
+    auto it = _callbacks.find("onLocalAudioVolumeIndicationEx");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::Number::New(env, volume);
+        auto param2 = Napi::Boolean::New(env, enable_vad);
+        const std::vector<napi_value> args = {param1, param2};
         function_reference->function.Call(args);
     }
 }

@@ -1133,6 +1133,177 @@ void NertcNodeEventHandler::Node_onLastmileProbeResult(const nertc::NERtcLastmil
     }
 }
 
+void NertcNodeEventHandler::onUserSubStreamAudioStart(nertc::uid_t uid)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUserSubStreamAudioStart(uid);
+    });
+}
+
+void NertcNodeEventHandler::Node_onUserSubStreamAudioStart(nertc::uid_t uid)
+{
+    auto it = _callbacks.find("onUserSubStreamAudioStart");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::Number::New(env, uid);
+        const std::vector<napi_value> args = {param1};
+        function_reference->function.Call(args);
+    }
+}
+
+void NertcNodeEventHandler::onUserSubStreamAudioStop(nertc::uid_t uid)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUserSubStreamAudioStop(uid);
+    });
+}
+
+void NertcNodeEventHandler::Node_onUserSubStreamAudioStop(nertc::uid_t uid)
+{
+    auto it = _callbacks.find("onUserSubStreamAudioStop");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::Number::New(env, uid);
+        const std::vector<napi_value> args = {param1};
+        function_reference->function.Call(args);
+    }
+}
+
+void NertcNodeEventHandler::onUserSubStreamAudioMute(nertc::uid_t uid, bool mute)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUserSubStreamAudioMute(uid, mute);
+    });
+}
+
+void NertcNodeEventHandler::Node_onUserSubStreamAudioMute(nertc::uid_t uid, bool mute)
+{
+    auto it = _callbacks.find("onUserSubStreamAudioMute");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::Number::New(env, uid);
+        auto param2 = Napi::Boolean::New(env, mute);
+        const std::vector<napi_value> args = {param1, param2};
+        function_reference->function.Call(args);
+    }
+}
+
+void NertcNodeEventHandler::onUserVideoMute(nertc::NERtcVideoStreamType videoStreamType, nertc::uid_t uid, bool mute)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUserVideoMute(videoStreamType, uid, mute);
+    });
+}
+
+void NertcNodeEventHandler::Node_onUserVideoMute(nertc::NERtcVideoStreamType videoStreamType, nertc::uid_t uid, bool mute)
+{
+    auto it = _callbacks.find("onUserVideoMuteEx");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        int type = videoStreamType;
+        auto param0 = Napi::Boolean::New(env, type);
+        auto param1 = Napi::Number::New(env, uid);
+        auto param2 = Napi::Boolean::New(env, mute);
+        const std::vector<napi_value> args = {param0, param1, param2};
+        function_reference->function.Call(args);
+    }
+}
+
+void NertcNodeEventHandler::onMediaRightChange(bool is_audio_banned, bool is_video_banned)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onMediaRightChange(is_audio_banned, is_video_banned);
+    });
+}
+
+void NertcNodeEventHandler::Node_onMediaRightChange(bool is_audio_banned, bool is_video_banned)
+{
+    auto it = _callbacks.find("onMediaRightChange");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param0 = Napi::Boolean::New(env, is_audio_banned);
+        auto param1 = Napi::Boolean::New(env, is_video_banned);
+        const std::vector<napi_value> args = {param0, param1};
+        function_reference->function.Call(args);
+    }
+}
+
+void NertcNodeEventHandler::onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onCheckNECastAudioDriverResult(result);
+    });
+}
+
+void NertcNodeEventHandler::Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result)
+{
+    auto it = _callbacks.find("onCheckNECastAudioDriverResult");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        int result_ = result;
+        auto param0 = Napi::Number::New(env, result_);
+        const std::vector<napi_value> args = {param0};
+        function_reference->function.Call(args);
+    }
+}
+
+void NertcNodeEventHandler::onVirtualBackgroundSourceEnabled(bool enabled, nertc::NERtcVirtualBackgroundSourceStateReason reason)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onVirtualBackgroundSourceEnabled(enabled, reason);
+    });
+}
+
+void NertcNodeEventHandler::Node_onVirtualBackgroundSourceEnabled(bool enabled, nertc::NERtcVirtualBackgroundSourceStateReason reason)
+{
+    auto it = _callbacks.find("onVirtualBackgroundSourceEnabled");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param0 = Napi::Boolean::New(env, enabled);
+        int reason_ = reason;
+        auto param1 = Napi::Number::New(env, reason_);
+        const std::vector<napi_value> args = {param0, param1};
+        function_reference->function.Call(args);
+    }
+}
+
+void NertcNodeEventHandler::onLocalVideoWatermarkState(nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onLocalVideoWatermarkState(videoStreamType, state);
+    });
+}
+
+void NertcNodeEventHandler::Node_onLocalVideoWatermarkState(nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state)
+{
+    auto it = _callbacks.find("onLocalVideoWatermarkState");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        int videoStreamType_ = videoStreamType;
+        auto param0 = Napi::Number::New(env, videoStreamType_);
+        int state_ = state;
+        auto param1 = Napi::Number::New(env, state_);
+        const std::vector<napi_value> args = {param0, param1};
+        function_reference->function.Call(args);
+    }
+}
+
 void NertcNodeEventHandler::onPullExternalAudioFrame(Napi::FunctionReference&& function, const std::shared_ptr<unsigned char>& data, uint32_t length)
 {
     // auto callback = new EventCallback();
