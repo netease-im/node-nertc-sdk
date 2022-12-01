@@ -906,7 +906,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * <pre>
      * 该方法调节混音里伴奏的发送音量大小。请在频道内调用该方法。
      * </pre>
-     * @param {number} volume 伴奏音量范围为 0~100。默认 100 为原始文件音量。
+     * @param {number} volume 伴奏音量范围为 0~200。默认 100 为原始文件音量。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功；
@@ -935,7 +935,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * <pre>
      * 该方法调节混音里伴奏的播放音量大小。请在频道内调用该方法。
      * </pre>
-     * @param {number} volume 伴奏音量范围为 0~100。默认 100 为原始文件音量。
+     * @param {number} volume 伴奏音量范围为 0~200。默认 100 为原始文件音量。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功；
