@@ -9,6 +9,14 @@ const events_1 = require("events");
 const process_1 = __importDefault(require("process"));
 // const nertc = require('bindings')('nertc-electron-sdk');
 const nertc = require('../../build/Release/nertc-electron-sdk.node');
+var path = require("path")
+const fs = require("fs")
+
+async function appendLog(path_log, body){
+    let log_path = path.join(path_log, `addon_log_0.log`)
+    fs.appendFile(`${log_path}`, new Date().toLocaleString() +" "+" "+JSON.stringify(body)+'\n' , (error)  => { });
+}
+
 /**
  * @class NERtcEngine
  */
@@ -25,6 +33,7 @@ class NERtcEngine extends events_1.EventEmitter {
         this.substreamRenderers = new Map();
         this.renderMode = this._checkWebGL() ? 1 : 2;
         this.customRenderer = renderer_1.CustomRenderer;
+        this.log_path = ``;
     }
     /**
      * 初始化 NERTC SDK 服务。
@@ -66,6 +75,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * </pre>
      */
     initialize(context) {
+        this.log_path = context.log_dir_path;
         return this.nertcEngine.initialize(context);
     }
     /**
@@ -3587,16 +3597,20 @@ class NERtcEngine extends events_1.EventEmitter {
      * @param {*} vdata
      */
     _checkData(header, ydata, udata, vdata) {
+        
         if (header.byteLength != 20) {
             console.error('invalid image header ' + header.byteLength);
+            appendLog(this.log_path, `invalid image header`)
             return false;
         }
         if (ydata.byteLength === 20) {
             console.error('invalid image yplane ' + ydata.byteLength);
+            appendLog(this.log_path, `invalid image yplane`)
             return false;
         }
         if (udata.byteLength === 20) {
             console.error('invalid image uplanedata ' + udata.byteLength);
+            appendLog(this.log_path, `invalid image uplanedata`)
             return false;
         }
         if (ydata.byteLength != udata.byteLength * 4 ||
@@ -3607,6 +3621,7 @@ class NERtcEngine extends events_1.EventEmitter {
                 udata.byteLength +
                 ' ' +
                 vdata.byteLength);
+                appendLog(this.log_path, `invalid image vplanedata`)
             return false;
         }
         return true;
