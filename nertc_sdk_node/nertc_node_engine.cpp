@@ -1722,10 +1722,11 @@ NIM_SDK_NODE_API_DEF(startScreenCaptureByWindowId)
     INIT_ENV
     do
     {
-        int32_t windowid;
+        int64_t windowid;
         nertc::NERtcRectangle region_rect = {};
         nertc::NERtcScreenCaptureParameters param = {};
-        napi_get_value_int32(info[0], windowid);
+        napi_get_value_int64(info[0], windowid);
+        LOG_F(INFO, "startScreenCaptureByWindowId windowid:%d", windowid);
         nertc_rectangle_obj_to_struct(env, info[1].As<Napi::Object>(), region_rect);
         std::set<int64_t> vsWindowId;
         nertc_screen_capture_params_obj_to_struct(env, info[2].As<Napi::Object>(), param, vsWindowId);
@@ -1781,6 +1782,7 @@ NIM_SDK_NODE_API_DEF(startScreenCaptureByDisplayId)
         nertc::NERtcRectangle region_rect = {};
         nertc::NERtcScreenCaptureParameters param = {};
         napi_get_value_int64(info[0], display);
+        LOG_F(INFO, "startScreenCaptureByDisplayId display:%d", display);
         nertc_rectangle_obj_to_struct(env, info[1].As<Napi::Object>(), region_rect);
         std::set<int64_t> vsWindowId;
         nertc_screen_capture_params_obj_to_struct(env, info[2].As<Napi::Object>(), param, vsWindowId);
