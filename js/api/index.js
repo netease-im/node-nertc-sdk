@@ -21,7 +21,6 @@ class NERtcEngine extends events_1.EventEmitter {
     constructor() {
         super();
         this.nertcEngine = new nertc.NertcNodeEngine();
-        this.initEventHandler();
         this.renderers = new Map();
         this.substreamRenderers = new Map();
         this.renderMode = this._checkWebGL() ? 1 : 2;
@@ -67,7 +66,9 @@ class NERtcEngine extends events_1.EventEmitter {
      * </pre>
      */
     initialize(context) {
-        return this.nertcEngine.initialize(context);
+        let ret = this.nertcEngine.initialize(context);
+        this.initEventHandler();
+        return ret;
     }
     /**
      * 释放资源。
