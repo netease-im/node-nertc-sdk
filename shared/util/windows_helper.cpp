@@ -1,4 +1,4 @@
-#include "windows_helper.h"
+﻿#include "windows_helper.h"
 #include <Psapi.h>
 #include <TlHelp32.h>
 #include <WinUser.h>
@@ -150,6 +150,100 @@ int WindowsHelpers::getNTDLLVersion()
 
 BOOL CALLBACK WindowsEnumerationHandler(HWND hwnd, LPARAM param)
 {
+#if 1
+    WindowsHelpers::CaptureTargetInfoList* list = reinterpret_cast<WindowsHelpers::CaptureTargetInfoList*>(param);
+
+    // Skip windows that are invisible, /*minimized,*/ have no title, or are owned,
+    // unless they have the app window style set.
+    HWND owner = GetWindow(hwnd, GW_OWNER);
+    LONG exstyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+
+    auto visible = IsWindowVisible(hwnd);
+
+    // Skip empty size window.
+    RECT rc;
+    GetWindowRect(hwnd, &rc);
+    if (::IsRectEmpty(&rc)) {
+      return TRUE;
+    }
+
+    // Netease Meeting is layered window
+    auto layered = (exstyle & WS_EX_LAYERED);
+
+    // WS_EX_APPWINDOW: Forces a top-level window onto the taskbar when the window is visible.
+    auto ex_appwindow = owner && !(exstyle & WS_EX_APPWINDOW);
+
+    // window with WS_EX_NOREDIRECTIONBITMAP and without WS_EX_WINDOWEDGE is not real UWP window. maybe a host
+    // window, i don't know.
+    // https://docs.microsoft.com/en-us/archive/msdn-magazine/2014/june/windows-with-c-high-performance-window-layering-using-the-windows-composition-engine
+    auto is_DirectComposition = (exstyle & WS_EX_NOREDIRECTIONBITMAP && !(exstyle & WS_EX_WINDOWEDGE));
+
+    if (!visible || is_DirectComposition) {
+        return TRUE;
+    }
+
+    int len = GetWindowTextLength(hwnd);
+    if (len == 0) {
+        return TRUE;
+    }
+
+    // Skip the Program Manager window and the Start button.
+    const size_t kClassLength = 256;
+    WCHAR class_name[kClassLength];
+    int class_name_length = GetClassNameW(hwnd, class_name, kClassLength);
+
+    // Skip Program Manager window and the Start button. This is the same logic
+    // that's used in Win32WindowPicker in libjingle. Consider filtering other
+    // windows as well (e.g. toolbars).
+    if (wcscmp(class_name, L"Progman") == 0 || wcscmp(class_name, L"Button") == 0) 
+      return TRUE;
+
+    DWORD dwPID; //保存进程标识符
+    GetWindowThreadProcessId(hwnd,
+                             &dwPID);                                //接受一个窗口句柄。dwPID保存窗口的创建者的进程标识符，GetWindowThreadProcessId返回值是该创建者的线程标识符
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPID); //打开一个已存在的进程对象,并返回进程的句柄，这就是我们要的进程句柄了
+    // YXLOG(Info) << "hProcess: " << hProcess << YXLOGEnd;
+    WCHAR exePath[256] = {0};
+    if (NULL != hProcess)
+    {
+        //获取程序的path，并保存到exePath
+        DWORD dwPathNameSize = sizeof(exePath);
+        if (TRUE != QueryFullProcessImageNameW(hProcess, 0, exePath, &dwPathNameSize))
+        {
+            CloseHandle(hProcess);
+            return TRUE;
+        }
+
+        CloseHandle(hProcess);
+        std::wstring strTemp = exePath;
+        // 过滤当前的exe
+        if (0 == _wcsicmp(strTemp.c_str(), WindowsHelpers::getCurrentExe().c_str()))
+        {
+            return TRUE;
+        }
+    }
+
+    WindowsHelpers::CaptureTargetInfo window;
+    window.type = 2;
+    window.id = hwnd;
+
+    const size_t kTitleLength = 500;
+    WCHAR window_title[kTitleLength];
+    // Truncate the title if it's longer than kTitleLength.
+    GetWindowTextW(hwnd, window_title, kTitleLength);
+    window.title = window_title;
+
+    // Skip windows when we failed to convert the title or it is empty.
+    if (window.title.empty()) return TRUE;
+
+    list->push_back(window);
+
+    return TRUE;
+
+#endif
+
+#if 0
+
     WindowsHelpers::CaptureTargetInfoList *list = reinterpret_cast<WindowsHelpers::CaptureTargetInfoList *>(param);
     if (nullptr == list)
     {
@@ -162,6 +256,8 @@ BOOL CALLBACK WindowsEnumerationHandler(HWND hwnd, LPARAM param)
 
     const size_t kClassLength = 256;
     WCHAR class_name[kClassLength] = {0};
+    // LONG exstyle = ::GetWindowLong(hwnd, GWL_EXSTYLE);
+    // auto is_DirectComposition = (exstyle & WS_EX_NOREDIRECTIONBITMAP && !(exstyle & WS_EX_WINDOWEDGE));
     if (::IsWindow(hwnd) && ::IsWindowVisible(hwnd) && (::GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_TOOLWINDOW) != WS_EX_TOOLWINDOW)
     {
         int class_name_length = GetClassNameW(hwnd, class_name, kClassLength);
@@ -242,6 +338,7 @@ BOOL CALLBACK WindowsEnumerationHandler(HWND hwnd, LPARAM param)
     list->push_back(window);
 
     return TRUE;
+#endif
 }
 
 std::wstring WindowsHelpers::getCurrentExe()
