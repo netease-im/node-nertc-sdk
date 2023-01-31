@@ -2482,7 +2482,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, startSystemAudioLoopbackCapture)
     {
         CHECK_NATIVE_THIS(instance);
 #ifdef WIN32
-        ret = instance->rtc_engine_->startSystemAudioLoopbackCapture();
+        // ret = instance->rtc_engine_->startSystemAudioLoopbackCapture();
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2496,7 +2496,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, stopSystemAudioLoopbackCapture)
     {
         CHECK_NATIVE_THIS(instance);
 #ifdef WIN32
-        ret = instance->rtc_engine_->stopSystemAudioLoopbackCapture();
+        // ret = instance->rtc_engine_->stopSystemAudioLoopbackCapture();
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
@@ -2516,7 +2516,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, setSystemAudioLoopbackCaptureVolume)
             break;
         }
 #ifdef WIN32
-        ret = instance->rtc_engine_->setSystemAudioLoopbackCaptureVolume(vol);
+        // ret = instance->rtc_engine_->setSystemAudioLoopbackCaptureVolume(vol);
 #endif
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));

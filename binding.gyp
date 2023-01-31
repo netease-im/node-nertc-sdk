@@ -54,6 +54,7 @@
         './shared/util/Logger.h',
         './shared/util/Logger.cpp'
       ],
+      'win_delay_load_hook': 'false',
       'conditions': [
         [
           'OS=="win"',
