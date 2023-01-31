@@ -1180,9 +1180,11 @@ void NertcNodeRtcMediaStatsHandler::onLocalAudioStats(const nertc::NERtcAudioSen
     nim_node::node_async_call::async_call([=]() {
         Node_onLocalAudioStats(ss);
     });
+
+    
 }
 
-void NertcNodeRtcMediaStatsHandler::Node_onLocalAudioStats(const nertc::NERtcAudioSendStats & stats)
+void NertcNodeRtcMediaStatsHandler::Node_onLocalAudioStats(nertc::NERtcAudioSendStats stats)
 {
     auto it = _callbacks.find("onLocalAudioStats");
     if (it != _callbacks.end())
@@ -1194,6 +1196,11 @@ void NertcNodeRtcMediaStatsHandler::Node_onLocalAudioStats(const nertc::NERtcAud
         const std::vector<napi_value> args = {param1};
         function_reference->function.Call(args);
     }
+
+    if(stats.audio_layers_list){
+        delete [] stats.audio_layers_list;
+        stats.audio_layers_list = nullptr;
+    }
 }
 
 void NertcNodeRtcMediaStatsHandler::onRemoteAudioStats(const nertc::NERtcAudioRecvStats *stats, unsigned int user_count)
@@ -1202,14 +1209,21 @@ void NertcNodeRtcMediaStatsHandler::onRemoteAudioStats(const nertc::NERtcAudioRe
         return;
     nertc::NERtcAudioRecvStats *ss = new nertc::NERtcAudioRecvStats[user_count];
     for (auto i = 0; i < user_count; i++) {
-        ss[i] = stats[i];
+        // ss[i] = stats[i];
+        ss[i].uid = stats[i].uid;
+        ss[i].audio_layers_count = stats[i].audio_layers_count;
+        ss[i].audio_layers_list = new nertc::NERtcAudioLayerRecvStats[stats[i].audio_layers_count];
+        for(int j = 0; j < stats[i].audio_layers_count; j++)
+        {
+            ss[i].audio_layers_list[j] = stats[i].audio_layers_list[j];
+        }
     }
     nim_node::node_async_call::async_call([=]() {
         Node_onRemoteAudioStats(ss, user_count);
     });
 }
 
-void NertcNodeRtcMediaStatsHandler::Node_onRemoteAudioStats(const nertc::NERtcAudioRecvStats *stats, unsigned int user_count)
+void NertcNodeRtcMediaStatsHandler::Node_onRemoteAudioStats(nertc::NERtcAudioRecvStats *stats, unsigned int user_count)
 {
     if (user_count <= 0)
         return;
@@ -1232,6 +1246,13 @@ void NertcNodeRtcMediaStatsHandler::Node_onRemoteAudioStats(const nertc::NERtcAu
     }
     if (stats)
     {
+        for(auto i = 0; i < user_count; i++){
+            if(stats[i].audio_layers_list){
+                delete [] stats[i].audio_layers_list;
+                stats[i].audio_layers_list = nullptr;
+            }
+
+        }
         delete[] stats;
         stats = nullptr;
     }
@@ -1251,7 +1272,7 @@ void NertcNodeRtcMediaStatsHandler::onLocalVideoStats(const nertc::NERtcVideoSen
     });
 }
 
-void NertcNodeRtcMediaStatsHandler::Node_onLocalVideoStats(const nertc::NERtcVideoSendStats& ss)
+void NertcNodeRtcMediaStatsHandler::Node_onLocalVideoStats(nertc::NERtcVideoSendStats ss)
 {
     auto it = _callbacks.find("onLocalVideoStats");
     if (it != _callbacks.end())
@@ -1266,6 +1287,7 @@ void NertcNodeRtcMediaStatsHandler::Node_onLocalVideoStats(const nertc::NERtcVid
     if (ss.video_layers_list)
     {
         delete[] ss.video_layers_list;
+        ss.video_layers_list = nullptr;
     }
 }
 
@@ -1286,7 +1308,7 @@ void NertcNodeRtcMediaStatsHandler::onRemoteVideoStats(const nertc::NERtcVideoRe
     });
 }
 
-void NertcNodeRtcMediaStatsHandler::Node_onRemoteVideoStats(const nertc::NERtcVideoRecvStats *ss, unsigned int user_count)
+void NertcNodeRtcMediaStatsHandler::Node_onRemoteVideoStats(nertc::NERtcVideoRecvStats *ss, unsigned int user_count)
 {
     auto it = _callbacks.find("onRemoteVideoStats");
     if (it != _callbacks.end())
@@ -1312,11 +1334,11 @@ void NertcNodeRtcMediaStatsHandler::Node_onRemoteVideoStats(const nertc::NERtcVi
             if (ss[i].video_layers_list)
             {
                 delete[] ss[i].video_layers_list;
-                // ss[i].video_layers_list = nullptr;
+                ss[i].video_layers_list = nullptr;
             }
         }
         delete[] ss;
-        // ss = nullptr;
+        ss = nullptr;
     }
 }
 
@@ -1332,7 +1354,7 @@ void NertcNodeRtcMediaStatsHandler::onNetworkQuality(const nertc::NERtcNetworkQu
     
 }
 
-void NertcNodeRtcMediaStatsHandler::Node_onNetworkQuality(const nertc::NERtcNetworkQualityInfo *ss, unsigned int user_count)
+void NertcNodeRtcMediaStatsHandler::Node_onNetworkQuality(nertc::NERtcNetworkQualityInfo *ss, unsigned int user_count)
 {
     auto it = _callbacks.find("onNetworkQuality");
     if (it != _callbacks.end())
