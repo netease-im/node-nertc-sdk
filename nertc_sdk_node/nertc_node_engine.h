@@ -70,6 +70,10 @@ public:
     NIM_SDK_NODE_API(enableLocalAudioStream);
     NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);
 
+    //4.2.5
+    NIM_SDK_NODE_API(enableLoopbackRecording);
+    NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);
+
     // ex
     NIM_SDK_NODE_API(getConnectionState);
     NIM_SDK_NODE_API(muteLocalAudioStream);

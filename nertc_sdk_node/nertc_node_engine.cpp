@@ -123,6 +123,10 @@ void NertcNodeEngine::InitModule(Local<Object> &exports,
     SET_PROTOTYPE(enableLocalAudioStream);
     SET_PROTOTYPE(adjustUserPlaybackSignalVolume);
 
+    //4.2.5
+	SET_PROTOTYPE(enableLoopbackRecording);
+	SET_PROTOTYPE(adjustLoopbackRecordingSignalVolume);
+
     SET_PROTOTYPE(getConnectionState)
     SET_PROTOTYPE(muteLocalAudioStream)
     SET_PROTOTYPE(setAudioProfile)
@@ -2333,6 +2337,40 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, adjustUserPlaybackSignalVolume)
         if (status != napi_ok)
             break;
         ret = instance->rtc_engine_->adjustUserPlaybackSignalVolume(uid, volume/*, static_cast<nertc::NERtcAudioStreamType>(stream_type)*/);
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableLoopbackRecording)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 2)
+    int ret = -1;
+    do
+    {
+        auto status = napi_ok;
+        bool enable;
+        GET_ARGS_VALUE(isolate, 0, bool, enable)
+        UTF8String deviveName;
+        GET_ARGS_VALUE(isolate, 1, utf8string, deviveName)
+        if (status != napi_ok || deviveName.length() == 0)
+        {
+            break;
+        }
+        ret = instance->rtc_engine_->enableLoopbackRecording(enable, deviveName.get());
+    } while (false);
+    args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
+}
+
+NIM_SDK_NODE_API_DEF(NertcNodeEngine, adjustLoopbackRecordingSignalVolume)
+{
+    CHECK_API_FUNC(NertcNodeEngine, 1)
+    int ret = -1;
+    do
+    {
+        auto status = napi_ok;
+        uint32_t volume;
+        GET_ARGS_VALUE(isolate, 0, uint32, volume)
+        ret = instance->rtc_engine_->adjustLoopbackRecordingSignalVolume(volume);
     } while (false);
     args.GetReturnValue().Set(Integer::New(args.GetIsolate(), ret));
 }
