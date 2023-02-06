@@ -442,6 +442,52 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.subscribeRemoteAudioStream(uid, enabled);
     }
 
+    /**
+     * 开启或关闭声卡采集。
+     * @since 4.1.110
+     * <pre>
+     * - 启用声卡采集功能后，声卡播放的声音会被合到本地音频流中，从而可以发送到远端。
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 macOS 和 Windows 平台。
+     * - macOS 系统默认声卡不支持采集功能，如需开启此功能需要 App 自己启用一个虚拟声卡，并将该虚拟声卡的名字作为 deviceName 传入 SDK。
+     * - 该方法在加入频道前后都能调用。
+     * </pre>
+     * @param  {boolean} enable 是否开启声卡采集功能。
+     * <pre>
+     * - true: 开启声卡采集。
+     * - false: 关闭声卡采集（默认）。
+     * </pre>
+     * @param  {String} deviceName 声卡的设备名。默认设为 NULL，即使用当前声卡采集。
+     * <pre>
+     * - 如果用户使用虚拟声卡，如 “Soundflower”，可以将虚拟声卡名称 “Soundflower” 作为参数，SDK 会找到对应的虚拟声卡设备，并开始采集。
+     * <pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功。
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    enableLoopbackRecording(enabled: Boolean, deviceName: String): number {
+        return this.nertcEngine.enableLoopbackRecording(enabled, deviceName);
+    }
+
+    /**
+     * 调节声卡采集信号音量。
+     * @since 4.1.110
+     * <pre>
+     * - 调用 {@link nertc::IRtcEngineEx::enableLoopbackRecording} "enableLoopbackRecording" 开启声卡采集后，你可以调用该方法调节声卡采集的信号音量。
+     * </pre>
+     * @param  {number} volume 声卡采集信号音量。取值范围为 [0,100]。默认值为 100，表示原始音量 。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    adjustLoopbackRecordingSignalVolume(volume: number): number {
+        return this.nertcEngine.adjustLoopbackRecordingSignalVolume(volume);
+    }
+
     /** 
      * 设置视频配置。
      * <pre>
