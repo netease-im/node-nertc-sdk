@@ -2354,6 +2354,7 @@ NIM_SDK_NODE_API_DEF(NertcNodeEngine, enableLoopbackRecording)
         GET_ARGS_VALUE(isolate, 1, utf8string, deviveName)
         if (status != napi_ok || deviveName.length() == 0)
         {
+            ret = instance->rtc_engine_->enableLoopbackRecording(enable, nullptr);
             break;
         }
         ret = instance->rtc_engine_->enableLoopbackRecording(enable, deviveName.get());
