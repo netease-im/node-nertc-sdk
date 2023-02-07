@@ -372,7 +372,7 @@ class NERtcEngine extends events_1.EventEmitter {
     subscribeRemoteAudioStream(uid, enabled) {
         return this.nertcEngine.subscribeRemoteAudioStream(uid, enabled);
     }
-     /**
+    /**
      * 开启或关闭声卡采集。
      * @since 4.1.110
      * <pre>
@@ -397,23 +397,8 @@ class NERtcEngine extends events_1.EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-     enableLoopbackRecording(enable, deviceName) {
-        // if (deviceName === '' && process.platform === 'darwin') {
-        //     const playoutDevices = this.nertcEngine.enumeratePlayoutDevices()
-        //     let foundDevice = false
-        //     for (let i = 0; i < playoutDevices.length; i++) {
-        //         if (playoutDevices[i].device_name === 'NeCastAudio A') {
-        //             foundDevice = true
-        //             break
-        //         }
-        //     }
-        //     if (foundDevice) {
-        //         deviceName = 'NeCastAudio'
-        //     } else {
-        //         return -1
-        //     }
-        // }
-        return this.nertcEngine.enableLoopbackRecording(enable, deviceName);
+    enableLoopbackRecording(enabled, deviceName) {
+        return this.nertcEngine.enableLoopbackRecording(enabled, deviceName);
     }
     /**
      * 调节声卡采集信号音量。

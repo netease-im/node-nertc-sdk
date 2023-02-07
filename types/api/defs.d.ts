@@ -417,6 +417,8 @@ export interface NERtcEngineAPI {
     muteLocalAudioStream(enabled: Boolean): number;
     setAudioProfile(profile: NERtcAudioProfileType, scenario: NERtcAudioScenarioType): number;
     subscribeRemoteAudioStream(uid: number, enabled: Boolean): number;
+    enableLoopbackRecording(enabled: Boolean, deviceName: String): number;
+    adjustLoopbackRecordingSignalVolume(volume: number): number;
     setVideoConfig(config: NERtcVideoConfig): number;
     enableDualStreamMode(enabled: Boolean): number;
     startVideoPreview(): number;
