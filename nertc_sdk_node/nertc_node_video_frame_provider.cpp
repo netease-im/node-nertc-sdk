@@ -4,6 +4,7 @@
 #include <chrono>
 #include <string>
 #include "libyuv.h"
+#include "../shared/log/logging/logging.h"
 
 using namespace libyuv;
 namespace nertc_node
@@ -66,6 +67,7 @@ bool NodeVideoFrameTransporter::deinitialize()
         m_thread->join();
     init = false;
     m_thread.reset();
+    LOG_F(INFO, "deinitialize");
     m_pFrameDataCallback = nullptr;
     // env = nullptr;
     // js_callback.Reset();
@@ -295,50 +297,57 @@ void NodeVideoFrameTransporter::FlushVideo()
 			if (!b_stopFlush) {
 
 				nim_node::node_async_call::async_call([this]() {
+                    if(nullptr == m_pFrameDataCallback){
+                        return;
+                    }
 
-					auto env = m_pFrameDataCallback->function.Env();
-					Napi::Array infos = Napi::Array::New(env);
-					uint32_t i = 0;
-
-					std::lock_guard<std::mutex> lock(m_lock);
-					for (auto& it : m_remoteVideoFrames) {
-						if (AddObj(env, infos, i, it.second))
-						{
-							++i;
-						} else {
-							++it.second.m_count;
-						}
-					}
-					if (m_localVideoFrame.get()) {
-						if (AddObj(env, infos, i, *(m_localVideoFrame.get())))
-						{
-							++i;
-						} else {
-							++m_localVideoFrame->m_count;
-						}
-					}
-					for (auto& it : m_substreamVideoFrame) {
-						if (AddObj(env, infos, i, it.second))
-						{
-							++i;
-						} else {
-							++it.second.m_count;
-						}
-					}
-					if (m_localSubStreamVideoFrame.get()) {
-						if (AddObj(env, infos, i, *m_localSubStreamVideoFrame.get()))
-						{
-							++i;
-						} else {
-							++m_localSubStreamVideoFrame->m_count;
-						}
-					}
-
-                    if (i > 0 && (!b_stopFlush)) {
-					    const std::vector<napi_value> args = { infos };
-					    m_pFrameDataCallback->function.Call(args);
-					}
-
+                    try{
+                        auto env = m_pFrameDataCallback->function.Env();
+					    Napi::Array infos = Napi::Array::New(env);
+					    uint32_t i = 0;
+    
+					    std::lock_guard<std::mutex> lock(m_lock);
+					    for (auto& it : m_remoteVideoFrames) {
+					    	if (AddObj(env, infos, i, it.second))
+					    	{
+					    		++i;
+					    	} else {
+					    		++it.second.m_count;
+					    	}
+					    }
+					    if (m_localVideoFrame.get()) {
+					    	if (AddObj(env, infos, i, *(m_localVideoFrame.get())))
+					    	{
+					    		++i;
+					    	} else {
+					    		++m_localVideoFrame->m_count;
+					    	}
+					    }
+					    for (auto& it : m_substreamVideoFrame) {
+					    	if (AddObj(env, infos, i, it.second))
+					    	{
+					    		++i;
+					    	} else {
+					    		++it.second.m_count;
+					    	}
+					    }
+					    if (m_localSubStreamVideoFrame.get()) {
+					    	if (AddObj(env, infos, i, *m_localSubStreamVideoFrame.get()))
+					    	{
+					    		++i;
+					    	} else {
+					    		++m_localSubStreamVideoFrame->m_count;
+					    	}
+					    }
+    
+                        if (i > 0 && (!b_stopFlush)) {
+					        const std::vector<napi_value> args = { infos };
+					        m_pFrameDataCallback->function.Call(args);
+					    }
+                    }catch(...){
+                        LOG_F(INFO, "FlushVideo exception");
+                        return;
+                    }
 				});
 			
 			}

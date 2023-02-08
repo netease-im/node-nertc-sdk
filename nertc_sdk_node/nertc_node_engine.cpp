@@ -272,7 +272,10 @@ NIM_SDK_NODE_API_DEF(release)
         LOG_F(INFO, "-------------sdk release-------------");
         ret = rtc_engine_->stopVideoPreview();
 		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
-		pTransporter->stopFlushVideo();
+        if (pTransporter){
+            pTransporter->deinitialize();
+		    pTransporter->stopFlushVideo();
+        }
         rtc_engine_->release(true);
         if (rtc_engine_)
         {
