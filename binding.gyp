@@ -164,8 +164,8 @@
               'files': [
                 './nertc_sdk/NEFundation_Mac.framework',
                 './nertc_sdk/nertc_sdk_Mac.framework',
-                #'./nertc_sdk/NERtcBeauty.framework',
-                #'./nertc_sdk/NERtcFaceDetect.framework',
+                './nertc_sdk/NERtcBeauty.framework',
+                './nertc_sdk/NERtcFaceDetect.framework',
                 './nertc_sdk/NERtcnn.framework',
                 './nertc_sdk/NERtcPersonSegment.framework'
               ]
@@ -183,8 +183,8 @@
                 'Foundation.framework',
                 'nertc_sdk_Mac.framework',
                 'NEFundation_Mac.framework',
-                #'NERtcBeauty.framework',
-                #'NERtcFaceDetect.framework',
+                'NERtcBeauty.framework',
+                'NERtcFaceDetect.framework',
                 'NERtcnn.framework',
                 'NERtcPersonSegment.framework',
                 #'libNERTCPrivilegedTask.a',
@@ -213,6 +213,7 @@
               'DEBUG_INFORMATION_FORMAT': 'dwarf-with-dsym',
               'OTHER_CFLAGS': [
               ],
+              'GCC_ENABLE_CPP_EXCEPTIONS': 'YES'
             }
           }
         ]
