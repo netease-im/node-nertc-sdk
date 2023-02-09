@@ -32,7 +32,7 @@
     "tar": "^6.1.11"
   },
   "scripts": {
-    "gyp": "node-gyp clean | node-gyp configure --python=/usr/bin/python3 --arch x86_x64 --target=16.0.2 --dist-url=https://electronjs.org/headers | ndoe-gyp  build ",
+    "gyp": "node-gyp clean && node-gyp configure --python=/usr/bin/python3 --arch x86_x64 --target=16.0.0 --dist-url=https://electronjs.org/headers && node-gyp  build",
     "cmake": "cmake-js compile -r electron -v 16.0.2 -a x86_64 -p 5 ",
     "build:dts": "rimraf ./types && tsc -p config_dts.json",
     "prebuild:ts": "npm run build:dts",

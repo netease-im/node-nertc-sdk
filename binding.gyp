@@ -78,16 +78,14 @@
               ]
              }
             ],
-            #  'library_dirs': [
-            #    '/home/liyongqiang01/electron/electron_sdk/nertc_sdk'
-            # ],
              'link_settings': {
               'libraries': [
-                '/home/liyongqiang01/electron/electron_sdk/nertc_sdk/libnertc_sdk.so',
-                 '/home/liyongqiang01/electron/electron_sdk/nertc_sdk/libprotoopp.so'
+                "<(PRODUCT_DIR)/../.././nertc_sdk/libnertc_sdk.so", 
+                "<(PRODUCT_DIR)/../.././nertc_sdk/libprotoopp.so",
+                "-Wl,-rpath,'$$ORIGIN'"
               ]
             },
-             'sources': [
+            'sources': [
                './shared/libyuv/source/compare_gcc.cc',
               './shared/libyuv/source/rotate_gcc.cc',
               './shared/libyuv/source/row_gcc.cc',
