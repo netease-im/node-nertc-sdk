@@ -269,6 +269,8 @@ NIM_SDK_NODE_API_DEF(release)
     INIT_ENV
     do
     {
+        _event_handler->removeAll();
+        _stats_observer->removeAll();
         LOG_F(INFO, "-------------sdk release-------------");
         ret = rtc_engine_->stopVideoPreview();
 		NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
@@ -284,8 +286,6 @@ NIM_SDK_NODE_API_DEF(release)
             _vdm = nullptr;
             rtc_engine_ = nullptr;
         }
-        _event_handler->removeAll();
-
         //todo
         // NertcNodeRtcMediaStatsHandler::GetInstance()->RemoveAll();
     }while (false);
