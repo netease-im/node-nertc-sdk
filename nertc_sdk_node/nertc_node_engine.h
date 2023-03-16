@@ -48,6 +48,7 @@ public:
     NIM_SDK_NODE_API(setupVideoCanvas);
     NIM_SDK_NODE_API(onVideoFrame);
     NIM_SDK_NODE_API(onEvent);
+    NIM_SDK_NODE_API(onAudioFrameEvent);
 
     // 3.9
     NIM_SDK_NODE_API(setClientRole);
@@ -193,6 +194,7 @@ private:
     nertc::IVideoDeviceManager *_vdm = nullptr;
     std::shared_ptr<NertcNodeEventHandler> _event_handler;
     std::shared_ptr<NertcNodeRtcMediaStatsHandler> _stats_observer;
+    std::shared_ptr<NertcNodeAudioFrameObserverHandler> _audio_observer;
 
 #ifdef WIN32
     nertc_electron_util::WindowsHelpers *_windows_helper = nullptr;

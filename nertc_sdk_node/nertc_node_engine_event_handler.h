@@ -253,7 +253,7 @@ public:
         uint32_t count,
         uint32_t offset[kNERtcMaxPlaneCount],
         uint32_t stride[kNERtcMaxPlaneCount],
-        nertc::NERtcVideoRotation rotation) ;
+        nertc::NERtcVideoRotation rotation) override;
 
     /** 本地用户的音乐文件播放状态改变回调。
 
@@ -521,6 +521,15 @@ private:
     void Node_onLastmileQuality(nertc::NERtcNetworkQualityType quality);
 
     void Node_onLastmileProbeResult(const nertc::NERtcLastmileProbeResult& result);
+
+    virtual void Node_onCaptureVideoFrame(void *data,
+        nertc::NERtcVideoType type, 
+        uint32_t width, 
+        uint32_t height,
+        uint32_t count,
+        uint32_t offset[kNERtcMaxPlaneCount],
+        uint32_t stride[kNERtcMaxPlaneCount],
+        nertc::NERtcVideoRotation rotation) ;
 };
 
 class NertcNodeRtcMediaStatsHandler : public EventHandler, public nertc::IRtcMediaStatsObserver
@@ -600,8 +609,38 @@ private:
 }; 
 
 
+class NertcNodeAudioFrameObserverHandler : public EventHandler, public nertc::INERtcAudioFrameObserver
+{
+private:
+    /* data */
+public:
+    NertcNodeAudioFrameObserverHandler(){};
+    ~NertcNodeAudioFrameObserverHandler(){};
+
+public:
+    virtual void onAudioFrameDidRecord(nertc::NERtcAudioFrame* frame) override;
+    
+    virtual void onSubStreamAudioFrameDidRecord(nertc::NERtcAudioFrame* frame) override;
+
+    virtual void onAudioFrameWillPlayback(nertc::NERtcAudioFrame* frame) override;
+
+    virtual void onMixedAudioFrame(nertc::NERtcAudioFrame* frame) override;
+
+    virtual void onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame) override;
+
+    virtual void onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame, nertc::channel_id_t cid) override;
+
+    virtual void onPlaybackSubStreamAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame,
+                                                           nertc::channel_id_t cid) override;
 
 
+private:
+    void Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame* frame);
+
+    void Node_onAudioFrameWillPlayback(nertc::NERtcAudioFrame* frame);
+
+
+};
 
 }
 #endif //NERTC_NODE_ENGINE_EVENT_HANDLER_H

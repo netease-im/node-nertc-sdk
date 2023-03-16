@@ -74,7 +74,6 @@ class NERtcEngine extends EventEmitter {
     constructor() {
         super();
         this.nertcEngine = new nertc.NertcNodeEngine();
-        this.initEventHandler();
         this.renderers = new Map();
         this.substreamRenderers = new Map();
         this.renderMode = this._checkWebGL() ? 1 : 2;
@@ -112,7 +111,9 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      */
     initialize(context: NERtcEngineContext): number {
-        return this.nertcEngine.initialize(context);
+        let ret:number = this.nertcEngine.initialize(context);
+        this.initEventHandler();
+        return ret;
     }
 
     /** 

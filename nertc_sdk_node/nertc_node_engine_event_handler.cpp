@@ -817,7 +817,79 @@ void NertcNodeEventHandler::onCaptureVideoFrame(void *data,
                                                 uint32_t stride[kNERtcMaxPlaneCount],
                                                 nertc::NERtcVideoRotation rotation)
 {
-    //TODO(litianyi)
+    if (_callbacks.find("onCaptureVideoFrame") == _callbacks.end())
+    {
+        return;
+    }
+
+    if(nertc::kNERtcVideoTypeI420 == type || nertc::kNERtcVideoTypeNV12 == type || nertc::kNERtcVideoTypeNV21 == type)
+    {
+        int data_len = offset[2] + stride[2] * height/2;
+        void* dst_data = (void*)malloc(data_len);
+        memset(dst_data, 0, data_len + 1) ;
+        if(data && data_len > 0){
+            memcpy(dst_data, data, data_len);
+            uint32_t offset_copy[kNERtcMaxPlaneCount] = {};
+            memcpy(offset_copy, offset, kNERtcMaxPlaneCount * sizeof(uint32_t));
+            uint32_t stride_copy[kNERtcMaxPlaneCount] = {};
+            memcpy(stride_copy, stride, kNERtcMaxPlaneCount * sizeof(uint32_t));
+			nim_node::node_async_call::async_call([=]() {
+				Node_onCaptureVideoFrame(dst_data, type, width, height, count, const_cast<uint32_t*>(offset_copy), const_cast<uint32_t*>(stride_copy), rotation);
+			});
+            
+        }
+    }   
+}
+
+void NertcNodeEventHandler::Node_onCaptureVideoFrame(void *data,
+    nertc::NERtcVideoType type, 
+    uint32_t width, 
+    uint32_t height,
+    uint32_t count,
+    uint32_t offset[kNERtcMaxPlaneCount],
+    uint32_t stride[kNERtcMaxPlaneCount],
+    nertc::NERtcVideoRotation rotation)
+{
+    try{
+        auto it = _callbacks.find("onCaptureVideoFrame");
+        if (it != _callbacks.end())
+        {
+            auto function_reference = it->second;
+            auto env = function_reference->function.Env();
+			int len1 = offset[2];
+			int len2 = stride[2];
+			int len3 = height;
+            int data_len = len1 + len2 * len3 /2;
+			auto param1 = Napi::ArrayBuffer::New(env, data, data_len);
+            auto param2 = Napi::Number::New(env, (int)type);
+            auto param3 = Napi::Number::New(env, width);
+            auto param4 = Napi::Number::New(env, height);
+            auto param5 = Napi::Number::New(env, count);
+			Napi::Array param6 = Napi::Array::New(env);
+			for (uint32_t i = 0; i < kNERtcMaxPlaneCount; ++i)
+			{
+				auto tmp = Napi::Number::New(env, offset[i]);
+				param6.Set(static_cast<napi_value>(Napi::Number::New(env, i)), tmp);
+			}
+			Napi::Array param7 = Napi::Array::New(env);
+			for (uint32_t i = 0; i < kNERtcMaxPlaneCount; ++i)
+			{
+				auto tmp = Napi::Number::New(env, stride[i]);
+				param7.Set(static_cast<napi_value>(Napi::Number::New(env, i)), tmp);
+			}
+			auto param8 = Napi::Number::New(env, (int)rotation);
+            const std::vector<napi_value> args = {param1, param2, param3, param4, param5, param6, param7, param8};
+            function_reference->function.Call(args);
+
+            if(data) {
+                free((void*)data);
+                data = nullptr;
+            }
+        }
+    }catch(...){
+        LOG_F(INFO, "Node_onAudioFrameWillPlayback exception");
+    }
+
 }
 
 void NertcNodeEventHandler::onAudioMixingStateChanged(nertc::NERtcAudioMixingState state, nertc::NERtcAudioMixingErrorCode error_code)
@@ -1685,5 +1757,165 @@ void NertcNodeRtcMediaStatsHandler::Node_onNetworkQuality(nertc::NERtcNetworkQua
     }
     
 }
+
+
+//NertcNodeAudioFrameObserverHandler
+void NertcNodeAudioFrameObserverHandler::onAudioFrameDidRecord(nertc::NERtcAudioFrame* frame)
+{
+    if(frame && frame->data) {
+        nertc::NERtcAudioFrame* copy_frame = new nertc::NERtcAudioFrame();
+        copy_frame->format = frame->format;
+
+        int data_len = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
+        void* dst_data = (void*)malloc(data_len);
+        memset(dst_data, 0, data_len+1) ;
+        if(dst_data > 0){
+            memcpy(dst_data, frame->data, data_len);
+            copy_frame->data = dst_data;
+        }
+        copy_frame->sync_timestamp = frame->sync_timestamp;
+
+        nim_node::node_async_call::async_call([=]() {
+            Node_onAudioFrameDidRecord(copy_frame);
+        });
+    }
+
+
+
+}
+
+void NertcNodeAudioFrameObserverHandler::Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame* frame)
+{
+ try{
+        auto it = _callbacks.find("onAudioFrameDidRecord");
+        if (it != _callbacks.end())
+        {  
+            auto function_reference = it->second;
+            auto env = function_reference->function.Env();
+            Napi::Object obj = Napi::Object::New(env);
+            nertc_audio_frame_to_obj(env, *frame, obj);
+            const std::vector<napi_value> args = {obj};
+            function_reference->function.Call(args);
+
+            if(frame && frame->data) {
+                free((void*)frame->data);
+                frame->data = nullptr;
+                delete frame;
+                frame = nullptr;
+            }
+        }
+    }catch(...){
+        LOG_F(INFO, "Node_onRemoteAudioVolumeIndication exception");
+    }
+
+}
+
+void NertcNodeAudioFrameObserverHandler::onSubStreamAudioFrameDidRecord(nertc::NERtcAudioFrame* frame)
+{
+    try{
+       
+
+
+    }catch(...){
+        LOG_F(INFO, "onSubStreamAudioFrameDidRecord exception");
+    }
+}
+
+void NertcNodeAudioFrameObserverHandler::onAudioFrameWillPlayback(nertc::NERtcAudioFrame* frame)
+{
+    if(frame && frame->data) {
+        nertc::NERtcAudioFrame* copy_frame = new nertc::NERtcAudioFrame();
+        copy_frame->format = frame->format;
+
+        int data_len = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
+        void* dst_data = (void*)malloc(data_len);
+        memset(dst_data, 0, data_len+1) ;
+        if(dst_data > 0){
+            memcpy(dst_data, frame->data, data_len);
+            copy_frame->data = dst_data;
+        }
+        copy_frame->sync_timestamp = frame->sync_timestamp;
+
+        nim_node::node_async_call::async_call([=]() {
+            Node_onAudioFrameWillPlayback(copy_frame);
+        });
+    }
+
+}
+
+void NertcNodeAudioFrameObserverHandler::Node_onAudioFrameWillPlayback(nertc::NERtcAudioFrame* frame)
+{
+    try{
+        auto it = _callbacks.find("onAudioFrameWillPlayback");
+        if (it != _callbacks.end())
+        {  
+            auto function_reference = it->second;
+            auto env = function_reference->function.Env();
+            Napi::Object obj = Napi::Object::New(env);
+            nertc_audio_frame_to_obj(env, *frame, obj);
+            const std::vector<napi_value> args = {obj};
+            function_reference->function.Call(args);
+
+            if(frame && frame->data) {
+                free((void*)frame->data);
+                frame->data = nullptr;
+                delete frame;
+                frame = nullptr;
+            }
+        }
+    }catch(...){
+        LOG_F(INFO, "Node_onAudioFrameWillPlayback exception");
+    }
+
+}
+
+
+void NertcNodeAudioFrameObserverHandler::onMixedAudioFrame(nertc::NERtcAudioFrame* frame)
+{
+    try{
+       
+
+
+    }catch(...){
+        LOG_F(INFO, "onMixedAudioFrame exception");
+    }
+}
+
+void NertcNodeAudioFrameObserverHandler::onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame)
+{
+    try{
+       
+
+
+    }catch(...){
+        LOG_F(INFO, "onPlaybackAudioFrameBeforeMixing exception");
+    }
+}
+
+void NertcNodeAudioFrameObserverHandler::onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame, nertc::channel_id_t cid)
+{
+    try{
+       
+
+
+    }catch(...){
+        LOG_F(INFO, "onPlaybackAudioFrameBeforeMixing2 exception");
+    }
+}
+
+void NertcNodeAudioFrameObserverHandler::onPlaybackSubStreamAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame,
+                                                           nertc::channel_id_t cid)
+{
+    try{
+       
+
+
+    }catch(...){
+        LOG_F(INFO, "onPlaybackSubStreamAudioFrameBeforeMixing exception");
+    }
+}
+
+
+
 
 }

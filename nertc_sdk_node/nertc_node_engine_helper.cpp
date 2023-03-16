@@ -872,6 +872,8 @@ napi_status nertc_audio_volume_info_to_obj(const Napi::Env env, const nertc::NER
     return napi_ok;
 }
 
+
+
 napi_status nertc_lastmile_probe_result_to_obj(const Napi::Env env, const nertc::NERtcLastmileProbeResult& config,  Napi::Object& obj)
 {
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"rtt")), config.rtt);
@@ -889,5 +891,26 @@ napi_status nertc_lastmile_probe_result_to_obj(const Napi::Env env, const nertc:
     return napi_ok;
 }
 
+napi_status nertc_audio_format_to_obj(const Napi::Env env, const nertc::NERtcAudioFormat& config, Napi::Object& obj)
+{
+	obj.Set(static_cast<napi_value>(Napi::String::New(env,"type")), (int)config.type);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"channels")), (int)config.channels);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"sample_rate")), (int)config.sample_rate);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"bytes_per_sample")), (int)config.bytes_per_sample);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"samples_per_channel")), (int)config.samples_per_channel);
+    return napi_ok;
+}
+
+napi_status nertc_audio_frame_to_obj(const Napi::Env env, const nertc::NERtcAudioFrame& config,  Napi::Object& obj)
+{
+    Napi::Object obj_format = Napi::Object::New(env);
+    nertc_audio_format_to_obj(env, config.format, obj_format);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"format")), obj_format);
+    
+    int length = config.format.samples_per_channel * config.format.channels * config.format.bytes_per_sample;
+    Napi::ArrayBuffer dataBuffer = Napi::ArrayBuffer::New(env, config.data, length);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"data")), dataBuffer);
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"sync_timestamp")), config.sync_timestamp);
+}
 
 }
