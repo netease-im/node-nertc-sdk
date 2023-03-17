@@ -827,7 +827,7 @@ void NertcNodeEventHandler::onCaptureVideoFrame(void *data,
         int data_len = offset[2] + stride[2] * height/2;
         void* dst_data = (void*)malloc(data_len);
         memset(dst_data, 0, data_len + 1) ;
-        if(data && data_len > 0){
+        if(data && (data_len > 0)){
             memcpy(dst_data, data, data_len);
             uint32_t offset_copy[kNERtcMaxPlaneCount] = {};
             memcpy(offset_copy, offset, kNERtcMaxPlaneCount * sizeof(uint32_t));
@@ -1765,23 +1765,20 @@ void NertcNodeAudioFrameObserverHandler::onAudioFrameDidRecord(nertc::NERtcAudio
     if(frame && frame->data) {
         nertc::NERtcAudioFrame* copy_frame = new nertc::NERtcAudioFrame();
         copy_frame->format = frame->format;
+        copy_frame->sync_timestamp = frame->sync_timestamp;
 
         int data_len = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
         void* dst_data = (void*)malloc(data_len);
-        memset(dst_data, 0, data_len+1) ;
-        if(dst_data > 0){
+        memset(dst_data, 0, data_len) ;
+        if(nullptr != dst_data){
             memcpy(dst_data, frame->data, data_len);
             copy_frame->data = dst_data;
-        }
-        copy_frame->sync_timestamp = frame->sync_timestamp;
 
-        nim_node::node_async_call::async_call([=]() {
-            Node_onAudioFrameDidRecord(copy_frame);
-        });
+            nim_node::node_async_call::async_call([=]() {
+                Node_onAudioFrameDidRecord(copy_frame);
+            });
+        }      
     }
-
-
-
 }
 
 void NertcNodeAudioFrameObserverHandler::Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame* frame)
@@ -1826,19 +1823,18 @@ void NertcNodeAudioFrameObserverHandler::onAudioFrameWillPlayback(nertc::NERtcAu
     if(frame && frame->data) {
         nertc::NERtcAudioFrame* copy_frame = new nertc::NERtcAudioFrame();
         copy_frame->format = frame->format;
+        copy_frame->sync_timestamp = frame->sync_timestamp;
 
         int data_len = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
         void* dst_data = (void*)malloc(data_len);
-        memset(dst_data, 0, data_len+1) ;
-        if(dst_data > 0){
+        memset(dst_data, 0, data_len) ;
+        if(nullptr != dst_data){
             memcpy(dst_data, frame->data, data_len);
             copy_frame->data = dst_data;
-        }
-        copy_frame->sync_timestamp = frame->sync_timestamp;
-
-        nim_node::node_async_call::async_call([=]() {
-            Node_onAudioFrameWillPlayback(copy_frame);
-        });
+            nim_node::node_async_call::async_call([=]() {
+                Node_onAudioFrameWillPlayback(copy_frame);
+            });
+        }     
     }
 
 }
