@@ -3439,6 +3439,21 @@ class NERtcEngine extends events_1.EventEmitter {
             fire('onLastmileProbeResult', result);
         });
 
+        /**
+         *播放音频数据回调，用于声音处理等操作。
+         * <pre>
+         * 有本地音频数据驱动就会回调。
+         * </pre>
+         * @event NERtcEngine#onCaptureVideoFrame
+         * @param {arrayBuffer} data 采集视频数据。
+         * @param {number} type 视频类型, 默认kNERtcVideoTypeI420。
+         * @param {number} width 视频宽度。
+         * @param {number} height 视频高度。
+         * @param {number} count 视频Plane Count。
+         * @param {array} offset 视频offset。
+         * @param {array} stride 视频stride。
+         * @param {number} rotation 视频旋转角度。
+         */
         this.nertcEngine.onEvent('onCaptureVideoFrame', function (data, type, width, height, count, offset, stride, rotation) {
             fire('onCaptureVideoFrame', data, type, width, height, count, offset, stride, rotation);
         });
