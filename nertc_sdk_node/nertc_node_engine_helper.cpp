@@ -184,11 +184,21 @@ napi_status nertc_screen_capture_params_obj_to_struct(const Napi::Env& env, cons
         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"frame_rate"))).As<Napi::Number>().Int32Value();
         params.frame_rate = out_i;
     }
+    // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"min_framerate"))))
+    // {
+    //     out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"min_framerate"))).As<Napi::Number>().Int32Value();
+    //     params.min_framerate = out_i;
+    // }
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"bitrate"))))
     {
         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"bitrate"))).As<Napi::Number>().Int32Value();
         params.bitrate = out_i;
     }
+    // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"min_bitrate"))))
+    // {
+    //     out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"min_bitrate"))).As<Napi::Number>().Int32Value();
+    //     params.min_bitrate = out_i;
+    // }
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"capture_mouse_cursor"))))
     {
         out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"capture_mouse_cursor"))).As<Napi::Boolean>().Value();
@@ -204,6 +214,11 @@ napi_status nertc_screen_capture_params_obj_to_struct(const Napi::Env& env, cons
         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"prefer"))).As<Napi::Number>().Int32Value();
         params.prefer = (nertc::NERtcSubStreamContentPrefer)out_i;
     }
+    // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"degradation_preference"))))
+    // {
+    //     out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"degradation_preference"))).As<Napi::Number>().Int32Value();
+    //     params.degradation_preference = (nertc::NERtcDegradationPreference)out_i;
+    // }
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"excluded_window_count"))))
     {
         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"excluded_window_count"))).As<Napi::Number>().Int32Value();
@@ -342,6 +357,48 @@ napi_status nertc_ls_img_info_obj_to_struct(const Napi::Env& env, const Napi::Ob
     return napi_ok;
 }
 
+// napi_status nertc_task_config_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcLiveConfig& config)
+// {
+//     int32_t out_i;
+//     uint32_t out_u;
+//     bool out_b;
+//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"single_video_passthrough")))){
+//         out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"single_video_passthrough"))).As<Napi::Boolean>().Value();
+//         config.single_video_passthrough = out_b;
+//     }
+
+//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"audio_bitrate"))))
+//     {
+//         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"audio_bitrate"))).As<Napi::Number>().Int32Value();
+//         config.audio_bitrate = out_i;
+//     }
+
+//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"sampleRate"))))
+//     {
+//         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"sampleRate"))).As<Napi::Number>().Int32Value();
+//         config.sampleRate = (nertc::NERtcLiveStreamAudioSampleRate)out_i;
+//     }
+
+//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"channels"))))
+//     {
+//         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"channels"))).As<Napi::Number>().Int32Value();
+//         config.channels = out_i;
+//     }
+
+//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"audioCodecProfile"))))
+//     {
+//         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"audioCodecProfile"))).As<Napi::Number>().Int32Value();
+//         config.audioCodecProfile = (nertc::NERtcLiveStreamAudioCodecProfile)out_i;
+//     }
+
+//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"interrupted_place_image")))){
+//         out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"interrupted_place_image"))).As<Napi::Boolean>().Value();
+//         config.interrupted_place_image = out_b;
+//     }
+    
+//     return napi_ok;
+// }
+
 napi_status nertc_ls_layout_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcLiveStreamLayout& layout)
 {
     int32_t out_i;
@@ -400,6 +457,12 @@ napi_status nertc_ls_layout_obj_to_struct(const Napi::Env& env, const Napi::Obje
             nertc_ls_img_info_obj_to_struct(env, so1, layout.bg_image);
 
         }
+
+        // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"bg_image_count"))))
+        // {
+        //     out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"bg_image_count"))).As<Napi::Number>().Int32Value();
+        //     layout.bg_image_count = out_i;
+        // }
     }
     return napi_ok;
 }
@@ -437,6 +500,11 @@ napi_status nertc_ls_task_info_obj_to_struct(const Napi::Env& env, const Napi::O
         Napi::Object layout_obj = obj.Get(static_cast<napi_value>(Napi::String::New(env,"layout"))).As<Napi::Object>();
         nertc_ls_layout_obj_to_struct(env, layout_obj, info.layout);
     }
+
+    // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"config")))){
+    //     Napi::Object config_obj = obj.Get(static_cast<napi_value>(Napi::String::New(env,"config"))).As<Napi::Object>();
+    //     nertc_task_config_obj_to_struct(env, config_obj, info.config);
+    // }
     return napi_ok;
 }
 
@@ -620,6 +688,7 @@ napi_status nertc_audio_effect_option_obj_to_struct(const Napi::Env& env, const 
 napi_status nertc_audio_mixing_option_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcCreateAudioMixingOption& option)
 {
     std::string out;
+    int64_t out64;
     uint32_t out_u;
     int32_t out_i;
     bool out_b;
@@ -656,6 +725,21 @@ napi_status nertc_audio_mixing_option_obj_to_struct(const Napi::Env& env, const 
     {
         out_u = obj.Get(static_cast<napi_value>(Napi::String::New(env,"playback_volume"))).As<Napi::Number>().Uint32Value();
         option.playback_volume = out_u;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"start_timestamp"))))
+    {
+        out64 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"start_timestamp"))).As<Napi::Number>().Int64Value();
+        option.start_timestamp = out64;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"send_with_audio_type"))))
+    {
+        out_u = obj.Get(static_cast<napi_value>(Napi::String::New(env,"send_with_audio_type"))).As<Napi::Number>().Int64Value();
+        option.send_with_audio_type = (nertc::NERtcAudioStreamType)out_u;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"progress_interval"))))
+    {
+        out_u = obj.Get(static_cast<napi_value>(Napi::String::New(env,"progress_interval"))).As<Napi::Number>().Int64Value();
+        option.progress_interval = out_u;
     }
     return napi_ok;
 }
@@ -729,6 +813,16 @@ napi_status nertc_video_config_obj_to_struct(const Napi::Env& env, const Napi::O
         out_u = obj.Get(static_cast<napi_value>(Napi::String::New(env,"degradation_preference"))).As<Napi::Number>().Uint32Value();
         config.degradation_preference = (nertc::NERtcDegradationPreference)out_u;
     }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"mirror_mode"))))
+    {
+        out_u = obj.Get(static_cast<napi_value>(Napi::String::New(env,"mirror_mode"))).As<Napi::Number>().Uint32Value();
+        config.mirror_mode = (nertc::NERtcVideoMirrorMode)out_u;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"orientation_mode"))))
+    {
+        out_u = obj.Get(static_cast<napi_value>(Napi::String::New(env,"orientation_mode"))).As<Napi::Number>().Uint32Value();
+        config.orientation_mode = (nertc::NERtcVideoOutputOrientationMode)out_u;
+    }
     return napi_ok;
 }
 
@@ -781,6 +875,27 @@ napi_status nertc_lastmile_probe_obj_to_struct(const Napi::Env& env, const Napi:
         config.expected_downlink_bitratebps = out_32;
     }
     return napi_ok;
+}
+
+napi_status nertc_channel_option_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcJoinChannelOptions& config)
+{
+    std::string out;
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"custom_info"))))
+    {
+        out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"custom_info"))).As<Napi::String>().Utf8Value();
+        memset(config.custom_info, 0, kNERtcCustomInfoLength);
+        strncpy(config.custom_info, out.c_str(), kNERtcCustomInfoLength);
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"permission_key"))))
+    {
+        out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"permission_key"))).As<Napi::String>().Utf8Value();
+        const char* cstr  = out.c_str();
+        char* ptr = new char[out.length() + 1];
+        std::strcpy(ptr, cstr);
+        ptr[out.length()] = '\0';  
+        config.permission_key = ptr;
+    }
 }
 
 napi_status nertc_media_relay_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcChannelMediaRelayConfiguration* config)

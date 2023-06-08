@@ -24,6 +24,7 @@ napi_status nertc_media_relay_obj_to_struct(const Napi::Env& env, const Napi::Ob
 napi_status nertc_encry_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcEncryptionConfig& config);
 napi_status nertc_channel_media_relay_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcChannelMediaRelayInfo& config);
 napi_status nertc_lastmile_probe_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcLastmileProbeConfig& config);
+napi_status nertc_channel_option_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcJoinChannelOptions& config);
 
 //set object field
 napi_status nertc_stats_to_obj(const Napi::Env env, const nertc::NERtcStats& config,  Napi::Object& obj);

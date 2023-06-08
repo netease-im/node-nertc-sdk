@@ -142,6 +142,11 @@ class NERtcEngine extends events_1.EventEmitter {
     joinChannel(token, channelName, uid) {
         return this.nertcEngine.joinChannel(token, channelName, uid);
     }
+
+    joinChannelEx(token, channelName, uid, channelOptions) {
+        return this.nertcEngine.joinChannelEx(token, channelName, uid, channelOptions);
+    }
+
     /**
      * 离开频道。
      * <pre>
@@ -412,7 +417,7 @@ class NERtcEngine extends events_1.EventEmitter {
         return this.nertcEngine.subscribeAllRemoteAudioStream(subscribe);
     }
 
-    setAudioSubscribeOnlyBy(uids, size) { //['12', '34', '56']
+    setAudioSubscribeOnlyBy(uids, size) { //[12, 34, 56]
         return this.nertcEngine.setAudioSubscribeOnlyBy(uids, size);
     }
 
@@ -1211,8 +1216,8 @@ class NERtcEngine extends events_1.EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    enableAudioVolumeIndication(enabled, interval, enable_vad) {
-        return this.nertcEngine.enableAudioVolumeIndication(enabled, interval, enable_vad);
+    enableAudioVolumeIndication(enabled, interval) {
+        return this.nertcEngine.enableAudioVolumeIndication(enabled, interval);
     }
     /**
      * 通过指定区域共享屏幕。共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕区域。
@@ -2151,6 +2156,10 @@ class NERtcEngine extends events_1.EventEmitter {
     setVideoDevice(id) {
         return this.nertcEngine.setDevice(id);
     }
+
+    setVideoDeviceEx(id, type) {
+        return this.nertcEngine.setDeviceEx(id, type);
+    }
     /**
      * 获取当前使用的视频采集设备信息。
      * @returns {String} 设备ID
@@ -2158,6 +2167,11 @@ class NERtcEngine extends events_1.EventEmitter {
     getVideoDevice() {
         return this.nertcEngine.getDevice();
     }
+
+    getVideoDeviceEx(type) {
+        return this.nertcEngine.getDeviceEx(type);
+    }
+
     /**
      * 设置 SDK 预设的人声的变声音效。
      * @since 4.1.110
@@ -2371,6 +2385,11 @@ class NERtcEngine extends events_1.EventEmitter {
     switchChannel(token, channelName) {
         return this.nertcEngine.switchChannel(token, channelName);
     }
+
+    switchChannelEx(token, channelName, option) {
+        return this.nertcEngine.switchChannelEx(token, channelName, option);
+    }
+
     /**
     * 设置本地用户的媒体流优先级。
     * @since 4.4.8
@@ -2725,9 +2744,9 @@ class NERtcEngine extends events_1.EventEmitter {
         return this.nertcEngine.enableBeauty(enable);
     }
 
-    enableBeautyMirrorMode(enable) {
-        return this.nertcEngine.enableBeautyMirrorMode(enable);
-    }
+    // enableBeautyMirrorMode(enable) {
+    //     return this.nertcEngine.enableBeautyMirrorMode(enable);
+    // }
 
     getBeautyEffect(type) {
         return this.nertcEngine.getBeautyEffect(type);

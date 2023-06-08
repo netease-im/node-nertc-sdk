@@ -42,19 +42,18 @@ class NERtcChannel extends events_1.EventEmitter {
     muteLocalSubStreamAudio(mute) {
         return this.rtcChannel.muteLocalSubStreamAudio(mute);
     }
-    enableLocalVideo() {
-        if(arguments.length == 1) {
-            return this.rtcChannel.enableLocalVideo(arguments[0]);
-        } else if(arguments.length == 2) {
-            return this.rtcChannel.enableLocalVideoEx(arguments[0], arguments[1]);
-        }
+    enableLocalVideo(enabled) {
+        return this.rtcChannel.enableLocalVideo(enabled);
     }
-    muteLocalVideoStream() {
-        if(arguments.length == 1) {
-            return this.rtcChannel.muteLocalVideoStream(arguments[0]);
-        } else if(arguments.length == 2) {
-            return this.rtcChannel.muteLocalVideoStreamEx(arguments[0], arguments[1]);
-        }
+
+    enableLocalVideoEx(type, enabled) {
+        return this.rtcChannel.enableLocalVideoEx(type, enabled);
+    }
+    muteLocalVideoStream(enabled) {
+        return this.rtcChannel.muteLocalVideoStream(enabled);
+    }
+    muteLocalVideoStreamEx(type, enabled) {
+        return this.rtcChannel.muteLocalVideoStreamEx(type, enabled);
     }
     startScreenCaptureByScreenRect(screenRect, regionRect, param) {
         return this.rtcChannel.startScreenCaptureByScreenRect(screenRect, regionRect, param);
@@ -132,12 +131,11 @@ class NERtcChannel extends events_1.EventEmitter {
             return -1;
         }
     }
-    setLocalVideoMirrorMode() {
-        if(arguments.length == 1) {
-            return this.rtcChannel.setLocalVideoMirrorMode(arguments[0]);
-        } else if(arguments.length == 2) {
-            return this.rtcChannel.setLocalVideoMirrorModeEx(arguments[0], arguments[1]);
-        }
+    setLocalVideoMirrorMode(mode) {
+        return this.rtcChannel.setLocalVideoMirrorMode(mode);
+    }
+    setLocalVideoMirrorModeEx(type, mode) {
+        return this.rtcChannel.setLocalVideoMirrorModeEx(type, mode);
     }
     setupRemoteVideoCanvas(uid, canvas) {
         if (canvas.view) {
@@ -174,19 +172,17 @@ class NERtcChannel extends events_1.EventEmitter {
     getConnectionState() {
         return this.rtcChannel.getConnectionState();
     }
-    setCameraCaptureConfig() {
-        if(arguments.length == 1) {
-            return this.rtcChannel.setCameraCaptureConfig(arguments[0]);
-        } else if(arguments.length == 2) {
-            return this.rtcChannel.setCameraCaptureConfigEx(arguments[0], arguments[1]);
-        }
+    setCameraCaptureConfig(config) {
+        return this.rtcChannel.setCameraCaptureConfig(config);
     }
-    setVideoConfig() {
-        if(arguments.length == 1) {
-            return this.rtcChannel.setVideoConfig(arguments[0]);
-        } else if(arguments.length == 2) {
-            return this.rtcChannel.setVideoConfigEx(arguments[0], arguments[1]);
-        }
+    setCameraCaptureConfigEx(type, config) {
+        return this.rtcChannel.setCameraCaptureConfigEx(type, config);
+    }
+    setVideoConfig(config) {
+        return this.rtcChannel.setVideoConfig(config);
+    }
+    setVideoConfigEx(type, config) {
+        return this.rtcChannel.setVideoConfigEx(type, config);
     }
     enableDualStreamMode(enabled) {
         return this.rtcChannel.enableDualStreamMode(enabled);
@@ -201,8 +197,7 @@ class NERtcChannel extends events_1.EventEmitter {
         return this.rtcChannel.subscribeAllRemoteAudioStream(subscribe);
     }
     setAudioSubscribeOnlyBy(subscribe) {
-        //todo
-        //return this.rtcChannel.setAudioSubscribeOnlyBy(subscribe);
+        return this.rtcChannel.setAudioSubscribeOnlyBy(subscribe);
     }
     subscribeRemoteVideoStream(uid, type, subscribe) {
         return this.rtcChannel.subscribeRemoteVideoStream(uid, type, subscribe);
@@ -811,168 +806,168 @@ class NERtcChannel extends events_1.EventEmitter {
         });
 
 
-        /**
-         * 当前通话统计回调。
-         * <pre>
-         * SDK 定期向 App 报告当前通话的统计信息，每 2 秒触发一次。
-         * </pre>
-         * @event NERtcChannel#onRtcStats
-         * @param {object} stats NERTC 引擎统计数据:
-         * @param {number} stats.cpu_app_usage 当前 App 的 CPU 使用率 (%)。
-         * @param {number} stats.cpu_idle_usage 当前系统的 CPU 空闲率 (%)。
-         * @param {number} stats.cpu_total_usage 当前系统的 CPU 使用率 (%)。
-         * @param {number} stats.memory_app_usage 当前App的内存使用率 (%)。
-         * @param {number} stats.memory_total_usage 当前系统的内存使用率 (%)。
-         * @param {number} stats.memory_app_kbytes 当前App的内存使用量 (KB)。
-         * @param {number} stats.total_duration 通话时长（秒）。
-         * @param {number} stats.tx_bytes 发送字节数，累计值。(bytes)
-         * @param {number} stats.rx_bytes 接收字节数，累计值。(bytes)
-         * @param {number} stats.tx_audio_bytes 音频发送字节数，累计值。(bytes)
-         * @param {number} stats.tx_video_bytes 视频发送字节数，累计值。(bytes)
-         * @param {number} stats.rx_audio_bytes 音频接收字节数，累计值。(bytes)
-         * @param {number} stats.rx_video_bytes 视频接收字节数，累计值。(bytes)
-         * @param {number} stats.tx_audio_kbitrate 音频发送码率。(kbps)
-         * @param {number} stats.rx_audio_kbitrate 音频接收码率。(kbps)
-         * @param {number} stats.tx_video_kbitrate 视频发送码率。(kbps)
-         * @param {number} stats.rx_video_kbitrate 视频接收码率。(kbps)
-         * @param {number} stats.up_rtt 上行平均往返时延rtt(ms)
-         * @param {number} stats.down_rtt 下行平均往返时延rtt(ms)
-         * @param {number} stats.tx_audio_packet_loss_rate 本地上行音频实际丢包率。(%)
-         * @param {number} stats.tx_video_packet_loss_rate 本地上行视频实际丢包率。(%)
-         * @param {number} stats.tx_audio_packet_loss_sum  本地上行音频实际丢包数。
-         * @param {number} stats.tx_video_packet_loss_sum  本地上行视频实际丢包数。
-         * @param {number} stats.tx_audio_jitter           本地上行音频抖动计算。(ms)
-         * @param {number} stats.tx_video_jitter           本地上行视频抖动计算。(ms)
-         * @param {number} stats.rx_audio_packet_loss_rate 本地下行音频实际丢包率。(%)
-         * @param {number} stats.rx_video_packet_loss_rate 本地下行视频实际丢包率。(%)
-         * @param {number} stats.rx_audio_packet_loss_sum  本地下行音频实际丢包数。
-         * @param {number} stats.rx_video_packet_loss_sum  本地下行视频实际丢包数。
-         * @param {number} stats.rx_audio_jitter           本地下行音频抖动计算。(ms)
-         * @param {number} stats.rx_video_jitter           本地下行视频抖动计算。(ms)
-         */
+        // /**
+        //  * 当前通话统计回调。
+        //  * <pre>
+        //  * SDK 定期向 App 报告当前通话的统计信息，每 2 秒触发一次。
+        //  * </pre>
+        //  * @event NERtcChannel#onRtcStats
+        //  * @param {object} stats NERTC 引擎统计数据:
+        //  * @param {number} stats.cpu_app_usage 当前 App 的 CPU 使用率 (%)。
+        //  * @param {number} stats.cpu_idle_usage 当前系统的 CPU 空闲率 (%)。
+        //  * @param {number} stats.cpu_total_usage 当前系统的 CPU 使用率 (%)。
+        //  * @param {number} stats.memory_app_usage 当前App的内存使用率 (%)。
+        //  * @param {number} stats.memory_total_usage 当前系统的内存使用率 (%)。
+        //  * @param {number} stats.memory_app_kbytes 当前App的内存使用量 (KB)。
+        //  * @param {number} stats.total_duration 通话时长（秒）。
+        //  * @param {number} stats.tx_bytes 发送字节数，累计值。(bytes)
+        //  * @param {number} stats.rx_bytes 接收字节数，累计值。(bytes)
+        //  * @param {number} stats.tx_audio_bytes 音频发送字节数，累计值。(bytes)
+        //  * @param {number} stats.tx_video_bytes 视频发送字节数，累计值。(bytes)
+        //  * @param {number} stats.rx_audio_bytes 音频接收字节数，累计值。(bytes)
+        //  * @param {number} stats.rx_video_bytes 视频接收字节数，累计值。(bytes)
+        //  * @param {number} stats.tx_audio_kbitrate 音频发送码率。(kbps)
+        //  * @param {number} stats.rx_audio_kbitrate 音频接收码率。(kbps)
+        //  * @param {number} stats.tx_video_kbitrate 视频发送码率。(kbps)
+        //  * @param {number} stats.rx_video_kbitrate 视频接收码率。(kbps)
+        //  * @param {number} stats.up_rtt 上行平均往返时延rtt(ms)
+        //  * @param {number} stats.down_rtt 下行平均往返时延rtt(ms)
+        //  * @param {number} stats.tx_audio_packet_loss_rate 本地上行音频实际丢包率。(%)
+        //  * @param {number} stats.tx_video_packet_loss_rate 本地上行视频实际丢包率。(%)
+        //  * @param {number} stats.tx_audio_packet_loss_sum  本地上行音频实际丢包数。
+        //  * @param {number} stats.tx_video_packet_loss_sum  本地上行视频实际丢包数。
+        //  * @param {number} stats.tx_audio_jitter           本地上行音频抖动计算。(ms)
+        //  * @param {number} stats.tx_video_jitter           本地上行视频抖动计算。(ms)
+        //  * @param {number} stats.rx_audio_packet_loss_rate 本地下行音频实际丢包率。(%)
+        //  * @param {number} stats.rx_video_packet_loss_rate 本地下行视频实际丢包率。(%)
+        //  * @param {number} stats.rx_audio_packet_loss_sum  本地下行音频实际丢包数。
+        //  * @param {number} stats.rx_video_packet_loss_sum  本地下行视频实际丢包数。
+        //  * @param {number} stats.rx_audio_jitter           本地下行音频抖动计算。(ms)
+        //  * @param {number} stats.rx_video_jitter           本地下行视频抖动计算。(ms)
+        //  */
         this.rtcChannel.onStatsObserver('onRtcStats', true, function (stats) {
             fire('onRtcStats', stats);
         });
 
-        /**
-         * 本地音频流统计信息回调。
-         * <pre>
-         * 该回调描述本地设备发送音频流的统计信息，每 2 秒触发一次。
-         * </pre>
-         * @event NERtcChannel#onLocalAudioStats
-         * @param {object} stats 本地音频流统计信息:
-         * @param {number} stats.num_channels 当前采集声道数。
-         * @param {number} stats.sent_sample_rate 本地上行音频采样率。
-         * @param {number} stats.sent_bitrate （上次统计后）发送码率(Kbps)。
-         * @param {number} stats.audio_loss_rate 特定时间内的音频丢包率 (%)。
-         * @param {number} stats.rtt RTT。
-         * @param {number} stats.volume 音量，范围为 0（最低）- 100（最高）。
-         */
+        // /**
+        //  * 本地音频流统计信息回调。
+        //  * <pre>
+        //  * 该回调描述本地设备发送音频流的统计信息，每 2 秒触发一次。
+        //  * </pre>
+        //  * @event NERtcChannel#onLocalAudioStats
+        //  * @param {object} stats 本地音频流统计信息:
+        //  * @param {number} stats.num_channels 当前采集声道数。
+        //  * @param {number} stats.sent_sample_rate 本地上行音频采样率。
+        //  * @param {number} stats.sent_bitrate （上次统计后）发送码率(Kbps)。
+        //  * @param {number} stats.audio_loss_rate 特定时间内的音频丢包率 (%)。
+        //  * @param {number} stats.rtt RTT。
+        //  * @param {number} stats.volume 音量，范围为 0（最低）- 100（最高）。
+        //  */
         this.rtcChannel.onStatsObserver('onLocalAudioStats', true, function (stats) {
             fire('onLocalAudioStats', stats);
         });
 
-        /**
-         * 通话中远端音频流的统计信息回调。
-         * <pre>
-         * 该回调描述远端用户在通话中端到端的音频流统计信息，每 2 秒触发一次。
-         * </pre>
-         * @event NERtcChannel#onRemoteAudioStats
-         * @param {number} uc stats 数组的大小
-         * @param {object[]} stats 每个远端用户音频统计信息的数组:
-         * @param {number} stats[].uid 用户 ID，指定是哪个用户的音频流
-         * @param {number} stats[].received_bitrate （上次统计后）接收到的码率(Kbps)
-         * @param {number} stats[].total_frozen_time 用户的下行音频卡顿累计时长(ms)
-         * @param {number} stats[].frozen_rate 用户的下行音频平均卡顿率(%)。
-         * @param {number} stats[].audio_loss_rate 特定时间内的音频丢包率 (%)。
-         * @param {number} stats[].volume 音量，范围为 0（最低）- 100（最高）。
-         */
+        // /**
+        //  * 通话中远端音频流的统计信息回调。
+        //  * <pre>
+        //  * 该回调描述远端用户在通话中端到端的音频流统计信息，每 2 秒触发一次。
+        //  * </pre>
+        //  * @event NERtcChannel#onRemoteAudioStats
+        //  * @param {number} uc stats 数组的大小
+        //  * @param {object[]} stats 每个远端用户音频统计信息的数组:
+        //  * @param {number} stats[].uid 用户 ID，指定是哪个用户的音频流
+        //  * @param {number} stats[].received_bitrate （上次统计后）接收到的码率(Kbps)
+        //  * @param {number} stats[].total_frozen_time 用户的下行音频卡顿累计时长(ms)
+        //  * @param {number} stats[].frozen_rate 用户的下行音频平均卡顿率(%)。
+        //  * @param {number} stats[].audio_loss_rate 特定时间内的音频丢包率 (%)。
+        //  * @param {number} stats[].volume 音量，范围为 0（最低）- 100（最高）。
+        //  */
         this.rtcChannel.onStatsObserver('onRemoteAudioStats', true, function (uc, stats) {
             fire('onRemoteAudioStats', uc, stats);
         });
 
-        /**
-         * 本地视频流统计信息回调。
-         * <pre>
-         * 该回调描述本地设备发送视频流的统计信息，每 2 秒触发一次。
-         * </pre>
-         * @event NERtcChannel#onLocalVideoStats
-         * @param {object} stats 本地视频流统计信息:
-         * @param {number} stats.video_layers_count 视频流条数。
-         * @param {object[]} stats.video_layers_list 视频流信息数组:
-         * @param {number} stats.video_layers_list[].layer_type 流类型： 1、主流，2、辅流。
-         * @param {number} stats.video_layers_list[].width 视频流宽（像素）
-         * @param {number} stats.video_layers_list[].height 视频流高（像素）
-         * @param {number} stats.video_layers_list[].capture_frame_rate 视频采集帧率。
-         * @param {number} stats.video_layers_list[].render_frame_rate 视频渲染帧率。
-         * @param {number} stats.video_layers_list[].encoder_frame_rate 编码帧率。
-         * @param {number} stats.video_layers_list[].sent_frame_rate 发送帧率。
-         * @param {number} stats.video_layers_list[].sent_bitrate 发送码率(Kbps)。
-         * @param {number} stats.video_layers_list[].target_bitrate 编码器目标码率(Kbps)。
-         * @param {number} stats.video_layers_list[].encoder_bitrate 编码器实际编码码率(Kbps)。
-         * @param {String} stats.video_layers_list[].codec_name 视频编码器名字。
-         */
+        // /**
+        //  * 本地视频流统计信息回调。
+        //  * <pre>
+        //  * 该回调描述本地设备发送视频流的统计信息，每 2 秒触发一次。
+        //  * </pre>
+        //  * @event NERtcChannel#onLocalVideoStats
+        //  * @param {object} stats 本地视频流统计信息:
+        //  * @param {number} stats.video_layers_count 视频流条数。
+        //  * @param {object[]} stats.video_layers_list 视频流信息数组:
+        //  * @param {number} stats.video_layers_list[].layer_type 流类型： 1、主流，2、辅流。
+        //  * @param {number} stats.video_layers_list[].width 视频流宽（像素）
+        //  * @param {number} stats.video_layers_list[].height 视频流高（像素）
+        //  * @param {number} stats.video_layers_list[].capture_frame_rate 视频采集帧率。
+        //  * @param {number} stats.video_layers_list[].render_frame_rate 视频渲染帧率。
+        //  * @param {number} stats.video_layers_list[].encoder_frame_rate 编码帧率。
+        //  * @param {number} stats.video_layers_list[].sent_frame_rate 发送帧率。
+        //  * @param {number} stats.video_layers_list[].sent_bitrate 发送码率(Kbps)。
+        //  * @param {number} stats.video_layers_list[].target_bitrate 编码器目标码率(Kbps)。
+        //  * @param {number} stats.video_layers_list[].encoder_bitrate 编码器实际编码码率(Kbps)。
+        //  * @param {String} stats.video_layers_list[].codec_name 视频编码器名字。
+        //  */
         this.rtcChannel.onStatsObserver('onLocalVideoStats', true, function (stats) {
             fire('onLocalVideoStats', stats);
         });
 
-        /**
-         * 通话中远端视频流的统计信息回调。
-         * <pre>
-         * 该回调描述远端用户在通话中端到端的视频流统计信息，每 2 秒触发一次。
-         * </pre>
-         * @event NERtcChannel#onRemoteVideoStats
-         * @param {number} uc stats 数组的大小。
-         * @param {object} stats 每个远端用户视频统计信息的数组:
-         * @param {number} stats.uid 用户 ID，指定是哪个用户的视频流。
-         * @param {number} stats.video_layers_count 视频流条数。
-         * @param {object[]} stats.video_layers_list 视频流信息数组:
-         * @param {number} stats.video_layers_list[].layer_type 流类型： 1、主流，2、辅流。
-         * @param {number} stats.video_layers_list[].width 视频流宽（像素）。
-         * @param {number} stats.video_layers_list[].height 视频流高（像素）。
-         * @param {number} stats.video_layers_list[].received_frame_rate 接收到的帧率 (fps)。
-         * @param {number} stats.video_layers_list[].render_frame_rate 视频渲染帧率。
-         * @param {number} stats.video_layers_list[].decoder_frame_rate 视频解码帧率（fps）。
-         * @param {number} stats.video_layers_list[].frozen_rate 用户的下行视频平均卡顿率（%）。
-         * @param {number} stats.video_layers_list[].packet_loss_rate 下行丢包率（%）。
-         * @param {number} stats.video_layers_list[].received_bitrate 接收到的码率（Kbps）。
-         * @param {number} stats.video_layers_list[].total_frozen_time 用户的下行视频卡顿累计时长（ms）。
-         * @param {String} stats.video_layers_list[].codec_name 视频编码器名字。
-         */
+        // /**
+        //  * 通话中远端视频流的统计信息回调。
+        //  * <pre>
+        //  * 该回调描述远端用户在通话中端到端的视频流统计信息，每 2 秒触发一次。
+        //  * </pre>
+        //  * @event NERtcChannel#onRemoteVideoStats
+        //  * @param {number} uc stats 数组的大小。
+        //  * @param {object} stats 每个远端用户视频统计信息的数组:
+        //  * @param {number} stats.uid 用户 ID，指定是哪个用户的视频流。
+        //  * @param {number} stats.video_layers_count 视频流条数。
+        //  * @param {object[]} stats.video_layers_list 视频流信息数组:
+        //  * @param {number} stats.video_layers_list[].layer_type 流类型： 1、主流，2、辅流。
+        //  * @param {number} stats.video_layers_list[].width 视频流宽（像素）。
+        //  * @param {number} stats.video_layers_list[].height 视频流高（像素）。
+        //  * @param {number} stats.video_layers_list[].received_frame_rate 接收到的帧率 (fps)。
+        //  * @param {number} stats.video_layers_list[].render_frame_rate 视频渲染帧率。
+        //  * @param {number} stats.video_layers_list[].decoder_frame_rate 视频解码帧率（fps）。
+        //  * @param {number} stats.video_layers_list[].frozen_rate 用户的下行视频平均卡顿率（%）。
+        //  * @param {number} stats.video_layers_list[].packet_loss_rate 下行丢包率（%）。
+        //  * @param {number} stats.video_layers_list[].received_bitrate 接收到的码率（Kbps）。
+        //  * @param {number} stats.video_layers_list[].total_frozen_time 用户的下行视频卡顿累计时长（ms）。
+        //  * @param {String} stats.video_layers_list[].codec_name 视频编码器名字。
+        //  */
         this.rtcChannel.onStatsObserver('onRemoteVideoStats', true, function (uc, stats) {
             fire('onRemoteVideoStats', uc, stats);
         });
 
-        /**
-         * 通话中每个用户的网络上下行质量报告回调。
-         * <pre>
-         * 该回调描述每个用户在通话中的网络状态，每 2 秒触发一次，只上报状态有变更的成员。
-         * </pre>
-         * @event NERtcChannel#onNetworkQuality
-         * @param {number} uc 数组的大小，即用户数。
-         * @param {object} stats 每个用户 ID 和网络上下行质量信息的数组:
-         * @param {number} stats[].uid 用户 ID，指定是哪个用户的视频流。
-         * @param {number} stats[].tx_quality 该用户的上行网络质量:
-         * <pre>
-         * - 0 网络质量未知
-         * - 1 网络质量极好
-         * - 2 用户主观感觉和 excellent 差不多，但码率可能略低于 excellent
-         * - 3 用户主观感受有瑕疵但不影响沟通
-         * - 4 勉强能沟通但不顺畅
-         * - 5 网络质量非常差，基本不能沟通
-         * - 6 完全无法沟通
-         * </pre>
-         * @param {number} stats[].rx_quality 该用户的下行网络质量:
-         * <pre>
-         * - 0 网络质量未知
-         * - 1 网络质量极好
-         * - 2 用户主观感觉和 excellent 差不多，但码率可能略低于 excellent
-         * - 3 用户主观感受有瑕疵但不影响沟通
-         * - 4 勉强能沟通但不顺畅
-         * - 5 网络质量非常差，基本不能沟通
-         * - 6 完全无法沟通
-         * </pre>
-         */
+        // /**
+        //  * 通话中每个用户的网络上下行质量报告回调。
+        //  * <pre>
+        //  * 该回调描述每个用户在通话中的网络状态，每 2 秒触发一次，只上报状态有变更的成员。
+        //  * </pre>
+        //  * @event NERtcChannel#onNetworkQuality
+        //  * @param {number} uc 数组的大小，即用户数。
+        //  * @param {object} stats 每个用户 ID 和网络上下行质量信息的数组:
+        //  * @param {number} stats[].uid 用户 ID，指定是哪个用户的视频流。
+        //  * @param {number} stats[].tx_quality 该用户的上行网络质量:
+        //  * <pre>
+        //  * - 0 网络质量未知
+        //  * - 1 网络质量极好
+        //  * - 2 用户主观感觉和 excellent 差不多，但码率可能略低于 excellent
+        //  * - 3 用户主观感受有瑕疵但不影响沟通
+        //  * - 4 勉强能沟通但不顺畅
+        //  * - 5 网络质量非常差，基本不能沟通
+        //  * - 6 完全无法沟通
+        //  * </pre>
+        //  * @param {number} stats[].rx_quality 该用户的下行网络质量:
+        //  * <pre>
+        //  * - 0 网络质量未知
+        //  * - 1 网络质量极好
+        //  * - 2 用户主观感觉和 excellent 差不多，但码率可能略低于 excellent
+        //  * - 3 用户主观感受有瑕疵但不影响沟通
+        //  * - 4 勉强能沟通但不顺畅
+        //  * - 5 网络质量非常差，基本不能沟通
+        //  * - 6 完全无法沟通
+        //  * </pre>
+        //  */
         this.rtcChannel.onStatsObserver('onNetworkQuality', true, function (uc, stats) {
             fire('onNetworkQuality', uc, stats);
         });

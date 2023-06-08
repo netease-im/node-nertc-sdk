@@ -34,24 +34,24 @@ public:
     virtual void onUserAudioStart(nertc::uid_t uid) override;
     virtual void onUserAudioStop(nertc::uid_t uid) override;
     virtual void onUserAudioMute(nertc::uid_t uid, bool mute) override;
-    virtual void onUserSubStreamAudioStart(nertc::uid_t uid) override;
-    virtual void onUserSubStreamAudioStop(nertc::uid_t uid) override;
-    virtual void onUserSubStreamAudioMute(nertc::uid_t uid, bool mute) override;
+    virtual void onUserSubStreamAudioStart(nertc::uid_t uid) override; // todo 新增接口
+    virtual void onUserSubStreamAudioStop(nertc::uid_t uid) override;  // todo 新增接口
+    virtual void onUserSubStreamAudioMute(nertc::uid_t uid, bool mute) override; // todo 新增接口
     virtual void onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile) override;
     virtual void onUserVideoStop(nertc::uid_t uid) override;
     virtual void onUserVideoMute(nertc::uid_t uid, bool mute) override;
-    virtual void onUserVideoMute(nertc::NERtcVideoStreamType videoStreamType,nertc::uid_t uid, bool mute) override;
+    virtual void onUserVideoMute(nertc::NERtcVideoStreamType videoStreamType,nertc::uid_t uid, bool mute) override; // todo 新增接口
     virtual void onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile) override;
     virtual void onUserSubStreamVideoStop(nertc::uid_t uid) override;
     virtual void onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status) override;
     virtual void onFirstAudioDataReceived(nertc::uid_t uid) override;
     virtual void onFirstVideoDataReceived(nertc::uid_t uid) override;
-    virtual void onFirstVideoDataReceived(nertc::NERtcVideoStreamType type, nertc::uid_t uid) override;
+    virtual void onFirstVideoDataReceived(nertc::NERtcVideoStreamType type, nertc::uid_t uid) override; // todo 新增接口
     virtual void onFirstAudioFrameDecoded(nertc::uid_t uid) override;
-    virtual void onFirstVideoFrameDecoded(nertc::uid_t uid, uint32_t width, uint32_t height) override;
-    virtual void onFirstVideoFrameDecoded(nertc::NERtcVideoStreamType type,nertc::uid_t uid, uint32_t width, uint32_t height) override;
+    virtual void onFirstVideoFrameDecoded(nertc::uid_t uid, uint32_t width, uint32_t height) override; 
+    virtual void onFirstVideoFrameDecoded(nertc::NERtcVideoStreamType type,nertc::uid_t uid, uint32_t width, uint32_t height) override;// todo 新增接口
     virtual void onLocalAudioVolumeIndication(int volume) override;
-    virtual void onLocalAudioVolumeIndication(int volume, bool enable_vad) override;
+    virtual void onLocalAudioVolumeIndication(int volume, bool enable_vad) override; // todo 新增接口
     virtual void onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume) override;
     virtual void onAddLiveStreamTask(const char* task_id, const char* url, int error_code) override;
     virtual void onUpdateLiveStreamTask(const char* task_id, const char* url, int error_code) override;
@@ -62,7 +62,7 @@ public:
     virtual void onMediaRelayEvent(nertc::NERtcChannelMediaRelayEvent event, const char* channel_name, nertc::NERtcErrorCode error) override;
     virtual void onLocalPublishFallbackToAudioOnly(bool is_fallback, nertc::NERtcVideoStreamType stream_type) override;
     virtual void onRemoteSubscribeFallbackToAudioOnly(nertc::uid_t uid, bool is_fallback, nertc::NERtcVideoStreamType stream_type) override;
-    virtual void onMediaRightChange(bool is_audio_banned, bool is_video_banned) override;
+    virtual void onMediaRightChange(bool is_audio_banned, bool is_video_banned) override;  // todo 新增接口
 
 
 private:

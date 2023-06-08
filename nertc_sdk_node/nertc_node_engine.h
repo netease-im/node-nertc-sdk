@@ -47,15 +47,18 @@ public:
     NIM_SDK_NODE_API(release);
     NIM_SDK_NODE_API(setChannelProfile);
     NIM_SDK_NODE_API(joinChannel);
+    NIM_SDK_NODE_API(joinChannelEx);
+    NIM_SDK_NODE_API(switchChannel);
+    NIM_SDK_NODE_API(switchChannelEx);
     NIM_SDK_NODE_API(leaveChannel);
     NIM_SDK_NODE_API(enableLocalAudio);
     NIM_SDK_NODE_API(enableLocalVideo);
+    NIM_SDK_NODE_API(enableLocalVideoEx);
     NIM_SDK_NODE_API(subscribeRemoteVideoStream);
     NIM_SDK_NODE_API(setupVideoCanvas);
     NIM_SDK_NODE_API(onVideoFrame);
     NIM_SDK_NODE_API(onEvent);
 
-    // 3.9
     NIM_SDK_NODE_API(setClientRole);
     NIM_SDK_NODE_API(setupSubStreamVideoCanvas);
     NIM_SDK_NODE_API(subscribeRemoteVideoSubStream);
@@ -64,23 +67,19 @@ public:
     NIM_SDK_NODE_API(pushExternalAudioFrame);
     NIM_SDK_NODE_API(pushExternalVideoFrame);
     
-    // 4.0
     NIM_SDK_NODE_API(sendSEIMsg);
     NIM_SDK_NODE_API(sendSEIMsgEx);
     NIM_SDK_NODE_API(setExternalAudioRender);
     NIM_SDK_NODE_API(pullExternalAudioFrame); //todo
 
-    // 4.1.1
     NIM_SDK_NODE_API(setAudioEffectPreset);
     NIM_SDK_NODE_API(setVoiceBeautifierPreset);
     NIM_SDK_NODE_API(setLocalVoicePitch);
     NIM_SDK_NODE_API(setLocalVoiceEqualization);
 
-    // 4.1.110(timing custom)
     NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);
 
-    // 4.4.8
-    NIM_SDK_NODE_API(switchChannel);
+
     NIM_SDK_NODE_API(setLocalMediaPriority);
     NIM_SDK_NODE_API(enableLoopbackRecording);
     NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);
@@ -184,6 +183,8 @@ public:
     NIM_SDK_NODE_API(enumerateCaptureDevices);
     NIM_SDK_NODE_API(setDevice);
     NIM_SDK_NODE_API(getDevice);
+    NIM_SDK_NODE_API(setDeviceEx);
+    NIM_SDK_NODE_API(getDeviceEx);
 
     // CUSTOM
     NIM_SDK_NODE_API(enumerateScreenCaptureSourceInfo);
@@ -194,7 +195,6 @@ public:
     NIM_SDK_NODE_API(setSystemAudioLoopbackCaptureVolume);
 
     // 4.6.20
-    NIM_SDK_NODE_API(enableLocalVideoEx);
     NIM_SDK_NODE_API(enableLocalSubStreamAudio);
     NIM_SDK_NODE_API(muteLocalSubStreamAudio);
     NIM_SDK_NODE_API(subscribeRemoteSubStreamAudio);
@@ -221,7 +221,7 @@ public:
     NIM_SDK_NODE_API(startBeauty);
     NIM_SDK_NODE_API(stopBeauty);
     NIM_SDK_NODE_API(enableBeauty);
-    NIM_SDK_NODE_API(enableBeautyMirrorMode);
+    // NIM_SDK_NODE_API(enableBeautyMirrorMode);
     NIM_SDK_NODE_API(getBeautyEffect);
     NIM_SDK_NODE_API(setBeautyEffect);
     NIM_SDK_NODE_API(addBeautyFilter);

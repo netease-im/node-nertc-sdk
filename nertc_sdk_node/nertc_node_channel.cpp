@@ -157,6 +157,7 @@ Napi::FunctionReference NertcNodeChannel::constructor;
 Napi::Object NertcNodeChannel::Init(Napi::Env env, Napi::Object exports) {
     Napi::Function func = DefineClass(env, "NertcNodeChannel", {
         SET_PROTOTYPE(onEvent),
+        SET_PROTOTYPE(onStatsObserver),
         SET_PROTOTYPE(onVideoFrame),
 
         SET_PROTOTYPE(release),
@@ -288,14 +289,29 @@ NIM_SDK_NODE_API_DEF(onEvent)
 
 NIM_SDK_NODE_API_DEF(onStatsObserver)
 {
-    auto env = info.Env();
-    std::string event_name = "";
-    Napi::FunctionReference function;
-    napi_get_value_utf8_string(info[0], event_name);
-    napi_get_value_function(info[1], function);
-    _stats_observer->addEvent(event_name, std::move(function));
-    auto ret_value = env.Null();
-    return ret_value;
+    INIT_ENV
+    do
+    {
+        std::string eventName;
+        bool enable;
+        napi_get_value_utf8_string(info[0], eventName);
+        napi_get_value_bool(info[1], enable);
+        if (eventName.length() == 0)
+        {
+            break;
+        }
+        if (!enable)
+        {
+            auto sz = _stats_observer->removeEventHandler(eventName);
+        }
+        else
+        {
+            Napi::FunctionReference function;
+            napi_get_value_function(info[2], function);
+            _stats_observer->addEvent(eventName, std::move(function));
+        }
+    } while (false);
+	return Napi::Number::New(env, ret);
 }
 
 NIM_SDK_NODE_API_DEF(onVideoFrame)
