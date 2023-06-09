@@ -1007,6 +1007,15 @@ class NERtcEngine extends events_1.EventEmitter {
     setAudioMixingPosition(pos) {
         return this.nertcEngine.setAudioMixingPosition(pos);
     }
+
+    setAudioMixingPitch(pitch) {
+        return this.nertcEngine.setAudioMixingPitch(pitch);
+    }
+
+    getAudioMixingPitch() {
+        return this.nertcEngine.getAudioMixingPitch();
+    }
+
     /**
      * 播放指定音效文件。
      * <pre>
@@ -1045,6 +1054,15 @@ class NERtcEngine extends events_1.EventEmitter {
     stopEffect(effectId) {
         return this.nertcEngine.stopEffect(effectId);
     }
+
+    setEffectPitch(effectId, pitch) {
+        return this.nertcEngine.setEffectPitch(effectId, pitch);
+    }
+
+    getEffectPitch(effectId) {
+        return this.nertcEngine.getEffectPitch(effectId);
+    }
+
     /**
      * 停止播放所有音效文件。
      * @returns {number}
@@ -1218,6 +1236,9 @@ class NERtcEngine extends events_1.EventEmitter {
      */
     enableAudioVolumeIndication(enabled, interval) {
         return this.nertcEngine.enableAudioVolumeIndication(enabled, interval);
+    }
+    enableAudioVolumeIndicationEx(enabled, interval, enableVad) {
+        return this.nertcEngine.enableAudioVolumeIndicationEx(enabled, interval, enableVad);
     }
     /**
      * 通过指定区域共享屏幕。共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕区域。
@@ -2359,6 +2380,11 @@ class NERtcEngine extends events_1.EventEmitter {
     adjustUserPlaybackSignalVolume(uid, volume) {
         return this.nertcEngine.adjustUserPlaybackSignalVolume(uid, volume);
     }
+
+    adjustChannelPlaybackSignalVolume(volume) {
+        return this.nertcEngine.adjustChannelPlaybackSignalVolume(volume);
+    }
+
     /**
     * 快速切换音视频房间。
     * @since 4.4.8
@@ -2440,13 +2466,13 @@ class NERtcEngine extends events_1.EventEmitter {
         return this.nertcEngine.updateScreenCaptureParameters(param);
     }
 
-    setExternalVideoSource(enabled) {
-        return this.nertcEngine.setExternalVideoSource(enabled);
-    }
+    // setExternalVideoSource(enabled) {
+    //     return this.nertcEngine.setExternalVideoSource(enabled);
+    // }
 
-    setExternalVideoSourceEx(type, enabled) {
-        return this.nertcEngine.setExternalVideoSourceEx(type, enabled);
-    }
+    // setExternalVideoSourceEx(type, enabled) {
+    //     return this.nertcEngine.setExternalVideoSourceEx(type, enabled);
+    // }
 
     /**
     * 开始客户端录音。
@@ -2477,6 +2503,11 @@ class NERtcEngine extends events_1.EventEmitter {
     startAudioRecording(filePath, sampleRate, quality) {
         return this.nertcEngine.startAudioRecording(filePath, sampleRate, quality);
     }
+
+    startAudioRecordingWithConfig(config) {
+        return this.nertcEngine.startAudioRecordingWithConfig(config);
+    }
+
     /**
     * 停止客户端录音。
     * @since 4.4.8
@@ -2728,8 +2759,18 @@ class NERtcEngine extends events_1.EventEmitter {
         return this.nertcEngine.enableVirtualBackground(enable, config);
     }
 
-    setCloudProxy(proxyType) {
-        return this.nertcEngine.setCloudProxy(proxyType);
+    setCloudProxy(type) {
+        return this.nertcEngine.setCloudProxy(type);
+    }
+
+    enableLocalData(enable) {
+        return this.nertcEngine.enableLocalData(enable);
+    }
+    subscribeRemoteData(uid, sub) {
+        return this.nertcEngine.subscribeRemoteData(uid, sub);
+    }
+    sendData(data) {
+        return this.nertcEngine.sendData(data);
     }
 
     startBeauty(file_path) {

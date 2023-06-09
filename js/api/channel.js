@@ -55,6 +55,9 @@ class NERtcChannel extends events_1.EventEmitter {
     muteLocalVideoStreamEx(type, enabled) {
         return this.rtcChannel.muteLocalVideoStreamEx(type, enabled);
     }
+    enableAudioVolumeIndication(enabled, interval, enableVad) {
+        return this.rtcChannel.enableAudioVolumeIndication(enabled, interval, enableVad);
+    }
     startScreenCaptureByScreenRect(screenRect, regionRect, param) {
         return this.rtcChannel.startScreenCaptureByScreenRect(screenRect, regionRect, param);
     }
@@ -225,6 +228,9 @@ class NERtcChannel extends events_1.EventEmitter {
     }
     adjustUserPlaybackSignalVolume(uid, volume) {
         return this.rtcChannel.adjustUserPlaybackSignalVolume(uid, volume);
+    }
+    adjustChannelPlaybackSignalVolume(volume) {
+        return this.rtcChannel.adjustChannelPlaybackSignalVolume(volume);
     }
     startChannelMediaRelay(config) {
         return this.rtcChannel.startChannelMediaRelay(config);

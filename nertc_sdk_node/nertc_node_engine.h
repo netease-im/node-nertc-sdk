@@ -78,13 +78,14 @@ public:
     NIM_SDK_NODE_API(setLocalVoiceEqualization);
 
     NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);
-
+    NIM_SDK_NODE_API(adjustChannelPlaybackSignalVolume);
 
     NIM_SDK_NODE_API(setLocalMediaPriority);
     NIM_SDK_NODE_API(enableLoopbackRecording);
     NIM_SDK_NODE_API(adjustLoopbackRecordingSignalVolume);
     NIM_SDK_NODE_API(setExcludeWindowList);
     NIM_SDK_NODE_API(startAudioRecording);
+    NIM_SDK_NODE_API(startAudioRecordingWithConfig);
     NIM_SDK_NODE_API(stopAudioRecording);
     NIM_SDK_NODE_API(startChannelMediaRelay);
     NIM_SDK_NODE_API(updateChannelMediaRelay);
@@ -111,6 +112,7 @@ public:
     NIM_SDK_NODE_API(setPlaybackAudioFrameParameters);
     NIM_SDK_NODE_API(startAudioDump);
     NIM_SDK_NODE_API(stopAudioDump);
+    NIM_SDK_NODE_API(startAudioDumpEx);
     NIM_SDK_NODE_API(startAudioMixing);
     NIM_SDK_NODE_API(stopAudioMixing);
     NIM_SDK_NODE_API(pauseAudioMixing);
@@ -122,8 +124,12 @@ public:
     NIM_SDK_NODE_API(getAudioMixingDuration);
     NIM_SDK_NODE_API(getAudioMixingCurrentPosition);
     NIM_SDK_NODE_API(setAudioMixingPosition);
+    NIM_SDK_NODE_API(setAudioMixingPitch);
+    NIM_SDK_NODE_API(getAudioMixingPitch);
     NIM_SDK_NODE_API(playEffect);
     NIM_SDK_NODE_API(stopEffect);
+    NIM_SDK_NODE_API(setEffectPitch);
+    NIM_SDK_NODE_API(getEffectPitch);
     NIM_SDK_NODE_API(stopAllEffects);
     NIM_SDK_NODE_API(pauseEffect);
     NIM_SDK_NODE_API(resumeEffect);
@@ -137,6 +143,7 @@ public:
     NIM_SDK_NODE_API(setEarbackVolume);
     NIM_SDK_NODE_API(onStatsObserver);
     NIM_SDK_NODE_API(enableAudioVolumeIndication);
+    NIM_SDK_NODE_API(enableAudioVolumeIndicationEx);
 
     NIM_SDK_NODE_API(startScreenCaptureByScreenRect);
     NIM_SDK_NODE_API(startScreenCaptureByDisplayId);
@@ -209,7 +216,6 @@ public:
     NIM_SDK_NODE_API(startVideoPreviewEx);
     NIM_SDK_NODE_API(stopVideoPreviewEx);
     NIM_SDK_NODE_API(muteLocalVideoStreamEx);
-    NIM_SDK_NODE_API(startAudioDumpEx);
     NIM_SDK_NODE_API(setScreenCaptureMouseCursor);
     NIM_SDK_NODE_API(updateScreenCaptureParameters);
     NIM_SDK_NODE_API(setExternalVideoSourceEx);
@@ -233,6 +239,10 @@ public:
     NIM_SDK_NODE_API(removeBeautyMakeup);
     NIM_SDK_NODE_API(setLocalVoiceReverbParam);
     NIM_SDK_NODE_API(enableMediaPub);
+
+    NIM_SDK_NODE_API(enableLocalData);
+    NIM_SDK_NODE_API(subscribeRemoteData);
+    NIM_SDK_NODE_API(sendData);
 
 private:
     //nertc::IRtcEngineEx *rtc_engine_ = nullptr;

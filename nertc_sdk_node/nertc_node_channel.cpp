@@ -210,6 +210,8 @@ Napi::Object NertcNodeChannel::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(sendSEIMsgEx),
 
         SET_PROTOTYPE(adjustUserPlaybackSignalVolume),
+        SET_PROTOTYPE(adjustChannelPlaybackSignalVolume),
+
         SET_PROTOTYPE(startChannelMediaRelay),
         SET_PROTOTYPE(updateChannelMediaRelay),
         SET_PROTOTYPE(stopChannelMediaRelay),
@@ -217,7 +219,9 @@ Napi::Object NertcNodeChannel::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(setLocalPublishFallbackOption),
         SET_PROTOTYPE(setRemoteSubscribeFallbackOption),
         SET_PROTOTYPE(setRemoteHighPriorityAudioStream),
-        SET_PROTOTYPE(enableMediaPub)
+        SET_PROTOTYPE(enableMediaPub),
+        SET_PROTOTYPE(enableAudioVolumeIndication)
+
 
     });
 
@@ -1194,6 +1198,20 @@ NIM_SDK_NODE_API_DEF(adjustUserPlaybackSignalVolume)
     return Napi::Number::New(env, ret);
 }
 
+NIM_SDK_NODE_API_DEF(adjustChannelPlaybackSignalVolume)
+{
+    INIT_ENV
+    do
+    {
+        int volume = 0;
+        napi_get_value_int32(info[0], volume);
+        LOG_F(INFO, "volume:%d", volume);
+        ret = _channel->adjustChannelPlaybackSignalVolume(volume);
+        LOG_F(INFO, "ret:%d", ret);
+    } while (false);
+    return Napi::Number::New(env, ret);
+}
+
 NIM_SDK_NODE_API_DEF(startChannelMediaRelay)
 {
     INIT_ENV
@@ -1387,6 +1405,25 @@ NIM_SDK_NODE_API_DEF(enableMediaPub)
         napi_get_value_bool(info[0], enabled);
 		napi_get_value_uint32(info[1], type);
         ret = _channel->enableMediaPub(enabled, (nertc::NERtcMediaPubType)type);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+
+NIM_SDK_NODE_API_DEF(enableAudioVolumeIndication)
+{
+    INIT_ENV
+    do
+    {
+        bool enabled;
+        uint32_t interval;
+        bool enableVad;
+        napi_get_value_bool(info[0], enabled);
+        napi_get_value_uint32(info[1], interval);
+        napi_get_value_bool(info[2], enableVad);
+        LOG_F(INFO, "enabled:%d interval:%d enableVad:%d", enabled, interval, enableVad);
+        ret = _channel->enableAudioVolumeIndication(enabled, interval, enableVad);
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);

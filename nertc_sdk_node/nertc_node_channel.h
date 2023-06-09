@@ -79,6 +79,8 @@ public:
     NIM_SDK_NODE_API(sendSEIMsgEx);
 
     NIM_SDK_NODE_API(adjustUserPlaybackSignalVolume);
+    NIM_SDK_NODE_API(adjustChannelPlaybackSignalVolume);
+
     NIM_SDK_NODE_API(startChannelMediaRelay);
     NIM_SDK_NODE_API(updateChannelMediaRelay);
     NIM_SDK_NODE_API(stopChannelMediaRelay);
@@ -86,6 +88,8 @@ public:
     NIM_SDK_NODE_API(setRemoteSubscribeFallbackOption);
     NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);
     NIM_SDK_NODE_API(enableMediaPub); // demo 没有入口
+    NIM_SDK_NODE_API(enableAudioVolumeIndication);
+
 
 
 private:

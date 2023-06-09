@@ -896,6 +896,75 @@ napi_status nertc_channel_option_to_struct(const Napi::Env& env, const Napi::Obj
         ptr[out.length()] = '\0';  
         config.permission_key = ptr;
     }
+    return napi_ok;
+}
+
+napi_status nertc_recording_option_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcAudioRecordingConfiguration& config)
+{
+    std::string out;
+    int32_t out_32;
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"filePath"))))
+    {
+        out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"filePath"))).As<Napi::String>().Utf8Value();
+        memset(config.filePath, 0, kNERtcMaxURILength);
+        strncpy(config.filePath, out.c_str(), kNERtcMaxURILength);
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"sampleRate"))))
+    {
+        out_32 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"sampleRate"))).As<Napi::Number>().Int32Value();
+        config.sampleRate = out_32;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"quality"))))
+    {
+        out_32 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"quality"))).As<Napi::Number>().Int32Value();
+        config.quality = (nertc::NERtcAudioRecordingQuality)out_32;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"position"))))
+    {
+        out_32 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"position"))).As<Napi::Number>().Int32Value();
+        config.position = (nertc::NERtcAudioRecordingPosition)out_32;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"cycleTime"))))
+    {
+        out_32 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"cycleTime"))).As<Napi::Number>().Int32Value();
+        config.cycleTime = (nertc::NERtcAudioRecordingCycleTime)out_32;
+    }
+
+    return napi_ok;
+}
+
+napi_status nertc_virtual_background_option_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::VirtualBackgroundSource& config)
+{
+    std::string out;
+    int32_t out_32;
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"background_source_type"))))
+    {
+        out_32 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"background_source_type"))).As<Napi::Number>().Int32Value();
+        config.background_source_type = (nertc::VirtualBackgroundSource::NERtcBackgroundSourceType)out_32;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"color"))))
+    {
+        out_32 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"color"))).As<Napi::Number>().Int32Value();
+        config.color = out_32;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"source"))))
+    {
+        out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"source"))).As<Napi::String>().Utf8Value();
+        const char* cstr  = out.c_str();
+        char* ptr = new char[out.length() + 1];
+        std::strcpy(ptr, cstr);
+        ptr[out.length()] = '\0';  
+        config.source = ptr;
+    }
+    return napi_ok;
 }
 
 napi_status nertc_media_relay_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcChannelMediaRelayConfiguration* config)

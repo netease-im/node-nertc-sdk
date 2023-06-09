@@ -202,6 +202,7 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(setLocalVoicePitch),
         SET_PROTOTYPE(setLocalVoiceEqualization),
         SET_PROTOTYPE(adjustUserPlaybackSignalVolume),
+        SET_PROTOTYPE(adjustChannelPlaybackSignalVolume),
     
         // //4.2.5
         SET_PROTOTYPE(switchChannel),
@@ -211,6 +212,7 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(adjustLoopbackRecordingSignalVolume),
         SET_PROTOTYPE(setExcludeWindowList),
         SET_PROTOTYPE(startAudioRecording),
+        SET_PROTOTYPE(startAudioRecordingWithConfig),
         SET_PROTOTYPE(stopAudioRecording),
         SET_PROTOTYPE(startChannelMediaRelay),
         SET_PROTOTYPE(updateChannelMediaRelay),
@@ -248,8 +250,12 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(getAudioMixingDuration),
         SET_PROTOTYPE(getAudioMixingCurrentPosition),
         SET_PROTOTYPE(setAudioMixingPosition),
+        SET_PROTOTYPE(setAudioMixingPitch),
+        SET_PROTOTYPE(getAudioMixingPitch),
         SET_PROTOTYPE(playEffect),
         SET_PROTOTYPE(stopEffect),
+        SET_PROTOTYPE(setEffectPitch),
+        SET_PROTOTYPE(getEffectPitch),
         SET_PROTOTYPE(stopAllEffects),
         SET_PROTOTYPE(pauseEffect),
         SET_PROTOTYPE(resumeEffect),
@@ -263,6 +269,7 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(setEarbackVolume),
         SET_PROTOTYPE(onStatsObserver),
         SET_PROTOTYPE(enableAudioVolumeIndication),
+        SET_PROTOTYPE(enableAudioVolumeIndicationEx),
         SET_PROTOTYPE(startScreenCaptureByScreenRect),
         SET_PROTOTYPE(startScreenCaptureByDisplayId),
         SET_PROTOTYPE(startScreenCaptureByWindowId),
@@ -349,6 +356,10 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(removeBeautyMakeup),
         SET_PROTOTYPE(setLocalVoiceReverbParam),
         SET_PROTOTYPE(enableMediaPub),
+
+        SET_PROTOTYPE(enableLocalData),
+        SET_PROTOTYPE(subscribeRemoteData),
+        SET_PROTOTYPE(sendData),
     });
 
 #if NAPI_VERSION < 6
@@ -913,6 +924,20 @@ NIM_SDK_NODE_API_DEF(adjustUserPlaybackSignalVolume)
     return Napi::Number::New(env, ret);
 }
 
+NIM_SDK_NODE_API_DEF(adjustChannelPlaybackSignalVolume)
+{
+    INIT_ENV
+    do
+    {
+        int volume = 0;
+        napi_get_value_int32(info[0], volume);
+        LOG_F(INFO, "volume:%d", volume);
+        ret = rtc_engine_->adjustChannelPlaybackSignalVolume(volume);
+        LOG_F(INFO, "ret:%d", ret);
+    } while (false);
+    return Napi::Number::New(env, ret);
+}
+
 NIM_SDK_NODE_API_DEF(switchChannel)
 {
     INIT_ENV
@@ -1039,6 +1064,21 @@ NIM_SDK_NODE_API_DEF(startAudioRecording)
         napi_get_value_uint32(info[2], scenario);
         LOG_F(INFO, "path:%s profile:%d scenario:%d", path.c_str(), profile, scenario);
         ret = rtc_engine_->startAudioRecording(path.c_str(), profile, (nertc::NERtcAudioRecordingQuality)scenario);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(startAudioRecordingWithConfig)
+{
+    Napi::Env env = info.Env();
+    int ret = -1;
+    do
+    {
+        nertc::NERtcAudioRecordingConfiguration config;
+        Napi::Object obj = info[0].As<Napi::Object>();
+        nertc_recording_option_to_struct(env, obj, config);
+        ret = rtc_engine_->startAudioRecordingWithConfig(config);
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
@@ -1706,6 +1746,32 @@ NIM_SDK_NODE_API_DEF(setAudioMixingPosition)
     return Napi::Number::New(env, ret);
 }
 
+NIM_SDK_NODE_API_DEF(setAudioMixingPitch)
+{
+    INIT_ENV
+    do
+    {
+        uint32_t param;
+        napi_get_value_uint32(info[0], param);
+        LOG_F(INFO, "param:%d", param);
+        ret = rtc_engine_->setAudioMixingPitch(param);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(getAudioMixingPitch)
+{
+    INIT_ENV
+    int32_t pitch = 0;
+    do
+    {
+        ret = rtc_engine_->getAudioMixingPitch(&pitch);
+    } while (false);
+    LOG_F(INFO, "ret:%d pitch:%d", ret, pitch);
+    return Napi::Number::New(env, ret == 0 ? pitch : ret);
+}
+
 NIM_SDK_NODE_API_DEF(playEffect)
 {
     INIT_ENV
@@ -1736,6 +1802,37 @@ NIM_SDK_NODE_API_DEF(stopEffect)
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setEffectPitch)
+{
+    INIT_ENV
+    do
+    {
+        uint32_t effect_id;
+        napi_get_value_uint32(info[0], effect_id);
+        int32_t pitch;
+        napi_get_value_int32(info[1], pitch);
+        LOG_F(INFO, "effect_id:%d pitch:%d", effect_id, pitch);
+        ret = rtc_engine_->setEffectPitch(effect_id, pitch);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(getEffectPitch)
+{
+    INIT_ENV
+    int32_t pitch = 0;
+    do
+    {
+        uint32_t effect_id;
+        napi_get_value_uint32(info[0], effect_id);
+        LOG_F(INFO, "effect_id:%d", effect_id);
+        ret = rtc_engine_->getEffectPitch(effect_id, &pitch);
+    } while (false);
+    LOG_F(INFO, "ret:%d pitch:%d", ret, pitch);
+    return Napi::Number::New(env, ret == 0 ? pitch : ret);
 }
 
 NIM_SDK_NODE_API_DEF(stopAllEffects)
@@ -1942,12 +2039,28 @@ NIM_SDK_NODE_API_DEF(enableAudioVolumeIndication)
     {
         bool enabled;
         uint32_t interval;
+        napi_get_value_bool(info[0], enabled);
+        napi_get_value_uint32(info[1], interval);
+        LOG_F(INFO, "enabled:%d interval:%d", enabled, interval);
+        ret = rtc_engine_->enableAudioVolumeIndication(enabled, interval);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(enableAudioVolumeIndicationEx)
+{
+    INIT_ENV
+    do
+    {
+        bool enabled;
+        uint32_t interval;
         bool enableVad;
         napi_get_value_bool(info[0], enabled);
         napi_get_value_uint32(info[1], interval);
-        // napi_get_value_bool(info[2], enableVad);
-        LOG_F(INFO, "enabled:%d interval:%d", enabled, interval);
-        ret = rtc_engine_->enableAudioVolumeIndication(enabled, interval);
+        napi_get_value_bool(info[2], enableVad);
+        LOG_F(INFO, "enabled:%d interval:%d enableVad:%d", enabled, interval, enableVad);
+        ret = rtc_engine_->enableAudioVolumeIndication(enabled, interval, enableVad);
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
@@ -3200,38 +3313,38 @@ NIM_SDK_NODE_API_DEF(enableFaceEnhance)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(enableVirtualBackground)
-{
-    INIT_ENV
-    do
-    {
-        bool enabled = false;
-        napi_get_value_bool(info[0], enabled);
-        LOG_F(INFO, "enabled:%d", enabled);
+// NIM_SDK_NODE_API_DEF(enableVirtualBackground)
+// {
+//     INIT_ENV
+//     do
+//     {
+//         bool enabled = false;
+//         napi_get_value_bool(info[0], enabled);
+//         LOG_F(INFO, "enabled:%d", enabled);
 
-        nertc::VirtualBackgroundSource param = {};
-        nertc_virtual_backgroup_source_obj_to_struct(env, info[1].As<Napi::Object>(), param);
-        Napi::Object obj = info[1].As<Napi::Object>();
-        if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"source"))))
-        {
-            std::string strSource = obj.Get(static_cast<napi_value>(Napi::String::New(env,"source"))).As<Napi::String>().Utf8Value();
-            param.source = const_cast<char*>(strSource.c_str());
-        }
-        ret = rtc_engine_->enableVirtualBackground(enabled, param);
-    } while (false);
-    LOG_F(INFO, "ret:%d", ret);
-    return Napi::Number::New(env, ret);
-}
+//         nertc::VirtualBackgroundSource param = {};
+//         nertc_virtual_backgroup_source_obj_to_struct(env, info[1].As<Napi::Object>(), param);
+//         Napi::Object obj = info[1].As<Napi::Object>();
+//         if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"source"))))
+//         {
+//             std::string strSource = obj.Get(static_cast<napi_value>(Napi::String::New(env,"source"))).As<Napi::String>().Utf8Value();
+//             param.source = const_cast<char*>(strSource.c_str());
+//         }
+//         ret = rtc_engine_->enableVirtualBackground(enabled, param);
+//     } while (false);
+//     LOG_F(INFO, "ret:%d", ret);
+//     return Napi::Number::New(env, ret);
+// }
 
 NIM_SDK_NODE_API_DEF(setCloudProxy)
 {
     INIT_ENV
     do
     {
-        int proxyType = false;
-        napi_get_value_int32(info[0], proxyType);
-        LOG_F(INFO, "proxyType:%d", proxyType);
-        ret = rtc_engine_->setCloudProxy(proxyType);
+        int type = false;
+        napi_get_value_int32(info[0], type);
+        LOG_F(INFO, "type:%d", type);
+        ret = rtc_engine_->setCloudProxy(type);
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
@@ -3458,5 +3571,71 @@ NIM_SDK_NODE_API_DEF(enableMediaPub)
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
+
+NIM_SDK_NODE_API_DEF(enableVirtualBackground)
+{
+    INIT_ENV
+    do
+    {
+        bool enable = false;
+        napi_get_value_bool(info[0], enable);
+        nertc::VirtualBackgroundSource option;
+        nertc_virtual_background_option_to_struct(env, info[1].As<Napi::Object>(), option);
+        ret = rtc_engine_->enableVirtualBackground(enable, option);
+        if (option.source != nullptr) {
+			delete[] option.source;
+			option.source = nullptr;
+		}
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(enableLocalData)
+{
+    INIT_ENV
+    do
+    {
+        bool enable = false;
+        napi_get_value_bool(info[0], enable);
+        ret = rtc_engine_->enableLocalData(enable);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(subscribeRemoteData)
+{
+    INIT_ENV
+    do
+    {
+        unsigned int uid;
+        bool sub = false;
+        napi_get_value_uint32(info[0], uid);
+        napi_get_value_bool(info[1], sub);
+        ret = rtc_engine_->subscribeRemoteData(uid, sub);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(sendData)
+{
+    INIT_ENV
+    do
+    {
+        if (!info[0].IsArrayBuffer()) {
+            Napi::Error::New(env, "retryErrors must be an arraybuffer").ThrowAsJavaScriptException();
+        } else {
+            Napi::ArrayBuffer arrayBuffer = info[0].As<Napi::ArrayBuffer>();
+            void * data = arrayBuffer.Data();
+            size_t len = arrayBuffer.ByteLength();
+            ret = rtc_engine_->sendData(data, len);
+        }
+        LOG_F(INFO, "ret:%d", ret);
+    } while (false);
+    return Napi::Number::New(env, ret);
+}
+
 
 } //namespace nertc_node
