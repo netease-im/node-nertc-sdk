@@ -31,6 +31,8 @@ public:
     NIM_SDK_NODE_API(release);
     NIM_SDK_NODE_API(getChannelName);
     NIM_SDK_NODE_API(joinChannel);
+    NIM_SDK_NODE_API(joinChannelWithUid);
+    NIM_SDK_NODE_API(joinChannelEx);
     NIM_SDK_NODE_API(leaveChannel);
     NIM_SDK_NODE_API(enableLocalAudio);
     NIM_SDK_NODE_API(enableLocalSubStreamAudio); // 新增接口

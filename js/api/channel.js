@@ -27,6 +27,12 @@ class NERtcChannel extends events_1.EventEmitter {
     joinChannel(token) {
         return this.rtcChannel.joinChannel(token);
     }
+    joinChannelWithUid(token, uid) {
+        return this.rtcChannel.joinChannelWithUid(token, uid);
+    }
+    joinChannelEx(token, uid, opt) {
+        return this.rtcChannel.joinChannelEx(token, uid, opt);
+    }
     leaveChannel() {
         return this.rtcChannel.leaveChannel();
     }
