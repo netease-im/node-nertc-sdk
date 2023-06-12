@@ -268,6 +268,7 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(enableEarback),
         SET_PROTOTYPE(setEarbackVolume),
         SET_PROTOTYPE(onStatsObserver),
+        SET_PROTOTYPE(onQsObserver),
         SET_PROTOTYPE(enableAudioVolumeIndication),
         SET_PROTOTYPE(enableAudioVolumeIndicationEx),
         SET_PROTOTYPE(startScreenCaptureByScreenRect),
@@ -391,6 +392,7 @@ NertcNodeEngine::NertcNodeEngine(const Napi::CallbackInfo& info)
     rtc_engine_ = (nertc::IRtcEngineEx *)createNERtcEngine();
     _event_handler = std::make_shared<NertcNodeEventHandler>();
     _stats_observer = std::make_shared<NertcNodeRtcMediaStatsHandler>();
+    _qs_handler = std::make_shared<NertcNodeVideoEncoderQosObserver>();
 #ifdef WIN32
     _windows_helper = new WindowsHelpers();
     window_capture_helper_.reset(new WindowCaptureHelper());
@@ -2039,6 +2041,39 @@ NIM_SDK_NODE_API_DEF(onStatsObserver)
             Napi::FunctionReference function;
             napi_get_value_function(info[2], function);
             _stats_observer->addEvent(eventName, std::move(function));
+        }
+    } while (false);
+	return Napi::Number::New(env, ret);
+}
+
+
+NIM_SDK_NODE_API_DEF(onQsObserver)
+{
+    INIT_ENV
+    do
+    {
+        rtc_engine_->setVideoEncoderQosObserver(_qs_handler.get());
+        std::string eventName;
+        bool enable;
+        napi_get_value_utf8_string(info[0], eventName);
+        napi_get_value_bool(info[1], enable);
+        if (eventName.length() == 0)
+        {
+            break;
+        }
+        if (!enable)
+        {
+            auto sz = _qs_handler->removeEventHandler(eventName);
+            if (sz == 0)
+            {
+                rtc_engine_->setVideoEncoderQosObserver(nullptr);
+            }
+        }
+        else
+        {
+            Napi::FunctionReference function;
+            napi_get_value_function(info[2], function);
+            _qs_handler->addEvent(eventName, std::move(function));
         }
     } while (false);
 	return Napi::Number::New(env, ret);

@@ -39,6 +39,7 @@ napi_status nertc_video_recv_stats_to_obj(const Napi::Env env, const nertc::NERt
 napi_status nertc_network_quality_to_obj(const Napi::Env env, const nertc::NERtcNetworkQualityInfo& config,  Napi::Object& obj);
 napi_status nertc_audio_volume_info_to_obj(const Napi::Env env, const nertc::NERtcAudioVolumeInfo& config,  Napi::Object& obj);
 napi_status nertc_lastmile_probe_result_to_obj(const Napi::Env env, const nertc::NERtcLastmileProbeResult& config,  Napi::Object& obj);
+napi_status nertc_user_join_extra_info_to_obj(const Napi::Env env, const nertc::NERtcUserJoinExtraInfo& join_extra_info,  Napi::Object& obj);
 
 // channel helper
 //obj->struct

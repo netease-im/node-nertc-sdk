@@ -315,6 +315,10 @@ class NERtcChannel extends events_1.EventEmitter {
             fire('onWarning', warnCode, msg);
         });
 
+        this.rtcChannel.onEvent('onApiCallExecuted', function (apiName, code, msg) {
+            fire('onApiCallExecuted', apiName, code, msg);
+        });
+
         /**
          * 加入频道回调
          * @event NERtcChannel#onJoinChannel
@@ -446,6 +450,10 @@ class NERtcChannel extends events_1.EventEmitter {
             fire('onUserJoined', uid, userName);
         });
 
+        this.rtcChannel.onEvent('onUserJoinedEx', function (uid, userName, info) {
+            fire('onUserJoinedEx', uid, userName, info);
+        });
+
         /**
          * 远端用户离开当前频道回调。
          * <pre>
@@ -464,6 +472,10 @@ class NERtcChannel extends events_1.EventEmitter {
          */
         this.rtcChannel.onEvent('onUserLeft', function (uid, reason) {
             fire('onUserLeft', uid, reason);
+        });
+
+        this.rtcChannel.onEvent('onUserLeftEx', function (uid, reason, info) {
+            fire('onUserLeftEx', uid, reason, info);
         });
 
         /**
@@ -838,6 +850,14 @@ class NERtcChannel extends events_1.EventEmitter {
 
         this.rtcChannel.onEvent('onMediaRightChange', function (is_audio_banned, is_video_banned) {
             fire('onMediaRightChange', is_audio_banned, is_video_banned);
+        });
+
+        this.rtcChannel.onEvent('onPermissionKeyWillExpire', function () {
+            fire('onPermissionKeyWillExpire');
+        });
+
+        this.rtcChannel.onEvent('onUpdatePermissionKey', function (key, code, time) {
+            fire('onUpdatePermissionKey', key, code, time);
         });
         
         this.rtcChannel.onVideoFrame( (infos)=>{ //function

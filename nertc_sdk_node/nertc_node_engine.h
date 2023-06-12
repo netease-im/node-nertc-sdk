@@ -142,6 +142,7 @@ public:
     NIM_SDK_NODE_API(enableEarback);
     NIM_SDK_NODE_API(setEarbackVolume);
     NIM_SDK_NODE_API(onStatsObserver);
+    NIM_SDK_NODE_API(onQsObserver);
     NIM_SDK_NODE_API(enableAudioVolumeIndication);
     NIM_SDK_NODE_API(enableAudioVolumeIndicationEx);
 
@@ -255,12 +256,14 @@ public:
     NIM_SDK_NODE_API(setSpatializerRenderMode);
     NIM_SDK_NODE_API(enableSpatializer);
 
+
 private:
     //nertc::IRtcEngineEx *rtc_engine_ = nullptr;
     nertc::IAudioDeviceManager *_adm = nullptr;
     nertc::IVideoDeviceManager *_vdm = nullptr;
     std::shared_ptr<NertcNodeEventHandler> _event_handler;
     std::shared_ptr<NertcNodeRtcMediaStatsHandler> _stats_observer;
+    std::shared_ptr<NertcNodeEventHandler> _qs_handler;
 
 #ifdef WIN32
     nertc_electron_util::WindowsHelpers *_windows_helper = nullptr;

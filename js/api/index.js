@@ -2901,6 +2901,9 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onWarning', function (warnCode, msg) {
             fire('onWarning', warnCode, msg);
         });
+        this.nertcEngine.onEvent('onApiCallExecuted', function (apiName, code, msg) {
+            fire('onApiCallExecuted', apiName, code, msg);
+        });
         /**
          * 释放硬件资源的回调。
          * @event NERtcEngine#onReleasedHwResources
@@ -3032,6 +3035,9 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onUserJoined', function (uid, userName) {
             fire('onUserJoined', uid, userName);
         });
+        this.nertcEngine.onEvent('onUserJoinedEx', function (uid, userName, info) {
+            fire('onUserJoinedEx', uid, userName, info);
+        });
         /**
          * 远端用户离开当前频道回调。
          * <pre>
@@ -3050,6 +3056,9 @@ class NERtcEngine extends events_1.EventEmitter {
          */
         this.nertcEngine.onEvent('onUserLeft', function (uid, reason) {
             fire('onUserLeft', uid, reason);
+        });
+        this.nertcEngine.onEvent('onUserLeftEx', function (uid, reason, info) {
+            fire('onUserLeftEx', uid, reason, info);
         });
         /**
          * 远端用户开启音频回调。
@@ -3226,6 +3235,10 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onFirstVideoDataReceived', function (uid) {
             fire('onFirstVideoDataReceived', uid);
         });
+        this.nertcEngine.onEvent('onFirstVideoDataReceivedEx', function (type, uid) {
+            fire('onFirstVideoDataReceivedEx', type, uid);
+        });
+
         /**
          * 已解码远端音频首帧的回调。
          * @event NERtcEngine#onFirstAudioFrameDecoded
@@ -3234,6 +3247,7 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onFirstAudioFrameDecoded', function (uid) {
             fire('onFirstAudioFrameDecoded', uid);
         });
+        
         /**
          * 已显示首帧远端视频回调。
          * <pre>
@@ -3247,6 +3261,10 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onFirstVideoFrameDecoded', function (uid, width, height) {
             fire('onFirstVideoFrameDecoded', uid, width, height);
         });
+        this.nertcEngine.onEvent('onFirstVideoFrameDecodedEx', function (type, uid, width, height) {
+            fire('onFirstVideoFrameDecodedEx', type, uid, width, height);
+        });
+
         /**
          * 本地用户的音乐文件播放状态改变回调。
          * <pre>
@@ -3293,6 +3311,11 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onAudioEffectFinished', function (effect_id) {
             fire('onAudioEffectFinished', effect_id);
         });
+
+        this.nertcEngine.onEvent('onAudioEffectTimestampUpdate', function (effecct_id, timestamp_ms) {
+            fire('onAudioEffectTimestampUpdate', effecct_id, timestamp_ms);
+        });
+
         /**
          * 提示频道内本地用户瞬时音量的回调。
          * <pre>
@@ -3306,6 +3329,11 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onLocalAudioVolumeIndication', function (volume) {
             fire('onLocalAudioVolumeIndication', volume);
         });
+
+        this.nertcEngine.onEvent('onLocalAudioVolumeIndicationEx', function (volume, enable) {
+            fire('onLocalAudioVolumeIndicationEx', volume, enable);
+        });
+
         /**
          * 提示频道内谁正在说话及说话者瞬时音量的回调。
          * <pre>
@@ -3399,7 +3427,7 @@ class NERtcEngine extends events_1.EventEmitter {
         });
         /**
          * 屏幕共享暂停/恢复/开始/结束等回调
-         * @event NERtcEngine#onScreenCaptureStatus
+         * @event NERtcEngine#onScreenCaptureStatusonScreenCaptureStatus
          * @param {number} status 屏幕共享状态。
          * <pre>
          * - 1 开始屏幕共享。
@@ -3739,6 +3767,48 @@ class NERtcEngine extends events_1.EventEmitter {
 
         this.nertcEngine.onEvent('onLocalVideoWatermarkState', function (videoStreamType, state) {
             fire('onLocalVideoWatermarkState', videoStreamType, state);
+        });
+
+        this.nertcEngine.onEvent('onPermissionKeyWillExpire', function () {
+            fire('onPermissionKeyWillExpire');
+        });
+
+        this.nertcEngine.onEvent('onUpdatePermissionKey', function (key, code, time) {
+            fire('onUpdatePermissionKey', key, code, time);
+        });
+
+        this.nertcEngine.onEvent('onUserDataReceiveMessage', function (uid, data) {
+            fire('onUserDataReceiveMessage', uid, data);
+        });
+
+        this.nertcEngine.onEvent('onUserDataStart', function (uid) {
+            fire('onUserDataStart', uid);
+        });
+
+        this.nertcEngine.onEvent('onUserDataStop', function (uid) {
+            fire('onUserDataStop', uid);
+        });
+
+        this.nertcEngine.onEvent('onUserDataStateChanged', function (uid) {
+            fire('onUserDataStateChanged', uid);
+        });
+
+        this.nertcEngine.onEvent('onUserDataBufferedAmountChanged', function (uid, amount) {
+            fire('onUserDataBufferedAmountChanged', uid, amount);
+        });
+
+
+        // qs
+        this.nertcEngine.onQsObserver('onRequestSendKeyFrame',true,  function (type) {
+            fire('onRequestSendKeyFrame', type);
+        });
+
+        this.nertcEngine.onQsObserver('onBitrateUpdated', true, function (bps, type) {
+            fire('onBitrateUpdated', bps, type);
+        });
+
+        this.nertcEngine.onQsObserver('onVideoCodecUpdated', true, function (codecType, type) {
+            fire('onVideoCodecUpdated', codecType, type);
         });
 
 

@@ -985,8 +985,99 @@ void NertcChannelEventHandler::Node_onMediaRightChange(bool is_audio_banned, boo
     }
 }
 
+void NertcChannelEventHandler::onApiCallExecuted(const char* api_name, nertc::NERtcErrorCode error, const char* message)
+{
+    std::string apiName = api_name;
+    std::string msg = message;
+    auto it = _callbacks.find("onApiCallExecuted");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::String::New(env, apiName);
+        auto param2 = Napi::Number::New(env, error);
+        auto param3 = Napi::String::New(env, msg);
+        const std::vector<napi_value> args = {param1, param2, param3};
+        function_reference->function.Call(args);
+    }
+}
 
+void NertcChannelEventHandler::onUserJoined(nertc::uid_t uid, const char* user_name, nertc::NERtcUserJoinExtraInfo join_extra_info)
+{
+    std::string userName = user_name;
+    auto it = _callbacks.find("onUserJoinedEx");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::Number::New(env, uid);
+        auto param2 = Napi::String::New(env, userName);
+        Napi::Object o = Napi::Object::New(env);
+        nertc_user_join_extra_info_to_obj(env, join_extra_info, o);
+        const std::vector<napi_value> args = {param1, param2, o};
+        function_reference->function.Call(args);
+    }
+}
 
+void NertcChannelEventHandler::onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info)
+{
+    auto it = _callbacks.find("onUserLeftEx");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::Number::New(env, uid);
+        auto param2 = Napi::Number::New(env, reason);
+        Napi::Object o = Napi::Object::New(env);
+        nertc_user_join_extra_info_to_obj(env, leave_extra_info, o);
+        const std::vector<napi_value> args = {param1, param2, o};
+        function_reference->function.Call(args);
+    }
+}
+
+void NertcChannelEventHandler::onPermissionKeyWillExpire()
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onPermissionKeyWillExpire();
+    });
+    
+}
+
+void NertcChannelEventHandler::Node_onPermissionKeyWillExpire()
+{
+    auto it = _callbacks.find("onPermissionKeyWillExpire");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        const std::vector<napi_value> args = {};
+        function_reference->function.Call(args);
+    }
+}
+
+void NertcChannelEventHandler::onUpdatePermissionKey(const char* key, nertc::NERtcErrorCode error, int timeout)
+{
+    std::string str_key = key;
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUpdatePermissionKey(str_key, error, timeout);
+    });
+}
+
+void NertcChannelEventHandler::Node_onUpdatePermissionKey(std::string key, nertc::NERtcErrorCode error, int timeout)
+{
+    auto it = _callbacks.find("onUpdatePermissionKey");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::String::New(env, key);
+        auto param2 = Napi::Number::New(env, error);
+        auto param3 = Napi::Number::New(env, timeout);
+        const std::vector<napi_value> args = {param1, param2, param3};
+        function_reference->function.Call(args);
+    }
+}
+/*******************************************质量透明数据***************************************************/
 void NertcChannelRtcMediaStatsHandler::onRtcStats(const nertc::NERtcStats &stats)
 {
     nim_node::node_async_call::async_call([=]() {

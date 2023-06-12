@@ -1154,6 +1154,12 @@ napi_status nertc_lastmile_probe_result_to_obj(const Napi::Env env, const nertc:
     return napi_ok;
 }
 
+napi_status nertc_user_join_extra_info_to_obj(const Napi::Env env, const nertc::NERtcUserJoinExtraInfo& join_extra_info,  Napi::Object& obj)
+{
+    std::string str_custom_info = join_extra_info.custom_info;
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"custom_info")), str_custom_info);
+    return napi_ok;
+}
 
 //channnel
 napi_status nertc_camera_capture_obj_to_struct(const Napi::Env env, Napi::Object& obj, nertc::NERtcCameraCaptureConfig& config)

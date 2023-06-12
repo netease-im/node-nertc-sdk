@@ -63,7 +63,11 @@ public:
     virtual void onLocalPublishFallbackToAudioOnly(bool is_fallback, nertc::NERtcVideoStreamType stream_type) override;
     virtual void onRemoteSubscribeFallbackToAudioOnly(nertc::uid_t uid, bool is_fallback, nertc::NERtcVideoStreamType stream_type) override;
     virtual void onMediaRightChange(bool is_audio_banned, bool is_video_banned) override;  // todo 新增接口
-
+    virtual void onApiCallExecuted(const char* api_name, nertc::NERtcErrorCode error, const char* message) override;
+    virtual void onUserJoined(nertc::uid_t uid, const char* user_name, nertc::NERtcUserJoinExtraInfo join_extra_info) override;
+    virtual void onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info) override;
+    virtual void onPermissionKeyWillExpire() override;
+    virtual void onUpdatePermissionKey(const char* key, nertc::NERtcErrorCode error, int timeout) override; 
 
 private:
     void Node_onError(int error_code, std::string msg);
@@ -109,7 +113,8 @@ private:
     void Node_onLocalPublishFallbackToAudioOnly(bool is_fallback, nertc::NERtcVideoStreamType stream_type);
     void Node_onRemoteSubscribeFallbackToAudioOnly(nertc::uid_t uid, bool is_fallback, nertc::NERtcVideoStreamType stream_type);
     void Node_onMediaRightChange(bool is_audio_banned, bool is_video_banned);
-
+    void Node_onPermissionKeyWillExpire();
+    void Node_onUpdatePermissionKey(std::string key, nertc::NERtcErrorCode error, int timeout);
 
 
 };
