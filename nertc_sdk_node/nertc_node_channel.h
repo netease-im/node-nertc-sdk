@@ -89,7 +89,14 @@ public:
     NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);
     NIM_SDK_NODE_API(enableMediaPub); // demo 没有入口
     NIM_SDK_NODE_API(enableAudioVolumeIndication);
+    NIM_SDK_NODE_API(updatePermissionKey);
 
+    NIM_SDK_NODE_API(updateSpatializerAudioRecvRange);
+    NIM_SDK_NODE_API(updateSpatializerSelfPosition);
+    NIM_SDK_NODE_API(enableSpatializerRoomEffects);
+    NIM_SDK_NODE_API(setSpatializerRoomProperty);
+    NIM_SDK_NODE_API(setSpatializerRenderMode);
+    NIM_SDK_NODE_API(enableSpatializer);
 
 
 private:

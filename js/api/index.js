@@ -1118,6 +1118,15 @@ class NERtcEngine extends events_1.EventEmitter {
     pauseAllEffects() {
         return this.nertcEngine.pauseAllEffects();
     }
+    setEffectPosition(effectId, pos) {
+        return this.nertcEngine.setEffectPosition(effectId, pos);
+    }
+    getEffectCurrentPosition(effectId) {
+        return this.nertcEngine.getEffectCurrentPosition(effectId);
+    }
+    getEffectDuration(effectId) {
+        return this.nertcEngine.getEffectDuration(effectId);
+    }
     /**
      * 恢复播放所有音效文件。
      * <pre>
@@ -1190,6 +1199,32 @@ class NERtcEngine extends events_1.EventEmitter {
     getEffectPlaybackVolume(effectId) {
         return this.nertcEngine.getEffectPlaybackVolume(effectId);
     }
+
+    enableSpatializer(enable) {
+        return this.nertcEngine.enableSpatializer(enable)
+    }
+    
+    updateSpatializerAudioRecvRange(audible_distance, conversational_distance, roll_off) {
+        return this.nertcEngine.updateSpatializerAudioRecvRange(audible_distance, conversational_distance, roll_off)
+    }
+
+    updateSpatializerSelfPosition(info) {
+        return this.nertcEngine.updateSpatializerSelfPosition(info)
+    }
+
+    enableSpatializerRoomEffects(enable) {
+        return this.nertcEngine.enableSpatializerRoomEffects(enable)
+    }
+
+    setSpatializerRoomProperty(room_property) {
+        return this.nertcEngine.setSpatializerRoomProperty(room_property)
+    }
+
+    setSpatializerRenderMode(mode) {
+        return this.nertcEngine.setSpatializerRenderMode(mode)
+    }
+
+
     /**
      * 开启或关闭耳返。
      * <pre>
@@ -2829,11 +2864,13 @@ class NERtcEngine extends events_1.EventEmitter {
         return this.nertcEngine.setLocalVoiceReverbParam(param);
     }
 
-    enableMediaPub(enabled, media_type) {
-        return this.nertcEngine.enableMediaPub(enabled, media_type);
+    enableMediaPub(enabled, mediaType) {
+        return this.nertcEngine.enableMediaPub(enabled, mediaType);
     }
 
-
+    updatePermissionKey(key) {
+        return this.nertcEngine.updatePermissionKey(key);
+    }
 
     /**
      * init event handler

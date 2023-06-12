@@ -243,6 +243,17 @@ public:
     NIM_SDK_NODE_API(enableLocalData);
     NIM_SDK_NODE_API(subscribeRemoteData);
     NIM_SDK_NODE_API(sendData);
+    NIM_SDK_NODE_API(updatePermissionKey);
+    NIM_SDK_NODE_API(setEffectPosition);
+    NIM_SDK_NODE_API(getEffectCurrentPosition);
+    NIM_SDK_NODE_API(getEffectDuration);
+
+    NIM_SDK_NODE_API(updateSpatializerAudioRecvRange);
+    NIM_SDK_NODE_API(updateSpatializerSelfPosition);
+    NIM_SDK_NODE_API(enableSpatializerRoomEffects);
+    NIM_SDK_NODE_API(setSpatializerRoomProperty);
+    NIM_SDK_NODE_API(setSpatializerRenderMode);
+    NIM_SDK_NODE_API(enableSpatializer);
 
 private:
     //nertc::IRtcEngineEx *rtc_engine_ = nullptr;

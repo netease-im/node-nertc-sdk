@@ -967,6 +967,93 @@ napi_status nertc_virtual_background_option_to_struct(const Napi::Env& env, cons
     return napi_ok;
 }
 
+napi_status nertc_spatializer_room_property_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcSpatializerRoomProperty& config)
+{
+    int32_t out_32;
+    float out_f;
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"room_capacity"))))
+    {
+        out_32 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"room_capacity"))).As<Napi::Number>().Int32Value();
+        config.room_capacity = (nertc::NERtcSpatializerRoomCapacity)out_32;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"material"))))
+    {
+        out_32 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"material"))).As<Napi::Number>().Int32Value();
+        config.material = (nertc::NERtcSpatializerMaterialName)out_32;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"reflection_scalar"))))
+    {
+        out_f = obj.Get(static_cast<napi_value>(Napi::String::New(env,"reflection_scalar"))).As<Napi::Number>().FloatValue();
+        config.reflection_scalar = out_f;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"reverb_gain"))))
+    {
+        out_f = obj.Get(static_cast<napi_value>(Napi::String::New(env,"reverb_gain"))).As<Napi::Number>().FloatValue();
+        config.reverb_gain = out_f;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"reverb_time"))))
+    {
+        out_f = obj.Get(static_cast<napi_value>(Napi::String::New(env,"reverb_time"))).As<Napi::Number>().FloatValue();
+        config.reverb_time = out_f;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"reverb_brightness"))))
+    {
+        out_f = obj.Get(static_cast<napi_value>(Napi::String::New(env,"reverb_brightness"))).As<Napi::Number>().FloatValue();
+        config.reverb_brightness = out_f;
+    }
+    return napi_ok;
+}
+
+napi_status nertc_spatializer_position_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcSpatializerPositionInfo& config)
+{
+    float out_f;
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"speaker_position"))))
+    {
+		Napi::Array objs = obj.Get(static_cast<napi_value>(Napi::String::New(env, "speaker_position"))).As<Napi::Array>();
+        for (size_t i = 0; i < objs.Length(); i++) 
+        {
+            out_f = objs.Get(i).As<Napi::Number>().FloatValue();
+            config.speaker_position[i] = out_f;
+        }
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"speaker_quaternion"))))
+    {
+		Napi::Array objs = obj.Get(static_cast<napi_value>(Napi::String::New(env, "speaker_quaternion"))).As<Napi::Array>();
+        for (size_t i = 0; i < objs.Length(); i++) 
+        {
+            out_f = objs.Get(i).As<Napi::Number>().FloatValue();
+            config.speaker_quaternion[i] = out_f;
+        }
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"head_position"))))
+    {
+		Napi::Array objs = obj.Get(static_cast<napi_value>(Napi::String::New(env, "head_position"))).As<Napi::Array>();
+        for (size_t i = 0; i < objs.Length(); i++) 
+        {
+            out_f = objs.Get(i).As<Napi::Number>().FloatValue();
+            config.head_position[i] = out_f;
+        }
+    }
+    
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"head_quaternion"))))
+    {
+		Napi::Array objs = obj.Get(static_cast<napi_value>(Napi::String::New(env, "head_quaternion"))).As<Napi::Array>();
+        for (size_t i = 0; i < objs.Length(); i++) 
+        {
+            out_f = objs.Get(i).As<Napi::Number>().FloatValue();
+            config.head_quaternion[i] = out_f;
+        }
+    }
+    return napi_ok;
+}
+
 napi_status nertc_media_relay_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcChannelMediaRelayConfiguration* config)
 {
     // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"src_infos"))))

@@ -253,6 +253,33 @@ class NERtcChannel extends events_1.EventEmitter {
     enableMediaPub(enabled, type) {
         return this.rtcChannel.enableMediaPub(enabled, type);
     }
+    updatePermissionKey(key) {
+        return this.rtcChannel.updatePermissionKey(key);
+    }
+
+    enableSpatializer(enable) {
+        return this.nertcEngine.enableSpatializer(enable)
+    }
+    
+    updateSpatializerAudioRecvRange(audible_distance, conversational_distance, roll_off) {
+        return this.nertcEngine.updateSpatializerAudioRecvRange(audible_distance, conversational_distance, roll_off)
+    }
+
+    updateSpatializerSelfPosition(info) {
+        return this.nertcEngine.updateSpatializerSelfPosition(info)
+    }
+
+    enableSpatializerRoomEffects(enable) {
+        return this.nertcEngine.enableSpatializerRoomEffects(enable)
+    }
+
+    setSpatializerRoomProperty(room_property) {
+        return this.nertcEngine.setSpatializerRoomProperty(room_property)
+    }
+
+    setSpatializerRenderMode(mode) {
+        return this.nertcEngine.setSpatializerRenderMode(mode)
+    }
 
     initEventHandler() {
         const self = this;
