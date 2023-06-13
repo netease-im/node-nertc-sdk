@@ -354,50 +354,56 @@ napi_status nertc_ls_img_info_obj_to_struct(const Napi::Env& env, const Napi::Ob
         info->height = out_i;
     }
 
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"z_order"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"z_order"))).As<Napi::Number>().Int32Value();
+        info->z_order = out_i;
+    }
+
     return napi_ok;
 }
 
-// napi_status nertc_task_config_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcLiveConfig& config)
-// {
-//     int32_t out_i;
-//     uint32_t out_u;
-//     bool out_b;
-//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"single_video_passthrough")))){
-//         out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"single_video_passthrough"))).As<Napi::Boolean>().Value();
-//         config.single_video_passthrough = out_b;
-//     }
+napi_status nertc_task_config_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcLiveConfig& config)
+{
+    int32_t out_i;
+    uint32_t out_u;
+    bool out_b;
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"single_video_passthrough")))){
+        out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"single_video_passthrough"))).As<Napi::Boolean>().Value();
+        config.single_video_passthrough = out_b;
+    }
 
-//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"audio_bitrate"))))
-//     {
-//         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"audio_bitrate"))).As<Napi::Number>().Int32Value();
-//         config.audio_bitrate = out_i;
-//     }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"audio_bitrate"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"audio_bitrate"))).As<Napi::Number>().Int32Value();
+        config.audio_bitrate = out_i;
+    }
 
-//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"sampleRate"))))
-//     {
-//         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"sampleRate"))).As<Napi::Number>().Int32Value();
-//         config.sampleRate = (nertc::NERtcLiveStreamAudioSampleRate)out_i;
-//     }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"sampleRate"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"sampleRate"))).As<Napi::Number>().Int32Value();
+        config.sampleRate = (nertc::NERtcLiveStreamAudioSampleRate)out_i;
+    }
 
-//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"channels"))))
-//     {
-//         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"channels"))).As<Napi::Number>().Int32Value();
-//         config.channels = out_i;
-//     }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"channels"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"channels"))).As<Napi::Number>().Int32Value();
+        config.channels = out_i;
+    }
 
-//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"audioCodecProfile"))))
-//     {
-//         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"audioCodecProfile"))).As<Napi::Number>().Int32Value();
-//         config.audioCodecProfile = (nertc::NERtcLiveStreamAudioCodecProfile)out_i;
-//     }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"audioCodecProfile"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"audioCodecProfile"))).As<Napi::Number>().Int32Value();
+        config.audioCodecProfile = (nertc::NERtcLiveStreamAudioCodecProfile)out_i;
+    }
 
-//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"interrupted_place_image")))){
-//         out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"interrupted_place_image"))).As<Napi::Boolean>().Value();
-//         config.interrupted_place_image = out_b;
-//     }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"interrupted_place_image")))){
+        out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"interrupted_place_image"))).As<Napi::Boolean>().Value();
+        config.interrupted_place_image = out_b;
+    }
     
-//     return napi_ok;
-// }
+    return napi_ok;
+}
 
 napi_status nertc_ls_layout_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcLiveStreamLayout& layout)
 {
@@ -458,11 +464,11 @@ napi_status nertc_ls_layout_obj_to_struct(const Napi::Env& env, const Napi::Obje
 
         }
 
-        // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"bg_image_count"))))
-        // {
-        //     out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"bg_image_count"))).As<Napi::Number>().Int32Value();
-        //     layout.bg_image_count = out_i;
-        // }
+        if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"bg_image_count"))))
+        {
+            out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"bg_image_count"))).As<Napi::Number>().Int32Value();
+            layout.bg_image_count = out_i;
+        }
     }
     return napi_ok;
 }
@@ -501,10 +507,10 @@ napi_status nertc_ls_task_info_obj_to_struct(const Napi::Env& env, const Napi::O
         nertc_ls_layout_obj_to_struct(env, layout_obj, info.layout);
     }
 
-    // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"config")))){
-    //     Napi::Object config_obj = obj.Get(static_cast<napi_value>(Napi::String::New(env,"config"))).As<Napi::Object>();
-    //     nertc_task_config_obj_to_struct(env, config_obj, info.config);
-    // }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"config")))){
+        Napi::Object config_obj = obj.Get(static_cast<napi_value>(Napi::String::New(env,"config"))).As<Napi::Object>();
+        nertc_task_config_obj_to_struct(env, config_obj, info.config);
+    }
     return napi_ok;
 }
 

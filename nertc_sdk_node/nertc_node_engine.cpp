@@ -2357,43 +2357,41 @@ NIM_SDK_NODE_API_DEF(addLiveStreamTask)
     {
         Napi::Object obj = info[0].As<Napi::Object>();
         nertc::NERtcLiveStreamTaskInfo info;
-        std::string taskId = "test_0";
-        std::string streamUrl = "rtmp://pf4dfc931.live.126.net/live/481ff312e5f14b669d68c03fd72fb523?wsSecret=ce3c4b3c89f74134a472228e35372fb3&wsTime=1583982682";
+        // std::string taskId = "test_0";
+        // std::string streamUrl = "rtmp://pf4dfc931.live.126.net/live/8b225991676244d2ade910cf0dcf3655?wsSecret=5b375810fb81db1288ac0460e995e000&wsTime=1583982681";
 
-        memset(info.task_id, 0, kNERtcMaxTaskIDLength);
-        strncpy(info.task_id, taskId.c_str(), kNERtcMaxTaskIDLength);
+        // memset(info.task_id, 0, kNERtcMaxTaskIDLength);
+        // strncpy(info.task_id, taskId.c_str(), kNERtcMaxTaskIDLength);
 
-        memset(info.stream_url, 0, kNERtcMaxURILength);
-        strncpy(info.stream_url, streamUrl.c_str(), kNERtcMaxURILength);
+        // memset(info.stream_url, 0, kNERtcMaxURILength);
+        // strncpy(info.stream_url, streamUrl.c_str(), kNERtcMaxURILength);
 
-        info.server_record_enabled = false;
-        info.ls_mode = nertc::kNERtcLsModeVideo;
-        info.layout.width = 1280;
-        info.layout.height = 720;
-        info.layout.background_color = 0;
-        info.layout.user_count = 1;
-        info.layout.users = new nertc::NERtcLiveStreamUserTranscoding[info.layout.user_count];
-        info.layout.users[0].uid = 159369;
-        info.layout.users[0].video_push = true;
-        info.layout.users[0].adaption = nertc::kNERtcLsModeVideoScaleFit;
-        info.layout.users[0].x = 0;
-        info.layout.users[0].y = 0;
-        info.layout.users[0].width = 640;
-        info.layout.users[0].height = 480;
-        info.layout.users[0].audio_push = true;
-        info.layout.users[0].z_order = 100;
-        info.layout.bg_image = nullptr;
-        info.layout.bg_image_count = 1;
-        info.config.single_video_passthrough = false;
-        info.config.audio_bitrate = 64;
-        info.config.sampleRate = nertc::kNERtcLiveStreamAudioSampleRate48000;
-        info.config.channels = 2;
-        info.config.audioCodecProfile = nertc::kNERtcLiveStreamAudioCodecProfileLCAAC;
-        info.config.interrupted_place_image = false;
+        // info.server_record_enabled = false;
+        // info.ls_mode = nertc::kNERtcLsModeVideo;
+        // info.layout.width = 1280;
+        // info.layout.height = 720;
+        // info.layout.background_color = 0;
+        // info.layout.user_count = 1;
+        // info.layout.users = new nertc::NERtcLiveStreamUserTranscoding[info.layout.user_count];
+        // info.layout.users[0].uid = 159369;
+        // info.layout.users[0].video_push = true;
+        // info.layout.users[0].adaption = nertc::kNERtcLsModeVideoScaleFit;
+        // info.layout.users[0].x = 0;
+        // info.layout.users[0].y = 0;
+        // info.layout.users[0].width = 640;
+        // info.layout.users[0].height = 480;
+        // info.layout.users[0].audio_push = true;
+        // info.layout.users[0].z_order = 100;
+        // info.layout.bg_image = nullptr;
+        // info.layout.bg_image_count = 1;
+        // info.config.single_video_passthrough = false;
+        // info.config.audio_bitrate = 64;
+        // info.config.sampleRate = nertc::kNERtcLiveStreamAudioSampleRate48000;
+        // info.config.channels = 2;
+        // info.config.audioCodecProfile = nertc::kNERtcLiveStreamAudioCodecProfileLCAAC;
+        // info.config.interrupted_place_image = false;
 
-        // nertc_ls_task_info_obj_to_struct(env, obj, info);
-        memset(info.extraInfo, 0, kNERtcMaxURILength);
-        // info.config = {0};
+        nertc_ls_task_info_obj_to_struct(env, obj, info);
         ret = rtc_engine_->addLiveStreamTask(info);
         if (info.layout.users)
         {
