@@ -28,30 +28,28 @@ public:
     virtual void onDisconnect(nertc::NERtcErrorCode reason) override;
     virtual void onClientRoleChanged(nertc::NERtcClientRole oldRole, nertc::NERtcClientRole newRole) override;
     virtual void onUserJoined(nertc::uid_t uid, const char * user_name) override;
-    //virtual void onUserJoined(uid_t uid, const char* user_name, NERtcUserJoinExtraInfo join_extra_info)
     virtual void onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason) override;
-    //virtual void onUserLeft(uid_t uid, NERtcSessionLeaveReason reason, NERtcUserJoinExtraInfo leave_extra_info)
     virtual void onUserAudioStart(nertc::uid_t uid) override;
     virtual void onUserAudioStop(nertc::uid_t uid) override;
     virtual void onUserAudioMute(nertc::uid_t uid, bool mute) override;
-    virtual void onUserSubStreamAudioStart(nertc::uid_t uid) override; // todo 新增接口
-    virtual void onUserSubStreamAudioStop(nertc::uid_t uid) override;  // todo 新增接口
-    virtual void onUserSubStreamAudioMute(nertc::uid_t uid, bool mute) override; // todo 新增接口
+    virtual void onUserSubStreamAudioStart(nertc::uid_t uid) override;
+    virtual void onUserSubStreamAudioStop(nertc::uid_t uid) override;
+    virtual void onUserSubStreamAudioMute(nertc::uid_t uid, bool mute) override;
     virtual void onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile) override;
     virtual void onUserVideoStop(nertc::uid_t uid) override;
     virtual void onUserVideoMute(nertc::uid_t uid, bool mute) override;
-    virtual void onUserVideoMute(nertc::NERtcVideoStreamType videoStreamType,nertc::uid_t uid, bool mute) override; // todo 新增接口
+    virtual void onUserVideoMute(nertc::NERtcVideoStreamType videoStreamType,nertc::uid_t uid, bool mute) override;
     virtual void onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile) override;
     virtual void onUserSubStreamVideoStop(nertc::uid_t uid) override;
     virtual void onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status) override;
     virtual void onFirstAudioDataReceived(nertc::uid_t uid) override;
     virtual void onFirstVideoDataReceived(nertc::uid_t uid) override;
-    virtual void onFirstVideoDataReceived(nertc::NERtcVideoStreamType type, nertc::uid_t uid) override; // todo 新增接口
+    virtual void onFirstVideoDataReceived(nertc::NERtcVideoStreamType type, nertc::uid_t uid) override;
     virtual void onFirstAudioFrameDecoded(nertc::uid_t uid) override;
     virtual void onFirstVideoFrameDecoded(nertc::uid_t uid, uint32_t width, uint32_t height) override; 
-    virtual void onFirstVideoFrameDecoded(nertc::NERtcVideoStreamType type,nertc::uid_t uid, uint32_t width, uint32_t height) override;// todo 新增接口
+    virtual void onFirstVideoFrameDecoded(nertc::NERtcVideoStreamType type,nertc::uid_t uid, uint32_t width, uint32_t height) override;
     virtual void onLocalAudioVolumeIndication(int volume) override;
-    virtual void onLocalAudioVolumeIndication(int volume, bool enable_vad) override; // todo 新增接口
+    virtual void onLocalAudioVolumeIndication(int volume, bool enable_vad) override;
     virtual void onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume) override;
     virtual void onAddLiveStreamTask(const char* task_id, const char* url, int error_code) override;
     virtual void onUpdateLiveStreamTask(const char* task_id, const char* url, int error_code) override;
@@ -62,7 +60,7 @@ public:
     virtual void onMediaRelayEvent(nertc::NERtcChannelMediaRelayEvent event, const char* channel_name, nertc::NERtcErrorCode error) override;
     virtual void onLocalPublishFallbackToAudioOnly(bool is_fallback, nertc::NERtcVideoStreamType stream_type) override;
     virtual void onRemoteSubscribeFallbackToAudioOnly(nertc::uid_t uid, bool is_fallback, nertc::NERtcVideoStreamType stream_type) override;
-    virtual void onMediaRightChange(bool is_audio_banned, bool is_video_banned) override;  // todo 新增接口
+    virtual void onMediaRightChange(bool is_audio_banned, bool is_video_banned) override;
     virtual void onApiCallExecuted(const char* api_name, nertc::NERtcErrorCode error, const char* message) override;
     virtual void onUserJoined(nertc::uid_t uid, const char* user_name, nertc::NERtcUserJoinExtraInfo join_extra_info) override;
     virtual void onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info) override;
@@ -96,10 +94,10 @@ private:
     void Node_onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status);
     void Node_onFirstAudioDataReceived(nertc::uid_t uid);
     void Node_onFirstVideoDataReceived(nertc::uid_t uid);
-    void Node_onFirstVideoDataReceivedEx(nertc::NERtcVideoStreamType type, nertc::uid_t uid);
+    void Node_onFirstVideoDataReceived(nertc::NERtcVideoStreamType type, nertc::uid_t uid);
     void Node_onFirstAudioFrameDecoded(nertc::uid_t uid);
     void Node_onFirstVideoFrameDecoded(nertc::uid_t uid, uint32_t width, uint32_t height);
-    void Node_onFirstVideoFrameDecodedEx(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height);
+    void Node_onFirstVideoFrameDecoded(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height);
     void Node_onLocalAudioVolumeIndication(int volume);
     void Node_onLocalAudioVolumeIndicationEx(int volume, bool enable_vad);
     void Node_onRemoteAudioVolumeIndication(const nertc::NERtcAudioVolumeInfo *speakers, unsigned int speaker_number, int total_volume);
@@ -113,6 +111,9 @@ private:
     void Node_onLocalPublishFallbackToAudioOnly(bool is_fallback, nertc::NERtcVideoStreamType stream_type);
     void Node_onRemoteSubscribeFallbackToAudioOnly(nertc::uid_t uid, bool is_fallback, nertc::NERtcVideoStreamType stream_type);
     void Node_onMediaRightChange(bool is_audio_banned, bool is_video_banned);
+    void Node_onApiCallExecuted(std::string api_name, nertc::NERtcErrorCode error, std::string message);
+    void Node_onUserJoined(nertc::uid_t uid, std::string user_name, nertc::NERtcUserJoinExtraInfo join_extra_info);
+    void Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info);
     void Node_onPermissionKeyWillExpire();
     void Node_onUpdatePermissionKey(std::string key, nertc::NERtcErrorCode error, int timeout);
 

@@ -579,11 +579,11 @@ void NertcChannelEventHandler::onFirstVideoDataReceived(nertc::NERtcVideoStreamT
 {
     LOG_F(INFO, "uid:%llu", uid);
     nim_node::node_async_call::async_call([=]() {
-        Node_onFirstVideoDataReceivedEx(type, uid);
+        Node_onFirstVideoDataReceived(type, uid);
     });
 }
 
-void NertcChannelEventHandler::Node_onFirstVideoDataReceivedEx(nertc::NERtcVideoStreamType type, nertc::uid_t uid)
+void NertcChannelEventHandler::Node_onFirstVideoDataReceived(nertc::NERtcVideoStreamType type, nertc::uid_t uid)
 {
     auto it = _callbacks.find("onFirstVideoDataReceivedEx");
     if (it != _callbacks.end())
@@ -645,11 +645,11 @@ void NertcChannelEventHandler::onFirstVideoFrameDecoded(nertc::NERtcVideoStreamT
 {
     LOG_F(INFO, "uid:%llu width:%d height:%d", uid, width, height);
     nim_node::node_async_call::async_call([=]() {
-        Node_onFirstVideoFrameDecodedEx(type, uid, width, height);
+        Node_onFirstVideoFrameDecoded(type, uid, width, height);
     });
 }
 
-void NertcChannelEventHandler::Node_onFirstVideoFrameDecodedEx(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height)
+void NertcChannelEventHandler::Node_onFirstVideoFrameDecoded(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height)
 {
     auto it = _callbacks.find("onFirstVideoFrameDecodedEx");
     if (it != _callbacks.end())
@@ -989,14 +989,21 @@ void NertcChannelEventHandler::onApiCallExecuted(const char* api_name, nertc::NE
 {
     std::string apiName = api_name;
     std::string msg = message;
+    nim_node::node_async_call::async_call([=]() {
+        Node_onApiCallExecuted(apiName, error, msg);
+    });
+}
+
+void NertcChannelEventHandler::Node_onApiCallExecuted(std::string api_name, nertc::NERtcErrorCode error, std::string message)
+{
     auto it = _callbacks.find("onApiCallExecuted");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;
         auto env = function_reference->function.Env();
-        auto param1 = Napi::String::New(env, apiName);
+        auto param1 = Napi::String::New(env, api_name);
         auto param2 = Napi::Number::New(env, error);
-        auto param3 = Napi::String::New(env, msg);
+        auto param3 = Napi::String::New(env, message);
         const std::vector<napi_value> args = {param1, param2, param3};
         function_reference->function.Call(args);
     }
@@ -1005,13 +1012,20 @@ void NertcChannelEventHandler::onApiCallExecuted(const char* api_name, nertc::NE
 void NertcChannelEventHandler::onUserJoined(nertc::uid_t uid, const char* user_name, nertc::NERtcUserJoinExtraInfo join_extra_info)
 {
     std::string userName = user_name;
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUserJoined(uid, userName, join_extra_info);
+    });
+}
+
+void NertcChannelEventHandler::Node_onUserJoined(nertc::uid_t uid, std::string user_name, nertc::NERtcUserJoinExtraInfo join_extra_info)
+{
     auto it = _callbacks.find("onUserJoinedEx");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;
         auto env = function_reference->function.Env();
         auto param1 = Napi::Number::New(env, uid);
-        auto param2 = Napi::String::New(env, userName);
+        auto param2 = Napi::String::New(env, user_name);
         Napi::Object o = Napi::Object::New(env);
         nertc_user_join_extra_info_to_obj(env, join_extra_info, o);
         const std::vector<napi_value> args = {param1, param2, o};
@@ -1020,6 +1034,13 @@ void NertcChannelEventHandler::onUserJoined(nertc::uid_t uid, const char* user_n
 }
 
 void NertcChannelEventHandler::onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUserLeft(uid, reason, leave_extra_info);
+    });
+}
+
+void NertcChannelEventHandler::Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info)
 {
     auto it = _callbacks.find("onUserLeftEx");
     if (it != _callbacks.end())

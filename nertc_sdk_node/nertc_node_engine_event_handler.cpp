@@ -1439,30 +1439,43 @@ void NertcNodeEventHandler::onApiCallExecuted(const char* api_name, nertc::NERtc
 {
     std::string apiName = api_name;
     std::string msg = message;
+    nim_node::node_async_call::async_call([=]() {
+        Node_onApiCallExecuted(apiName, error, msg);
+    });
+}
+
+void NertcNodeEventHandler::Node_onApiCallExecuted(std::string api_name, nertc::NERtcErrorCode error, std::string message)
+{
     auto it = _callbacks.find("onApiCallExecuted");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;
         auto env = function_reference->function.Env();
-        auto param1 = Napi::String::New(env, apiName);
+        auto param1 = Napi::String::New(env, api_name);
         auto param2 = Napi::Number::New(env, error);
-        auto param3 = Napi::String::New(env, msg);
+        auto param3 = Napi::String::New(env, message);
         const std::vector<napi_value> args = {param1, param2, param3};
         function_reference->function.Call(args);
     }
-
 }
 
 void NertcNodeEventHandler::onUserJoined(nertc::uid_t uid, const char* user_name, nertc::NERtcUserJoinExtraInfo join_extra_info)
 {
     std::string userName = user_name;
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUserJoined(uid, userName, join_extra_info);
+    });
+}
+
+void NertcNodeEventHandler::Node_onUserJoined(nertc::uid_t uid, std::string user_name, nertc::NERtcUserJoinExtraInfo join_extra_info)
+{
     auto it = _callbacks.find("onUserJoinedEx");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;
         auto env = function_reference->function.Env();
         auto param1 = Napi::Number::New(env, uid);
-        auto param2 = Napi::String::New(env, userName);
+        auto param2 = Napi::String::New(env, user_name);
         Napi::Object o = Napi::Object::New(env);
         nertc_user_join_extra_info_to_obj(env, join_extra_info, o);
         const std::vector<napi_value> args = {param1, param2, o};
@@ -1471,6 +1484,13 @@ void NertcNodeEventHandler::onUserJoined(nertc::uid_t uid, const char* user_name
 }
 
 void NertcNodeEventHandler::onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUserLeft(uid, reason, leave_extra_info);
+    });
+}
+
+void NertcNodeEventHandler::Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info)
 {
     auto it = _callbacks.find("onUserLeftEx");
     if (it != _callbacks.end())
@@ -1488,6 +1508,18 @@ void NertcNodeEventHandler::onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeav
 
 void NertcNodeEventHandler::onUserDataReceiveMessage(nertc::uid_t uid, void* pData, uint64_t size)
 {
+    void* pCopy = malloc(size);
+    memset(pCopy, 0, size) ;
+    if (pData) {
+        memcpy(pCopy, pData, size);
+    }
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUserDataReceiveMessage(uid, pCopy, size);
+    });
+}
+
+void NertcNodeEventHandler::Node_onUserDataReceiveMessage(nertc::uid_t uid, void * pData, uint64_t size)
+{
     auto it = _callbacks.find("onUserDataReceiveMessage");
     if (it != _callbacks.end())
     {
@@ -1503,6 +1535,13 @@ void NertcNodeEventHandler::onUserDataReceiveMessage(nertc::uid_t uid, void* pDa
 
 void NertcNodeEventHandler::onUserDataStart(nertc::uid_t uid)
 {
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUserDataStart(uid);
+    });
+}
+
+void NertcNodeEventHandler::Node_onUserDataStart(nertc::uid_t uid)
+{
     auto it = _callbacks.find("onUserDataStart");
     if (it != _callbacks.end())
     {
@@ -1515,6 +1554,13 @@ void NertcNodeEventHandler::onUserDataStart(nertc::uid_t uid)
 }
 
 void NertcNodeEventHandler::onUserDataStop(nertc::uid_t uid)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUserDataStop(uid);
+    });
+}
+
+void NertcNodeEventHandler::Node_onUserDataStop(nertc::uid_t uid)
 {
     auto it = _callbacks.find("onUserDataStop");
     if (it != _callbacks.end())
@@ -1529,6 +1575,13 @@ void NertcNodeEventHandler::onUserDataStop(nertc::uid_t uid)
 
 void NertcNodeEventHandler::onUserDataStateChanged(nertc::uid_t uid)
 {
+    nim_node::node_async_call::async_call([=]() {
+        Node_onUserDataStateChanged(uid);
+    });
+}
+
+void NertcNodeEventHandler::Node_onUserDataStateChanged(nertc::uid_t uid)
+{
     auto it = _callbacks.find("onUserDataStateChanged");
     if (it != _callbacks.end())
     {
@@ -1541,6 +1594,13 @@ void NertcNodeEventHandler::onUserDataStateChanged(nertc::uid_t uid)
 }
 
 void NertcNodeEventHandler::onUserDataBufferedAmountChanged(nertc::uid_t uid, uint64_t previousAmount)
+{
+        nim_node::node_async_call::async_call([=]() {
+        Node_onUserDataBufferedAmountChanged(uid, previousAmount);
+    });
+}
+
+void NertcNodeEventHandler::Node_onUserDataBufferedAmountChanged(nertc::uid_t uid, uint64_t previousAmount)
 {
     auto it = _callbacks.find("onUserDataBufferedAmountChanged");
     if (it != _callbacks.end())
@@ -1775,6 +1835,13 @@ void NertcNodeRtcMediaStatsHandler::Node_onNetworkQuality(const nertc::NERtcNetw
 /**********************************************QS*****************************************************/
 void NertcNodeVideoEncoderQosObserver::onRequestSendKeyFrame(nertc::NERtcVideoStreamType video_stream_type)
 {
+    nim_node::node_async_call::async_call([=]() {
+        Node_onRequestSendKeyFrame(video_stream_type);
+    }); 
+}
+
+void NertcNodeVideoEncoderQosObserver::Node_onRequestSendKeyFrame(nertc::NERtcVideoStreamType video_stream_type)
+{
     auto it = _callbacks.find("onRequestSendKeyFrame");
     if (it != _callbacks.end())
     {
@@ -1785,7 +1852,15 @@ void NertcNodeVideoEncoderQosObserver::onRequestSendKeyFrame(nertc::NERtcVideoSt
         function_reference->function.Call(args);
     }
 }
+
 void NertcNodeVideoEncoderQosObserver::onBitrateUpdated(uint32_t bitrate_bps, nertc::NERtcVideoStreamType video_stream_type)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onBitrateUpdated(bitrate_bps, video_stream_type);
+    }); 
+}
+
+void NertcNodeVideoEncoderQosObserver::Node_onBitrateUpdated(uint32_t bitrate_bps, nertc::NERtcVideoStreamType video_stream_type)
 {
     auto it = _callbacks.find("onBitrateUpdated");
     if (it != _callbacks.end())
@@ -1798,7 +1873,15 @@ void NertcNodeVideoEncoderQosObserver::onBitrateUpdated(uint32_t bitrate_bps, ne
         function_reference->function.Call(args);
     }
 }
+
 void NertcNodeVideoEncoderQosObserver::onVideoCodecUpdated(nertc::NERtcVideoCodecType video_codec_type, nertc::NERtcVideoStreamType video_stream_type)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onVideoCodecUpdated(video_codec_type, video_stream_type);
+    });       
+}
+
+void NertcNodeVideoEncoderQosObserver::Node_onVideoCodecUpdated(nertc::NERtcVideoCodecType video_codec_type, nertc::NERtcVideoStreamType video_stream_type)
 {
     auto it = _callbacks.find("onVideoCodecUpdated");
     if (it != _callbacks.end())

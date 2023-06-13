@@ -450,8 +450,8 @@ class NERtcChannel extends events_1.EventEmitter {
             fire('onUserJoined', uid, userName);
         });
 
-        this.rtcChannel.onEvent('onUserJoinedEx', function (uid, userName, info) {
-            fire('onUserJoinedEx', uid, userName, info);
+        this.rtcChannel.onEvent('onUserJoinedEx', function (uid, userName, extra_info) {
+            fire('onUserJoinedEx', uid, userName, extra_info);
         });
 
         /**
@@ -474,8 +474,8 @@ class NERtcChannel extends events_1.EventEmitter {
             fire('onUserLeft', uid, reason);
         });
 
-        this.rtcChannel.onEvent('onUserLeftEx', function (uid, reason, info) {
-            fire('onUserLeftEx', uid, reason, info);
+        this.rtcChannel.onEvent('onUserLeftEx', function (uid, reason, extra_info) {
+            fire('onUserLeftEx', uid, reason, extra_info);
         });
 
         /**
@@ -562,8 +562,8 @@ class NERtcChannel extends events_1.EventEmitter {
          * @param {number} uid 远端用户ID。
          * @param {boolean} mute 是否禁视频流。
          */
-         this.rtcChannel.onEvent('onUserVideoMuteEx', function (uid, mute) {
-            fire('onUserVideoMuteEx', uid, mute);
+         this.rtcChannel.onEvent('onUserVideoMuteEx', function (streamType, uid, mute) {
+            fire('onUserVideoMuteEx', streamType, uid, mute);
         });
 
         /**

@@ -2901,9 +2901,11 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onWarning', function (warnCode, msg) {
             fire('onWarning', warnCode, msg);
         });
+
         this.nertcEngine.onEvent('onApiCallExecuted', function (apiName, code, msg) {
             fire('onApiCallExecuted', apiName, code, msg);
         });
+
         /**
          * 释放硬件资源的回调。
          * @event NERtcEngine#onReleasedHwResources
@@ -3035,8 +3037,8 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onUserJoined', function (uid, userName) {
             fire('onUserJoined', uid, userName);
         });
-        this.nertcEngine.onEvent('onUserJoinedEx', function (uid, userName, info) {
-            fire('onUserJoinedEx', uid, userName, info);
+        this.nertcEngine.onEvent('onUserJoinedEx', function (uid, userName, extra_info) {
+            fire('onUserJoinedEx', uid, userName, extra_info);
         });
         /**
          * 远端用户离开当前频道回调。
@@ -3057,9 +3059,11 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onUserLeft', function (uid, reason) {
             fire('onUserLeft', uid, reason);
         });
-        this.nertcEngine.onEvent('onUserLeftEx', function (uid, reason, info) {
-            fire('onUserLeftEx', uid, reason, info);
+
+        this.nertcEngine.onEvent('onUserLeftEx', function (uid, reason, extra_info) {
+            fire('onUserLeftEx', uid, reason, extra_info);
         });
+
         /**
          * 远端用户开启音频回调。
          * @event NERtcEngine#onUserAudioStart
@@ -3161,8 +3165,8 @@ class NERtcEngine extends events_1.EventEmitter {
             fire('onUserVideoMute', uid, mute);
         });
 
-        this.nertcEngine.onEvent('onUserVideoMuteEx', function (videoStreamType, uid, mute) {
-            fire('onUserVideoMuteEx', videoStreamType, uid, mute);
+        this.nertcEngine.onEvent('onUserVideoMuteEx', function (streamType, uid, mute) {
+            fire('onUserVideoMuteEx', streamType, uid, mute);
         });
 
         /**
@@ -3235,8 +3239,8 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onFirstVideoDataReceived', function (uid) {
             fire('onFirstVideoDataReceived', uid);
         });
-        this.nertcEngine.onEvent('onFirstVideoDataReceivedEx', function (type, uid) {
-            fire('onFirstVideoDataReceivedEx', type, uid);
+        this.nertcEngine.onEvent('onFirstVideoDataReceivedEx', function (streamType, uid) {
+            fire('onFirstVideoDataReceivedEx', streamType, uid);
         });
 
         /**
@@ -3330,8 +3334,8 @@ class NERtcEngine extends events_1.EventEmitter {
             fire('onLocalAudioVolumeIndication', volume);
         });
 
-        this.nertcEngine.onEvent('onLocalAudioVolumeIndicationEx', function (volume, enable) {
-            fire('onLocalAudioVolumeIndicationEx', volume, enable);
+        this.nertcEngine.onEvent('onLocalAudioVolumeIndicationEx', function (volume, enable_vad) {
+            fire('onLocalAudioVolumeIndicationEx', volume, enable_vad);
         });
 
         /**
@@ -3538,9 +3542,106 @@ class NERtcEngine extends events_1.EventEmitter {
             fire('onUserSubStreamAudioMute', uid, mute);
         });
 
+        /**
+         * 通话前网络上下行 last mile 质量状态回调。
+         * <pre>
+         * 该回调描述本地用户在加入房间前的 last mile 网络探测的结果，以打分形式描述上下行网络质量的主观体验，您可以通过该回调预估本地用户在音视频通话中的网络体验。
+         * 在调用 startLastmileProbeTest 之后，SDK 会在约 5 秒内返回该回调。
+         * </pre>
+         * @since V4.5.0
+         * @event NERtcEngine#onLastmileQuality
+         * @param {number} quality  网络上下行质量，基于上下行网络的丢包率和抖动计算，探测结果主要反映上行网络的状态。
+         * <pre>
+         * - 0: 网络质量未知。
+         * - 1: 网络质量极好。
+         * - 2: 用户主观感觉和 `kNERtcNetworkQualityExcellent` 类似，但码率可能略低于 `kNERtcNetworkQualityExcellent`。
+         * - 3: 用户主观感受有瑕疵但不影响沟通。
+         * - 4: 勉强能沟通但不顺畅。
+         * - 5: 网络质量非常差，基本不能沟通。
+         * - 6: 完全无法沟通。
+         * </pre>
+         */
+        this.nertcEngine.onEvent('onLastmileQuality', function (quality) {
+            fire('onLastmileQuality', quality);
+        });
+        /**
+        * 通话前网络上下行 Last mile 质量探测报告回调。
+        * <pre>
+        * 该回调描述本地用户在加入房间前的 last mile 网络探测详细报告，报告中通过客观数据反馈上下行网络质量，包括网络抖动、丢包率等数据。您可以通过该回调客观预测本地用户在音视频通话中的网络状态。
+        * 在调用 startLastmileProbeTest 之后，SDK 会在约 30 秒内返回该回调。
+        * </pre>
+        * @since V4.5.0
+        * @event NERtcEngine#onLastmileProbeResult
+        * @param {object} result  上下行 Last mile 质量探测结果。
+        * @param {number} result.rtt 往返时延，单位为毫秒（ms）。
+        * @param {number} result.state 质量探测结果的状态。
+        * <pre>
+        * - 1: 表示本次 last mile 质量探测的结果是完整的。
+        * - 2: 表示本次 last mile 质量探测未进行带宽预测，因此结果不完整。通常原因为测试资源暂时受限。
+        * - 3: 未进行 last mile 质量探测。通常原因为网络连接中断。
+        * </pre>
+        * @param {number} result.uplink_report 上行网络质量报告。
+        * @param {number} result.uplink_report.jitter 网络抖动，单位为毫秒 (ms)。
+        * @param {number} result.uplink_report.packet_loss_rate 丢包率（%）。
+        * @param {number} result.uplink_report.available_band_width 可用网络带宽预估，单位为 bps。
+        * @param {number} result.downlink_report下行网络质量报告。
+        * @param {number} result.downlink_report.jitter 网络抖动，单位为毫秒 (ms)。
+        * @param {number} result.downlink_report.packet_loss_rate 丢包率（%）。
+        * @param {number} result.downlink_report.available_band_width 可用网络带宽预估，单位为 bps。
+        */
+        this.nertcEngine.onEvent('onLastmileProbeResult', function (result) {
+            fire('onLastmileProbeResult', result);
+        });
+
+        this.nertcEngine.onEvent('onMediaRightChange', function (is_audio_banned, is_video_banned) {
+            fire('onMediaRightChange', is_audio_banned, is_video_banned);
+        });
+
+        this.nertcEngine.onEvent('onCheckNECastAudioDriverResult', function (result) {
+            fire('onCheckNECastAudioDriverResult', result);
+        });
+
+        this.nertcEngine.onEvent('onVirtualBackgroundSourceEnabled', function (enabled, reason) {
+            fire('onVirtualBackgroundSourceEnabled', enabled, reason);
+        });
+
+        this.nertcEngine.onEvent('onLocalVideoWatermarkState', function (videoStreamType, state) {
+            fire('onLocalVideoWatermarkState', videoStreamType, state);
+        });
+
+        this.nertcEngine.onEvent('onPermissionKeyWillExpire', function () {
+            fire('onPermissionKeyWillExpire');
+        });
+
+        this.nertcEngine.onEvent('onUpdatePermissionKey', function (key, code, time) {
+            fire('onUpdatePermissionKey', key, code, time);
+        });
+
+        this.nertcEngine.onEvent('onUserDataReceiveMessage', function (uid, data) {
+            fire('onUserDataReceiveMessage', uid, data);
+        });
+
+        this.nertcEngine.onEvent('onUserDataStart', function (uid) {
+            fire('onUserDataStart', uid);
+        });
+
+        this.nertcEngine.onEvent('onUserDataStop', function (uid) {
+            fire('onUserDataStop', uid);
+        });
+
+        this.nertcEngine.onEvent('onUserDataStateChanged', function (uid) {
+            fire('onUserDataStateChanged', uid);
+        });
+
+        this.nertcEngine.onEvent('onUserDataBufferedAmountChanged', function (uid, amount) {
+            fire('onUserDataBufferedAmountChanged', uid, amount);
+        });
+
         this.nertcEngine.onVideoFrame( (infos)=>{ //function
             this.doVideoFrameReceived(infos);
         });
+
+        // mediaStats
         /**
          * 当前通话统计回调。
          * <pre>
@@ -3701,102 +3802,6 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onStatsObserver('onNetworkQuality', true, function (uc, stats) {
             fire('onNetworkQuality', uc, stats);
         });
-
-        /**
-         * 通话前网络上下行 last mile 质量状态回调。
-         * <pre>
-         * 该回调描述本地用户在加入房间前的 last mile 网络探测的结果，以打分形式描述上下行网络质量的主观体验，您可以通过该回调预估本地用户在音视频通话中的网络体验。
-         * 在调用 startLastmileProbeTest 之后，SDK 会在约 5 秒内返回该回调。
-         * </pre>
-         * @since V4.5.0
-         * @event NERtcEngine#onLastmileQuality
-         * @param {number} quality  网络上下行质量，基于上下行网络的丢包率和抖动计算，探测结果主要反映上行网络的状态。
-         * <pre>
-         * - 0: 网络质量未知。
-         * - 1: 网络质量极好。
-         * - 2: 用户主观感觉和 `kNERtcNetworkQualityExcellent` 类似，但码率可能略低于 `kNERtcNetworkQualityExcellent`。
-         * - 3: 用户主观感受有瑕疵但不影响沟通。
-         * - 4: 勉强能沟通但不顺畅。
-         * - 5: 网络质量非常差，基本不能沟通。
-         * - 6: 完全无法沟通。
-         * </pre>
-         */
-         this.nertcEngine.onEvent('onLastmileQuality', function (quality) {
-            fire('onLastmileQuality', quality);
-        });
-        /**
-        * 通话前网络上下行 Last mile 质量探测报告回调。
-        * <pre>
-        * 该回调描述本地用户在加入房间前的 last mile 网络探测详细报告，报告中通过客观数据反馈上下行网络质量，包括网络抖动、丢包率等数据。您可以通过该回调客观预测本地用户在音视频通话中的网络状态。
-        * 在调用 startLastmileProbeTest 之后，SDK 会在约 30 秒内返回该回调。
-        * </pre>
-        * @since V4.5.0
-        * @event NERtcEngine#onLastmileProbeResult
-        * @param {object} result  上下行 Last mile 质量探测结果。
-        * @param {number} result.rtt 往返时延，单位为毫秒（ms）。
-        * @param {number} result.state 质量探测结果的状态。
-        * <pre>
-        * - 1: 表示本次 last mile 质量探测的结果是完整的。
-        * - 2: 表示本次 last mile 质量探测未进行带宽预测，因此结果不完整。通常原因为测试资源暂时受限。
-        * - 3: 未进行 last mile 质量探测。通常原因为网络连接中断。
-        * </pre>
-        * @param {number} result.uplink_report 上行网络质量报告。
-        * @param {number} result.uplink_report.jitter 网络抖动，单位为毫秒 (ms)。
-        * @param {number} result.uplink_report.packet_loss_rate 丢包率（%）。
-        * @param {number} result.uplink_report.available_band_width 可用网络带宽预估，单位为 bps。
-        * @param {number} result.downlink_report下行网络质量报告。
-        * @param {number} result.downlink_report.jitter 网络抖动，单位为毫秒 (ms)。
-        * @param {number} result.downlink_report.packet_loss_rate 丢包率（%）。
-        * @param {number} result.downlink_report.available_band_width 可用网络带宽预估，单位为 bps。
-        */
-        this.nertcEngine.onEvent('onLastmileProbeResult', function (result) {
-            fire('onLastmileProbeResult', result);
-        });
-
-        this.nertcEngine.onEvent('onMediaRightChange', function (is_audio_banned, is_video_banned) {
-            fire('onMediaRightChange', is_audio_banned, is_video_banned);
-        });
-
-        this.nertcEngine.onEvent('onCheckNECastAudioDriverResult', function (result) {
-            fire('onCheckNECastAudioDriverResult', result);
-        });
-
-        this.nertcEngine.onEvent('onVirtualBackgroundSourceEnabled', function (enabled, reason) {
-            fire('onVirtualBackgroundSourceEnabled', enabled, reason);
-        });
-
-        this.nertcEngine.onEvent('onLocalVideoWatermarkState', function (videoStreamType, state) {
-            fire('onLocalVideoWatermarkState', videoStreamType, state);
-        });
-
-        this.nertcEngine.onEvent('onPermissionKeyWillExpire', function () {
-            fire('onPermissionKeyWillExpire');
-        });
-
-        this.nertcEngine.onEvent('onUpdatePermissionKey', function (key, code, time) {
-            fire('onUpdatePermissionKey', key, code, time);
-        });
-
-        this.nertcEngine.onEvent('onUserDataReceiveMessage', function (uid, data) {
-            fire('onUserDataReceiveMessage', uid, data);
-        });
-
-        this.nertcEngine.onEvent('onUserDataStart', function (uid) {
-            fire('onUserDataStart', uid);
-        });
-
-        this.nertcEngine.onEvent('onUserDataStop', function (uid) {
-            fire('onUserDataStop', uid);
-        });
-
-        this.nertcEngine.onEvent('onUserDataStateChanged', function (uid) {
-            fire('onUserDataStateChanged', uid);
-        });
-
-        this.nertcEngine.onEvent('onUserDataBufferedAmountChanged', function (uid, amount) {
-            fire('onUserDataBufferedAmountChanged', uid, amount);
-        });
-
 
         // qs
         this.nertcEngine.onQsObserver('onRequestSendKeyFrame',true,  function (type) {

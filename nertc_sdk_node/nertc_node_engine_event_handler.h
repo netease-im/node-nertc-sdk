@@ -6,6 +6,7 @@
 #include "nertc_node_engine_helper.h"
 #include "nertc_engine_event_handler_ex.h"
 #include "nertc_engine_media_stats_observer.h"
+#include "nertc_engine_video_encoder_qos_observer.h"
 
 
 namespace nertc_node
@@ -94,7 +95,7 @@ public:
     virtual void onRemoveLiveStreamTask(const char* task_id, int error_code) override;
     virtual void onLiveStreamState(const char* task_id, const char* url, nertc::NERtcLiveStreamStateCode state) override; 
     virtual void onAudioHowling(bool howling) override;
-    void onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize) override;
+    virtual void onRecvSEIMsg(nertc::uid_t uid, const char* data, uint32_t dataSize) override;
     virtual void onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status) override;
     virtual void onAudioRecording(nertc::NERtcAudioRecordingCode code, const char* file_path) override;
     virtual void onMediaRelayStateChanged(nertc::NERtcChannelMediaRelayState state, const char* channel_name) override;
@@ -185,8 +186,16 @@ private:
     void Node_onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result);
     void Node_onVirtualBackgroundSourceEnabled(bool enabled, nertc::NERtcVirtualBackgroundSourceStateReason reason);
     void Node_onLocalVideoWatermarkState(nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state);
-    void Node_onPermissionKeyWillExpire();
     void Node_onUpdatePermissionKey(std::string key, nertc::NERtcErrorCode error, int timeout);
+    void Node_onUserDataReceiveMessage(nertc::uid_t uid, void* pData, uint64_t size);
+    void Node_onUserDataStart(nertc::uid_t uid);
+    void Node_onUserDataStop(nertc::uid_t uid);
+    void Node_onUserDataStateChanged(nertc::uid_t uid);
+    void Node_onUserDataBufferedAmountChanged(nertc::uid_t uid, uint64_t previousAmount);
+    void Node_onPermissionKeyWillExpire();
+    void Node_onApiCallExecuted(std::string api_name, nertc::NERtcErrorCode error, std::string message);
+    void Node_onUserJoined(nertc::uid_t uid, std::string user_name, nertc::NERtcUserJoinExtraInfo join_extra_info);
+    void Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info);
 };
 
 class NertcNodeRtcMediaStatsHandler : public EventHandler, public nertc::IRtcMediaStatsObserver
@@ -204,9 +213,6 @@ public:
     virtual void onLocalVideoStats(const nertc::NERtcVideoSendStats &stats) override;
     virtual void onRemoteVideoStats(const nertc::NERtcVideoRecvStats *stats, unsigned int user_count) override;
     virtual void onNetworkQuality(const nertc::NERtcNetworkQualityInfo *infos, unsigned int user_count) override;
-
-
-
 private:
     void Node_onRtcStats(const nertc::NERtcStats & stats);
     void Node_onLocalAudioStats(const nertc::NERtcAudioSendStats & stats);
@@ -217,7 +223,7 @@ private:
 
 };
 
-class NertcNodeVideoEncoderQosObserver : public EventHandler,  nertc::INERtcVideoEncoderQosObserver
+class NertcNodeVideoEncoderQosObserver : public EventHandler, public nertc::INERtcVideoEncoderQosObserver
 {
 
 public:
@@ -225,10 +231,14 @@ public:
     ~NertcNodeVideoEncoderQosObserver(){};
 
 public:
-    //INERtcVideoEncoderQosObserver
     virtual void onRequestSendKeyFrame(nertc::NERtcVideoStreamType video_stream_type) override;
     virtual void onBitrateUpdated(uint32_t bitrate_bps, nertc::NERtcVideoStreamType video_stream_type) override;
-    virtual void onVideoCodecUpdated(nertc::NERtcVideoCodecType video_codec_type, nertc::NERtcVideoStreamType video_stream_type)  override;
+    virtual void onVideoCodecUpdated(nertc::NERtcVideoCodecType video_codec_type, nertc::NERtcVideoStreamType video_stream_type) override;
+
+private:
+    void Node_onRequestSendKeyFrame(nertc::NERtcVideoStreamType video_stream_type);
+    void Node_onBitrateUpdated(uint32_t bitrate_bps, nertc::NERtcVideoStreamType video_stream_type);
+    void Node_onVideoCodecUpdated(nertc::NERtcVideoCodecType video_codec_type, nertc::NERtcVideoStreamType video_stream_type);
 
 };
 
