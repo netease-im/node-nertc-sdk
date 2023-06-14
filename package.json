@@ -49,7 +49,7 @@
     "name-addon": "nertc",
     "build-tool": "node-gyp",
     "binary-dir": "build/Release",
-    "sdk-group": "NERtcSDK",
+    "sdk-group": "NERtcSDK_Special",
     "addon-group": "electron"
   },
   "repository": {
