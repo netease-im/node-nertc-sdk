@@ -4,7 +4,9 @@
 #include "../shared/sdk_helper/node_api_helper.h"
 #include <string>
 
+#ifdef WIN32
 using namespace nertc_electron_util;
+#endif
 
 #define SET_PROTOTYPE(name) \
     InstanceMethod(#name,  &NertcNodeChannel::name)
@@ -268,7 +270,7 @@ NertcNodeChannel::NertcNodeChannel(const Napi::CallbackInfo& info)
 
     uint64_t thisAddr = (uint64_t)this;
     g_channel_transporter_map[thisAddr] = new NodeVideoFrameTransporter();
-    LOG_F(INFO, "----create channel, channelName: %s----", channelName);
+    LOG_F(INFO, "----create channel, channelName: %s----", channelName.c_str());
 }
 
 NertcNodeChannel::~NertcNodeChannel() {
@@ -1478,7 +1480,7 @@ NIM_SDK_NODE_API_DEF(updatePermissionKey)
     {
         std::string key;
         napi_get_value_utf8_string(info[0], key);
-        LOG_F(INFO, "key:%s", key);
+        LOG_F(INFO, "key:%s", key.c_str());
         ret = _channel->updatePermissionKey(key.c_str());
     } while (false);
     LOG_F(INFO, "ret:%d", ret);

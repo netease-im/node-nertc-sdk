@@ -3472,7 +3472,7 @@ NIM_SDK_NODE_API_DEF(addBeautyFilter)
         {
             break;
         }
-        LOG_F(INFO, "path:%s", path);
+        LOG_F(INFO, "path:%s", path.c_str());
         ret = rtc_engine_->addBeautyFilter(path.c_str());
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
@@ -3512,7 +3512,7 @@ NIM_SDK_NODE_API_DEF(addBeautySticker)
     {
         std::string path;
         napi_get_value_utf8_string(info[0], path);
-        LOG_F(INFO, "path:%s", path);
+        LOG_F(INFO, "path:%s", path.c_str());
         ret = rtc_engine_->addBeautySticker(path.c_str());
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
@@ -3537,7 +3537,7 @@ NIM_SDK_NODE_API_DEF(addBeautyMakeup)
     {
         std::string path;
         napi_get_value_utf8_string(info[0], path);
-        LOG_F(INFO, "path:%s", path);
+        LOG_F(INFO, "path:%s", path.c_str());
         ret = rtc_engine_->addBeautyMakeup(path.c_str());
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
@@ -3657,7 +3657,7 @@ NIM_SDK_NODE_API_DEF(updatePermissionKey)
     {
         std::string key;
         napi_get_value_utf8_string(info[0], key);
-        LOG_F(INFO, "key:%s", key);
+        LOG_F(INFO, "key:%s", key.c_str());
         ret = rtc_engine_->updatePermissionKey(key.c_str());
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
