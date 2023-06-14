@@ -166,12 +166,17 @@
             'copies': [{
               'destination': '<(PRODUCT_DIR)',
               'files': [
-                './nertc_sdk/NEFundation_Mac.framework',
                 './nertc_sdk/nertc_sdk_Mac.framework',
+                './nertc_sdk/NERtcAiDenoise.framework',
+                './nertc_sdk/NERtcAiHowling.framework',
+                './nertc_sdk/NERtcAudio3D.framework',
                 './nertc_sdk/NERtcBeauty.framework',
                 './nertc_sdk/NERtcFaceDetect.framework',
+                './nertc_sdk/NERtcFaceEnhance.framework',
                 './nertc_sdk/NERtcnn.framework',
-                './nertc_sdk/NERtcPersonSegment.framework'
+                './nertc_sdk/NERtcPersonSegment.framework',
+                './nertc_sdk/NERtcScreenShareEnhance.framework',
+                './nertc_sdk/NERtcSuperResolution.framework'
               ]
             }],
             'defines': [
@@ -184,13 +189,24 @@
             ],
             'link_settings': {
               'libraries': [
-                'Foundation.framework',
                 'nertc_sdk_Mac.framework',
-                'NEFundation_Mac.framework',
+                'NERtcAiDenoise.framework',
+                'NERtcAiHowling.framework',
+                'NERtcAudio3D.framework',
                 'NERtcBeauty.framework',
                 'NERtcFaceDetect.framework',
+                'NERtcFaceEnhance.framework',
                 'NERtcnn.framework',
                 'NERtcPersonSegment.framework',
+                'NERtcScreenShareEnhance.framework',
+                'NERtcSuperResolution.framework',
+                # 'Foundation.framework',
+                # 'nertc_sdk_Mac.framework',
+                # 'NEFundation_Mac.framework',
+                # 'NERtcBeauty.framework',
+                # 'NERtcFaceDetect.framework',
+                # 'NERtcnn.framework',
+                # 'NERtcPersonSegment.framework',
                 #'libNERTCPrivilegedTask.a',
                 '-Wl,-rpath,@loader_path',
                 '-ObjC'
