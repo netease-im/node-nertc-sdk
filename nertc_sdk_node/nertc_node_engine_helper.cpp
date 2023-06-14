@@ -511,6 +511,11 @@ napi_status nertc_ls_task_info_obj_to_struct(const Napi::Env& env, const Napi::O
         Napi::Object config_obj = obj.Get(static_cast<napi_value>(Napi::String::New(env,"config"))).As<Napi::Object>();
         nertc_task_config_obj_to_struct(env, config_obj, info.config);
     }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"extraInfo")))){
+        out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"extraInfo"))).As<Napi::String>().Utf8Value();
+        memset(info.extraInfo, 0, kNERtcMaxSEIBufferLength);
+        strncpy(info.extraInfo, out.c_str(), kNERtcMaxSEIBufferLength);
+    }
     return napi_ok;
 }
 
