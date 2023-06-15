@@ -81,9 +81,22 @@ class NERtcEngine extends EventEmitter {
         this.customRenderer = CustomRenderer;
     }
 
-    createChannel(name) {
-        let nertcChannel = new nertc.NertcNodeChannel(name);
-        return new NERtcChannel(name, nertcChannel);
+    /**
+     * 创建一个 NERtcChannel 对象
+     * <pre>
+     * 设置相同房间名称的用户会进入同一个通话房间。
+     * 字符串格式，长度为1~ 64 字节。支持以下89个字符：a-z, A-Z, 0-9, space, !#$%&()+-:;≤.,>? @[]^_{|}~”
+     * </pre>
+     * @param {string} name  房间名
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    createChannel(channelName: string): any {
+        let nertcChannel = new nertc.NertcNodeChannel(channelName);
+        return new NERtcChannel(channelName, nertcChannel);
     }
 
     /**
@@ -197,6 +210,10 @@ class NERtcEngine extends EventEmitter {
      */
     joinChannel(token: String, channelName: String, uid: number): number {
         return this.nertcEngine.joinChannel(token, channelName, uid);
+    }
+
+    joinChannelEx(token: string, channelName: string, uid: number, channelOptions: any): number {
+        return this.nertcEngine.joinChannelEx(token, channelName, uid, channelOptions);
     }
 
     /**
@@ -346,6 +363,10 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.enableLocalVideo(enabled);
     }
 
+    enableLocalVideoEx(type: number, enabled: boolean): number {
+        return this.nertcEngine.enableLocalVideoEx(type, enabled);
+    }
+
     /**
      * 订阅 / 取消订阅指定远端用户的视频流。对方打开视频后需要主动订阅
      * @param {number} uid 指定用户的用户 ID。
@@ -405,6 +426,14 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.muteLocalAudioStream(enabled);
     }
 
+    enableLocalSubStreamAudio(enabled: boolean): number {
+        return this.nertcEngine.enableLocalSubStreamAudio(enabled);
+    }
+
+    muteLocalSubStreamAudio(enabled: boolean): number {
+        return this.nertcEngine.muteLocalSubStreamAudio(enabled);
+    }
+
     /**
      * 设置音频编码属性。
      * <pre>
@@ -454,6 +483,35 @@ class NERtcEngine extends EventEmitter {
     subscribeRemoteAudioStream(uid: number, enabled: Boolean): number {
         return this.nertcEngine.subscribeRemoteAudioStream(uid, enabled);
     }
+
+    subscribeRemoteSubStreamAudio(uid: number, enabled: boolean): number {
+        return this.nertcEngine.subscribeRemoteSubStreamAudio(uid, enabled);
+    }
+
+    subscribeAllRemoteAudioStream(subscribe: boolean): number {
+        return this.nertcEngine.subscribeAllRemoteAudioStream(subscribe);
+    }
+
+    setAudioSubscribeOnlyBy(uids: any, size: number): number { //[12, 34, 56]
+        return this.nertcEngine.setAudioSubscribeOnlyBy(uids, size);
+    }
+
+    setStreamAlignmentProperty(enable: boolean): number {
+        return this.nertcEngine.setStreamAlignmentProperty(enable);
+    }
+
+    getNtpTimeOffset(): number {
+        return this.nertcEngine.getNtpTimeOffset();
+    }
+
+    setCameraCaptureConfig(config: any): number {
+        return this.nertcEngine.setCameraCaptureConfig(config);
+    }
+
+    setCameraCaptureConfigEx(type: number, config: any): number {
+        return this.nertcEngine.setCameraCaptureConfigEx(type, config);
+    }
+
 
     /**
      * 设置视频配置。
@@ -514,6 +572,10 @@ class NERtcEngine extends EventEmitter {
      */
     setVideoConfig(config: NERtcVideoConfig): number {
         return this.nertcEngine.setVideoConfig(config);
+    }
+
+    setVideoConfigEx(type: number, config: NERtcVideoConfig): number {
+        return this.nertcEngine.setVideoConfigEx(type, config);
     }
 
     /**
@@ -651,8 +713,12 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setLocalVideoMirrorMode(mode: NERtcVideoMirrorMode) {
+    setLocalVideoMirrorMode(mode: NERtcVideoMirrorMode): number {
         return this.nertcEngine.setLocalVideoMirrorMode(mode);
+    }
+
+    setLocalVideoMirrorModeEx(type:number, mode: NERtcVideoMirrorMode) {
+        return this.nertcEngine.setLocalVideoMirrorModeEx(type, mode);
     }
 
     /**
@@ -733,6 +799,10 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.startVideoPreview();
     }
 
+    startVideoPreviewEx(type: number): number {
+        return this.nertcEngine.startVideoPreviewEx(type);
+    }
+
     /**
      * 停止视频预览。
      * @returns {number}
@@ -743,6 +813,10 @@ class NERtcEngine extends EventEmitter {
      */
     stopVideoPreview(): number {
         return this.nertcEngine.stopVideoPreview();
+    }
+
+    stopVideoPreviewEx(type: number): number {
+        return this.nertcEngine.stopVideoPreviewEx(type);
     }
 
     /**
@@ -763,6 +837,10 @@ class NERtcEngine extends EventEmitter {
      */
     muteLocalVideoStream(enabled: Boolean): number {
         return this.nertcEngine.muteLocalVideoStream(enabled);
+    }
+
+    muteLocalVideoStreamEx(type: number, enabled: boolean): number {
+        return this.nertcEngine.muteLocalVideoStreamEx(type, enabled);
     }
 
     /**
@@ -821,6 +899,16 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.setParameters(parameters);
     }
 
+    setRecordingAudioFrameParameters(format: any): number {
+        return this.nertcEngine.setRecordingAudioFrameParameters(format);
+    }
+    setPlaybackAudioFrameParameters(format: any): number {
+        return this.nertcEngine.setPlaybackAudioFrameParameters(format);
+    }
+    setMixedAudioFrameParameters(sample_rate: number): number {
+        return this.nertcEngine.setMixedAudioFrameParameters(sample_rate);
+    }
+
     // /** 设置录制的声音格式。该方法设置 \ref nertc::INERtcAudioFrameObserver::onAudioFrameDidRecord "onAudioFrameDidRecord" 回调的录制声音格式。
 
 
@@ -867,6 +955,10 @@ class NERtcEngine extends EventEmitter {
      */
     startAudioDump(): number {
         return this.nertcEngine.startAudioDump();
+    }
+
+    startAudioDumpEx(type: number): number {
+        return this.nertcEngine.startAudioDumpEx(type);
     }
 
     /**
@@ -1057,6 +1149,14 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.setAudioMixingPosition(pos);
     }
 
+    setAudioMixingPitch(pitch: number): number {
+        return this.nertcEngine.setAudioMixingPitch(pitch);
+    }
+
+    getAudioMixingPitch(): number {
+        return this.nertcEngine.getAudioMixingPitch();
+    }
+
     /**
      * 播放指定音效文件。
      * <pre>
@@ -1095,6 +1195,14 @@ class NERtcEngine extends EventEmitter {
      */
     stopEffect(effectId: number): number {
         return this.nertcEngine.stopEffect(effectId);
+    }
+
+    setEffectPitch(effectId: number, pitch: number): number {
+        return this.nertcEngine.setEffectPitch(effectId, pitch);
+    }
+
+    getEffectPitch(effectId: number): number {
+        return this.nertcEngine.getEffectPitch(effectId);
     }
 
     /**
@@ -1154,6 +1262,18 @@ class NERtcEngine extends EventEmitter {
      */
     pauseAllEffects(): number {
         return this.nertcEngine.pauseAllEffects();
+    }
+
+    setEffectPosition(effectId: number, pos: number): number {
+        return this.nertcEngine.setEffectPosition(effectId, pos);
+    }
+
+    getEffectCurrentPosition(effectId: number): number {
+        return this.nertcEngine.getEffectCurrentPosition(effectId);
+    }
+
+    getEffectDuration(effectId: number): number {
+        return this.nertcEngine.getEffectDuration(effectId);
     }
 
     /**
@@ -1233,6 +1353,30 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.getEffectPlaybackVolume(effectId);
     }
 
+    enableSpatializer(enable: boolean): number {
+        return this.nertcEngine.enableSpatializer(enable)
+    }
+    
+    updateSpatializerAudioRecvRange(audible_distance: number, conversational_distance: number, roll_off: number): number {
+        return this.nertcEngine.updateSpatializerAudioRecvRange(audible_distance, conversational_distance, roll_off)
+    }
+
+    updateSpatializerSelfPosition(info: any): number {
+        return this.nertcEngine.updateSpatializerSelfPosition(info)
+    }
+
+    enableSpatializerRoomEffects(enable: boolean): number {
+        return this.nertcEngine.enableSpatializerRoomEffects(enable)
+    }
+
+    setSpatializerRoomProperty(room_property: any): number {
+        return this.nertcEngine.setSpatializerRoomProperty(room_property)
+    }
+
+    setSpatializerRenderMode(mode: number) {
+        return this.nertcEngine.setSpatializerRenderMode(mode)
+    }
+
     /**
      * 开启或关闭耳返。
      * <pre>
@@ -1295,6 +1439,10 @@ class NERtcEngine extends EventEmitter {
      */
     enableAudioVolumeIndication(enabled: boolean, interval: number): number {
         return this.nertcEngine.enableAudioVolumeIndication(enabled, interval);
+    }
+
+    enableAudioVolumeIndicationEx(enabled: boolean, interval: number, enableVad: boolean): number {
+        return this.nertcEngine.enableAudioVolumeIndicationEx(enabled, interval, enableVad);
     }
 
     /**
@@ -1469,6 +1617,10 @@ class NERtcEngine extends EventEmitter {
      */
     updateScreenCaptureRegion(regionRect: NERtcRectangle): number {
         return this.nertcEngine.updateScreenCaptureRegion(regionRect);
+    }
+
+    setScreenCaptureMouseCursor(capture_cursor: boolean): number {
+        return this.nertcEngine.setScreenCaptureMouseCursor(capture_cursor);
     }
 
     /**
@@ -2275,12 +2427,20 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.setDevice(id);
     }
 
+    setVideoDeviceEx(id: string, type: number): number {
+        return this.nertcEngine.setDeviceEx(id, type);
+    }
+
     /**
      * 获取当前使用的视频采集设备信息。
      * @returns {String} 设备ID
      */
     getVideoDevice(): String {
         return this.nertcEngine.getDevice();
+    }
+
+    getVideoDeviceEx(type: number): string {
+        return this.nertcEngine.getDeviceEx(type);
     }
 
     /**
@@ -2477,6 +2637,10 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.adjustUserPlaybackSignalVolume(uid, volume)
     }
 
+    adjustChannelPlaybackSignalVolume(volume: number): number {
+        return this.nertcEngine.adjustChannelPlaybackSignalVolume(volume);
+    }
+
      /**
     * 快速切换音视频房间。
     * @since 4.4.8
@@ -2502,6 +2666,10 @@ class NERtcEngine extends EventEmitter {
     */
     switchChannel(token: String, channelName: String): number {
         return this.nertcEngine.switchChannel(token, channelName);
+    }
+
+    switchChannelEx(token: string, channelName: string, option: any): number {
+        return this.nertcEngine.switchChannelEx(token, channelName, option);
     }
 
     /**
@@ -2551,6 +2719,10 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.setExcludeWindowList(param);
     }
 
+    updateScreenCaptureParameters(param: NERtcScreenCaptureWindowParam): number {
+        return this.nertcEngine.updateScreenCaptureParameters(param);
+    }
+
     /**
     * 开始客户端录音。
     * @since 4.4.8
@@ -2577,8 +2749,12 @@ class NERtcEngine extends EventEmitter {
     * - 其他：方法调用失败。
     * </pre>
     */
-     startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number{
+    startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number{
         return this.nertcEngine.startAudioRecording(filePath, sampleRate, quality);
+    }
+
+    startAudioRecordingWithConfig(config: any): number {
+        return this.nertcEngine.startAudioRecordingWithConfig(config);
     }
 
     /**
@@ -2810,7 +2986,7 @@ class NERtcEngine extends EventEmitter {
     * - 其他: 方法调用失败。
     * </pre>
     */
-    startLastmileProbeTest(config) {
+    startLastmileProbeTest(config: any): number {
         return this.nertcEngine.startLastmileProbeTest(config);
     }
     /**
@@ -2822,45 +2998,45 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 调用失败
      * </pre>
      */
-    stopLastmileProbeTest() {
+    stopLastmileProbeTest(): number {
         return this.nertcEngine.stopLastmileProbeTest();
     }
 
-    setRemoteHighPriorityAudioStream(enable, uid) {
+    setRemoteHighPriorityAudioStream(enable: boolean, uid: number): number {
         return this.nertcEngine.setRemoteHighPriorityAudioStream(enable, uid);
     }
 
-    checkNECastAudioDriver() {
+    checkNECastAudioDriver(): number {
         return this.nertcEngine.checkNECastAudioDriver();
     }
 
-    enableVirtualBackground(enable, config) {
+    enableVirtualBackground(enable: boolean, config: any): number {
         return this.nertcEngine.enableVirtualBackground(enable, config);
     }
 
-    setCloudProxy(type) {
+    setCloudProxy(type: number): number {
         return this.nertcEngine.setCloudProxy(type);
     }
 
-    enableLocalData(enable) {
+    enableLocalData(enable: boolean): number {
         return this.nertcEngine.enableLocalData(enable);
     }
-    subscribeRemoteData(uid, sub) {
+    subscribeRemoteData(uid: number, sub: boolean): number {
         return this.nertcEngine.subscribeRemoteData(uid, sub);
     }
-    sendData(data) {
+    sendData(data: any): number {
         return this.nertcEngine.sendData(data);
     }
 
-    startBeauty(file_path) {
+    startBeauty(file_path: string): number {
         return this.nertcEngine.startBeauty(file_path);
     }
 
-    stopBeauty() {
+    stopBeauty(): number {
         return this.nertcEngine.stopBeauty();
     }
 
-    enableBeauty(enable) {
+    enableBeauty(enable: boolean): number {
         return this.nertcEngine.enableBeauty(enable);
     }
 
@@ -2868,55 +3044,53 @@ class NERtcEngine extends EventEmitter {
     //     return this.nertcEngine.enableBeautyMirrorMode(enable);
     // }
 
-    getBeautyEffect(type) {
+    getBeautyEffect(type: number): number {
         return this.nertcEngine.getBeautyEffect(type);
     }
 
-    setBeautyEffect(type, level) { //level *100
+    setBeautyEffect(type: number, level: number): number { //level *100
         return this.nertcEngine.setBeautyEffect(type, level);
     }
 
-    addBeautyFilter(file_path) {
+    addBeautyFilter(file_path: string): number {
         return this.nertcEngine.addBeautyFilter(file_path);
     }
 
-    removeBeautyFilter() {
+    removeBeautyFilter(): number {
         return this.nertcEngine.removeBeautyFilter();
     }
 
-    setBeautyFilterLevel(level) { //level *100
+    setBeautyFilterLevel(level: number): number { //level *100
         return this.nertcEngine.setBeautyFilterLevel(level);
     }
 
-    addBeautySticker(file_path) {
+    addBeautySticker(file_path: string): number {
         return this.nertcEngine.addBeautySticker(file_path);
     }
 
-    removeBeautySticker() {
+    removeBeautySticker(): number {
         return this.nertcEngine.removeBeautySticker();
     }
 
-    addBeautyMakeup(file_path) {
+    addBeautyMakeup(file_path: string): number {
         return this.nertcEngine.addBeautyMakeup(file_path);
     }
 
-    removeBeautyMakeup() {
+    removeBeautyMakeup(): number {
         return this.nertcEngine.removeBeautyMakeup();
     }
 
-    setLocalVoiceReverbParam(param) {
+    setLocalVoiceReverbParam(param: any): number {
         return this.nertcEngine.setLocalVoiceReverbParam(param);
     }
 
-    enableMediaPub(enabled, mediaType) {
+    enableMediaPub(enabled: boolean, mediaType: number): number {
         return this.nertcEngine.enableMediaPub(enabled, mediaType);
     }
 
-    updatePermissionKey(key) {
+    updatePermissionKey(key: string): number {
         return this.nertcEngine.updatePermissionKey(key);
     }
-
-
 
     // setMixedAudioFrameParameters(samplerate: number): number {
     //     return this.nertcEngine.setMixedAudioFrameParameters(samplerate);      
@@ -2964,6 +3138,10 @@ class NERtcEngine extends EventEmitter {
             msg: string
         ) {
             fire('onWarning', warnCode, msg);
+        });
+
+        this.nertcEngine.onEvent('onApiCallExecuted', function (apiName, code, msg) {
+            fire('onApiCallExecuted', apiName, code, msg);
         });
 
         /**
@@ -3134,6 +3312,13 @@ class NERtcEngine extends EventEmitter {
             fire('onUserJoined', uid, userName);
         });
 
+        this.nertcEngine.onEvent('onUserJoinedEx', function (
+            uid: number, 
+            userName: number, 
+            extra_info: any) {
+            fire('onUserJoinedEx', uid, userName, extra_info);
+        });
+
         /**
          * 远端用户离开当前频道回调。
          * <pre>
@@ -3155,6 +3340,13 @@ class NERtcEngine extends EventEmitter {
             reason: NERtcSessionLeaveReason
         ) {
             fire('onUserLeft', uid, reason);
+        });
+
+        this.nertcEngine.onEvent('onUserLeftEx', function (
+            uid: number, 
+            reason: number, 
+            extra_info: any) {
+            fire('onUserLeftEx', uid, reason, extra_info);
         });
 
         /**
@@ -3289,6 +3481,13 @@ class NERtcEngine extends EventEmitter {
             fire('onUserVideoMute', uid, mute);
         });
 
+        this.nertcEngine.onEvent('onUserVideoMuteEx', function (
+            streamType: number, 
+            uid: number, 
+            mute: boolean) {
+            fire('onUserVideoMuteEx', streamType, uid, mute);
+        });
+
         /**
          * 音频设备状态更改回调。
          * @event NERtcEngine#onAudioDeviceStateChanged
@@ -3379,6 +3578,13 @@ class NERtcEngine extends EventEmitter {
             fire('onFirstVideoDataReceived', uid);
         });
 
+        this.nertcEngine.onEvent('onFirstVideoDataReceivedEx', function (
+            streamType: number, 
+            uid: number
+        ) {
+            fire('onFirstVideoDataReceivedEx', streamType, uid);
+        });
+
         /**
          * 已解码远端音频首帧的回调。
          * @event NERtcEngine#onFirstAudioFrameDecoded
@@ -3406,6 +3612,15 @@ class NERtcEngine extends EventEmitter {
             height: number
         ) {
             fire('onFirstVideoFrameDecoded', uid, width, height);
+        });
+
+        this.nertcEngine.onEvent('onFirstVideoFrameDecodedEx', function (
+            type: number, 
+            uid: number, 
+            width: number, 
+            height: number
+        ) {
+            fire('onFirstVideoFrameDecodedEx', type, uid, width, height);
         });
 
         /**
@@ -3464,6 +3679,13 @@ class NERtcEngine extends EventEmitter {
             fire('onAudioEffectFinished', effect_id);
         });
 
+        this.nertcEngine.onEvent('onAudioEffectTimestampUpdate', function (
+            effecct_id: number, 
+            timestamp_ms: number
+        ) {
+            fire('onAudioEffectTimestampUpdate', effecct_id, timestamp_ms);
+        });
+
         /**
          * 提示频道内本地用户瞬时音量的回调。
          * <pre>
@@ -3478,6 +3700,13 @@ class NERtcEngine extends EventEmitter {
             volume: number
         ) {
             fire('onLocalAudioVolumeIndication', volume);
+        });
+
+        this.nertcEngine.onEvent('onLocalAudioVolumeIndicationEx', function (
+            volume: number, 
+            enable_vad: boolean
+        ) {
+            fire('onLocalAudioVolumeIndicationEx', volume, enable_vad);
         });
 
         /**
@@ -3708,15 +3937,15 @@ class NERtcEngine extends EventEmitter {
             fire('onRemoteSubscribeFallbackToAudioOnly', uid, is_fallback, stream_type);
         });
 
-        this.nertcEngine.onEvent('onUserSubStreamAudioStart', function (uid) {
+        this.nertcEngine.onEvent('onUserSubStreamAudioStart', function (uid: number) {
             fire('onUserSubStreamAudioStart', uid);
         });
 
-        this.nertcEngine.onEvent('onUserSubStreamAudioStop', function (uid) {
+        this.nertcEngine.onEvent('onUserSubStreamAudioStop', function (uid: number) {
             fire('onUserSubStreamAudioStop', uid);
         });
 
-        this.nertcEngine.onEvent('onUserSubStreamAudioMute', function (uid, mute) {
+        this.nertcEngine.onEvent('onUserSubStreamAudioMute', function (uid: number, mute: number) {
             fire('onUserSubStreamAudioMute', uid, mute);
         });
 
@@ -3771,19 +4000,29 @@ class NERtcEngine extends EventEmitter {
             fire('onLastmileProbeResult', result);
         });
 
-        this.nertcEngine.onEvent('onMediaRightChange', function (is_audio_banned, is_video_banned) {
+        this.nertcEngine.onEvent('onMediaRightChange', function (
+            is_audio_banned: boolean, 
+            is_video_banned: boolean
+        ) {
             fire('onMediaRightChange', is_audio_banned, is_video_banned);
         });
 
-        this.nertcEngine.onEvent('onCheckNECastAudioDriverResult', function (result) {
+        this.nertcEngine.onEvent('onCheckNECastAudioDriverResult', function (
+            result: number
+        ) {
             fire('onCheckNECastAudioDriverResult', result);
         });
 
-        this.nertcEngine.onEvent('onVirtualBackgroundSourceEnabled', function (enabled, reason) {
+        this.nertcEngine.onEvent('onVirtualBackgroundSourceEnabled', function (
+            enabled: boolean, reason: number
+        ) {
             fire('onVirtualBackgroundSourceEnabled', enabled, reason);
         });
 
-        this.nertcEngine.onEvent('onLocalVideoWatermarkState', function (videoStreamType, state) {
+        this.nertcEngine.onEvent('onLocalVideoWatermarkState', function (
+            videoStreamType: number, 
+            state: number
+        ) {
             fire('onLocalVideoWatermarkState', videoStreamType, state);
         });
 
@@ -3791,27 +4030,36 @@ class NERtcEngine extends EventEmitter {
             fire('onPermissionKeyWillExpire');
         });
 
-        this.nertcEngine.onEvent('onUpdatePermissionKey', function (key, code, time) {
+        this.nertcEngine.onEvent('onUpdatePermissionKey', function (
+            key: string, 
+            code: number, 
+            time: number
+        ) {
             fire('onUpdatePermissionKey', key, code, time);
         });
 
-        this.nertcEngine.onEvent('onUserDataReceiveMessage', function (uid, data) {
+        this.nertcEngine.onEvent('onUserDataReceiveMessage', function (
+            uid: number, 
+            data: ArrayBuffer
+        ) {
             fire('onUserDataReceiveMessage', uid, data);
         });
 
-        this.nertcEngine.onEvent('onUserDataStart', function (uid) {
+        this.nertcEngine.onEvent('onUserDataStart', function (uid: number) {
             fire('onUserDataStart', uid);
         });
 
-        this.nertcEngine.onEvent('onUserDataStop', function (uid) {
+        this.nertcEngine.onEvent('onUserDataStop', function (uid: number) {
             fire('onUserDataStop', uid);
         });
 
-        this.nertcEngine.onEvent('onUserDataStateChanged', function (uid) {
+        this.nertcEngine.onEvent('onUserDataStateChanged', function (uid: number) {
             fire('onUserDataStateChanged', uid);
         });
 
-        this.nertcEngine.onEvent('onUserDataBufferedAmountChanged', function (uid, amount) {
+        this.nertcEngine.onEvent('onUserDataBufferedAmountChanged', function (
+            uid: number, 
+            amount: number) {
             fire('onUserDataBufferedAmountChanged', uid, amount);
         });
 
@@ -3987,15 +4235,15 @@ class NERtcEngine extends EventEmitter {
         });
 
         /*****qs*****/
-        this.nertcEngine.onQsObserver('onRequestSendKeyFrame',true,  function (type) {
+        this.nertcEngine.onQsObserver('onRequestSendKeyFrame',true,  function (type: number) {
             fire('onRequestSendKeyFrame', type);
         });
 
-        this.nertcEngine.onQsObserver('onBitrateUpdated', true, function (bps, type) {
+        this.nertcEngine.onQsObserver('onBitrateUpdated', true, function (bps: number, type: number) {
             fire('onBitrateUpdated', bps, type);
         });
 
-        this.nertcEngine.onQsObserver('onVideoCodecUpdated', true, function (codecType, type) {
+        this.nertcEngine.onQsObserver('onVideoCodecUpdated', true, function (codecType: number, type: number) {
             fire('onVideoCodecUpdated', codecType, type);
         });
     }

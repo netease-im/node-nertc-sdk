@@ -764,11 +764,9 @@ export interface NERtcEngineAPI {
     enableLocalAudio(enabled: Boolean): number;
     enableLocalVideo(enabled: Boolean): number;
     subscribeRemoteVideoStream(uid: number, type: NERtcRemoteVideoStreamType, subscribe: Boolean): number;
-
     setupVideoCanvas(uid: number, enabled: Boolean): number;
     onVideoFrame(callback: Function): number;
     onEvent(eventName: String, callback: Function): void;
-
     getConnectionState(): number;
     muteLocalAudioStream(enabled: Boolean): number;
     setAudioProfile(profile: NERtcAudioProfileType, scenario: NERtcAudioScenarioType): number;
@@ -779,8 +777,6 @@ export interface NERtcEngineAPI {
     stopVideoPreview(): number;
     muteLocalVideoStream(enabled: Boolean): number;
     setParameters(parameters: String): number;
-    setRecordingAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number;
-    setPlaybackAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number;
     startAudioDump(): number;
     stopAudioDump(): number;
     startAudioMixing(opt: NERtcCreateAudioMixingOption): number;
@@ -848,41 +844,21 @@ export interface NERtcEngineAPI {
     setDevice(id: String): number; //<256chars
     getDevice(): String;
     setLocalVideoMirrorMode(mode: NERtcVideoMirrorMode): number;
-    //3.9
     setClientRole(role: NERtcClientRole): number;
     setupSubStreamVideoCanvas(uid: number, enabled: Boolean): number;
     subscribeRemoteVideoSubStream(uid: number, sub: boolean): number;
-
-    //sc
     enumerateScreenCaptureSourceInfo(thumbWidth: number, thumbHeight: number, iconWidth: number, iconHeight: number): Array<Object>;
     startSystemAudioLoopbackCapture(): number;
     stopSystemAudioLoopbackCapture(): number;
     setSystemAudioLoopbackCaptureVolume(volume: number): number;
-
-    // 4.0.x
     sendSEIMsg(data: ArrayBuffer): number;
     sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType): number;
     setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number;
     pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number;
-
-    // 4.1.1
     setAudioEffectPreset(type: NERtcVoiceChangerType): number;
     setVoiceBeautifierPreset(type: NERtcVoiceBeautifierType): number;
     setLocalVoicePitch(pitch: number): number;
     setLocalVoiceEqualization(bandFrequency: NERtcVoiceEqualizationBand, bandGain: number): number;
-  
-    
-
-    // 4.1.112
-
-    //TODO
-    // setMixedAudioFrameParameters(samplerate: number): number;
-    // setExternalVideoSource(enabled: boolean): number;
-    //pushExternalVideoFrame
-    // setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number;
-    //pushExternalAudioFrame
-
-    //4.4.8
     switchChannel(token: String, channelName: String): number;
     setLocalMediaPriority(priority: NERtcMediaPriorityType, preemptive: boolean): number;
     setExcludeWindowList(param: NERtcScreenCaptureWindowParam): number;
@@ -899,4 +875,71 @@ export interface NERtcEngineAPI {
     enableSuperResolution(enable: boolean): number;
     enableEncryption(enable: boolean, config: NERtcEncryptionConfig): number;
 
+    createChannel(channelName: string): any;
+    joinChannelEx(token: string, channelName: string, uid: number, channelOptions: any): number;
+    enableLocalVideoEx(type: number, enabled: boolean): number;
+    enableLocalSubStreamAudio(enabled: boolean): number;
+    muteLocalSubStreamAudio(enabled: boolean): number;
+    subscribeRemoteSubStreamAudio(uid: number, enabled: boolean): number;
+    subscribeAllRemoteAudioStream(subscribe: boolean): number;
+    setAudioSubscribeOnlyBy(uids: any, size: number): number;
+    setStreamAlignmentProperty(enable: boolean): number;
+    getNtpTimeOffset(): number;
+    setCameraCaptureConfig(config: any): number;
+    setCameraCaptureConfigEx(type: number, config: any): number;
+    setVideoConfigEx(type: number, config: NERtcVideoConfig): number;
+    setLocalVideoMirrorModeEx(type:number, mode: NERtcVideoMirrorMode);
+    startVideoPreviewEx(type: number): number;
+    stopVideoPreviewEx(type: number): number;
+    muteLocalVideoStreamEx(type: number, enabled: boolean): number;
+    setRecordingAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number;
+    setPlaybackAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number;
+    setMixedAudioFrameParameters(sample_rate: number): number;
+    startAudioDumpEx(type: number): number;
+    setAudioMixingPitch(pitch: number): number;
+    getAudioMixingPitch(): number;
+    setEffectPitch(effectId: number, pitch: number): number;
+    getEffectPitch(effectId: number): number;
+    setEffectPosition(effectId: number, pos: number): number;
+    getEffectCurrentPosition(effectId: number): number;
+    getEffectDuration(effectId: number): number;
+    enableSpatializer(enable: boolean): number;
+    updateSpatializerAudioRecvRange(audible_distance: number, conversational_distance: number, roll_off: number): number;
+    updateSpatializerSelfPosition(info: any): number;
+    enableSpatializerRoomEffects(enable: boolean): number;
+    setSpatializerRoomProperty(room_property: any): number;
+    setSpatializerRenderMode(mode: number);
+    enableAudioVolumeIndicationEx(enabled: boolean, interval: number, enableVad: boolean): number;
+    setScreenCaptureMouseCursor(capture_cursor: boolean): number;
+    setDeviceEx(id: string, type: number): number;
+    getDeviceEx(type: number): string;
+    adjustChannelPlaybackSignalVolume(volume: number): number;
+    switchChannelEx(token: string, channelName: string, option: any): number;
+    startAudioRecordingWithConfig(config: any): number;
+    updateScreenCaptureParameters(param: NERtcScreenCaptureWindowParam): number;
+    startLastmileProbeTest(config: any): number;
+    stopLastmileProbeTest(): number;
+    setRemoteHighPriorityAudioStream(enable: boolean, uid: number): number;
+    checkNECastAudioDriver(): number;
+    enableVirtualBackground(enable: boolean, config: any): number;
+    setCloudProxy(type: number): number;
+    enableLocalData(enable: boolean): number;
+    subscribeRemoteData(uid: number, sub: boolean): number;
+    sendData(data: any): number;
+    startBeauty(file_path: string): number;
+    stopBeauty(): number;
+    enableBeauty(enable: boolean): number;
+    getBeautyEffect(type: number): number;
+    setBeautyEffect(type: number, level: number): number;
+    addBeautyFilter(file_path: string): number;
+    removeBeautyFilter(): number;
+    setBeautyFilterLevel(level: number): number;
+    addBeautySticker(file_path: string): number;
+    removeBeautySticker(): number;
+    addBeautyMakeup(file_path: string): number;
+    removeBeautyMakeup(): number;
+    setLocalVoiceReverbParam(param: any): number;
+    enableMediaPub(enabled: boolean, mediaType: number): number;
+    updatePermissionKey(key: string): number;
+    onQsObserver(eventName: String, enabled: boolean, callback: Function): void;
 }
