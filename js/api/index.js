@@ -2729,7 +2729,7 @@ class NERtcEngine extends events_1.EventEmitter {
         return this.nertcEngine.enableEncryption(enable, config);
     }
 
-     /**
+   /**
     * 开始通话前网络质量探测。
     * <pre>
     * - 启用该方法后，SDK 会通过回调方式反馈上下行网络的质量状态与质量探测报告，包括带宽、丢包率、网络抖动和往返时延等数据。一般用于通话前的网络质量探测场景，用户加入房间之前可以通过该方法预估音视频通话中本地用户的主观体验和客观网络状态。
