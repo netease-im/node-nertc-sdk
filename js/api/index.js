@@ -1,16 +1,11 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const renderer_1 = require("../renderer");
 const defs_1 = require("./defs");
 const events_1 = require("events");
-const process_1 = __importDefault(require("process"));
 // const nertc = require('bindings')('nertc-electron-sdk');
 const nertc = require('../../build/Release/nertc-electron-sdk.node');
-const NERtcChannel = require('./channel').default
-
+const NERtcChannel = require('./channel').default;
 /**
  * @class NERtcEngine
  */
@@ -28,12 +23,23 @@ class NERtcEngine extends events_1.EventEmitter {
         this.renderMode = this._checkWebGL() ? 1 : 2;
         this.customRenderer = renderer_1.CustomRenderer;
     }
-
-    createChannel(name) {
-        let nertcChannel = new nertc.NertcNodeChannel(name);
-        return new NERtcChannel(name, nertcChannel);
+    /**
+     * 创建一个 NERtcChannel 对象
+     * <pre>
+     * 设置相同房间名称的用户会进入同一个通话房间。
+     * 字符串格式，长度为1~ 64 字节。支持以下89个字符：a-z, A-Z, 0-9, space, !#$%&()+-:;≤.,>? @[]^_{|}~”
+     * </pre>
+     * @param {string} name  房间名
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    createChannel(channelName) {
+        let nertcChannel = new nertc.NertcNodeChannel(channelName);
+        return new NERtcChannel(channelName, nertcChannel);
     }
-
     /**
      * 初始化 NERTC SDK 服务。
      * <pre>
@@ -142,11 +148,9 @@ class NERtcEngine extends events_1.EventEmitter {
     joinChannel(token, channelName, uid) {
         return this.nertcEngine.joinChannel(token, channelName, uid);
     }
-
     joinChannelEx(token, channelName, uid, channelOptions) {
         return this.nertcEngine.joinChannelEx(token, channelName, uid, channelOptions);
     }
-
     /**
      * 离开频道。
      * <pre>
@@ -290,11 +294,9 @@ class NERtcEngine extends events_1.EventEmitter {
     enableLocalVideo(enabled) {
         return this.nertcEngine.enableLocalVideo(enabled);
     }
-
     enableLocalVideoEx(type, enabled) {
         return this.nertcEngine.enableLocalVideoEx(type, enabled);
     }
-
     /**
      * 订阅 / 取消订阅指定远端用户的视频流。对方打开视频后需要主动订阅
      * @param {number} uid 指定用户的用户 ID。
@@ -351,15 +353,12 @@ class NERtcEngine extends events_1.EventEmitter {
     muteLocalAudioStream(enabled) {
         return this.nertcEngine.muteLocalAudioStream(enabled);
     }
-
     enableLocalSubStreamAudio(enabled) {
         return this.nertcEngine.enableLocalSubStreamAudio(enabled);
     }
-
     muteLocalSubStreamAudio(enabled) {
         return this.nertcEngine.muteLocalSubStreamAudio(enabled);
     }
-
     /**
      * 设置音频编码属性。
      * <pre>
@@ -408,35 +407,27 @@ class NERtcEngine extends events_1.EventEmitter {
     subscribeRemoteAudioStream(uid, enabled) {
         return this.nertcEngine.subscribeRemoteAudioStream(uid, enabled);
     }
-
     subscribeRemoteSubStreamAudio(uid, enabled) {
         return this.nertcEngine.subscribeRemoteSubStreamAudio(uid, enabled);
     }
-
     subscribeAllRemoteAudioStream(subscribe) {
         return this.nertcEngine.subscribeAllRemoteAudioStream(subscribe);
     }
-
-    setAudioSubscribeOnlyBy(uids, size) { //[12, 34, 56]
+    setAudioSubscribeOnlyBy(uids, size) {
         return this.nertcEngine.setAudioSubscribeOnlyBy(uids, size);
     }
-
     setStreamAlignmentProperty(enable) {
         return this.nertcEngine.setStreamAlignmentProperty(enable);
     }
-
     getNtpTimeOffset() {
         return this.nertcEngine.getNtpTimeOffset();
     }
-
     setCameraCaptureConfig(config) {
         return this.nertcEngine.setCameraCaptureConfig(config);
     }
-
     setCameraCaptureConfigEx(type, config) {
         return this.nertcEngine.setCameraCaptureConfigEx(type, config);
     }
-
     /**
      * 设置视频配置。
      * <pre>
@@ -817,6 +808,33 @@ class NERtcEngine extends events_1.EventEmitter {
     setMixedAudioFrameParameters(sample_rate) {
         return this.nertcEngine.setMixedAudioFrameParameters(sample_rate);
     }
+    // /** 设置录制的声音格式。该方法设置 \ref nertc::INERtcAudioFrameObserver::onAudioFrameDidRecord "onAudioFrameDidRecord" 回调的录制声音格式。
+    //  - joinChannel 前/后都允许更改设置。
+    //  - 取消监听，重置为空。
+    //  @param format 指定 *onAudioFrameDidRecord* 中返回数据的采样率和数据的通道数。允许传入 NULL，默认为 NULL。
+    //  * @returns {number}
+    //  * <pre>
+    //  * - 0: 方法调用成功；
+    //  * - 其他: 方法调用失败。
+    //  * </pre>
+    //  */
+    // setRecordingAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number {
+    //     return this.nertcEngine.setRecordingAudioFrameParameters(format);      
+    // }
+    // /** 设置播放的声音格式。该方法设置 \ref nertc::INERtcAudioFrameObserver::onAudioFrameWillPlayback "onAudioFrameWillPlayback" 回调的播放声音格式。
+    //  <b>NOTE:</b>
+    //  - joinChannel 前/后都允许更改设置。
+    //  - 取消监听，重置为空。
+    //  @param format 指定 *onAudioFrameWillPlayback* 中返回数据的采样率和数据的通道数。允许传入 NULL，默认为 NULL。
+    //  * @returns {number}
+    //  * <pre>
+    //  * - 0: 方法调用成功；
+    //  * - 其他: 方法调用失败。
+    //  * </pre>
+    //  */
+    // setPlaybackAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number {
+    //     return this.nertcEngine.setPlaybackAudioFrameParameters(format);      
+    // }
     /**
      * 开启音频dump。
      * @returns {number}
@@ -1007,15 +1025,12 @@ class NERtcEngine extends events_1.EventEmitter {
     setAudioMixingPosition(pos) {
         return this.nertcEngine.setAudioMixingPosition(pos);
     }
-
     setAudioMixingPitch(pitch) {
         return this.nertcEngine.setAudioMixingPitch(pitch);
     }
-
     getAudioMixingPitch() {
         return this.nertcEngine.getAudioMixingPitch();
     }
-
     /**
      * 播放指定音效文件。
      * <pre>
@@ -1054,15 +1069,12 @@ class NERtcEngine extends events_1.EventEmitter {
     stopEffect(effectId) {
         return this.nertcEngine.stopEffect(effectId);
     }
-
     setEffectPitch(effectId, pitch) {
         return this.nertcEngine.setEffectPitch(effectId, pitch);
     }
-
     getEffectPitch(effectId) {
         return this.nertcEngine.getEffectPitch(effectId);
     }
-
     /**
      * 停止播放所有音效文件。
      * @returns {number}
@@ -1199,32 +1211,24 @@ class NERtcEngine extends events_1.EventEmitter {
     getEffectPlaybackVolume(effectId) {
         return this.nertcEngine.getEffectPlaybackVolume(effectId);
     }
-
     enableSpatializer(enable) {
-        return this.nertcEngine.enableSpatializer(enable)
+        return this.nertcEngine.enableSpatializer(enable);
     }
-    
     updateSpatializerAudioRecvRange(audible_distance, conversational_distance, roll_off) {
-        return this.nertcEngine.updateSpatializerAudioRecvRange(audible_distance, conversational_distance, roll_off)
+        return this.nertcEngine.updateSpatializerAudioRecvRange(audible_distance, conversational_distance, roll_off);
     }
-
     updateSpatializerSelfPosition(info) {
-        return this.nertcEngine.updateSpatializerSelfPosition(info)
+        return this.nertcEngine.updateSpatializerSelfPosition(info);
     }
-
     enableSpatializerRoomEffects(enable) {
-        return this.nertcEngine.enableSpatializerRoomEffects(enable)
+        return this.nertcEngine.enableSpatializerRoomEffects(enable);
     }
-
     setSpatializerRoomProperty(room_property) {
-        return this.nertcEngine.setSpatializerRoomProperty(room_property)
+        return this.nertcEngine.setSpatializerRoomProperty(room_property);
     }
-
     setSpatializerRenderMode(mode) {
-        return this.nertcEngine.setSpatializerRenderMode(mode)
+        return this.nertcEngine.setSpatializerRenderMode(mode);
     }
-
-
     /**
      * 开启或关闭耳返。
      * <pre>
@@ -1256,6 +1260,17 @@ class NERtcEngine extends events_1.EventEmitter {
     setEarbackVolume(volume) {
         return this.nertcEngine.setEarbackVolume(volume);
     }
+    // /** 注册统计信息观测器。
+    // @param {} eventName NERtcMediaStatsEventName
+    // @param {} enabled 是否开启
+    // @param {} callback 回调函数
+    // @returns {number}
+    // - 0: 方法调用成功；
+    // - 其他: 方法调用失败。
+    // */
+    // onStatsObserver(eventName: NERtcMediaStatsEventName, enabled: boolean, callback: Function): void {
+    //     return this.nertcEngine.onStatsObserver(eventName, enabled, callback);         
+    // }
     /**
      * 启用说话者音量提示。该方法允许 SDK 定期向 App 反馈当前谁在说话以及说话者的音量。
      * <pre>
@@ -1445,11 +1460,9 @@ class NERtcEngine extends events_1.EventEmitter {
     updateScreenCaptureRegion(regionRect) {
         return this.nertcEngine.updateScreenCaptureRegion(regionRect);
     }
-
     setScreenCaptureMouseCursor(capture_cursor) {
         return this.nertcEngine.setScreenCaptureMouseCursor(capture_cursor);
     }
-
     /**
      * 停止屏幕共享。
      * @returns {number}
@@ -2212,7 +2225,6 @@ class NERtcEngine extends events_1.EventEmitter {
     setVideoDevice(id) {
         return this.nertcEngine.setDevice(id);
     }
-
     setVideoDeviceEx(id, type) {
         return this.nertcEngine.setDeviceEx(id, type);
     }
@@ -2223,11 +2235,9 @@ class NERtcEngine extends events_1.EventEmitter {
     getVideoDevice() {
         return this.nertcEngine.getDevice();
     }
-
     getVideoDeviceEx(type) {
         return this.nertcEngine.getDeviceEx(type);
     }
-
     /**
      * 设置 SDK 预设的人声的变声音效。
      * @since 4.1.110
@@ -2415,42 +2425,38 @@ class NERtcEngine extends events_1.EventEmitter {
     adjustUserPlaybackSignalVolume(uid, volume) {
         return this.nertcEngine.adjustUserPlaybackSignalVolume(uid, volume);
     }
-
     adjustChannelPlaybackSignalVolume(volume) {
         return this.nertcEngine.adjustChannelPlaybackSignalVolume(volume);
     }
-
     /**
-    * 快速切换音视频房间。
-    * @since 4.4.8
-    * <pre>
-    * - 房间场景为直播场景时，房间中角色为观众的成员可以调用该方法从当前房间快速切换至另一个房间。
-    * - 成功调用该方切换房间后，本端用户会先收到离开房间的回调 onLeaveChannel，再收到成功加入新房间的回调 onJoinChannel。远端用户会收到 onUserLeave 和 onUserJoined 回调。
-    * <b>NOTE:</b>
-    * - 快速切换房间功能默认关闭。如需使用，请联系技术支持免费开通。
-    * - 该方法仅适用于直播场景中，角色为观众的音视频房间成员。即已通过接口 setchannelprofile 设置房间场景为直播，通过 setClientRole 设置房间成员的角色为观众。
-    * - 房间成员成功切换房间后，默认订阅房间内所有其他成员的音频流，因此产生用量并影响计费。如果想取消订阅，可以通过调用相应的 subscribeRemoteAudio 方法传入 false 实现。
-    * </pre>
-    * @param {number}  token 安全认证签名（NERTC Token）。
-    * <pre>
-    * - null。非安全模式下可设置为 null。安全性不高，建议在产品正式上线前联系对应商务经理转为安全模式。
-    * - 已获取的 NERTC Token。安全模式下必须设置为获取到的 Token 。若未传入正确的 Token，用户将无法进入房间。推荐使用安全模式。
-    * </pre>
-    * @param {string} channel_name 期望切换到的目标房间名称。
-    * @return {number}
-    * <pre>
-    * - 0: 方法调用成功。
-    * - 其他：方法调用失败。
-    * </pre>
-    */
+   * 快速切换音视频房间。
+   * @since 4.4.8
+   * <pre>
+   * - 房间场景为直播场景时，房间中角色为观众的成员可以调用该方法从当前房间快速切换至另一个房间。
+   * - 成功调用该方切换房间后，本端用户会先收到离开房间的回调 onLeaveChannel，再收到成功加入新房间的回调 onJoinChannel。远端用户会收到 onUserLeave 和 onUserJoined 回调。
+   * <b>NOTE:</b>
+   * - 快速切换房间功能默认关闭。如需使用，请联系技术支持免费开通。
+   * - 该方法仅适用于直播场景中，角色为观众的音视频房间成员。即已通过接口 setchannelprofile 设置房间场景为直播，通过 setClientRole 设置房间成员的角色为观众。
+   * - 房间成员成功切换房间后，默认订阅房间内所有其他成员的音频流，因此产生用量并影响计费。如果想取消订阅，可以通过调用相应的 subscribeRemoteAudio 方法传入 false 实现。
+   * </pre>
+   * @param {number}  token 安全认证签名（NERTC Token）。
+   * <pre>
+   * - null。非安全模式下可设置为 null。安全性不高，建议在产品正式上线前联系对应商务经理转为安全模式。
+   * - 已获取的 NERTC Token。安全模式下必须设置为获取到的 Token 。若未传入正确的 Token，用户将无法进入房间。推荐使用安全模式。
+   * </pre>
+   * @param {string} channel_name 期望切换到的目标房间名称。
+   * @return {number}
+   * <pre>
+   * - 0: 方法调用成功。
+   * - 其他：方法调用失败。
+   * </pre>
+   */
     switchChannel(token, channelName) {
         return this.nertcEngine.switchChannel(token, channelName);
     }
-
     switchChannelEx(token, channelName, option) {
         return this.nertcEngine.switchChannelEx(token, channelName, option);
     }
-
     /**
     * 设置本地用户的媒体流优先级。
     * @since 4.4.8
@@ -2496,19 +2502,9 @@ class NERtcEngine extends events_1.EventEmitter {
     setExcludeWindowList(param) {
         return this.nertcEngine.setExcludeWindowList(param);
     }
-
     updateScreenCaptureParameters(param) {
         return this.nertcEngine.updateScreenCaptureParameters(param);
     }
-
-    // setExternalVideoSource(enabled) {
-    //     return this.nertcEngine.setExternalVideoSource(enabled);
-    // }
-
-    // setExternalVideoSourceEx(type, enabled) {
-    //     return this.nertcEngine.setExternalVideoSourceEx(type, enabled);
-    // }
-
     /**
     * 开始客户端录音。
     * @since 4.4.8
@@ -2538,11 +2534,9 @@ class NERtcEngine extends events_1.EventEmitter {
     startAudioRecording(filePath, sampleRate, quality) {
         return this.nertcEngine.startAudioRecording(filePath, sampleRate, quality);
     }
-
     startAudioRecordingWithConfig(config) {
         return this.nertcEngine.startAudioRecordingWithConfig(config);
     }
-
     /**
     * 停止客户端录音。
     * @since 4.4.8
@@ -2614,7 +2608,7 @@ class NERtcEngine extends events_1.EventEmitter {
     updateChannelMediaRelay(config) {
         return this.nertcEngine.updateChannelMediaRelay(config);
     }
-    /** 
+    /**
     * 停止跨房间媒体流转发。
     * <pre>
     * 主播离开房间时，跨房间媒体流转发自动停止，您也可以在需要的时候随时调用 stopChannelMediaRelay 方法，此时主播会退出所有目标房间。
@@ -2629,7 +2623,7 @@ class NERtcEngine extends events_1.EventEmitter {
     stopChannelMediaRelay() {
         return this.nertcEngine.stopChannelMediaRelay();
     }
-    /** 
+    /**
     * 设置弱网条件下发布的音视频流回退选项。
     * <pre>
     * 在网络不理想的环境下，发布的音视频质量都会下降。使用该接口并将 option 设置为 kNERtcStreamFallbackAudioOnly 后：
@@ -2653,7 +2647,7 @@ class NERtcEngine extends events_1.EventEmitter {
     setLocalPublishFallbackOption(option) {
         return this.nertcEngine.setLocalPublishFallbackOption(option);
     }
-    /** 
+    /**
     * 设置弱网条件下订阅的音视频流回退选项。
     * <pre>弱网环境下，订阅的音视频质量会下降。使用该接口并将 option 设置为  #kNERtcStreamFallbackVideoStreamLow 或者 #kNERtcStreamFallbackAudioOnly 后：
     * - SDK 会在下行弱网且音视频质量严重受影响时，将视频流切换为小流，或关断视频流，从而保证或提高通信质量。
@@ -2677,7 +2671,7 @@ class NERtcEngine extends events_1.EventEmitter {
     setRemoteSubscribeFallbackOption(option) {
         return this.nertcEngine.setRemoteSubscribeFallbackOption(option);
     }
-    /** 
+    /**
     * 启用或停止 AI 超分。
     * @since V4.4.0
     * <pre>
@@ -2697,13 +2691,12 @@ class NERtcEngine extends events_1.EventEmitter {
     enableSuperResolution(enable) {
         return this.nertcEngine.enableSuperResolution(enable);
     }
-    
     /**
      * 开启或关闭媒体流加密。
      * @since V4.4.0
      * 在金融行业等安全性要求较高的场景下，您可以在加入房间前通过此方法设置媒体流加密模式。
      * <pre>
-    *  <b>NOTE:</b>
+     *  <b>NOTE:</b>
      * - 请在加入房间前调用该方法，加入房间后无法修改加密模式与密钥。用户离开房间后，SDK 会自动关闭加密。如需重新开启加密，需要在用户再次加入房间前调用此方法。
      * - 同一房间内，所有开启媒体流加密的用户必须使用相同的加密模式和密钥，否则使用不同密钥的成员加入房间时会报错 kNERtcErrEncryptNotSuitable（30113）。
      * - 安全起见，建议每次启用媒体流加密时都更换新的密钥。
@@ -2725,11 +2718,10 @@ class NERtcEngine extends events_1.EventEmitter {
      * - 其他: 调用失败
      * </pre>
      */
-     enableEncryption(enable, config) {
+    enableEncryption(enable, config) {
         return this.nertcEngine.enableEncryption(enable, config);
     }
-
-   /**
+    /**
     * 开始通话前网络质量探测。
     * <pre>
     * - 启用该方法后，SDK 会通过回调方式反馈上下行网络的质量状态与质量探测报告，包括带宽、丢包率、网络抖动和往返时延等数据。一般用于通话前的网络质量探测场景，用户加入房间之前可以通过该方法预估音视频通话中本地用户的主观体验和客观网络状态。
@@ -2766,7 +2758,7 @@ class NERtcEngine extends events_1.EventEmitter {
     * - 其他: 方法调用失败。
     * </pre>
     */
-      startLastmileProbeTest(config) {
+    startLastmileProbeTest(config) {
         return this.nertcEngine.startLastmileProbeTest(config);
     }
     /**
@@ -2781,23 +2773,18 @@ class NERtcEngine extends events_1.EventEmitter {
     stopLastmileProbeTest() {
         return this.nertcEngine.stopLastmileProbeTest();
     }
-
     setRemoteHighPriorityAudioStream(enable, uid) {
         return this.nertcEngine.setRemoteHighPriorityAudioStream(enable, uid);
     }
-
     checkNECastAudioDriver() {
         return this.nertcEngine.checkNECastAudioDriver();
     }
-
     enableVirtualBackground(enable, config) {
         return this.nertcEngine.enableVirtualBackground(enable, config);
     }
-
     setCloudProxy(type) {
         return this.nertcEngine.setCloudProxy(type);
     }
-
     enableLocalData(enable) {
         return this.nertcEngine.enableLocalData(enable);
     }
@@ -2807,71 +2794,60 @@ class NERtcEngine extends events_1.EventEmitter {
     sendData(data) {
         return this.nertcEngine.sendData(data);
     }
-
     startBeauty(file_path) {
         return this.nertcEngine.startBeauty(file_path);
     }
-
     stopBeauty() {
         return this.nertcEngine.stopBeauty();
     }
-
     enableBeauty(enable) {
         return this.nertcEngine.enableBeauty(enable);
     }
-
     // enableBeautyMirrorMode(enable) {
     //     return this.nertcEngine.enableBeautyMirrorMode(enable);
     // }
-
     getBeautyEffect(type) {
         return this.nertcEngine.getBeautyEffect(type);
     }
-
-    setBeautyEffect(type, level) { //level *100
+    setBeautyEffect(type, level) {
         return this.nertcEngine.setBeautyEffect(type, level);
     }
-
     addBeautyFilter(file_path) {
         return this.nertcEngine.addBeautyFilter(file_path);
     }
-
     removeBeautyFilter() {
         return this.nertcEngine.removeBeautyFilter();
     }
-
-    setBeautyFilterLevel(level) { //level *100
+    setBeautyFilterLevel(level) {
         return this.nertcEngine.setBeautyFilterLevel(level);
     }
-
     addBeautySticker(file_path) {
         return this.nertcEngine.addBeautySticker(file_path);
     }
-
     removeBeautySticker() {
         return this.nertcEngine.removeBeautySticker();
     }
-
     addBeautyMakeup(file_path) {
         return this.nertcEngine.addBeautyMakeup(file_path);
     }
-
     removeBeautyMakeup() {
         return this.nertcEngine.removeBeautyMakeup();
     }
-
     setLocalVoiceReverbParam(param) {
         return this.nertcEngine.setLocalVoiceReverbParam(param);
     }
-
     enableMediaPub(enabled, mediaType) {
         return this.nertcEngine.enableMediaPub(enabled, mediaType);
     }
-
     updatePermissionKey(key) {
         return this.nertcEngine.updatePermissionKey(key);
     }
-
+    // setMixedAudioFrameParameters(samplerate: number): number {
+    //     return this.nertcEngine.setMixedAudioFrameParameters(samplerate);      
+    // }
+    // setExternalAudioSource(enabled: boolean, samplerate: number, channel: number): number {
+    //     return this.nertcEngine.setExternalAudioSource(enabled, samplerate, channel);      
+    // }
     /**
      * init event handler
      * @private
@@ -2901,11 +2877,9 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onWarning', function (warnCode, msg) {
             fire('onWarning', warnCode, msg);
         });
-
         this.nertcEngine.onEvent('onApiCallExecuted', function (apiName, code, msg) {
             fire('onApiCallExecuted', apiName, code, msg);
         });
-
         /**
          * 释放硬件资源的回调。
          * @event NERtcEngine#onReleasedHwResources
@@ -3059,11 +3033,9 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onUserLeft', function (uid, reason) {
             fire('onUserLeft', uid, reason);
         });
-
         this.nertcEngine.onEvent('onUserLeftEx', function (uid, reason, extra_info) {
             fire('onUserLeftEx', uid, reason, extra_info);
         });
-
         /**
          * 远端用户开启音频回调。
          * @event NERtcEngine#onUserAudioStart
@@ -3164,11 +3136,9 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onUserVideoMute', function (uid, mute) {
             fire('onUserVideoMute', uid, mute);
         });
-
         this.nertcEngine.onEvent('onUserVideoMuteEx', function (streamType, uid, mute) {
             fire('onUserVideoMuteEx', streamType, uid, mute);
         });
-
         /**
          * 音频设备状态更改回调。
          * @event NERtcEngine#onAudioDeviceStateChanged
@@ -3242,7 +3212,6 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onFirstVideoDataReceivedEx', function (streamType, uid) {
             fire('onFirstVideoDataReceivedEx', streamType, uid);
         });
-
         /**
          * 已解码远端音频首帧的回调。
          * @event NERtcEngine#onFirstAudioFrameDecoded
@@ -3251,7 +3220,6 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onFirstAudioFrameDecoded', function (uid) {
             fire('onFirstAudioFrameDecoded', uid);
         });
-        
         /**
          * 已显示首帧远端视频回调。
          * <pre>
@@ -3268,7 +3236,6 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onFirstVideoFrameDecodedEx', function (type, uid, width, height) {
             fire('onFirstVideoFrameDecodedEx', type, uid, width, height);
         });
-
         /**
          * 本地用户的音乐文件播放状态改变回调。
          * <pre>
@@ -3315,11 +3282,9 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onAudioEffectFinished', function (effect_id) {
             fire('onAudioEffectFinished', effect_id);
         });
-
         this.nertcEngine.onEvent('onAudioEffectTimestampUpdate', function (effecct_id, timestamp_ms) {
             fire('onAudioEffectTimestampUpdate', effecct_id, timestamp_ms);
         });
-
         /**
          * 提示频道内本地用户瞬时音量的回调。
          * <pre>
@@ -3333,11 +3298,9 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onLocalAudioVolumeIndication', function (volume) {
             fire('onLocalAudioVolumeIndication', volume);
         });
-
         this.nertcEngine.onEvent('onLocalAudioVolumeIndicationEx', function (volume, enable_vad) {
             fire('onLocalAudioVolumeIndicationEx', volume, enable_vad);
         });
-
         /**
          * 提示频道内谁正在说话及说话者瞬时音量的回调。
          * <pre>
@@ -3430,69 +3393,69 @@ class NERtcEngine extends events_1.EventEmitter {
             fire('onRecvSEIMsg', uid, data);
         });
         /**
-         * 屏幕共享暂停/恢复/开始/结束等回调
-         * @event NERtcEngine#onScreenCaptureStatusonScreenCaptureStatus
-         * @param {number} status 屏幕共享状态。
-         * <pre>
-         * - 1 开始屏幕共享。
-         * - 2 暂停屏幕共享。
-         * - 3 恢复屏幕共享。
-         * - 4 停止屏幕共享。
-         * - 5 屏幕分享的目标窗口被覆盖。
-         * </pre>
-         */
+          * 屏幕共享暂停/恢复/开始/结束等回调
+          * @event NERtcEngine#onScreenCaptureStatusonScreenCaptureStatus
+          * @param {number} status 屏幕共享状态。
+          * <pre>
+          * - 1 开始屏幕共享。
+          * - 2 暂停屏幕共享。
+          * - 3 恢复屏幕共享。
+          * - 4 停止屏幕共享。
+          * - 5 屏幕分享的目标窗口被覆盖。
+          * </pre>
+          */
         this.nertcEngine.onEvent('onScreenCaptureStatus', function (status) {
             fire('onScreenCaptureStatus', status);
         });
         /** 音频录制状态回调。
-         * @event NERtcEngine#onAudioRecording
-         * @param code 音频录制状态码。详细信息请参考 NERtcAudioRecordingCode。
-         * @param file_path 音频录制文件保存路径。
-         */
+          * @event NERtcEngine#onAudioRecording
+          * @param code 音频录制状态码。详细信息请参考 NERtcAudioRecordingCode。
+          * @param file_path 音频录制文件保存路径。
+          */
         this.nertcEngine.onEvent('onAudioRecording', function (code, file_path) {
             fire('onAudioRecording', code, file_path);
         });
-        /** 
-         * 跨房间媒体流转发状态发生改变回调。
-         * @event NERtcEngine#onMediaRelayStateChanged
-         * @param {number} state 当前跨房间媒体流转发状态。
-         * <pre>
-         * - 0 初始状态。在成功调用 stopChannelMediaRelay 停止跨房间媒体流转发后， onMediaRelayStateChanged 会回调该状态。
-         * - 1 尝试跨房间转发媒体流。
-         * - 2 源房间主播角色成功加入目标房间。
-         * - 3 发生异常，详见 onMediaRelayEvent 的 error 中提示的错误信息。
-         * </pre>
-         * @param channel_name  媒体流转发的目标房间名。
-         */
+        /**
+          * 跨房间媒体流转发状态发生改变回调。
+          * @event NERtcEngine#onMediaRelayStateChanged
+          * @param {number} state 当前跨房间媒体流转发状态。
+          * <pre>
+          * - 0 初始状态。在成功调用 stopChannelMediaRelay 停止跨房间媒体流转发后， onMediaRelayStateChanged 会回调该状态。
+          * - 1 尝试跨房间转发媒体流。
+          * - 2 源房间主播角色成功加入目标房间。
+          * - 3 发生异常，详见 onMediaRelayEvent 的 error 中提示的错误信息。
+          * </pre>
+          * @param channel_name  媒体流转发的目标房间名。
+          */
         this.nertcEngine.onEvent('onMediaRelayStateChanged', function (state, channel_name) {
             fire('onMediaRelayStateChanged', state, channel_name);
         });
-        /** 
-         * 媒体流相关转发事件回调。
-         * @event NERtcEngine#onMediaRelayEvent
-         * @param {number} event 当前媒体流转发事件。详细信息请参考 #NERtcChannelMediaRelayEvent 。
-         * <pre>
-         * - 0 媒体流转发停止。
-         * - 1 正在连接服务器，开始尝试转发媒体流。
-         * - 2 连接服务器成功。
-         * - 3 视频音频媒体流成功转发到目标房间。
-         * - 4 音频媒体流成功转发到目标房间。
-         * - 5 媒体流屏幕共享等其他流成功转发到目标房间。
-         * - 100 媒体流转发失败。原因包括：
-         * - 414 请求参数错误。
-         * - 30110 重复调用 startChannelMediaRelay。
-         * - 30111 媒体流转发权限不足。例如调用 startChannelMediaRelay 的房间成员为主播角色、或房间为双人通话房间，不支持转发媒体流。
-         * - 30112 调用 stopChannelMediaRelay 前，未调用 startChannelMediaRelay。
-         * </pre>
-         * @param channel_name  转发的目标房间名。
-         * @param error         相关错误码。详细信息请参考 #NERtcErrorCode 。
-         */
+        /**
+          * 媒体流相关转发事件回调。
+          * @event NERtcEngine#onMediaRelayEvent
+          * @param {number} event 当前媒体流转发事件。详细信息请参考 #NERtcChannelMediaRelayEvent 。
+          * <pre>
+          * - 0 媒体流转发停止。
+          * - 1 正在连接服务器，开始尝试转发媒体流。
+          * - 2 连接服务器成功。
+          * - 3 视频音频媒体流成功转发到目标房间。
+          * - 4 音频媒体流成功转发到目标房间。
+          * - 5 媒体流屏幕共享等其他流成功转发到目标房间。
+          * - 100 媒体流转发失败。原因包括：
+          * - 414 请求参数错误。
+          * - 30110 重复调用 startChannelMediaRelay。
+          * - 30111 媒体流转发权限不足。例如调用 startChannelMediaRelay 的房间成员为主播角色、或房间为双人通话房间，不支持转发媒体流。
+          * - 30112 调用 stopChannelMediaRelay 前，未调用 startChannelMediaRelay。
+          * </pre>
+          * @param channel_name  转发的目标房间名。
+          * @param error         相关错误码。详细信息请参考 #NERtcErrorCode 。
+          */
         this.nertcEngine.onEvent('onMediaRelayEvent', function (event, channel_name, error) {
             fire('onMediaRelayEvent', event, channel_name, error);
         });
         /**
          * 本地发布流已回退为音频流、或已恢复为音视频流回调。
-         * <br>如果您调用了设置本地推流回退选项 setLocalPublishFallbackOption 接口，并将 option 设置为 #kNERtcStreamFallbackAudioOnly 后，当上行网络环境不理想、本地发布的媒体流回退为音频流时，或当上行网络改善、媒体流恢复为音视频流时，会触发该回调。 
+         * <br>如果您调用了设置本地推流回退选项 setLocalPublishFallbackOption 接口，并将 option 设置为 #kNERtcStreamFallbackAudioOnly 后，当上行网络环境不理想、本地发布的媒体流回退为音频流时，或当上行网络改善、媒体流恢复为音视频流时，会触发该回调。
          * @event NERtcEngine#onLocalPublishFallbackToAudioOnly
          * @param {boolean} is_fallback   本地发布流已回退或已恢复。
          * <pre>
@@ -3513,7 +3476,7 @@ class NERtcEngine extends events_1.EventEmitter {
          * <pre>
          * 如果你调用了设置远端订阅流回退选项 setRemoteSubscribeFallbackOption 接口并将 option 设置 #kNERtcStreamFallbackAudioOnly 后，当下行网络环境不理想、仅接收远端音频流时，或当下行网络改善、恢复订阅音视频流时，会触发该回调。
          * </pre>
-         * @event NERtcEngine#onRemoteSubscribeFallbackToAudioOnly 
+         * @event NERtcEngine#onRemoteSubscribeFallbackToAudioOnly
          * @param {number} uid 远端用户的 ID。
          * @param {boolean} is_fallback 远端订阅流已回退或恢复：
          * <pre>
@@ -3529,19 +3492,15 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onRemoteSubscribeFallbackToAudioOnly', function (uid, is_fallback, stream_type) {
             fire('onRemoteSubscribeFallbackToAudioOnly', uid, is_fallback, stream_type);
         });
-
         this.nertcEngine.onEvent('onUserSubStreamAudioStart', function (uid) {
             fire('onUserSubStreamAudioStart', uid);
         });
-
         this.nertcEngine.onEvent('onUserSubStreamAudioStop', function (uid) {
             fire('onUserSubStreamAudioStop', uid);
         });
-
         this.nertcEngine.onEvent('onUserSubStreamAudioMute', function (uid, mute) {
             fire('onUserSubStreamAudioMute', uid, mute);
         });
-
         /**
          * 通话前网络上下行 last mile 质量状态回调。
          * <pre>
@@ -3592,56 +3551,43 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onEvent('onLastmileProbeResult', function (result) {
             fire('onLastmileProbeResult', result);
         });
-
         this.nertcEngine.onEvent('onMediaRightChange', function (is_audio_banned, is_video_banned) {
             fire('onMediaRightChange', is_audio_banned, is_video_banned);
         });
-
         this.nertcEngine.onEvent('onCheckNECastAudioDriverResult', function (result) {
             fire('onCheckNECastAudioDriverResult', result);
         });
-
         this.nertcEngine.onEvent('onVirtualBackgroundSourceEnabled', function (enabled, reason) {
             fire('onVirtualBackgroundSourceEnabled', enabled, reason);
         });
-
         this.nertcEngine.onEvent('onLocalVideoWatermarkState', function (videoStreamType, state) {
             fire('onLocalVideoWatermarkState', videoStreamType, state);
         });
-
         this.nertcEngine.onEvent('onPermissionKeyWillExpire', function () {
             fire('onPermissionKeyWillExpire');
         });
-
         this.nertcEngine.onEvent('onUpdatePermissionKey', function (key, code, time) {
             fire('onUpdatePermissionKey', key, code, time);
         });
-
         this.nertcEngine.onEvent('onUserDataReceiveMessage', function (uid, data) {
             fire('onUserDataReceiveMessage', uid, data);
         });
-
         this.nertcEngine.onEvent('onUserDataStart', function (uid) {
             fire('onUserDataStart', uid);
         });
-
         this.nertcEngine.onEvent('onUserDataStop', function (uid) {
             fire('onUserDataStop', uid);
         });
-
         this.nertcEngine.onEvent('onUserDataStateChanged', function (uid) {
             fire('onUserDataStateChanged', uid);
         });
-
         this.nertcEngine.onEvent('onUserDataBufferedAmountChanged', function (uid, amount) {
             fire('onUserDataBufferedAmountChanged', uid, amount);
         });
-
-        this.nertcEngine.onVideoFrame( (infos)=>{ //function
-            this.doVideoFrameReceived(infos);
+        this.nertcEngine.onVideoFrame(function (infos) {
+            self.doVideoFrameReceived(infos);
         });
-
-        // mediaStats
+        /*****mediaStats*****/
         /**
          * 当前通话统计回调。
          * <pre>
@@ -3802,21 +3748,16 @@ class NERtcEngine extends events_1.EventEmitter {
         this.nertcEngine.onStatsObserver('onNetworkQuality', true, function (uc, stats) {
             fire('onNetworkQuality', uc, stats);
         });
-
-        // qs
-        this.nertcEngine.onQsObserver('onRequestSendKeyFrame',true,  function (type) {
+        /*****qs*****/
+        this.nertcEngine.onQsObserver('onRequestSendKeyFrame', true, function (type) {
             fire('onRequestSendKeyFrame', type);
         });
-
         this.nertcEngine.onQsObserver('onBitrateUpdated', true, function (bps, type) {
             fire('onBitrateUpdated', bps, type);
         });
-
         this.nertcEngine.onQsObserver('onVideoCodecUpdated', true, function (codecType, type) {
             fire('onVideoCodecUpdated', codecType, type);
         });
-
-
     }
     // /**
     //  * Decide whether to use webgl/software/custom rendering.
@@ -3839,64 +3780,64 @@ class NERtcEngine extends events_1.EventEmitter {
     // setCustomRenderer(customRenderer: IRenderer) {
     //     this.customRenderer = customRenderer;
     // }
-    /**
-     * @private
-     * @ignore
-     * sdk test interface, external cannot be used
-     * @returns {number} {boolean}
-     */
-    setupLocalVideoCanvasTest(bind) {
-        let canvas = {}
-        canvas.mode = 0
-        if(bind){
-            canvas.view = document.getElementById('localView')
-        }else {
-            canvas.view = null
-        }
-        return this.setupLocalVideoCanvas(canvas)  
-    }
-    /**
-     * @private
-     * @ignore 
-     * sdk test interface, external cannot be used
-     * @returns {number} {boolean}
-     */
-    setupRemoteVideoCanvasTest(uid, bind) {
-        let canvas = {}
-        canvas.mode = 0
-        if(bind){
-            canvas.view = document.getElementById('remoteView')
-        }else {
-            canvas.view = null
-        }
-        return this.setupRemoteVideoCanvas(uid, canvas)  
-    }
-    /**
-     * @private
-     * @ignore 
-     * sdk test interface, external cannot be used
-     * @returns {number} {boolean}
-     */
-    setupRemoteSubVideoCanvasTest(uid, bind) {
-        let canvas = {}
-        canvas.mode = 0
-        if(bind){
-            canvas.view = document.getElementById('remoteSubView')
-        }else {
-            canvas.view = null
-        }
-        return this.setupRemoteSubStreamVideoCanvas(uid, canvas)  
-    }
-
-    /**
-     * @private
-     * @ignore
-     * sdk test interface, external cannot be used
-     * @returns {number}
-     */
-     appQuitTest() {
-        this.emit('onAppQuit', 0, 'app quit');
-    }
+    /*****test api*****/
+    // /**
+    //  * @private
+    //  * @ignore
+    //  * sdk test interface, external cannot be used
+    //  * @returns {number} {boolean}
+    //  */
+    // setupLocalVideoCanvasTest(bind) {
+    //     let canvas = {}
+    //     canvas.mode = 0
+    //     if(bind){
+    //         canvas.view = document.getElementById('localView')
+    //     }else {
+    //         canvas.view = null
+    //     }
+    //     return this.setupLocalVideoCanvas(canvas)  
+    // }
+    // /**
+    //  * @private
+    //  * @ignore 
+    //  * sdk test interface, external cannot be used
+    //  * @returns {number} {boolean}
+    //  */
+    // setupRemoteVideoCanvasTest(uid, bind) {
+    //     let canvas = {}
+    //     canvas.mode = 0
+    //     if(bind){
+    //         canvas.view = document.getElementById('remoteView')
+    //     }else {
+    //         canvas.view = null
+    //     }
+    //     return this.setupRemoteVideoCanvas(uid, canvas)  
+    // }
+    // /**
+    //  * @private
+    //  * @ignore 
+    //  * sdk test interface, external cannot be used
+    //  * @returns {number} {boolean}
+    //  */
+    // setupRemoteSubVideoCanvasTest(uid, bind) {
+    //     let canvas = {}
+    //     canvas.mode = 0
+    //     if(bind){
+    //         canvas.view = document.getElementById('remoteSubView')
+    //     }else {
+    //         canvas.view = null
+    //     }
+    //     return this.setupRemoteSubStreamVideoCanvas(uid, canvas)  
+    // }
+    // /**
+    //  * @private
+    //  * @ignore
+    //  * sdk test interface, external cannot be used
+    //  * @returns {number}
+    //  */
+    //  appQuitTest() {
+    //     this.emit('onAppQuit', 0, 'app quit');
+    // }
     /**
      * @private
      * @ignore
@@ -4004,7 +3945,7 @@ class NERtcEngine extends events_1.EventEmitter {
             const info = infos[i];
             const { type, uid, channelId, header, ydata, udata, vdata } = info;
             if (!header || !ydata || !udata || !vdata) {
-                console.log('Invalid data param : ' +
+                console.log('Invalid data param ： ' +
                     header +
                     ' ' +
                     ydata +
@@ -4115,7 +4056,7 @@ class NERtcEngine extends events_1.EventEmitter {
                 return '';
             }
         }
-        let renderer = null;
+        let renderer;
         if (streamType === defs_1.NERtcVideoStreamType.kNERtcVideoStreamMain) {
             renderer = this.renderers.get(String(key));
         }

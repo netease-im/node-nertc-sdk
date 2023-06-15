@@ -69,7 +69,7 @@ class NERtcChannel extends EventEmitter {
      * NERtcEngine类构造函数
      * @returns {NERtcEngine}
      */
-    constructor(name, rtcChannel) {
+    constructor(name: string, rtcChannel: any) {
         super();
         this.channelName = name;
         this.rtcChannel = rtcChannel;
@@ -340,7 +340,7 @@ class NERtcChannel extends EventEmitter {
      * <pre>
      * 该方法绑定远端用户和辅流显示视图，即设定 uid 指定的用户用哪个视图显示。调用该接口时需要指定远端视频的 uid，一般可以在用户加入后设置好。
      * <b>NODE:</b>
-     * - 如果 App 不能事先知道对方的 uid，可以通过{@link NERtcEngine#on}方法监听 onUserJoined 事件时设置。
+     * - 如果 App 不能事先知道对方的 uid，可以通过{@link NERtcChannel#on}方法监听 onUserJoined 事件时设置。
      * - 退出频道后，SDK 会把远端用户的绑定关系清除掉。
      * </pre>
      * @param {number} uid 远端用户 ID。
@@ -375,7 +375,7 @@ class NERtcChannel extends EventEmitter {
     /**
      * 设置参会者角色
      * <pre>
-     * {@link NERtcEngine#setClientRole} 接口用于在直播场景中设置用户角色。默认情况下用户以主播角色加入房间。
+     * {@link NERtcChannel#setClientRole} 接口用于在直播场景中设置用户角色。默认情况下用户以主播角色加入房间。
      * 在加入房间前，用户需要调用setClientRole 接口设置本端模式为观众或主播模式。在加入房间后，用户可以通过本接口切换用户模式。
      * 用户角色支持设置为主播或观众，主播和观众的权限不同。默认情况下用户以主播角色加入房间。
      * 可以在通话前后设置，通话前设置会在加入频道之后生效。如果设置观众模式。则会停止音视频设备。
@@ -385,7 +385,7 @@ class NERtcChannel extends EventEmitter {
      * - 主播(0)：可以开关摄像头等设备、可以发布流、可以操作互动直播推流相关接口、上下线对其他房间内用户可见
      * - 观众(1)：不可以开关摄像头等设备、不可以发布流、不可以操作互动直播推流相关接口、上下线对其他房间内用户不可见
      * </pre>
-     * @fires NERtcEngine#onClientRoleChanged
+     * @fires NERtcChannel#onClientRoleChanged
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功；
@@ -614,7 +614,7 @@ class NERtcChannel extends EventEmitter {
 
     /**
      * 添加房间推流任务，成功添加后当前用户可以收到该直播流的状态通知。通话中有效。
-     * @fires NERtcEngine#onAddLiveStreamTask
+     * @fires NERtcChannel#onAddLiveStreamTask
      * @param {Object} info 直播任务信息。
      * @param {String} info.task_id 推流任务ID，为推流任务的唯一标识，用于过程中增删任务操作 <64 chars
      * @param {String} info.stream_url 直播推流地址 <256 chars
@@ -670,7 +670,7 @@ class NERtcChannel extends EventEmitter {
 
     /**
      * 更新修改房间推流任务。通话中有效。
-     * @fires NERtcEngine#onUpdateLiveStreamTask
+     * @fires NERtcChannel#onUpdateLiveStreamTask
      * @param {Object} info 直播任务信息。
      * @param {String} info.task_id 推流任务ID，为推流任务的唯一标识，用于过程中增删任务操作 <64 chars
      * @param {String} info.stream_url 直播推流地址 <256 chars
@@ -716,7 +716,7 @@ class NERtcChannel extends EventEmitter {
 
     /**
      * 删除房间推流任务。通话中有效。
-     * @fires NERtcEngine#onRemoveLiveStreamTask
+     * @fires NERtcChannel#onRemoveLiveStreamTask
      * @param {String} taskId  直播任务id
      * @returns {number}
      * <pre>
@@ -985,7 +985,7 @@ class NERtcChannel extends EventEmitter {
   
     initEventHandler() {
         const self = this;
-        const fire = (event, ...args) => {
+        const fire = (event: string, ...args: Array<any>) => {
             setImmediate(() => {
                 this.emit(event, ...args);
             });
@@ -993,7 +993,7 @@ class NERtcChannel extends EventEmitter {
         
         /**
          * 发生错误回调。
-         * @event NERtcEngine#onError
+         * @event NERtcChannel#onError
          * @param {NERtcErrorCode} errorCode 错误码
          * @param {string} msg 错误描述
          */
@@ -1006,7 +1006,7 @@ class NERtcChannel extends EventEmitter {
   
         /**
          * 发生警告回调。
-         * @event NERtcEngine#onWarning
+         * @event NERtcChannel#onWarning
          * @param {NERtcErrorCode} warnCode 错误码
          * @param {string} msg 错误描述
          */
@@ -1027,7 +1027,7 @@ class NERtcChannel extends EventEmitter {
   
         /**
          * 加入频道回调
-         * @event NERtcEngine#onJoinChannel
+         * @event NERtcChannel#onJoinChannel
          * @param {number} cid 频道 ID
          * @param {number} uid 用户 ID
          * @param {NERtcErrorCode} result 错误码
@@ -1047,7 +1047,7 @@ class NERtcChannel extends EventEmitter {
           * <pre>
           * 有时候由于网络原因，客户端可能会和服务器失去连接，SDK会进行自动重连，开始自动重连后触发此回调。
           * </pre>
-          * @event NERtcEngine#onReconnectingStart
+          * @event NERtcChannel#onReconnectingStart
           * @param cid  频道 ID。
           * @param uid  用户 ID。
           */
@@ -1063,7 +1063,7 @@ class NERtcChannel extends EventEmitter {
           * <pre>
           * 有时候由于通话流程、用户行为、网络原因等，客户端通话状态变更，触发此回调。
           * </pre>
-          * @event NERtcEngine#onConnectionStateChange
+          * @event NERtcChannel#onConnectionStateChange
           * @param {number} state  变更后通话状态:
           * <pre>
           * - 1 没加入频道
@@ -1099,7 +1099,7 @@ class NERtcChannel extends EventEmitter {
          * <pre>
          * 有时候由于网络原因，客户端可能会和服务器失去连接，SDK会进行自动重连，自动重连后触发此回调方法。
          * </pre>
-         * @event NERtcEngine#onRejoinChannel
+         * @event NERtcChannel#onRejoinChannel
          * @param {number} cid 频道 ID
          * @param {number} uid 用户 ID
          * @param {NERtcErrorCode} result 错误码
@@ -1116,8 +1116,8 @@ class NERtcChannel extends EventEmitter {
   
         /**
          * 离开频道回调。
-         * App 调用 {@link NERtcEngine#leaveChannel} 方法时，SDK提示 App 离开频道是否成功。
-         * @event NERtcEngine#onLeaveChannel
+         * App 调用 {@link NERtcChannel#leaveChannel} 方法时，SDK提示 App 离开频道是否成功。
+         * @event NERtcChannel#onLeaveChannel
          * @param {NERtcErrorCode} result 错误码
          */
         this.rtcChannel.onEvent('onLeaveChannel', function (
@@ -1131,7 +1131,7 @@ class NERtcChannel extends EventEmitter {
          * <pre>
          * 由于非网络原因，客户端可能会和服务器失去连接，此时SDK无需自动重连，直接触发此回调方法。
          * </pre>
-         * @event NERtcEngine#onDisconnect
+         * @event NERtcChannel#onDisconnect
          * @param {NERtcErrorCode} result 错误码
          */
         this.rtcChannel.onEvent('onDisconnect', function (
@@ -1142,12 +1142,12 @@ class NERtcChannel extends EventEmitter {
   
         /** 参会者角色类型变更回调。
          * <pre>
-         * 本地用户加入房间后，通过 {@link NERtcEngine#setClientRole} 切换用户角色后会触发此回调。例如从主播切换为观众、从观众切换为主播。
+         * 本地用户加入房间后，通过 {@link NERtcChannel#setClientRole} 切换用户角色后会触发此回调。例如从主播切换为观众、从观众切换为主播。
          * <b>NOTE:</b>
          * 直播场景下，如果您在加入房间后调用该方法切换用户角色，调用成功后，会触发以下回调：
          * - 主播切观众，本端触发onClientRoleChanged回调，远端触发 onUserLeft 回调。
          * - 观众切主播，本端触发onClientRoleChanged回调，远端触发 onUserJoined 回调。
-         * @event NERtcEngine#onClientRoleChanged
+         * @event NERtcChannel#onClientRoleChanged
          * @param {number} oldRole 原角色类型。
          * <pre>
          * - 0 主播
@@ -1171,7 +1171,7 @@ class NERtcChannel extends EventEmitter {
          * <pre>
          * - 通信模式下，该回调提示有远端用户加入了频道，并返回新加入用户的 ID；如果加入之前，已经有其他用户在频道中了，新加入的用户也会收到这些已有用户加入频道的回调。
          * </pre>
-         * @event NERtcEngine#onUserJoined
+         * @event NERtcChannel#onUserJoined
          * @param {number} uid 新加入频道的远端用户ID。
          * @param {string} userName 新加入频道的远端用户名(无效)。
          */
@@ -1194,7 +1194,7 @@ class NERtcChannel extends EventEmitter {
          * <pre>
          * 提示有远端用户离开了频道（或掉线）。
          * </pre>
-         * @event NERtcEngine#onUserLeft
+         * @event NERtcChannel#onUserLeft
          * @param {number} uid 远端用户ID。
          * @param {number} reason 远端用户离开原因:
          * <pre>
@@ -1221,7 +1221,7 @@ class NERtcChannel extends EventEmitter {
 
         /**
          * 远端用户开启音频回调。
-         * @event NERtcEngine#onUserAudioStart
+         * @event NERtcChannel#onUserAudioStart
          * @param {number} uid 远端用户ID。
          */
         this.rtcChannel.onEvent('onUserAudioStart', function (
@@ -1232,7 +1232,7 @@ class NERtcChannel extends EventEmitter {
   
         /**
          * 远端用户停用音频回调。
-         * @event NERtcEngine#onUserAudioStop
+         * @event NERtcChannel#onUserAudioStop
          * @param {number} uid 远端用户ID。
          */
         this.rtcChannel.onEvent('onUserAudioStop', function (
@@ -1243,7 +1243,7 @@ class NERtcChannel extends EventEmitter {
   
         /**
          * 远端用户是否静音回调。
-         * @event NERtcEngine#onUserAudioMute
+         * @event NERtcChannel#onUserAudioMute
          * @param {number} uid 远端用户ID。
          * @param {boolean} mute 是否静音。
          */
@@ -1268,7 +1268,7 @@ class NERtcChannel extends EventEmitter {
   
         /**
          * 远端用户开启视频回调。
-         * @event NERtcEngine#onUserVideoStart
+         * @event NERtcChannel#onUserVideoStart
          * @param {number} uid 远端用户ID。
          * @param {number} maxProfile 最大分辨率:
          * <pre>
@@ -1290,7 +1290,7 @@ class NERtcChannel extends EventEmitter {
   
         /**
          * 远端用户停用视频回调。
-         * @event NERtcEngine#onUserVideoStop
+         * @event NERtcChannel#onUserVideoStop
          * @param {number} uid 远端用户ID。
          */
         this.rtcChannel.onEvent('onUserVideoStop', function (
@@ -1328,7 +1328,7 @@ class NERtcChannel extends EventEmitter {
   
         /**
          * 远端用户开启辅流视频回调。
-         * @event NERtcEngine#onUserSubStreamVideoStart
+         * @event NERtcChannel#onUserSubStreamVideoStart
          * @param {number} uid 远端用户ID。
          * @param {number} maxProfile 最大分辨率:
          * <pre>
@@ -1348,7 +1348,7 @@ class NERtcChannel extends EventEmitter {
   
         /**
          * 远端用户停用辅流视频回调。
-         * @event NERtcEngine#onUserSubStreamVideoStop
+         * @event NERtcChannel#onUserSubStreamVideoStop
          * @param {number} uid 远端用户ID。
          */
         this.rtcChannel.onEvent('onUserSubStreamVideoStop', function (
@@ -1359,7 +1359,7 @@ class NERtcChannel extends EventEmitter {
   
         /**
          * 屏幕共享暂停/恢复/开始/结束等回调
-         * @event NERtcEngine#onScreenCaptureStatusonScreenCaptureStatus
+         * @event NERtcChannel#onScreenCaptureStatusonScreenCaptureStatus
          * @param {number} status 屏幕共享状态。
          * <pre>
          * - 1 开始屏幕共享。
@@ -1375,7 +1375,7 @@ class NERtcChannel extends EventEmitter {
   
         /**
          * 已接收到远端音频首帧回调。
-         * @event NERtcEngine#onFirstAudioDataReceived
+         * @event NERtcChannel#onFirstAudioDataReceived
          * @param {number} uid 发送音频帧的远端用户的用户 ID。
          */
         this.rtcChannel.onEvent('onFirstAudioDataReceived', function (
@@ -1389,7 +1389,7 @@ class NERtcChannel extends EventEmitter {
          * <pre>
          * 第一帧远端视频显示在视图上时，触发此调用。
          * </pre>
-         * @event NERtcEngine#onFirstVideoDataReceived
+         * @event NERtcChannel#onFirstVideoDataReceived
          * @param {number} uid 用户 ID，指定是哪个用户的视频流。
          */
         this.rtcChannel.onEvent('onFirstVideoDataReceived', function (
@@ -1407,7 +1407,7 @@ class NERtcChannel extends EventEmitter {
   
         /**
          * 已解码远端音频首帧的回调。
-         * @event NERtcEngine#onFirstAudioFrameDecoded
+         * @event NERtcChannel#onFirstAudioFrameDecoded
          * @param {number} uid 远端用户 ID。
          */
         this.rtcChannel.onEvent('onFirstAudioFrameDecoded', function (
@@ -1421,7 +1421,7 @@ class NERtcChannel extends EventEmitter {
          * <pre>
          * 引擎收到第一帧远端视频流并解码成功时，触发此调用。 App 可在此回调中设置该用户的 video canvas。
          * </pre>
-         * @event NERtcEngine#onFirstVideoFrameDecoded
+         * @event NERtcChannel#onFirstVideoFrameDecoded
          * @param {number} uid 用户 ID，指定是哪个用户的视频流。
          * @param {number} width 视频流宽（px）。
          * @param {number} height 视频流高（px）。
@@ -1446,11 +1446,11 @@ class NERtcChannel extends EventEmitter {
         /**
          * 提示频道内本地用户瞬时音量的回调。
          * <pre>
-         * 该回调默认禁用。可以通过 {@link NERtcEngine#enableAudioVolumeIndication} 方法开启；
-         * 开启后，本地用户说话，SDK 会按 {@link NERtcEngine#enableAudioVolumeIndication} 方法中设置的时间间隔触发该回调。
-         * 如果本地用户将自己静音（调用了 {@link NERtcEngine#muteLocalAudioStream}），SDK 将音量设置为 0 后回调给应用层。
+         * 该回调默认禁用。可以通过 {@link NERtcChannel#enableAudioVolumeIndication} 方法开启；
+         * 开启后，本地用户说话，SDK 会按 {@link NERtcChannel#enableAudioVolumeIndication} 方法中设置的时间间隔触发该回调。
+         * 如果本地用户将自己静音（调用了 {@link NERtcChannel#muteLocalAudioStream}），SDK 将音量设置为 0 后回调给应用层。
          * </pre>
-         * @event NERtcEngine#onLocalAudioVolumeIndication
+         * @event NERtcChannel#onLocalAudioVolumeIndication
          * @param {number} volume （混音后的）音量，取值范围为 [0,100]。
          */
         this.rtcChannel.onEvent('onLocalAudioVolumeIndication', function (
@@ -1469,14 +1469,14 @@ class NERtcChannel extends EventEmitter {
         /**
          * 提示频道内谁正在说话及说话者瞬时音量的回调。
          * <pre>
-         * 该回调默认禁用。可以通过 {@link NERtcEngine#enableAudioVolumeIndication} 方法开启；
-         * 开启后，无论频道内是否有人说话，SDK 都会按 {@link NERtcEngine#enableAudioVolumeIndication} 方法中设置的时间间隔触发该回调。
+         * 该回调默认禁用。可以通过 {@link NERtcChannel#enableAudioVolumeIndication} 方法开启；
+         * 开启后，无论频道内是否有人说话，SDK 都会按 {@link NERtcChannel#enableAudioVolumeIndication} 方法中设置的时间间隔触发该回调。
          * 在返回的 speakers 数组中:
          * - 如果有 uid 出现在上次返回的数组中，但不在本次返回的数组中，则默认该 uid 对应的远端用户没有说话。
          * - 如果volume 为 0，表示该用户没有说话。
          * - 如果speakers 数组为空，则表示此时远端没有人说话。
          * </pre>
-         * @event NERtcEngine#onRemoteAudioVolumeIndication
+         * @event NERtcChannel#onRemoteAudioVolumeIndication
          * @param {object[]} speakers 每个说话者的用户 ID 和音量信息的数组:
          * @param {number} speakers[].uid 说话者的用户 ID。如果返回的 uid 为 0，则默认为本地用户
          * @param {number} speakers[].volume 说话者的音量，范围为 0（最低）- 100（最高）
@@ -1494,9 +1494,9 @@ class NERtcChannel extends EventEmitter {
         /**
          * 通知添加直播任务结果。
          * <pre>
-         * 该回调异步返回 {@link NERtcEngine#addLiveStreamTask} 接口的调用结果；实际推流状态参考 onLiveStreamState 事件
+         * 该回调异步返回 {@link NERtcChannel#addLiveStreamTask} 接口的调用结果；实际推流状态参考 onLiveStreamState 事件
          * </pre>
-         * @event NERtcEngine#onAddLiveStreamTask
+         * @event NERtcChannel#onAddLiveStreamTask
          * @param {String} task_id 任务id
          * @param {String} url 推流地址
          * @param {number} error 结果
@@ -1512,9 +1512,9 @@ class NERtcChannel extends EventEmitter {
         /**
          * 通知更新直播任务结果。
          * <pre>
-         * 该回调异步返回 {@link NERtcEngine#updateLiveStreamTask} 接口的调用结果；实际推流状态参考 onLiveStreamState 事件
+         * 该回调异步返回 {@link NERtcChannel#updateLiveStreamTask} 接口的调用结果；实际推流状态参考 onLiveStreamState 事件
          * </pre>
-         * @event NERtcEngine#onUpdateLiveStreamTask
+         * @event NERtcChannel#onUpdateLiveStreamTask
          * @param {String} task_id 任务id
          * @param {String} url 推流地址
          * @param {number} error 结果
@@ -1530,9 +1530,9 @@ class NERtcChannel extends EventEmitter {
         /**
          * 通知删除直播任务结果。
          * <pre>
-         * 该回调异步返回 {@link NERtcEngine#removeLiveStreamTask} 接口的调用结果；实际推流状态参考 onLiveStreamState 事件
+         * 该回调异步返回 {@link NERtcChannel#removeLiveStreamTask} 接口的调用结果；实际推流状态参考 onLiveStreamState 事件
          * </pre>
-         * @event NERtcEngine#onRemoveLiveStreamTask
+         * @event NERtcChannel#onRemoveLiveStreamTask
          * @param {String} task_id 任务id
          * @param {number} error 结果
          */
@@ -1545,7 +1545,7 @@ class NERtcChannel extends EventEmitter {
   
         /**
          * 通知直播推流状态
-         * @event NERtcEngine#onLiveStreamState
+         * @event NERtcChannel#onLiveStreamState
          * @param {string} task_id 任务id
          * @param {string} url 推流地址
          * @param {number} state 直播推流状态:
@@ -1566,7 +1566,7 @@ class NERtcChannel extends EventEmitter {
         /**
          * 监听 SEI 数据回调
          * @since 4.1.110
-         * @event NERtcEngine#onRecvSEIMsg
+         * @event NERtcChannel#onRecvSEIMsg
          * @param {number} uid 发送该 sei 的用户 id
          * @param {ArrayBuffer} data 接收到的 sei 数据
          */
@@ -1579,7 +1579,7 @@ class NERtcChannel extends EventEmitter {
   
         /** 
          * 跨房间媒体流转发状态发生改变回调。
-         * @event NERtcEngine#onMediaRelayStateChanged
+         * @event NERtcChannel#onMediaRelayStateChanged
          * @param {number} state 当前跨房间媒体流转发状态。
          * <pre>
          * - 0 初始状态。在成功调用 stopChannelMediaRelay 停止跨房间媒体流转发后， onMediaRelayStateChanged 会回调该状态。
@@ -1595,7 +1595,7 @@ class NERtcChannel extends EventEmitter {
   
         /** 
          * 媒体流相关转发事件回调。
-         * @event NERtcEngine#onMediaRelayEvent
+         * @event NERtcChannel#onMediaRelayEvent
          * @param {number} event 当前媒体流转发事件。详细信息请参考 #NERtcChannelMediaRelayEvent 。
          * <pre>
          * - 0 媒体流转发停止。
@@ -1620,7 +1620,7 @@ class NERtcChannel extends EventEmitter {
         /**
          * 本地发布流已回退为音频流、或已恢复为音视频流回调。
          * <br>如果您调用了设置本地推流回退选项 setLocalPublishFallbackOption 接口，并将 option 设置为 #kNERtcStreamFallbackAudioOnly 后，当上行网络环境不理想、本地发布的媒体流回退为音频流时，或当上行网络改善、媒体流恢复为音视频流时，会触发该回调。 
-         * @event NERtcEngine#onLocalPublishFallbackToAudioOnly
+         * @event NERtcChannel#onLocalPublishFallbackToAudioOnly
          * @param {boolean} is_fallback   本地发布流已回退或已恢复。
          * <pre>
          * - true： 由于网络环境不理想，发布的媒体流已回退为音频流。
@@ -1644,7 +1644,7 @@ class NERtcChannel extends EventEmitter {
          * <pre>
          * 如果你调用了设置远端订阅流回退选项 setRemoteSubscribeFallbackOption 接口并将 option 设置 #kNERtcStreamFallbackAudioOnly 后，当下行网络环境不理想、仅接收远端音频流时，或当下行网络改善、恢复订阅音视频流时，会触发该回调。
          * </pre>
-         * @event NERtcEngine#onRemoteSubscribeFallbackToAudioOnly 
+         * @event NERtcChannel#onRemoteSubscribeFallbackToAudioOnly 
          * @param {number} uid 远端用户的 ID。
          * @param {boolean} is_fallback 远端订阅流已回退或恢复：
          * <pre>
@@ -1684,7 +1684,7 @@ class NERtcChannel extends EventEmitter {
             fire('onUpdatePermissionKey', key, code, time);
         });
         
-        this.rtcChannel.onVideoFrame( (infos)=>{ //function
+        this.rtcChannel.onVideoFrame( (infos: any)=>{ //function
             this.doVideoFrameReceived(infos);
         });
   
@@ -1695,7 +1695,7 @@ class NERtcChannel extends EventEmitter {
          * <pre>
          * SDK 定期向 App 报告当前通话的统计信息，每 2 秒触发一次。
          * </pre>
-         * @event NERtcEngine#onRtcStats
+         * @event NERtcChannel#onRtcStats
          * @param {object} stats NERTC 引擎统计数据:
          * @param {number} stats.cpu_app_usage 当前 App 的 CPU 使用率 (%)。
          * @param {number} stats.cpu_idle_usage 当前系统的 CPU 空闲率 (%)。
@@ -1738,7 +1738,7 @@ class NERtcChannel extends EventEmitter {
          * <pre>
          * 该回调描述本地设备发送音频流的统计信息，每 2 秒触发一次。
          * </pre>
-         * @event NERtcEngine#onLocalAudioStats
+         * @event NERtcChannel#onLocalAudioStats
          * @param {object} stats 本地音频流统计信息:
          * @param {number} stats.num_channels 当前采集声道数。
          * @param {number} stats.sent_sample_rate 本地上行音频采样率。
@@ -1756,7 +1756,7 @@ class NERtcChannel extends EventEmitter {
          * <pre>
          * 该回调描述远端用户在通话中端到端的音频流统计信息，每 2 秒触发一次。
          * </pre>
-         * @event NERtcEngine#onRemoteAudioStats
+         * @event NERtcChannel#onRemoteAudioStats
          * @param {number} uc stats 数组的大小
          * @param {object[]} stats 每个远端用户音频统计信息的数组:
          * @param {number} stats[].uid 用户 ID，指定是哪个用户的音频流
@@ -1775,7 +1775,7 @@ class NERtcChannel extends EventEmitter {
          * <pre>
          * 该回调描述本地设备发送视频流的统计信息，每 2 秒触发一次。
          * </pre>
-         * @event NERtcEngine#onLocalVideoStats
+         * @event NERtcChannel#onLocalVideoStats
          * @param {object} stats 本地视频流统计信息:
          * @param {number} stats.video_layers_count 视频流条数。
          * @param {object[]} stats.video_layers_list 视频流信息数组:
@@ -1800,7 +1800,7 @@ class NERtcChannel extends EventEmitter {
          * <pre>
          * 该回调描述远端用户在通话中端到端的视频流统计信息，每 2 秒触发一次。
          * </pre>
-         * @event NERtcEngine#onRemoteVideoStats
+         * @event NERtcChannel#onRemoteVideoStats
          * @param {number} uc stats 数组的大小。
          * @param {object} stats 每个远端用户视频统计信息的数组:
          * @param {number} stats.uid 用户 ID，指定是哪个用户的视频流。
@@ -1827,7 +1827,7 @@ class NERtcChannel extends EventEmitter {
          * <pre>
          * 该回调描述每个用户在通话中的网络状态，每 2 秒触发一次，只上报状态有变更的成员。
          * </pre>
-         * @event NERtcEngine#onNetworkQuality
+         * @event NERtcChannel#onNetworkQuality
          * @param {number} uc 数组的大小，即用户数。
          * @param {object} stats 每个用户 ID 和网络上下行质量信息的数组:
          * @param {number} stats[].uid 用户 ID，指定是哪个用户的视频流。
@@ -2073,7 +2073,7 @@ class NERtcChannel extends EventEmitter {
                 return '';
             }
         }
-        let renderer = null
+        let renderer: IRenderer | undefined;
         if (streamType === NERtcVideoStreamType.kNERtcVideoStreamMain) {
             renderer = this.renderers.get(String(key));
         } else {

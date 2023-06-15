@@ -888,7 +888,7 @@ export interface NERtcEngineAPI {
     setCameraCaptureConfig(config: any): number;
     setCameraCaptureConfigEx(type: number, config: any): number;
     setVideoConfigEx(type: number, config: NERtcVideoConfig): number;
-    setLocalVideoMirrorModeEx(type:number, mode: NERtcVideoMirrorMode);
+    setLocalVideoMirrorModeEx(type:number, mode: NERtcVideoMirrorMode): number;
     startVideoPreviewEx(type: number): number;
     stopVideoPreviewEx(type: number): number;
     muteLocalVideoStreamEx(type: number, enabled: boolean): number;
@@ -908,7 +908,7 @@ export interface NERtcEngineAPI {
     updateSpatializerSelfPosition(info: any): number;
     enableSpatializerRoomEffects(enable: boolean): number;
     setSpatializerRoomProperty(room_property: any): number;
-    setSpatializerRenderMode(mode: number);
+    setSpatializerRenderMode(mode: number): number;
     enableAudioVolumeIndicationEx(enabled: boolean, interval: number, enableVad: boolean): number;
     setScreenCaptureMouseCursor(capture_cursor: boolean): number;
     setDeviceEx(id: string, type: number): number;

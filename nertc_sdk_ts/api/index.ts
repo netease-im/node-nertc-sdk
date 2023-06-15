@@ -56,7 +56,7 @@ import { EventEmitter } from 'events'
 import process from 'process';
 // const nertc = require('bindings')('nertc-electron-sdk');
 const nertc = require('../../build/Release/nertc-electron-sdk.node');
-const NERtcChannel = require('./NERtcChannel.ts');
+const NERtcChannel = require('./channel').default;
 
 /**
  * @class NERtcEngine
@@ -718,7 +718,7 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.setLocalVideoMirrorMode(mode);
     }
 
-    setLocalVideoMirrorModeEx(type:number, mode: NERtcVideoMirrorMode) {
+    setLocalVideoMirrorModeEx(type:number, mode: NERtcVideoMirrorMode): number {
         return this.nertcEngine.setLocalVideoMirrorModeEx(type, mode);
     }
 
@@ -1374,7 +1374,7 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.setSpatializerRoomProperty(room_property)
     }
 
-    setSpatializerRenderMode(mode: number) {
+    setSpatializerRenderMode(mode: number): number {
         return this.nertcEngine.setSpatializerRenderMode(mode)
     }
 
@@ -3141,7 +3141,11 @@ class NERtcEngine extends EventEmitter {
             fire('onWarning', warnCode, msg);
         });
 
-        this.nertcEngine.onEvent('onApiCallExecuted', function (apiName, code, msg) {
+        this.nertcEngine.onEvent('onApiCallExecuted', function (
+            apiName: string, 
+            code: number, 
+            msg: string
+        ) {
             fire('onApiCallExecuted', apiName, code, msg);
         });
 
@@ -3969,7 +3973,7 @@ class NERtcEngine extends EventEmitter {
          * - 6: 完全无法沟通。
          * </pre>
          */
-        this.nertcEngine.onEvent('onLastmileQuality', function (quality) {
+        this.nertcEngine.onEvent('onLastmileQuality', function (quality: number) {
             fire('onLastmileQuality', quality);
         });
         /**
@@ -3997,7 +4001,7 @@ class NERtcEngine extends EventEmitter {
         * @param {number} result.downlink_report.packet_loss_rate 丢包率（%）。
         * @param {number} result.downlink_report.available_band_width 可用网络带宽预估，单位为 bps。
         */
-        this.nertcEngine.onEvent('onLastmileProbeResult', function (result) {
+        this.nertcEngine.onEvent('onLastmileProbeResult', function (result: any) {
             fire('onLastmileProbeResult', result);
         });
 
@@ -4556,29 +4560,29 @@ class NERtcEngine extends EventEmitter {
     captureRender(
         key: 'local' | number,
         streamType: NERtcVideoStreamType = NERtcVideoStreamType.kNERtcVideoStreamMain
-    ): string {
-        if (streamType === NERtcVideoStreamType.kNERtcVideoStreamMain) {
-            if (!this.renderers.has(String(key))) {
-                return '';
-            }
-        } else {
-            if (!this.substreamRenderers.has(String(key))) {
-                return '';
-            }
-        }
-        let renderer = null
-        if (streamType === NERtcVideoStreamType.kNERtcVideoStreamMain) {
-            renderer = this.renderers.get(String(key));
-        } else {
-            renderer = this.substreamRenderers.get(String(key));
-        }
-        try {
-            return (renderer as IRenderer).captureImage()
-        } catch (err) {
-            console.error(`${err.stack}`)
-            return '';
-        }
-    }
+      ): string {
+          if (streamType === NERtcVideoStreamType.kNERtcVideoStreamMain) {
+              if (!this.renderers.has(String(key))) {
+                  return '';
+              }
+          } else {
+              if (!this.substreamRenderers.has(String(key))) {
+                  return '';
+              }
+          }
+          let renderer: IRenderer | undefined;
+          if (streamType === NERtcVideoStreamType.kNERtcVideoStreamMain) {
+              renderer = this.renderers.get(String(key));
+          } else {
+              renderer = this.substreamRenderers.get(String(key));
+          }
+          try {
+              return (renderer as IRenderer).captureImage()
+          } catch (err) {
+              console.error(`${err.stack}`)
+              return '';
+          }
+      }
 
     /**
      * Destroys the renderer.
