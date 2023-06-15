@@ -2147,5 +2147,320 @@ class NERtcChannel extends EventEmitter {
   
 }
 
+declare interface NERtcChannel {
+    /** 发生错误回调。
+
+     该回调方法表示 SDK 运行时出现了（网络或媒体相关的）错误。通常情况下，SDK上报的错误意味着SDK无法自动恢复，需要 App 干预或提示用户。
+
+     @param error_code 错误代码: #NERtcDMErrorCode.
+     @param msg 错误描述。
+     */
+     on(event: 'onError', cb: (errorCode: number, msg: string) => void): this;
+
+    /** 发生警告回调。
+
+     该回调方法表示 SDK 运行时出现了（网络或媒体相关的）警告。通常情况下，SDK 上报的警告信息 App 可以忽略，SDK 会自动恢复。
+
+     @param warn_code 错误代码: #NERtcWarnCode.
+     @param msg 警告描述。
+     */
+     on(event: 'onWarning', cb: (warnCode: number, msg: string) => void): this;
+
+     on(event: 'onApiCallExecuted', cb: (apiName: string, code: number, msg: string) => void): this;
+
+    /** 加入频道回调。
+     @param cid  频道 ID。
+     @param uid  用户 ID。
+     @param result  返回结果。
+     @param elapsed 从 joinChannel 开始到发生此事件过去的时间（毫秒）。
+     */
+     on(event: 'onJoinChannel', cb: (cid: number, uid: number, result: NERtcErrorCode, elapsed: number) => void): this;
+
+    /** 触发重连。
+      有时候由于网络原因，客户端可能会和服务器失去连接，SDK会进行自动重连，开始自动重连后触发此回调。
+
+     @param cid  频道 ID。
+     @param uid  用户 ID。
+     */
+    on(event: 'onReconnectingStart', cb: (cid: number, uid: number) => void): this;
+
+    /** 连接状态变更。
+
+      有时候由于通话流程、用户行为、网络原因等，客户端通话状态变更，触发此回调。
+
+     @param state  变更后通话状态。
+     @param reason  变更原因。
+     */
+     on(event: 'onConnectionStateChange', cb: (state: NERtcConnectionStateType, reason: NERtcReasonConnectionChangedType) => void): this;
+
+     /** 重新加入频道回调。
+
+      有时候由于网络原因，客户端可能会和服务器失去连接，SDK会进行自动重连，自动重连后触发此回调方法。
+
+     @param cid  频道 ID。
+     @param uid  用户 ID。
+     @param result  返回结果。
+     @param elapsed 从开始重连到发生此事件过去的时间（毫秒）。
+     */
+    on(event: 'onRejoinChannel', cb: (cid: number, uid: number, result: NERtcErrorCode, elapsed: number) => void): this;
+
+    /** 离开频道回调。
+
+     App 调用 \ref IRtcEngine::leaveChannel "leaveChannel" 方法时，SDK提示 App 离开频道是否成功。
+
+     @param result 返回结果。
+     */
+     on(event: 'onLeaveChannel', cb: (result: NERtcErrorCode) => void): this;
+
+     /** 掉线回调。
+
+      由于非网络原因，客户端可能会和服务器失去连接，此时SDK无需自动重连，直接触发此回调方法。
+
+     @param reason  返回结果。
+     */
+    on(event: 'onDisconnect', cb: (result: NERtcErrorCode) => void): this;
+
+    /** 参会者角色类型变更回调。
+    
+    本地用户加入房间后，通过 \ref IRtcEngine::setClientRole "setClientRole" 切换用户角色后会触发此回调。例如从主播切换为观众、从观众切换为主播。
+
+    直播场景下，如果您在加入房间后调用该方法切换用户角色，调用成功后，会触发以下回调：
+    - 主播切观众，本端触发onClientRoleChanged回调，远端触发\ref nertc::IRtcEngineEventHandler::onUserLeft "onUserLeft"回调。
+    - 观众切主播，本端触发onClientRoleChanged回调，远端触发\ref nertc::IRtcEngineEventHandler::onUserJoined "onUserJoined"回调。
+
+     @param oldRole  原角色类型。
+     @param newRole  新角色类型。
+     */
+     on(event: 'onClientRoleChanged', cb: (oldRole: NERtcClientRole, newRole: NERtcClientRole) => void): this;
+
+
+     /** 远端用户加入当前频道回调。
+
+     - 通信模式下，该回调提示有远端用户加入了频道，并返回新加入用户的 ID；如果加入之前，已经有其他用户在频道中了，新加入的用户也会收到这些已有用户加入频道的回调。
+
+     @param uid 新加入频道的远端用户ID。
+     @param user_name 新加入频道的远端用户名(无效)。
+     */
+    on(event: 'onUserJoined', cb: (uid: number, userName: string, extra_info: any) => void): this;
+
+    on(event: 'onUserJoinedEx', cb: (uid: number, userName: string, extra_info: any) => void): this;
+
+    /** 远端用户离开当前频道回调。
+
+     提示有远端用户离开了频道（或掉线）。
+
+     @param uid 远端用户ID。
+     @param reason 远端用户离开原因。
+     */
+     on(event: 'onUserLeft', cb: (uid: number, reason: NERtcSessionLeaveReason) => void): this;
+
+     on(event: 'onUserLeftEx', cb: (uid: number, reason: NERtcSessionLeaveReason, extra_info: any) => void): this;
+
+    /** 远端用户开启音频回调。
+    
+     @param uid 远端用户ID。
+     */
+    on(event: 'onUserAudioStart', cb: (uid: number) => void): this;
+
+    /** 远端用户停用音频回调。
+
+     @param uid 远端用户ID。
+     */
+     on(event: 'onUserAudioStop', cb: (uid: number) => void): this;
+
+     /** 远端用户是否静音回调。
+
+     @param uid 远端用户ID。
+     @param mute 是否静音。
+     */
+    on(event: 'onUserAudioMute', cb: (uid: number, mute: boolean) => void): this;
+
+    on(event: 'onUserSubStreamAudioStart', cb: (uid: number) => void): this;
+
+    on(event: 'onUserSubStreamAudioStop', cb: (uid: number) => void): this;
+
+    on(event: 'onUserSubStreamAudioMute', cb: (uid: number, numte: boolean) => void): this;
+
+    /** 远端用户开启视频回调。
+
+     @param uid 远端用户ID。
+     @param max_profile 最大分辨率。
+     */
+     on(event: 'onUserVideoStart', cb: (uid: number, maxProfile: NERtcVideoProfileType) => void): this;
+
+     /** 远端用户停用视频回调。
+
+     @param uid 远端用户ID。
+     */
+    on(event: 'onUserVideoStop', cb: (uid: number) => void): this;
+
+    /** 远端用户是否禁视频流回调。
+
+     @param uid 远端用户ID。
+     @param mute 是否禁视频流。
+     */
+    on(event: 'onUserVideoMute', cb: (uid: number, mute: boolean) => void): this;
+
+    on(event: 'onUserVideoMuteEx', cb: (streamType: number, uid: number, mute: boolean) => void): this;
+
+    /** 远端用户开启辅流视频回调。
+
+     @param uid 远端用户ID。
+     @param max_profile 最大分辨率。
+     */
+     on(event: 'onUserSubStreamVideoStart', cb: (uid: number, max_profile: NERtcVideoProfileType) => void): this;
+
+    /** 远端用户停用辅流视频回调。
+
+     @param uid 远端用户ID。
+     */
+     on(event: 'onUserSubStreamVideoStop', cb: (uid: number) => void): this;
+
+     /**
+     * 屏幕共享暂停/恢复/开始/结束等回调
+     */
+    on(event: 'onScreenCaptureStatus', cb: (status: number) => void): this;
+
+    /** 已接收到远端音频首帧回调。
+
+     @param uid 发送音频帧的远端用户的用户 ID。
+     */
+     on(event: 'onFirstAudioDataReceived', cb: (uid: number) => void): this;
+
+    /** 已显示首帧远端视频回调。
+
+    第一帧远端视频显示在视图上时，触发此调用。
+
+     @param uid 用户 ID，指定是哪个用户的视频流。
+     */
+    on(event: 'onFirstVideoDataReceived', cb: (uid: number) => void): this;
+
+    on(event: 'onFirstVideoDataReceivedEx', cb: (type:number, uid: number) => void): this;
+
+    /** 已解码远端音频首帧的回调。
+
+     @param uid 远端用户 ID。
+     */
+     on(event: 'onFirstAudioFrameDecoded', cb: (uid: number) => void): this;
+
+     /** 已接收到远端视频并完成解码回调。
+
+    引擎收到第一帧远端视频流并解码成功时，触发此调用。 App 可在此回调中设置该用户的 video canvas。
+
+     @param uid 用户 ID，指定是哪个用户的视频流。
+     @param width 视频流宽（px）。
+     @param height 视频流高（px）。
+
+     */
+    on(event: 'onFirstVideoFrameDecoded', cb: (uid: number, width: number, height: number) => void): this;
+
+    on(event: 'onFirstVideoFrameDecodedEx', cb: (type: number, uid: number, width: number, height: number) => void): this;
+
+    /** 提示频道内本地用户瞬时音量的回调。
+
+     该回调默认禁用。可以通过 enableAudioVolumeIndication 方法开启；
+     开启后，本地用户说话，SDK 会按 enableAudioVolumeIndication 方法中设置的时间间隔触发该回调。
+     如果本地用户将自己静音（调用了 muteLocalAudioStream），SDK 将音量设置为 0 后回调给应用层。
+
+     @param volume （混音后的）音量，取值范围为 [0,100]。
+     */
+    on(event: 'onLocalAudioVolumeIndication', cb: (volume: number) => void): this;
+
+    on(event: 'onLocalAudioVolumeIndicationEx', cb: (volume: number, enable_vad: boolean) => void): this;
+
+    /** 提示频道内谁正在说话及说话者瞬时音量的回调。
+
+     该回调默认禁用。可以通过 enableAudioVolumeIndication 方法开启；
+     开启后，无论频道内是否有人说话，SDK 都会按 enableAudioVolumeIndication 方法中设置的时间间隔触发该回调。
+
+     在返回的 speakers 数组中:
+
+     - 如果有 uid 出现在上次返回的数组中，但不在本次返回的数组中，则默认该 uid 对应的远端用户没有说话。
+     - 如果volume 为 0，表示该用户没有说话。
+     - 如果speakers 数组为空，则表示此时远端没有人说话。
+
+     @param speakers 每个说话者的用户 ID 和音量信息的数组: NERtcAudioVolumeInfo
+     @param speaker_number speakers 数组的大小，即说话者的人数。
+     @param total_volume （混音后的）总音量，取值范围为 [0,100]。
+     */
+     on(event: 'onRemoteAudioVolumeIndication', cb: (speakers: Array<NERtcAudioVolumeInfo>, speaker_number: number, total_volume: number) => void): this;
+
+     /** 通知添加直播任务结果。
+
+     该回调异步返回 \ref IRtcEngineEx::addLiveStreamTask "addLiveStreamTask" 接口的调用结果；实际推流状态参考 \ref IRtcEngineEventHandlerEx::onLiveStreamState "onLiveStreamState"
+
+     @param task_id 任务id
+     @param url 推流地址
+     @param error_code 结果
+     - 0: 调用成功；
+     - 其他: 调用失败。
+     */
+    on(event: 'onAddLiveStreamTask', cb: (task_id: string, url: string, error: number) => void): this;
+
+    /** 通知更新直播任务结果。
+
+     该回调异步返回 \ref IRtcEngineEx::updateLiveStreamTask "updateLiveStreamTask" 接口的调用结果；实际推流状态参考 \ref IRtcEngineEventHandlerEx::onLiveStreamState "onLiveStreamState"
+
+     @param task_id 任务id
+     @param url 推流地址
+     @param error_code 结果
+     - 0: 调用成功；
+     - 其他: 调用失败。
+     */
+    on(event: 'onUpdateLiveStreamTask', cb: (task_id: string, url: string, error: number) => void): this;
+
+    /** 通知删除直播任务结果。
+
+     该回调异步返回 \ref IRtcEngineEx::removeLiveStreamTask "removeLiveStreamTask" 接口的调用结果；实际推流状态参考 \ref IRtcEngineEventHandlerEx::onLiveStreamState "onLiveStreamState"
+
+     @param task_id 任务id
+     @param error_code 结果
+     - 0: 调用成功；
+     - 其他: 调用失败。
+     */
+    on(event: 'onRemoveLiveStreamTask', cb: (task_id: string, error: number) => void): this;
+
+    /** 通知直播推流状态
+
+     @param task_id 任务id
+     @param url 推流地址
+     @param state #NERtcLiveStreamStateCode, 直播推流状态
+     - 505: 推流中；
+     - 506: 推流失败；
+     - 511: 推流结束；
+     */
+    on(event: 'onLiveStreamState', cb: (task_id: string, url: string, state: NERtcLiveStreamStateCode) => void): this;
+
+    /** 收到远端流的 SEI 内容回调。
+
+     * @param uid 发送该 sei 的用户 id
+     * @param data 接收到的 sei 数据
+     */
+    on(event: 'onRecvSEIMsg', cb: (uid: number, data: ArrayBuffer) => void): this;
+
+    on(event: 'onMediaRelayStateChanged', cb: (state: number, channel_name: String) => void): this;
+    
+    on(event: 'onMediaRelayEvent', cb: (event: number, channel_name: String, error: number) => void): this;
+    on(event: 'onLocalPublishFallbackToAudioOnly', cb: (is_fallback: boolean, stream_type: number) => void): this;
+    on(event: 'onRemoteSubscribeFallbackToAudioOnly', cb: (uid: number, is_fallback: boolean, stream_type: number) => void): this;
+    
+    on(event: 'onMediaRightChange', cb: (is_audio_banned: boolean, is_video_banned: boolean) => void): this;
+    on(event: 'onPermissionKeyWillExpire', cb: () => void): this;
+    on(event: 'onUpdatePermissionKey', cb: (key: string, code: number, time: number) => void): this;
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+}
+
 export default NERtcChannel;
 

@@ -4659,6 +4659,10 @@ declare interface NERtcEngine {
      */
     on(event: 'onWarning', cb: (warnCode: number, msg: string) => void): this;
 
+    
+    on(event: 'onApiCallExecuted', cb: (apiName: string, code: number, msg: string) => void): this;
+
+    
     /** 释放硬件资源的回调。
 
      SDK提示释放硬件资源是否成功。
@@ -4855,12 +4859,23 @@ declare interface NERtcEngine {
      */
     on(event: 'onUserAudioMute', cb: (uid: number, mute: boolean) => void): this;
 
+    
+    on(event: 'onUserSubStreamAudioStart', cb: (uid: number) => void): this;
+
+    on(event: 'onUserSubStreamAudioStop', cb: (uid: number) => void): this;
+
+    on(event: 'onUserSubStreamAudioMute', cb: (uid: number, numte: boolean) => void): this;
+
+
     /** 远端用户是否禁视频流回调。
 
      @param uid 远端用户ID。
      @param mute 是否禁视频流。
      */
     on(event: 'onUserVideoMute', cb: (uid: number, mute: boolean) => void): this;
+
+    on(event: 'onUserVideoMuteEx', cb: (streamType: number, uid: number, mute: boolean) => void): this;
+
 
     /** 音频设备状态更改回调。
 
