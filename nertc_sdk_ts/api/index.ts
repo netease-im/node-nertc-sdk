@@ -56,6 +56,7 @@ import { EventEmitter } from 'events'
 import process from 'process';
 // const nertc = require('bindings')('nertc-electron-sdk');
 const nertc = require('../../build/Release/nertc-electron-sdk.node');
+const NERtcChannel = require('./NERtcChannel.ts');
 
 /**
  * @class NERtcEngine
