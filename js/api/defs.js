@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NERtcVoiceEqualizationBand = exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcVideoStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcEncryptionMode = exports.NERtcAudioRecordingQuality = exports.NERtcMediaPriorityType = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcLogLevel = void 0;
+exports.NERtcBackgroundSourceType = exports.NERtcAudioRecordingCycleTime = exports.NERtcAudioRecordingPosition = exports.NERtcSpatializerRenderMode = exports.NERtcSpatializerMaterialName = exports.NERtcSpatializerRoomCapacity = exports.NERtcVoiceEqualizationBand = exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcVideoStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcEncryptionMode = exports.NERtcAudioRecordingQuality = exports.NERtcMediaPriorityType = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDistanceRolloffModel = exports.NERtcAudioStreamType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcRawAudioFrameOpModeType = exports.NERtcVideoOutputOrientationMode = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcLogLevel = void 0;
 /** 日志级别。 */
 var NERtcLogLevel;
 (function (NERtcLogLevel) {
@@ -147,6 +147,19 @@ var NERtcVideoMirrorMode;
     NERtcVideoMirrorMode[NERtcVideoMirrorMode["kNERtcVideoMirrorModeEnabled"] = 1] = "kNERtcVideoMirrorModeEnabled";
     NERtcVideoMirrorMode[NERtcVideoMirrorMode["kNERtcVideoMirrorModeDisabled"] = 2] = "kNERtcVideoMirrorModeDisabled";
 })(NERtcVideoMirrorMode = exports.NERtcVideoMirrorMode || (exports.NERtcVideoMirrorMode = {}));
+/** @enum NERtcVideoOutputOrientationMode 设置镜像模式。*/
+var NERtcVideoOutputOrientationMode;
+(function (NERtcVideoOutputOrientationMode) {
+    NERtcVideoOutputOrientationMode[NERtcVideoOutputOrientationMode["kNERtcVideoOutputOrientationModeAdaptative"] = 0] = "kNERtcVideoOutputOrientationModeAdaptative";
+    NERtcVideoOutputOrientationMode[NERtcVideoOutputOrientationMode["kNERtcVideoOutputOrientationModeFixedLandscape"] = 1] = "kNERtcVideoOutputOrientationModeFixedLandscape";
+    NERtcVideoOutputOrientationMode[NERtcVideoOutputOrientationMode["kNERtcVideoOutputOrientationModeFixedPortrait"] = 2] = "kNERtcVideoOutputOrientationModeFixedPortrait";
+})(NERtcVideoOutputOrientationMode = exports.NERtcVideoOutputOrientationMode || (exports.NERtcVideoOutputOrientationMode = {}));
+/** @enum NERtcRawAudioFrameOpModeType 读写模式*/
+var NERtcRawAudioFrameOpModeType;
+(function (NERtcRawAudioFrameOpModeType) {
+    NERtcRawAudioFrameOpModeType[NERtcRawAudioFrameOpModeType["kNERtcRawAudioFrameOpModeReadOnly"] = 0] = "kNERtcRawAudioFrameOpModeReadOnly";
+    NERtcRawAudioFrameOpModeType[NERtcRawAudioFrameOpModeType["kNERtcRawAudioFrameOpModeReadWrite"] = 1] = "kNERtcRawAudioFrameOpModeReadWrite";
+})(NERtcRawAudioFrameOpModeType = exports.NERtcRawAudioFrameOpModeType || (exports.NERtcRawAudioFrameOpModeType = {}));
 var NERtcAudioProfileType;
 (function (NERtcAudioProfileType) {
     NERtcAudioProfileType[NERtcAudioProfileType["kNERtcAudioProfileDefault"] = 0] = "kNERtcAudioProfileDefault";
@@ -190,6 +203,19 @@ var NERtcDegradationPreference;
     NERtcDegradationPreference[NERtcDegradationPreference["kNERtcDegradationMaintainQuality"] = 2] = "kNERtcDegradationMaintainQuality";
     NERtcDegradationPreference[NERtcDegradationPreference["kNERtcDegradationBalanced"] = 3] = "kNERtcDegradationBalanced";
 })(NERtcDegradationPreference = exports.NERtcDegradationPreference || (exports.NERtcDegradationPreference = {}));
+/** @enum NERtcAudioStreamType 伴音跟随音频主流还是辅流，默认跟随主流。*/
+var NERtcAudioStreamType;
+(function (NERtcAudioStreamType) {
+    NERtcAudioStreamType[NERtcAudioStreamType["kNERtcAudioStreamTypeMain"] = 0] = "kNERtcAudioStreamTypeMain";
+    NERtcAudioStreamType[NERtcAudioStreamType["kNERtcAudioStreamTypeSub"] = 1] = "kNERtcAudioStreamTypeSub";
+})(NERtcAudioStreamType = exports.NERtcAudioStreamType || (exports.NERtcAudioStreamType = {}));
+/** @enum NERtcDistanceRolloffModel 空间音效衰减模式 */
+var NERtcDistanceRolloffModel;
+(function (NERtcDistanceRolloffModel) {
+    NERtcDistanceRolloffModel[NERtcDistanceRolloffModel["kNERtcDistanceRolloffLogarithmic"] = 0] = "kNERtcDistanceRolloffLogarithmic";
+    NERtcDistanceRolloffModel[NERtcDistanceRolloffModel["kNERtcDistanceRolloffLinear"] = 1] = "kNERtcDistanceRolloffLinear";
+    NERtcDistanceRolloffModel[NERtcDistanceRolloffModel["kNERtcDistanceRolloffNone"] = 2] = "kNERtcDistanceRolloffNone";
+})(NERtcDistanceRolloffModel = exports.NERtcDistanceRolloffModel || (exports.NERtcDistanceRolloffModel = {}));
 /** 屏幕共享编码参数配置。*/
 var NERtcScreenProfileType;
 (function (NERtcScreenProfileType) {
@@ -434,3 +460,68 @@ var NERtcVoiceEqualizationBand;
     NERtcVoiceEqualizationBand[NERtcVoiceEqualizationBand["kNERtcVoiceEqualizationBand_8K"] = 8] = "kNERtcVoiceEqualizationBand_8K";
     NERtcVoiceEqualizationBand[NERtcVoiceEqualizationBand["kNERtcVoiceEqualizationBand_16K"] = 9] = "kNERtcVoiceEqualizationBand_16K";
 })(NERtcVoiceEqualizationBand = exports.NERtcVoiceEqualizationBand || (exports.NERtcVoiceEqualizationBand = {}));
+/** 空间音效房间大小 */
+var NERtcSpatializerRoomCapacity;
+(function (NERtcSpatializerRoomCapacity) {
+    NERtcSpatializerRoomCapacity[NERtcSpatializerRoomCapacity["kNERtcSpatializerRoomCapacitySmall"] = 0] = "kNERtcSpatializerRoomCapacitySmall";
+    NERtcSpatializerRoomCapacity[NERtcSpatializerRoomCapacity["kNERtcSpatializerRoomCapacityMedium"] = 1] = "kNERtcSpatializerRoomCapacityMedium";
+    NERtcSpatializerRoomCapacity[NERtcSpatializerRoomCapacity["kNERtcSpatializerRoomCapacityLarge"] = 2] = "kNERtcSpatializerRoomCapacityLarge";
+    NERtcSpatializerRoomCapacity[NERtcSpatializerRoomCapacity["kNERtcSpatializerRoomCapacityHuge"] = 3] = "kNERtcSpatializerRoomCapacityHuge";
+    NERtcSpatializerRoomCapacity[NERtcSpatializerRoomCapacity["kNERtcSpatializerRoomCapacityNone"] = 4] = "kNERtcSpatializerRoomCapacityNone";
+})(NERtcSpatializerRoomCapacity = exports.NERtcSpatializerRoomCapacity || (exports.NERtcSpatializerRoomCapacity = {}));
+/** 空间音效中房间材质名称 */
+var NERtcSpatializerMaterialName;
+(function (NERtcSpatializerMaterialName) {
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialTransparent"] = 0] = "kNERtcSpatializerMaterialTransparent";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialAcousticCeilingTiles"] = 1] = "kNERtcSpatializerMaterialAcousticCeilingTiles";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialBrickBare"] = 2] = "kNERtcSpatializerMaterialBrickBare";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialBrickPainted"] = 3] = "kNERtcSpatializerMaterialBrickPainted";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialConcreteBlockCoarse"] = 4] = "kNERtcSpatializerMaterialConcreteBlockCoarse";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialConcreteBlockPainted"] = 5] = "kNERtcSpatializerMaterialConcreteBlockPainted";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialCurtainHeavy"] = 6] = "kNERtcSpatializerMaterialCurtainHeavy";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialFiberGlassInsulation"] = 7] = "kNERtcSpatializerMaterialFiberGlassInsulation";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialGlassThin"] = 8] = "kNERtcSpatializerMaterialGlassThin";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialGlassThick"] = 9] = "kNERtcSpatializerMaterialGlassThick";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialGrass"] = 10] = "kNERtcSpatializerMaterialGrass";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialLinoleumOnConcrete"] = 11] = "kNERtcSpatializerMaterialLinoleumOnConcrete";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialMarble"] = 12] = "kNERtcSpatializerMaterialMarble";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialMetal"] = 13] = "kNERtcSpatializerMaterialMetal";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialParquetOnConcrete"] = 14] = "kNERtcSpatializerMaterialParquetOnConcrete";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialPlasterRough"] = 15] = "kNERtcSpatializerMaterialPlasterRough";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialPlasterSmooth"] = 16] = "kNERtcSpatializerMaterialPlasterSmooth";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialPlywoodPanel"] = 17] = "kNERtcSpatializerMaterialPlywoodPanel";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialPolishedConcreteOrTile"] = 18] = "kNERtcSpatializerMaterialPolishedConcreteOrTile";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialSheetrock"] = 19] = "kNERtcSpatializerMaterialSheetrock";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialWaterOrIceSurface"] = 20] = "kNERtcSpatializerMaterialWaterOrIceSurface";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialWoodCeiling"] = 21] = "kNERtcSpatializerMaterialWoodCeiling";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialWoodPanel"] = 22] = "kNERtcSpatializerMaterialWoodPanel";
+    NERtcSpatializerMaterialName[NERtcSpatializerMaterialName["kNERtcSpatializerMaterialUniform"] = 23] = "kNERtcSpatializerMaterialUniform";
+})(NERtcSpatializerMaterialName = exports.NERtcSpatializerMaterialName || (exports.NERtcSpatializerMaterialName = {}));
+/** 空间音效渲染模式 */
+var NERtcSpatializerRenderMode;
+(function (NERtcSpatializerRenderMode) {
+    NERtcSpatializerRenderMode[NERtcSpatializerRenderMode["kNERtcSpatializerRenderStereoPanning"] = 0] = "kNERtcSpatializerRenderStereoPanning";
+    NERtcSpatializerRenderMode[NERtcSpatializerRenderMode["kNERtcSpatializerRenderBinauralLowQuality"] = 1] = "kNERtcSpatializerRenderBinauralLowQuality";
+    NERtcSpatializerRenderMode[NERtcSpatializerRenderMode["kNERtcSpatializerRenderBinauralMediumQuality"] = 2] = "kNERtcSpatializerRenderBinauralMediumQuality";
+    NERtcSpatializerRenderMode[NERtcSpatializerRenderMode["kNERtcSpatializerRenderBinauralHighQuality"] = 3] = "kNERtcSpatializerRenderBinauralHighQuality";
+    NERtcSpatializerRenderMode[NERtcSpatializerRenderMode["kNERtcSpatializerRenderRoomEffectsOnly"] = 4] = "kNERtcSpatializerRenderRoomEffectsOnly";
+})(NERtcSpatializerRenderMode = exports.NERtcSpatializerRenderMode || (exports.NERtcSpatializerRenderMode = {}));
+var NERtcAudioRecordingPosition;
+(function (NERtcAudioRecordingPosition) {
+    NERtcAudioRecordingPosition[NERtcAudioRecordingPosition["kNERtcAudioRecordingPositionMixedRecordingAndPlayback"] = 0] = "kNERtcAudioRecordingPositionMixedRecordingAndPlayback";
+    NERtcAudioRecordingPosition[NERtcAudioRecordingPosition["kNERtcAudioRecordingPositionRecording"] = 1] = "kNERtcAudioRecordingPositionRecording";
+    NERtcAudioRecordingPosition[NERtcAudioRecordingPosition["kNERtcAudioRecordingPositionMixedPlayback"] = 2] = "kNERtcAudioRecordingPositionMixedPlayback";
+})(NERtcAudioRecordingPosition = exports.NERtcAudioRecordingPosition || (exports.NERtcAudioRecordingPosition = {}));
+var NERtcAudioRecordingCycleTime;
+(function (NERtcAudioRecordingCycleTime) {
+    NERtcAudioRecordingCycleTime[NERtcAudioRecordingCycleTime["kNERtcAudioRecordingCycleTime0"] = 0] = "kNERtcAudioRecordingCycleTime0";
+    NERtcAudioRecordingCycleTime[NERtcAudioRecordingCycleTime["kNERtcAudioRecordingCycleTime10"] = 10] = "kNERtcAudioRecordingCycleTime10";
+    NERtcAudioRecordingCycleTime[NERtcAudioRecordingCycleTime["kNERtcAudioRecordingCycleTime60"] = 60] = "kNERtcAudioRecordingCycleTime60";
+    NERtcAudioRecordingCycleTime[NERtcAudioRecordingCycleTime["kNERtcAudioRecordingCycleTime360"] = 360] = "kNERtcAudioRecordingCycleTime360";
+    NERtcAudioRecordingCycleTime[NERtcAudioRecordingCycleTime["kNERtcAudioRecordingCycleTime900"] = 900] = "kNERtcAudioRecordingCycleTime900";
+})(NERtcAudioRecordingCycleTime = exports.NERtcAudioRecordingCycleTime || (exports.NERtcAudioRecordingCycleTime = {}));
+var NERtcBackgroundSourceType;
+(function (NERtcBackgroundSourceType) {
+    NERtcBackgroundSourceType[NERtcBackgroundSourceType["kNERtcBackgroundColor"] = 1] = "kNERtcBackgroundColor";
+    NERtcBackgroundSourceType[NERtcBackgroundSourceType["kNERtcBackgroundImage"] = 2] = "kNERtcBackgroundImage";
+})(NERtcBackgroundSourceType = exports.NERtcBackgroundSourceType || (exports.NERtcBackgroundSourceType = {}));

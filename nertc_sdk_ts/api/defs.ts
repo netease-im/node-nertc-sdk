@@ -17,6 +17,18 @@ export enum NERtcLogLevel{
     kNERtcLogLevelOff      = 7,        /**< 不输出日志信息。*/
 }
 
+export interface NERtcJoinChannelOptions {
+    custom_info: string; /**< 自定义信息，最长支持 127 个字符。 <127chars */
+    permission_key: string; /**< 权限密钥。能控制通话时长及媒体权限能力。*/
+}
+
+/** 音频帧请求格式。*/
+export interface NERtcAudioFrameRequestFormat {
+    channels: number; /**< 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。*/
+    sample_rate: number; /**< 采样率。*/
+    mode: NERtcRawAudioFrameOpModeType;/**< 读写模式*/
+}
+
 /** 私有化服务器配置项 */
 export interface NERtcServerAddresses {
     channel_server: string; /**< 获取通道信息服务器, <256chars */
@@ -184,6 +196,21 @@ export enum NERtcVideoMirrorMode
     kNERtcVideoMirrorModeDisabled   = 2,    /**< 2: （默认）关闭镜像模式。*/
 }
 
+/** @enum NERtcVideoOutputOrientationMode 设置镜像模式。*/
+export enum NERtcVideoOutputOrientationMode
+{
+    kNERtcVideoOutputOrientationModeAdaptative       = 0,    /**< 0: （默认）该模式下 SDK 输出的视频方向与采集到的视频方向一致。接收端会根据收到的视频旋转信息对视频进行旋转。*/
+    kNERtcVideoOutputOrientationModeFixedLandscape    = 1,    /**< 1:该模式下 SDK 固定输出横屏模式的视频。如果采集到的视频是竖屏模式，则视频编码器会对其进行裁剪。*/
+    kNERtcVideoOutputOrientationModeFixedPortrait   = 2,    /**< 2: 该模式下 SDK 固定输出竖屏模式的视频，如果采集到的视频是横屏模式，则视频编码器会对其进行裁剪。*/
+}
+
+/** @enum NERtcRawAudioFrameOpModeType 读写模式*/
+export enum NERtcRawAudioFrameOpModeType
+{
+    kNERtcRawAudioFrameOpModeReadOnly       = 0,    /**< 0: 返回数据只读模式。*/
+    kNERtcRawAudioFrameOpModeReadWrite    = 1,    /**< 1:返回数据可读写。*/
+}
+
 export interface NERtcVideoCanvas {
     mode: NERtcVideoScalingMode;
     view: Element;
@@ -232,6 +259,19 @@ export enum NERtcDegradationPreference {
     kNERtcDegradationBalanced           = 3,  /**< 平衡模式 */
 }
 
+/** @enum NERtcAudioStreamType 伴音跟随音频主流还是辅流，默认跟随主流。*/
+export enum NERtcAudioStreamType {
+    kNERtcAudioStreamTypeMain            = 0,  /**< 主流 */
+    kNERtcAudioStreamTypeSub  = 1,  /**< 辅流 */
+}
+
+/** @enum NERtcDistanceRolloffModel 空间音效衰减模式 */
+export enum NERtcDistanceRolloffModel {
+    kNERtcDistanceRolloffLogarithmic            = 0,  /**< 指数模式 */
+    kNERtcDistanceRolloffLinear  = 1,  /**< 线性模式 */
+    kNERtcDistanceRolloffNone = 2,/**< 无衰减 */
+}
+
 /** 视频配置的属性。*/
 export interface NERtcVideoConfig {
     max_profile: NERtcVideoProfileType;	/**< 视频编码的分辨率，用于衡量编码质量。*/
@@ -243,12 +283,8 @@ export interface NERtcVideoConfig {
     bitrate: number;                   /**< 视频编码码率kbps，取0时使用默认值 */
     min_bitrate: number;               /**< 视频编码码率下限kbps，取0时使用默认值 */
     degradation_preference: NERtcDegradationPreference;   /**< 编码策略 */
-}
-
-/** 音频帧请求格式。*/
-export interface NERtcAudioFrameRequestFormat {
-    channels: number;      /**< 音频频道数量(如果是立体声，数据是交叉的)。单声道: 1；双声道 : 2。*/
-    sample_rate: number;   /**< 采样率。*/
+    mirror_mode: NERtcVideoMirrorMode; /**< 设置本地视频编码的镜像模式，即本地发送视频的镜像模式，只影响远端用户看到的视频画面。 */
+    orientation_mode: NERtcVideoOutputOrientationMode; /**< 设置本地视频编码的方向模式，即本地发送视频的方向模式，同时影响本端用户的预览画面和远端用户看到的视频画面。*/
 }
 
 /** 创建混音的配置项 */
@@ -259,6 +295,9 @@ export interface NERtcCreateAudioMixingOption {
     send_volume: number;           /**< 发送音量。最大为 100（默认）含义（0%-100%）*/
     playback_enabled: boolean;          /**< 是否可回放，默认为 true */
     playback_volume: number;       /**< 回放音量。最大为 100（默认）*/
+    start_timestamp: number; /**< 音乐文件开始播放的时间，UTC 时间戳，即从1970 年 1 月 1 日 0 点 0 分 0 秒开始到事件发生时的毫秒数。默认值为 0，表示立即播放。*/
+    send_with_audio_type: NERtcAudioStreamType; /**< 伴音跟随音频主流还是辅流，默认跟随主流。*/
+    progress_interval: number; /**< 伴音播放进度回调间隔，单位ms，取值范围为 100~10000, 默认1000ms*/
 }
 
 /** 创建音效的配置项 */
@@ -269,6 +308,9 @@ export interface NERtcCreateAudioEffectOption {
     send_volume: number;           /**< 发送音量。最大为 100（默认）含义（0%-100%）*/
     playback_enabled: boolean;          /**< 是否可回放，默认为 true */
     playback_volume: number;       /**< 回放音量。最大为 100（默认）*/
+    start_timestamp: number; /**< 音乐文件开始播放的时间，UTC 时间戳，即从1970 年 1 月 1 日 0 点 0 分 0 秒开始到事件发生时的毫秒数。默认值为 0，表示立即播放。*/
+    send_with_audio_type: NERtcAudioStreamType; /**< 伴音跟随音频主流还是辅流，默认跟随主流。*/
+    progress_interval: number; /**< 伴音播放进度回调间隔，单位ms，取值范围为 100~10000, 默认1000ms*/
 }
 
 /** 待共享区域相对于整个屏幕或窗口的位置，如不填，则表示共享整个屏幕或窗口。*/
@@ -496,6 +538,13 @@ export enum NERtcClientRole
 export enum NERtcStreamChannelType {
     kNERtcStreamChannelTypeMainStream   = 0, /**< 主流通道 */
     kNERtcStreamChannelTypeSubStream    = 1, /**< 辅流通道 */
+}
+
+/** 摄像头采集配置 */
+export interface NERtcCameraCaptureConfig
+{
+    captureWidth: number;      /**< 本地采集的视频宽度，单位为 px。*/
+    captureHeight: number;     /**< 本地采集的视频高度，单位为 px）。*/
 }
 
 export interface NERtcPullExternalAudioFrameCb
@@ -753,6 +802,113 @@ export enum NERtcVoiceEqualizationBand {
     kNERtcVoiceEqualizationBand_4K  = 7, /**<  4 kHz */
     kNERtcVoiceEqualizationBand_8K  = 8, /**<  8 kHz */
     kNERtcVoiceEqualizationBand_16K = 9, /**<  16 kHz */
+}
+
+/** 3D音效算法中坐标信息 */
+export interface NERtcSpatializerPositionInfo {
+    speaker_position: Array<Number>;                      /**< 发声坐标 */
+    speaker_quaternion: Array<Number>;               /**< 发声旋转角度四元数 */
+    head_position: Array<Number>;   /**< 头部听觉坐标 */
+    head_quaternion: Array<Number>;                         /**< 头部听觉旋转角度四元数 */
+}
+
+/** 空间音效房间大小 */
+export enum NERtcSpatializerRoomCapacity {
+    kNERtcSpatializerRoomCapacitySmall  = 0, /**<  小房间 */
+    kNERtcSpatializerRoomCapacityMedium  = 1, /**<  中等大小房间 */
+    kNERtcSpatializerRoomCapacityLarge = 2, /**<  大房间 */
+    kNERtcSpatializerRoomCapacityHuge = 3, /**<  巨大房间 */
+    kNERtcSpatializerRoomCapacityNone = 4, /**<  无房间效果 */
+}
+
+/** 空间音效中房间材质名称 */
+export enum NERtcSpatializerMaterialName {
+    kNERtcSpatializerMaterialTransparent  = 0, /**<  透明的 */
+    kNERtcSpatializerMaterialAcousticCeilingTiles  = 1, /**<  声学天花板，未开放 */
+    kNERtcSpatializerMaterialBrickBare = 2, /**<  砖块，未开放 */
+    kNERtcSpatializerMaterialBrickPainted = 3, /**<  涂漆的砖块，未开放 */
+    kNERtcSpatializerMaterialConcreteBlockCoarse = 4, /**<  粗糙的混凝土块，未开放 */
+    kNERtcSpatializerMaterialConcreteBlockPainted = 5, /**<  涂漆的混凝土块，未开放 */
+    kNERtcSpatializerMaterialCurtainHeavy = 6, /**< 厚重的窗帘 */
+    kNERtcSpatializerMaterialFiberGlassInsulation = 7, /**< 隔音的玻璃纤维，未开放 */
+    kNERtcSpatializerMaterialGlassThin = 8, /**< 薄的的玻璃，未开放 */
+    kNERtcSpatializerMaterialGlassThick = 9, /**< 茂密的草地，未开放 */
+    kNERtcSpatializerMaterialGrass = 10, /**< 草地 */
+    kNERtcSpatializerMaterialLinoleumOnConcrete = 11, /**< 铺装了油毡的混凝土，未开放 */
+    kNERtcSpatializerMaterialMarble = 12, /**< 大理石 */
+    kNERtcSpatializerMaterialMetal = 13, /**< 金属，未开放 */
+    kNERtcSpatializerMaterialParquetOnConcrete = 14, /**< 镶嵌木板的混凝土，未开放 */
+    kNERtcSpatializerMaterialPlasterRough = 15, /**< 石膏，未开放 */
+    kNERtcSpatializerMaterialPlasterSmooth = 16, /**< 粗糙石膏，未开放 */
+    kNERtcSpatializerMaterialPlywoodPanel = 17, /**< 光滑石膏，未开放 */
+    kNERtcSpatializerMaterialPolishedConcreteOrTile = 18, /**< 木板，未开放 */
+    kNERtcSpatializerMaterialSheetrock = 19, /**< 石膏灰胶纸板，未开放 */
+    kNERtcSpatializerMaterialWaterOrIceSurface = 20, /**< 水面或者冰面，未开放 */
+    kNERtcSpatializerMaterialWoodCeiling = 21, /**< 木头天花板，未开放 */
+    kNERtcSpatializerMaterialWoodPanel = 22, /**< 木头枪板，未开放 */
+    kNERtcSpatializerMaterialUniform = 23, /**< 均匀分布，未开放 */
+}
+
+/** 3D音效房间属性设置 */
+export interface NERtcSpatializerRoomProperty {
+    room_capacity: NERtcSpatializerRoomCapacity;  /**< 房间大小 #NERtcSpatializerRoomCapacity ，默认值 #kNERtcSpatializerRoomCapacitySmall */
+    material: NERtcSpatializerMaterialName;               /**< 房间材质 #NERtcSpatializerMaterialName ，默认值 #kNERtcSpatializerMaterialTransparent */
+    reflection_scalar: Number;   /**< 反射比例，默认值1.0 */
+    reverb_gain: Number;                         /**< 混响增益比例因子，默认值1.0 */
+    reverb_time: Number;                         /**< 混响时间比例因子，默认值1.0 */
+    reverb_brightness: Number;                         /**< 混响亮度，默认值1.0 */
+}
+
+/** 空间音效渲染模式 */
+export enum NERtcSpatializerRenderMode {
+    kNERtcSpatializerRenderStereoPanning  = 0, /**<  立体声 */
+    kNERtcSpatializerRenderBinauralLowQuality  = 1, /**<  双声道低 */
+    kNERtcSpatializerRenderBinauralMediumQuality = 2, /**<  双声道中 */
+    kNERtcSpatializerRenderBinauralHighQuality = 3, /**<  双声道高 */
+    kNERtcSpatializerRenderRoomEffectsOnly = 4, /**<  仅房间音效 */
+}
+
+export enum NERtcAudioRecordingPosition {
+    kNERtcAudioRecordingPositionMixedRecordingAndPlayback  = 0, /**<  录制本地和所有远端用户混音后的音频（默认） */
+    kNERtcAudioRecordingPositionRecording  = 1, /**<  仅录制本地用户的音频 */
+    kNERtcAudioRecordingPositionMixedPlayback = 2, /**<  仅录制所有远端用户的音频 */
+}
+export enum NERtcAudioRecordingCycleTime {
+    kNERtcAudioRecordingCycleTime0  = 0, /**<  音频录制缓存时间为0，实时写文件（默认） */
+    kNERtcAudioRecordingCycleTime10  = 10, /**<  音频录制缓存时间为10s，StopAudioRectording()后，将缓存都写到文件，文件数据时间跨度为: [0,10s] */
+    kNERtcAudioRecordingCycleTime60 = 60, /**<  音频录制缓存时间为60s，StopAudioRectording()后，将缓存都写到文件，文件数据时间跨度为: [0,60s] */
+    kNERtcAudioRecordingCycleTime360 = 360, /**<  音频录制缓存时间为360s，StopAudioRectording()后，将缓存都写到文件，文件数据时间跨度为: [0,360s] */
+    kNERtcAudioRecordingCycleTime900 = 900, /**<  音频录制缓存时间为900s，StopAudioRectording()后，将缓存都写到文件，文件数据时间跨度为: [0,900s] */
+
+}
+/**  */
+export interface NERtcAudioRecordingConfiguration {
+    filePath: string;  /**< 录音文件在本地保存的绝对路径，需要精确到文件名及格式。例如：sdcard/xxx/audio.aac。*/
+    sampleRate: number; /**< 录音采样率（Hz），可以设为 16000、32000（默认）、44100 或 48000。 */
+    quality: NERtcAudioRecordingQuality;   /**< 录音音质，只在 AAC 格式下有效 */
+    position: NERtcAudioRecordingPosition;  /**< 录音文件所包含的内容 */
+    cycleTime: NERtcAudioRecordingCycleTime;  /**< 录制过程中，循环缓存的最大时间长度，单位(s) */
+}
+
+export enum NERtcBackgroundSourceType {
+    kNERtcBackgroundColor  = 1, /**<  背景图像为纯色（默认） */
+    kNERtcBackgroundImage  = 2, /**<  背景图像只支持 PNG 或 JPG 格式的文件 */
+}
+/**  自定义背景图像*/
+export interface VirtualBackgroundSource {
+    background_source_type: NERtcBackgroundSourceType;  /**< 自定义背景图片的类型*/
+    color: number; /**< 自定义背景图像的颜色。格式为RGB定义的十六进制整数，不带#号 */
+    source: string;   /**< 自定义背景图片的本地绝对路径。支持 PNG 和 JPG 格式。 */
+}
+
+/**  混响参数*/
+export interface NERtcReverbParam {
+    wetGain: number;  /**< 湿信号，取值范围为 0 ~ 1，默认值为 0.0f。*/
+    dryGain: number; /**< 干信号，取值范围为 0 ~ 1，默认值为 1.0f。 */
+    damping: number;   /**< 混响阻尼，取值范围为 0 ~ 1，默认值为 1.0f。 */
+    roomSize: number;   /**< 房间大小，取值范围为 0.1 ~ 2，默认值为 0.1f。 */
+    decayTime: number;   /**< 持续强度（余响），取值范围为 0.1 ~ 20，默认值为 0.1f。 */
+    preDelay: number;   /**< 延迟长度，取值范围为 0 ~ 1，默认值为 0.0f。 */
 }
 
 export interface NERtcEngineAPI {

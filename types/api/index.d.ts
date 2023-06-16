@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { IRenderer } from '../renderer';
-import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcChannelMediaRelayConfiguration, NERtcVideoStreamType, NERtcMediaPriorityType, NERtcScreenCaptureWindowParam, NERtcAudioRecordingQuality, NERtcEncryptionConfig } from './defs';
+import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcAudioFrameRequestFormat, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcChannelMediaRelayConfiguration, NERtcVideoStreamType, NERtcMediaPriorityType, NERtcScreenCaptureWindowParam, NERtcAudioRecordingQuality, NERtcEncryptionConfig, NERtcJoinChannelOptions, NERtcCameraCaptureConfig, NERtcDistanceRolloffModel, NERtcSpatializerPositionInfo, NERtcSpatializerRoomProperty, NERtcSpatializerRenderMode, NERtcAudioRecordingConfiguration, VirtualBackgroundSource, NERtcReverbParam } from './defs';
 import { EventEmitter } from 'events';
 /**
  * @class NERtcEngine
@@ -18,16 +18,12 @@ declare class NERtcEngine extends EventEmitter {
     constructor();
     /**
      * 创建一个 NERtcChannel 对象
+     * @since V5.4.0
      * <pre>
      * 设置相同房间名称的用户会进入同一个通话房间。
-     * 字符串格式，长度为1~ 64 字节。支持以下89个字符：a-z, A-Z, 0-9, space, !#$%&()+-:;≤.,>? @[]^_{|}~”
      * </pre>
-     * @param {string} name  房间名
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
+     * @param {string} name  房间名 字符串格式，长度为1~ 64 字节。支持以下89个字符：a-z, A-Z, 0-9, space, !#$%&()+-:;≤.,>? @[]^_{|}~”
+     * @returns {object} NERtcChannel对象
      */
     createChannel(channelName: string): any;
     /**
@@ -128,7 +124,26 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     joinChannel(token: String, channelName: String, uid: number): number;
-    joinChannelEx(token: string, channelName: string, uid: number, channelOptions: any): number;
+    /**
+     * 加入频道。如果频道还未创建，会自动尝试创建频道。
+     * @since V5.4.0
+     * <pre>
+     * 该方法让用户加入通话频道，在同一个频道内的用户可以互相通话，多个用户加入同一个频道，可以群聊。 使用不同 App Key 的 App 是不能互通的。如果已在通话中，用户必须调用 {@link NERtcEngine#leaveChannel} 退出当前通话，才能进入下一个频道。
+     * 频道内每个用户的用户 ID 必须是唯一的。
+     * </pre>
+     * @param {String} token 动态秘钥。安全要求不高: 将值设为 空字符串。安全要求高: 将值设置为 Token。如果你已经启用了 App Certificate, 请务必使用 Token。
+     * @param {String} channelName 标识通话的频道名称，长度在 64 字节以内的字符串。以下为支持的字符集范围（共 89 个字符）: a-z, A-Z, 0-9, space, !#$%&()+-:;&le;.,>? @[]^_{|}~”
+     * @param {number} uid 用户ID。
+     * @param {Object} channelOptions 加入音视频房间时的一些可选信息。
+     * @param {string} channelOptions.custom_info 自定义信息，最长支持 127 个字符。
+     * @param {string} channelOptions.permission_key 权限密钥。能控制通话时长及媒体权限能力。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    joinChannelEx(token: string, channelName: string, uid: number, channelOptions: NERtcJoinChannelOptions): number;
     /**
      * 离开频道。
      * <pre>
@@ -240,7 +255,30 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     enableLocalVideo(enabled: Boolean): number;
-    enableLocalVideoEx(type: number, enabled: boolean): number;
+    /**
+     * 开启或关闭本地视频采集和渲染
+     * @since V5.4.0
+     * <pre>
+     * 该方法启用本地视频采集功能。
+     * 该方法设置内部引擎为启用状态，在 {@link NERtcEngine#leaveChannel} 后仍然有效。
+     * </pre>
+     * @param {number} streamType 视频通道类型：
+     * <pre>
+     * - 0: 主流；
+     * - 1: 辅流。
+     * </pre>
+     * @param {boolean} enabled 是否启用本地视频:
+     * <pre>
+     * - true: 开启本地视频采集和渲染 (默认)；
+     * - false: 关闭使用本地摄像头设备。关闭后，远端用户会接收不到本地用户的视频流；但本地用户依然可以接收远端用户的视频流。设置为 false 时，该方法不需要本地有摄像头。
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    enableLocalVideoEx(streamType: NERtcVideoStreamType, enabled: boolean): number;
     /**
      * 订阅 / 取消订阅指定远端用户的视频流。对方打开视频后需要主动订阅
      * @param {number} uid 指定用户的用户 ID。
@@ -291,7 +329,45 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     muteLocalAudioStream(enabled: Boolean): number;
+    /**
+     * 开启或关闭音频辅流。
+     * @since V5.4.0
+     * <pre>
+     * 开启时远端会收到onUserSubStreamAudioStart，关闭时远端会收到onUserSubStreamAudioStop。
+     * <b>NOTE:</b>
+     * - 该方法设置内部引擎为启用状态，在{@link NERtcEngine#leaveChannel}后仍然有效。
+     * </pre>
+     * @param {boolean} enabled 是否开启音频辅流：
+     * <pre>
+     * - true: 开启音频辅流。
+     * - false: 关闭音频辅流。
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
     enableLocalSubStreamAudio(enabled: boolean): number;
+    /**
+     * 静音或解除静音本地上行的音频辅流。
+     * @since V5.4.0
+     * <pre>
+     * <b>NOTE:</b>
+     * - 静音状态会在通话结束后被重置为非静音。
+     * - 该方法仅可在加入房间后调用。
+     * </pre>
+     * @param {boolean} mute 是否静音本地音频辅流发送。
+     * <pre>
+     * - true: 静音本地音频辅流（默认）。
+     * - false: 取消静音本地音频辅流。
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
     muteLocalSubStreamAudio(enabled: boolean): number;
     /**
      * 设置音频编码属性。
@@ -323,12 +399,12 @@ declare class NERtcEngine extends EventEmitter {
      */
     setAudioProfile(profile: NERtcAudioProfileType, scenario: NERtcAudioScenarioType): number;
     /**
-     * 订阅／取消订阅指定音频流。
+     * 订阅／取消订阅指定音频主流。
      * @param {number} uid 指定用户的 ID
      * @param {boolean} subscribe
      * <pre>
-     * - true: 订阅指定音频流（默认）；
-     * - false: 取消订阅指定音频流。
+     * - true: 订阅指定音频主流（默认）。
+     * - false: 取消订阅指定音频主流。
      * </pre>
      * @returns {number}
      * <pre>
@@ -337,13 +413,140 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     subscribeRemoteAudioStream(uid: number, enabled: Boolean): number;
-    subscribeRemoteSubStreamAudio(uid: number, enabled: boolean): number;
+    /**
+     * 订阅／取消订阅指定音频辅流
+     * @since V5.4.0
+     * @param {number} uid 指定用户的 ID
+     * @param {boolean} subscribe
+     * <pre>
+     * - true: 订阅指定音频辅流（默认）。
+     * - false: 取消订阅指定音频辅流。
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    subscribeRemoteSubStreamAudio(uid: number, subscribe: boolean): number;
+    /**
+     * 取消或恢复订阅所有远端用户的音频主流。
+     * @since V5.4.0
+     * <pre>
+     * 加入房间时，默认订阅所有远端用户的音频主流。
+     * <b>NOTE:</b>
+     * - 设置该方法的 subscribe 参数为 true 后，对后续加入房间的用户同样生效。
+     * - 在开启自动订阅（默认）时，设置该方法的 subscribe 参数为 false 可以实现取消订阅所有远端用户的音频流，但此时无法再调用{@link NERtcEngine#subscribeRemoteAudioStream}方法单独订阅指定远端用户的音频流。
+     * </pre>
+     * @param {boolean} subscribe
+     * <pre>
+     * - true: 订阅所有远端用户的音频主流。
+     * - false: 取消订阅所有远端用户的音频主流。
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
     subscribeAllRemoteAudioStream(subscribe: boolean): number;
-    setAudioSubscribeOnlyBy(uids: any, size: number): number;
+    /**
+     * 设置自己的音频只能被房间内指定的人订阅。
+     * @since V5.4.0
+     * <pre>
+     * 默认房间所有其他人都可以订阅自己的音频。
+     * <b>NOTE:</b>
+     * - 此接口需要在加入房间成功后调用。
+     * - 对于调用接口时不在房间的 uid 不生效。
+     * </pre>
+     * @param {Array<Number>} uids 用户id数组
+     * @param {number} size 数组长度
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setAudioSubscribeOnlyBy(uids: Array<Number>, size: number): number;
+    /**
+     * 开启精准对齐。
+     * @since V5.4.0
+     * <pre>
+     * 通过此接口可以实现精准对齐功能，对齐本地系统与服务端的时间。
+     * <b>NOTE:</b>
+     * - 请在引擎初始化之后调用此接口，且该方法仅可在加入房间前调用。
+     * - 适用于 KTV 实时合唱的场景。
+     * </pre>
+     * @param {boolean} enable 是否开启精准对齐功能:
+     * <pre>
+     * true：开启精准对齐功能。
+     * false：关闭精准对齐功能。
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
     setStreamAlignmentProperty(enable: boolean): number;
+    /**
+     * 获取本地系统时间与服务端时间差值。
+     * @since V5.4.0
+     * <pre>
+     * 可以用于做时间对齐，通过 (毫秒级系统时间 - offset) 可能得到当前服务端时间。
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 本地与服务端时间差值，单位为毫秒（ms）。如果没有成功加入音视频房间，返回 0。
+     * </pre>
+     */
     getNtpTimeOffset(): number;
-    setCameraCaptureConfig(config: any): number;
-    setCameraCaptureConfigEx(type: number, config: any): number;
+    /**
+    * 设置本地摄像头的视频主流采集配置。
+    * @since V5.4.0
+    * <pre>
+    * 通过此接口可以设置本地摄像头采集的主流视频宽度、高度、旋转角度等。
+    * <b>NOTE:</b>
+    * - 纯音频 SDK 禁用该接口。
+    * - 该方法仅适用于视频主流。
+    * - 该方法支持在加入房间后动态调用，设置成功后，会自动重启摄像头采集模块。
+    * - 若系统相机不支持您设置的分辨率，会自动调整为最相近一档的分辨率，因此建议您设置为常规标准的分辨率。
+    * - 设置较高的采集分辨率会增加性能消耗，例如 CPU 和内存占用等，尤其是在开启视频前处理的场景下。
+    * </pre>
+    * @param {object} config 摄像头采集配置:
+    * @param {number} config.captureWidth 本地采集的视频宽度，单位为 px。
+    * @param {number} config.captureHeight 本地采集的视频高度，单位为 px。
+    * @returns {number}
+    * <pre>
+    * - 0: 方法调用成功；
+    * - 其他: 方法调用失败。
+    * </pre>
+    */
+    setCameraCaptureConfig(config: NERtcCameraCaptureConfig): number;
+    /**
+     * 设置本地摄像头的视频主流或辅流采集配置。
+     * @since V5.4.0
+     * <pre>
+     * 通过此接口可以设置本地摄像头采集的主流或辅流视频宽度、高度、旋转角度等。
+     * <b>NOTE:</b>
+     * - 纯音频 SDK 禁用该接口。
+     * - 调用该接口设置成功后，会自动重启摄像头采集模块。
+     * </pre>
+     * @param {NERtcVideoStreamType} streamType 视频通道类型。
+     * <pre>
+     * - 0: 主流。
+     * - 1: 辅流。
+     * </pre>
+     * @param {object} config 摄像头采集配置:
+     * @param {number} config.captureWidth 本地采集的视频宽度，单位为 px。
+     * @param {number} config.captureHeight 本地采集的视频高度，单位为 px。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setCameraCaptureConfigEx(streamType: NERtcVideoStreamType, config: NERtcCameraCaptureConfig): number;
     /**
      * 设置视频配置。
      * <pre>
@@ -395,6 +598,19 @@ declare class NERtcEngine extends EventEmitter {
      * - 2 清晰度优先
      * - 3 平衡模式
      * </pre>
+     * @param {number} config.mirror_mode 设置本地视频编码的镜像模式，即本地发送视频的镜像模式，只影响远端用户看到的视频画面:
+     * <pre>
+     * - 0 Windows/macOS SDK 启用镜像模式。在 iOS/Android 平台中：如果你使用前置摄像头，SDK 默认启用镜像模式；如果你使用后置摄像头，SDK 默认关闭镜像模式。
+     * - 1 启用镜像模式。
+     * - 2 清晰度优先
+     * - 3 关闭镜像模式(默认)。
+     * </pre>
+     * @param {number} config.orientation_mode 编码策略:
+     * <pre>
+     * - 0 该模式下 SDK 输出的视频方向与采集到的视频方向一致。接收端会根据收到的视频旋转信息对视频进行旋转（默认）。
+     * - 1 该模式下 SDK 固定输出横屏模式的视频。如果采集到的视频是竖屏模式，则视频编码器会对其进行裁剪。
+     * - 2 该模式下 SDK 固定输出竖屏模式的视频，如果采集到的视频是横屏模式，则视频编码器会对其进行裁剪。
+     * </pre>
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功；
@@ -402,7 +618,82 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setVideoConfig(config: NERtcVideoConfig): number;
-    setVideoConfigEx(type: number, config: NERtcVideoConfig): number;
+    /**
+     * 设置视频配置。
+     * @since V5.4.0
+     * <pre>
+     * 该方法设置视频配置。每个属性对应一套视频参数，如分辨率等，会在摄像头重启后生效。 所有设置的参数均为理想情况下的最大值。当视频引擎因网络环境等原因无法达到设置的分辨率的最大值时，会取最接近最大值的那个值。
+     * </pre>
+     * @param {number} streamType 视频通道类型。
+     * <pre>
+     * - 0: 主流。
+     * - 1: 辅流。
+     * </pre>
+     * @param {object} config 视频配置:
+     * @param {number} config.max_profile 视频编码的分辨率，用于衡量编码质量:
+     * <pre>
+     * - 0 160x90/120, 15fps
+     * - 1 320x180/240, 15fps
+     * - 2 640x360/480, 30fps
+     * - 3 1280x720, 30fps
+     * - 4 1920x1080, 30fps
+     * </pre>
+     * @param {number} config.width 视频编码自定义分辨率之宽度。width为0表示使用max_profile
+     * @param {number} config.height 视频编码自定义分辨率之高度。height为0表示使用max_profile
+     * @param {number} config.crop_mode 视频画面裁剪模式:
+     * <pre>
+     * - 0 Device Defalut
+     * - 1 16:9
+     * - 2 4:3
+     * - 3 1:1
+     * </pre>
+     * @param {number} config.framerate 视频帧率:
+     * <pre>
+     * - 0 默认帧率
+     * - 7 7帧每秒
+     * - 10 10帧每秒
+     * - 15 15帧每秒
+     * - 24 24帧每秒
+     * - 30 30帧每秒
+     * - 60 60帧每秒
+     * </pre>
+     * @param {number} config.min_framerate 视频最小帧率:
+     * <pre>
+     * - 0 默认帧率
+     * - 7 7帧每秒
+     * - 10 10帧每秒
+     * - 15 15帧每秒
+     * - 24 24帧每秒
+     * - 30 30帧每秒
+     * </pre>
+     * @param {number} [config.bitrate=0] 视频编码码率kbps，取0时使用默认值
+     * @param {number} [config.min_bitrate=0] 视频编码码率下限kbps，取0时使用默认值
+     * @param {number} config.degradation_preference 编码策略:
+     * <pre>
+     * - 0 使用引擎推荐值。通话场景使用平衡模式，直播推流场景使用清晰优先
+     * - 1 帧率优先
+     * - 2 清晰度优先
+     * - 3 平衡模式
+     * </pre>
+     * @param {number} config.mirror_mode 设置本地视频编码的镜像模式，即本地发送视频的镜像模式，只影响远端用户看到的视频画面:
+     * <pre>
+    * - 0 Windows/macOS SDK 启用镜像模式。
+     * - 1 启用镜像模式。
+     * - 2 （默认）关闭镜像模式。
+     * </pre>
+     * @param {NERtcVideoOutputOrientationMode} config.orientation_mode 编码策略:
+     * <pre>
+     * - 0 该模式下 SDK 输出的视频方向与采集到的视频方向一致。接收端会根据收到的视频旋转信息对视频进行旋转（默认）。
+     * - 1 该模式下 SDK 固定输出横屏模式的视频。如果采集到的视频是竖屏模式，则视频编码器会对其进行裁剪。
+     * - 2 该模式下 SDK 固定输出竖屏模式的视频，如果采集到的视频是横屏模式，则视频编码器会对其进行裁剪。
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setVideoConfigEx(streamType: NERtcVideoStreamType, config: NERtcVideoConfig): number;
     /**
      * 设置视频双流发送。
      * <pre>
@@ -504,7 +795,33 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setLocalVideoMirrorMode(mode: NERtcVideoMirrorMode): number;
-    setLocalVideoMirrorModeEx(type: number, mode: NERtcVideoMirrorMode): number;
+    /**
+    * 设置本地视频镜像模式。
+    * @since V5.4.0
+    * <pre>
+    * 通过此接口可以设置本地视频是否开启镜像模式，即画面是否左右翻转。
+    * <b>NOTE:</b>
+    * - 纯音频 SDK 禁用该接口
+    * - 本地视频画布的镜像模式仅影响本地用户所见，不影响远端用户所见。您的应用层可以多次调用此方法更改镜像模式。
+    * </pre>
+    * @param {number} streamType 视频通道类型。
+    * <pre>
+    * - 0: 主流。
+    * - 1: 辅流。
+    * </pre>
+    * @param {number} mode  视频镜像模式:
+    * <pre>
+    * - 0 Windows/macOS SDK 启用镜像模式。
+    * - 1 启用镜像模式。
+    * - 2 （默认）关闭镜像模式。
+    * </pre>
+    * @returns {number}
+    * <pre>
+    * - 0: 方法调用成功；
+    * - 其他: 方法调用失败。
+    * </pre>
+    */
+    setLocalVideoMirrorModeEx(streamType: NERtcVideoStreamType, mode: NERtcVideoMirrorMode): number;
     /**
      * 设置远端用户辅流视图。
      * <pre>
@@ -565,9 +882,32 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     startVideoPreview(): number;
-    startVideoPreviewEx(type: number): number;
+    /**
+     * 开启视频预览。
+     * @since V5.4.0
+     * <pre>
+     * 该方法用于在进入频道前启动本地视频预览。调用该 API 前，必须:
+     * - 调用 {@link NERtcEngine#setupLocalVideoCanvas} 设置预览窗口；
+     * - 调用 {@link NERtcEngine#setVideoDevice} 前必须先设置设备id；
+     * <b>NOTE:</b> 启用了本地视频预览后，在进入频道前，本地预览必须先关闭，需要调用 {@link NERtcEngine#stopVideoPreview}。
+     * </pre>
+     * @param {number} streamType 视频通道类型。
+     * <pre>
+     * - 0: 主流。
+     * - 1: 辅流。
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    startVideoPreviewEx(streamType: number): number;
     /**
      * 停止视频预览。
+     * <pre>
+     * 通过此接口可以实现在预览本地视频后关闭预览。
+     * </pre>
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功；
@@ -575,7 +915,23 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     stopVideoPreview(): number;
-    stopVideoPreviewEx(type: number): number;
+    /**
+     * 停止视频预览。
+     * <pre>
+     * 通过此接口可以实现在预览本地视频后关闭预览。
+     * </pre>
+     * @param {number} streamType 视频通道类型。
+     * <pre>
+     * - 0: 主流。
+     * - 1: 辅流。
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    stopVideoPreviewEx(streamType: number): number;
     /**
      * 开关本地视频发送。
      * <pre>
@@ -593,7 +949,28 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     muteLocalVideoStream(enabled: Boolean): number;
-    muteLocalVideoStreamEx(type: number, enabled: boolean): number;
+    /**
+     * 开关本地视频发送。
+     * <pre>
+     * 调用该方法禁视频流时，SDK 不再发送本地视频流，但摄像头仍然处于工作状态。相比于 {@link NERtcEngine#enableLocalVideo} (false) 用于控制本地视频流发送的方法，该方法响应速度更快。该方法不影响本地视频流获取，没有禁用摄像头。
+     * </pre>
+     * @param {number} streamType 视频通道类型。
+     * <pre>
+     * - 0: 视频主流。
+     * - 1: 视频辅流。
+     * </pre>
+     * @param {boolean} mute
+     * <pre>
+     * - true: 不发送本地视频流
+     * - false: 发送本地视频流（默认）
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    muteLocalVideoStreamEx(streamType: number, enabled: boolean): number;
     /**
      * 通过 JSON 配置 SDK 提供技术预览或特别定制功能。以标准化方式公开 JSON 选项。
      * @param {object} parameters JSON 字符串形式的参数
@@ -647,8 +1024,79 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setParameters(parameters: String): number;
-    setRecordingAudioFrameParameters(format: any): number;
-    setPlaybackAudioFrameParameters(format: any): number;
+    /**
+    * 设置采集的音频格式。
+    * @since V5.4.0
+    * <pre>
+    * <b>NOTE:</b>
+    * - 请在初始化后调用该方法，且该方法在加入房间前后均可调用。
+    * - 适用于需要监听音频 PCM 采集数据回调并指定回调的数据格式的场景。
+    * - 若您希望使用音频的原始格式，format 参数传 NULL 即可。
+    * </pre>
+    * @param {object} format 音频帧请求格式
+    * @param {Number} format.channels 音频声道数量:
+    * <pre>
+    * - 1 单声道
+    * - 2 双声道
+    * </pre>
+    * @param {Number} format.sample_rate 采样率。
+    * @param {number} format.mode 读写模式：
+    * <pre>
+    * 0 返回数据只读模式
+    * 1 返回数据可读写
+    * </pre>
+    * @returns {number}
+    * <pre>
+    * - 0: 方法调用成功；
+    * - 其他: 方法调用失败。
+    * </pre>
+    */
+    setRecordingAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number;
+    /**
+     * 设置音频播放回调的声音格式。
+     * @since V5.4.0
+     * <pre>
+     * <b>NOTE:</b>
+     * - 请在初始化后调用该方法，且该方法仅可在加入房间后调用。
+     * - 适用于需要自行对待播放的声音进行二次处理的场景。
+     * </pre>
+     * @param {object} format 音频帧请求格式
+     * @param {Number} format.channels 音频声道数量:
+     * <pre>
+     * - 1 单声道
+     * - 2 双声道
+     * </pre>
+     * @param {Number} format.sample_rate 采样率。
+     * @param {number} format.mode 读写模式：
+     * <pre>
+     * 0 返回数据只读模式
+     * 1 返回数据可读写
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setPlaybackAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number;
+    /**
+    * 设置采集和播放声音混音后的音频数据采样率。
+    * @since V5.4.0
+    * <pre>
+    * 通过本接口可以实现设置 onMixedAudioFrame回调的混音音频采样率
+    * <b>NOTE:</b>
+    * - 请在初始化后调用该方法，且该方法在加入房间前后均可调用。
+    * - 适用于需要获取本地用户和远端所有用户的声音的场景，比如通话录音的场景。
+    * - 该方法设置内部引擎为启用状态，在离开房间后设置会重置为默认状态。
+    * - 未调用该接口设置返回的音频数据格式时，回调中的采样率取默认值。
+    * </pre>
+    * @param {Number} sample_rate 采样率。
+    * @returns {number}
+    * <pre>
+    * - 0: 方法调用成功；
+    * - 其他: 方法调用失败。
+    * </pre>
+    */
     setMixedAudioFrameParameters(sample_rate: number): number;
     /**
      * 开启音频dump。
@@ -659,6 +1107,21 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     startAudioDump(): number;
+    /**
+     * 开启音频dump。
+     * @since V5.4.0
+     * @param {number} type 音频dump类型。
+     * <pre>
+     * - 0: 仅输出.dump文件（默认）。
+     * - 1: 输出.dump和.wav文件。
+     * - 2: 仅输出.wav文件.
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
     startAudioDumpEx(type: number): number;
     /**
      * 结束音频dump。
@@ -682,6 +1145,9 @@ declare class NERtcEngine extends EventEmitter {
      * @param {number} [option.send_volume=100] 发送音量。最大为 100（默认）含义（0%-100%）
      * @param {boolean} [option.playback_enabled=true] 是否可回放，默认为 true
      * @param {number} [option.playback_volume=100] 回放音量。最大为 100（默认）
+     * @param {number} [option.start_timestamp] 音乐文件开始播放的时间，UTC 时间戳，即从1970 年 1 月 1 日 0 点 0 分 0 秒开始到事件发生时的毫秒数。默认值为 0，表示立即播放。
+     * @param {number} [option.NERtcAudioStreamType] 伴音跟随音频主流还是辅流，默认跟随主流。
+     * @param {number} [option.progress_interval] 伴音播放进度回调间隔，单位ms，取值范围为 100~10000, 默认1000ms。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功；
@@ -812,7 +1278,29 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setAudioMixingPosition(pos: number): number;
+    /**
+     * 设置当前伴音文件的音调。
+     * @since v5.4.0
+     * <pre>
+     * 通过此接口可以实现当本地人声和播放的音乐文件混音时，仅调节音乐文件的音调。
+     * <b>NOTE:</b>
+     * - 当前伴音任务结束后，此接口的设置会恢复至默认。
+     * </pre>
+     * @param {number} pitch 当前伴音文件的音调。默认值为 0，即不调整音调，取值范围为 -12 ~ 12
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
     setAudioMixingPitch(pitch: number): number;
+    /**
+    * 获取当前伴音文件的音调。
+    * @since v5.4.0
+    * <pre>
+    * 请先调用startAudioMixing方法开启伴音。
+    * @returns {number} 当前伴音文件音调
+    */
     getAudioMixingPitch(): number;
     /**
      * 播放指定音效文件。
@@ -825,9 +1313,12 @@ declare class NERtcEngine extends EventEmitter {
      * @param {String} opt[].path 本地文件全路径或URL <256 chars
      * @param {number} [opt[].loop_count=1] 循环次数， <= 0, 表示无限循环，默认 1
      * @param {boolean} [opt[].send_enabled=true] 是否可发送，默认为 true
-     * @param {number} opt[].send_volume 发送音量。最大为 100（默认）含义（0%-100%）
+     * @param {number} [opt[].send_volume] 发送音量。最大为 100（默认）含义（0%-100%）
      * @param {boolean} [opt[].playback_enabled=true] 是否可回放，默认为 true
-     * @param {number} opt[].playback_volume  回放音量。最大为 100（默认）
+     * @param {number} [opt[].playback_volume]  回放音量。最大为 100（默认）
+     * @param {number} [opt[].start_timestamp] 音乐文件开始播放的时间，UTC 时间戳，即从1970 年 1 月 1 日 0 点 0 分 0 秒开始到事件发生时的毫秒数。默认值为 0，表示立即播放。
+     * @param {number} [opt[].NERtcAudioStreamType] 伴音跟随音频主流还是辅流，默认跟随主流。
+     * @param {number} [opt[].progress_interval] 伴音播放进度回调间隔，单位ms，取值范围为 100~10000, 默认1000ms。
      * @returns {number}
      * <pre>
      * - 0: 方法调用成功；
@@ -848,7 +1339,31 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     stopEffect(effectId: number): number;
+    /**
+     * 设置指定音效文件的音调。
+     * @since v5.4.0
+     * <pre>
+     * 通过此接口可以实现当本地人声和播放的音乐文件混音时，仅调节音乐文件的音调。
+     * <b>NOTE:</b>
+     * - 当前音效任务结束后，此接口的设置会恢复至默认。
+     * </pre>
+     * @param {number} 指定音效文件的 ID。每个音效文件均对应唯一的 ID。
+     * @param {number} pitch 当前音效文件的音调。默认值为 0，即不调整音调，取值范围为 -12 ~ 12。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
     setEffectPitch(effectId: number, pitch: number): number;
+    /**
+     * 获取指定音效文件的音调。
+     * @since v5.4.0
+     * <pre>
+     * 请先调用playEffect方法开启伴音。
+     * </pre>
+     * @returns {number} 当前音效文件音调
+     */
     getEffectPitch(effectId: number): number;
     /**
      * 停止播放所有音效文件。
@@ -897,8 +1412,36 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     pauseAllEffects(): number;
+    /**
+     * 设置指定音效文件的播放位置。
+     * @since v5.4.0
+     * <pre>
+     * 通过此接口可以实现根据实际情况播放音效文件，而非从头到尾播放整个文件。
+     * <b>NOTE:</b>
+     * - 请在引擎初始化之后调用此接口，且该方法仅可在加入房间后调用。
+     * </pre>
+     * @param {number} effectId 指定音效文件的 ID。每个音效文件均对应唯一的 ID。
+     * @param {number} timestamp_ms 指定音效文件的起始播放位置。单位为毫秒。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
     setEffectPosition(effectId: number, pos: number): number;
+    /**
+     * 获取指定音效文件的播放进度。
+     * @since v5.4.0
+     * <pre>
+     * 请先调用playEffect方法开启伴音。
+     * @returns {number} 当前音效文件音调
+     */
     getEffectCurrentPosition(effectId: number): number;
+    /**
+     * 获取指定音效文件的时长。
+     * @since v5.4.0
+     * @returns {number} 当前音效文件的时长.
+     */
     getEffectDuration(effectId: number): number;
     /**
      * 恢复播放所有音效文件。
@@ -962,12 +1505,147 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      */
     getEffectPlaybackVolume(effectId: number): number;
+    /**
+     * 引擎3D音效算法开关.
+     * @since v5.4.0
+     * <pre>
+     * 通话前调用，通话结束后不重置
+     * </pre>
+     * @param {boolean} enable 是否打开3D音效算法功能.
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
     enableSpatializer(enable: boolean): number;
-    updateSpatializerAudioRecvRange(audible_distance: number, conversational_distance: number, roll_off: number): number;
-    updateSpatializerSelfPosition(info: any): number;
+    /**
+     * 引擎3D音效算法距离范围设置
+     * @since v5.4.0
+     * <pre>
+     * 依赖enableSpatializer接口开启，通话前调用
+     * </pre>
+     * @param {number} audible_distance 监听器能够听到扬声器并接收其文本消息的距离扬声器的最大距离。[0,1000] 默认值为 32。
+     * @param {number} conversational_distance 控制扬声器音频保持其原始音量的范围，超出该范围时，语音聊天的响度在被听到时开始淡出。
+     * @param {number} roll_off 距离衰减模式:
+     * <pre>
+     * 0: 指数模式
+     * 1: 线性模式
+     * 2: 无衰减
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    updateSpatializerAudioRecvRange(audible_distance: number, conversational_distance: number, roll_off: NERtcDistanceRolloffModel): number;
+    /**
+     * 引擎3D音效算法中本人坐标方位更新接口
+     * @since v5.4.0
+     * <pre>
+     * 依赖enableSpatializer接口开启，enableSpatializer接口关闭后重置设置
+     * </pre>
+     * @param {obejct} info 3D音效算法中坐标信息。
+     * @param {Array<Number>} info.speaker_position 说话位置信息，默认值{0,0,0}。
+     * @param {Array<Number>} info.speaker_quaternion 说话旋转信息，默认值{0,0,0,0}。
+     * @param {Array<Number>} info.head_position 听觉位置信息，默认值{0,0,0}。
+     * @param {Array<Number>} info.head_quaternion 听觉旋转信息，默认值{0,0,0,0}。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    updateSpatializerSelfPosition(info: NERtcSpatializerPositionInfo): number;
+    /**
+     * 引擎3D音效算法中房间混响效果开关
+     * @since v5.4.0
+     * <pre>
+     * 依赖enableSpatializer接口开启
+     * </pre>
+     * @param {boolean} enable 混响效果开关，默认值关闭
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
     enableSpatializerRoomEffects(enable: boolean): number;
-    setSpatializerRoomProperty(room_property: any): number;
-    setSpatializerRenderMode(mode: number): number;
+    /**
+     * 引擎3D音效算法中房间混响属性
+     * @since v5.4.0
+     * <pre>
+     * 依赖enableSpatializer接口开启
+     * </pre>
+     * @param {object} room_property 3D音效房间属性设置
+     * @param {number} room_property.room_capacity 空间音效房间大小
+     * <pre>
+     * - 0 小房间。
+     * - 1 中等大小房间
+     * - 2 大房间
+     * - 3 巨大房间
+     * - 4 无房间效果
+     * </pre>
+     * @param {number} room_property.material 房间属性
+     * <pre>
+     * - 0 透明的
+     * - 1 声学天花板，未开放
+     * - 2 砖块，未开放
+     * - 3 涂漆的砖块，未开放
+     * - 4 粗糙的混凝土块，未开放
+     * - 5 涂漆的混凝土块，未开放
+     * - 6 厚重的窗帘
+     * - 7 隔音的玻璃纤维，未开放
+     * - 8 薄的的玻璃，未开放
+     * - 9 茂密的草地，未开放
+     * - 10 草地
+     * - 11 铺装了油毡的混凝土，未开放
+     * - 12 大理石
+     * - 13 金属，未开放
+     * - 14 镶嵌木板的混凝土，未开放
+     * - 15 石膏，未开放
+     * - 16 粗糙石膏，未开放
+     * - 17 光滑石膏，未开放
+     * - 18 木板，未开放
+     * - 19 石膏灰胶纸板，未开放
+     * - 20 水面或者冰面，未开放
+     * - 21 木头天花板，未开放
+     * - 22 木头枪板，未开放
+     * - 23 均匀分布，未开放
+     * </pre>
+     * @param {number} room_property.reflection_scalar 反射比例，默认值1.0
+     * @param {number} room_property.reverb_gain 混响增益比例因子，默认值1.0
+     * @param {number} room_property.reverb_time 混响时间比例因子，默认值1.0
+     * @param {number} room_property.reverb_brightness 混响亮度，默认值1.0
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setSpatializerRoomProperty(room_property: NERtcSpatializerRoomProperty): number;
+    /**
+     * 引擎3D音效算法中渲染模式
+     * @since v5.4.0
+     * <pre>
+     * 依赖enableSpatializer接口开启
+     * </pre>
+     * @param {number} mode 空间音效渲染模式:
+     * <pre>
+     * - 0 立体声
+     * - 1 双声道低
+     * - 2 双声道中
+     * - 3 双声道高
+     * - 4 仅房间音效
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    setSpatializerRenderMode(mode: NERtcSpatializerRenderMode): number;
     /**
      * 开启或关闭耳返。
      * <pre>
@@ -1009,6 +1687,29 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     enableAudioVolumeIndication(enabled: boolean, interval: number): number;
+    /**
+     * 启用说话者音量提示。该方法允许 SDK 定期向 App 反馈当前谁在说话以及说话者的音量。
+     * @since V4.5.d
+     * <pre>
+     * 启用该方法后，无论频道内是否有人说话，可以通过{@link NERtcEngine#on}方法监听 onRemoteAudioVolumeIndication，根据设置的间隔时间返回音量提示事件。
+     * </pre>
+     * @param {boolean} enable 是否启用说话者音量提示。
+     * <pre>
+     * - true 启用说话者音量提示
+     * - false 关闭说话者音量提示
+     * </pre>
+     * @param {number} interval 指定音量提示的时间间隔，单位为毫秒。必须设置为 100 毫秒的整数倍值。
+     * @param {boolean} intervaenableVadl 是否启用本地采集人声监测:
+     * <pre>
+     * - true 启用本地采集人声监测
+     * - false 关闭本地采集人声监测
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - d: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
     enableAudioVolumeIndicationEx(enabled: boolean, interval: number, enableVad: boolean): number;
     /**
      * 通过指定区域共享屏幕。共享一个屏幕或该屏幕的部分区域。用户需要在该方法中指定想要共享的屏幕区域。
@@ -1172,6 +1873,20 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     updateScreenCaptureRegion(regionRect: NERtcRectangle): number;
+    /**
+     * 在共享屏幕或窗口时，更新是否显示鼠标。
+     * @since V5.4.0
+     * @param {boolean} capture_cursor  屏幕共享时是否捕捉鼠标光标。
+     * <pre>
+     * - true 共享屏幕时显示鼠标
+     * - false 共享屏幕时不显示鼠标
+     * </pre>
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
     setScreenCaptureMouseCursor(capture_cursor: boolean): number;
     /**
      * 停止屏幕共享。
@@ -1853,13 +2568,36 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setVideoDevice(id: String): number;
-    setVideoDeviceEx(id: string, type: number): number;
+    /**
+    * 指定视频采集设备。
+    * @param {string} id 视频采集设备的设备 ID。可以通过 {@link NERtcEngine#enumerateCaptureDevices}获取。
+    * @param {number} streamType 视频流类型。
+    * <pre>
+    * - 0：视频流主流。
+    * - 1：视频流辅流。
+    * </pre>
+    * @returns {number}
+    * <pre>
+    * - 0: 方法调用成功；
+    * - 其他: 方法调用失败。
+    * </pre>
+    */
+    setVideoDeviceEx(id: string, streamType: NERtcVideoStreamType): number;
     /**
      * 获取当前使用的视频采集设备信息。
      * @returns {String} 设备ID
      */
     getVideoDevice(): String;
-    getVideoDeviceEx(type: number): string;
+    /**
+     * 获取当前使用的视频采集设备信息。
+     * @param {number} streamType 视频流类型。
+     * <pre>
+     * - 0：视频流主流。
+     * - 1：视频流辅流。
+     * </pre>
+     * @returns {String} 设备ID
+     */
+    getVideoDeviceEx(streamType: NERtcVideoStreamType): string;
     /**
      * 设置 SDK 预设的人声的变声音效。
      * @since 4.1.110
@@ -2018,6 +2756,22 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     adjustUserPlaybackSignalVolume(uid: number, volume: number): number;
+    /**
+     * 调节本地播放的指定房间的所有远端用户的信号音量。
+     * @since V5.4.0
+     * <pre>
+     * -通过此接口可以实现在通话过程中随时调节指定房间内的所有远端用户在本地播放的混音音量。
+     * <b>NOTE:</b>
+     * - 请在引擎初始化之后调用此接口，该方法在加入房间前后都可调用。
+     * - 该方法设置内部引擎为启用状态，在 leaveChannel 后失效，但在本次通话过程中有效。
+     * </pre>
+     * @param  {number} volume 播放音量，取值范围为 [0,400]。
+     * @returns {number}
+     * <pre>
+     * - 0: 方法调用成功。
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
     adjustChannelPlaybackSignalVolume(volume: number): number;
     /**
    * 快速切换音视频房间。
@@ -2043,7 +2797,33 @@ declare class NERtcEngine extends EventEmitter {
    * </pre>
    */
     switchChannel(token: String, channelName: String): number;
-    switchChannelEx(token: string, channelName: string, option: any): number;
+    /**
+     * 快速切换音视频房间。
+     * @since V5.4.0
+     * <pre>
+     * - 房间场景为直播场景时，房间中角色为观众的成员可以调用该方法从当前房间快速切换至另一个房间。
+     * - 成功调用该方切换房间后，本端用户会先收到离开房间的回调 onLeaveChannel，再收到成功加入新房间的回调 onJoinChannel。远端用户会收到 onUserLeave 和 onUserJoined 回调。
+     * <b>NOTE:</b>
+     * - 快速切换房间功能默认关闭。如需使用，请联系技术支持免费开通。
+     * - 该方法仅适用于直播场景中，角色为观众的音视频房间成员。即已通过接口 setchannelprofile 设置房间场景为直播，通过 setClientRole 设置房间成员的角色为观众。
+     * - 房间成员成功切换房间后，默认订阅房间内所有其他成员的音频流，因此产生用量并影响计费。如果想取消订阅，可以通过调用相应的 subscribeRemoteAudio 方法传入 false 实现。
+     * </pre>
+     * @param {number}  token 安全认证签名（NERTC Token）。
+     * <pre>
+     * - null。非安全模式下可设置为 null。安全性不高，建议在产品正式上线前联系对应商务经理转为安全模式。
+     * - 已获取的 NERTC Token。安全模式下必须设置为获取到的 Token 。若未传入正确的 Token，用户将无法进入房间。推荐使用安全模式。
+     * </pre>
+     * @param {string} channelName 期望切换到的目标房间名称。
+     * @param {Object} channelOptions 加入音视频房间时的一些可选信息。
+     * @param {string} channelOptions.custom_info 自定义信息，最长支持 127 个字符。
+     * @param {string} channelOptions.permission_key 权限密钥。能控制通话时长及媒体权限能力。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功。
+     * - 其他：方法调用失败。
+     * </pre>
+     */
+    switchChannelEx(token: string, channelName: string, channelOptions: NERtcJoinChannelOptions): number;
     /**
     * 设置本地用户的媒体流优先级。
     * @since 4.4.8
@@ -2085,6 +2865,19 @@ declare class NERtcEngine extends EventEmitter {
     * </pre>
     */
     setExcludeWindowList(param: NERtcScreenCaptureWindowParam): number;
+    /**
+    * 更新屏幕共享参数。
+    * @since V5.4.0
+    * <pre>
+    *  - 仅支持Windows
+    * </pre>
+    * @param {list} window_list 需屏蔽的窗口ID列表, 例如：[id1,id2...]。
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功。
+    * - 其他：方法调用失败。
+    * </pre>
+    */
     updateScreenCaptureParameters(param: NERtcScreenCaptureWindowParam): number;
     /**
     * 开始客户端录音。
@@ -2113,7 +2906,53 @@ declare class NERtcEngine extends EventEmitter {
     * </pre>
     */
     startAudioRecording(filePath: String, sampleRate: number, quality: NERtcAudioRecordingQuality): number;
-    startAudioRecordingWithConfig(config: any): number;
+    /**
+    * 开始客户端录音。
+    * @since V5.4.0
+    * <pre>
+    * - 调用该方法后，客户端会录制房间内所有用户混音后的音频流，并将其保存在本地一个录音文件中。录制开始或结束时，自动触发 onAudioRecording() 回调。
+    * - 指定的录音音质不同，录音文件会保存为不同格式：
+    * - WAV：音质保真度高，文件大。
+    * - AAC：音质保真度低，文件小。
+    * <b>NOTE:</b>
+    * - 请在加入房间后调用此方法。
+    * - 客户端只能同时运行一个录音任务，正在录音时，如果重复调用 startAudioRecording，会结束当前录制任务，并重新开始新的录音任务。
+    * - 当前用户离开房间时，自动停止录音。您也可以在通话中随时调用 stopAudioRecording 手动停止录音。
+    * </pre>
+    * @param {object} config 录音配置。
+    * @param {String} config.filePath 录音文件在本地保存的绝对路径，需要精确到文件名及格式。例如：sdcard/xxx/audio.aac。
+    * <pre>
+    * - 请确保指定的路径存在并且可写。
+    * - 目前仅支持 WAV 或 AAC 文件格式。
+    * </pre>
+    * @param {number} config.sampleRate 录音采样率（Hz），可以设为 16000、32000（默认）、44100 或 48000。
+    * @param {number} config.quality 录音音质，只在 AAC 格式下有效:
+    * <pre>
+    * - 0 低音质
+    * - 1 中音质
+    * - 2 高音质
+    * </pre>
+    * @param {number} config.position 录音文件所包含的内容:
+    * <pre>
+    * - 0 录制本地和所有远端用户混音后的音频（默认）
+    * - 1 仅录制本地用户的音频
+    * - 2 仅录制所有远端用户的音频
+    * </pre>
+    * @param {number} config.cycleTime  录制过程中，循环缓存的最大时间长度，单位(s):
+    * <pre>
+    * - 0 录制本地和所有远端用户混音后的音频（默认）
+    * - 10 音频录制缓存时间为10s，StopAudioRectording()后，将缓存都写到文件，文件数据时间跨度为: [0,10s]
+    * - 60 音频录制缓存时间为60s，StopAudioRectording()后，将缓存都写到文件，文件数据时间跨度为: [0,60s]
+    * - 360 音频录制缓存时间为360s，StopAudioRectording()后，将缓存都写到文件，文件数据时间跨度为: [0,360s]
+    * - 900 音频录制缓存时间为900s，StopAudioRectording()后，将缓存都写到文件，文件数据时间跨度为: [0,900s]
+    * </pre>
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功。
+    * - 其他：方法调用失败。
+    * </pre>
+    */
+    startAudioRecordingWithConfig(config: NERtcAudioRecordingConfiguration): number;
     /**
     * 停止客户端录音。
     * @since 4.4.8
@@ -2330,27 +3169,420 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     stopLastmileProbeTest(): number;
+    /**
+     * 设置远端用户音频流为高优先级。
+     * @since V5.4.0
+     * <pre>
+     * 支持在音频自动订阅的情况下，设置某一个远端用户的音频为最高优先级，可以优先听到该用户的音频。
+     *  <b>NOTE:</b>
+     * - 该接口需要通话中设置，并需要自动订阅打开（默认打开）。
+     * - 该接口只能设置一个用户的优先级，后设置的会覆盖之前的设置。
+     * - 该接口通话结束后，优先级设置重置。
+     * </pre>
+     * @param enable 是否设置音频订阅优先级。
+     * <pre>
+     * - true 设置音频订阅优先级。
+     * - false 取消设置音频订阅优先级。
+     * </pre>
+     * @param {number} uid 用户 ID。
+     * @return
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     setRemoteHighPriorityAudioStream(enable: boolean, uid: number): number;
+    /**
+    * 检测虚拟声卡是否安装（仅适用于 Mac 系统）
+    * @since V5.4.0
+    * <pre>
+    * 该接口会检测电脑是否安装最新版本的虚拟声卡。如果未安装，并且应用中已集成NERTCPrivilegedTask库，该接口会弹出安装虚拟声卡对话框，方便用户安装。
+    * </pre>
+    * @return
+    * <pre>
+    * - 0 电脑未安装网易虚拟声卡或虚拟声卡不是最新版本
+    * - 1 电脑已安装最新版本的网易虚拟声卡
+    * </pre>
+    */
     checkNECastAudioDriver(): number;
-    enableVirtualBackground(enable: boolean, config: any): number;
+    /**
+     * 启用/禁用虚拟背景。
+     * @since V5.4.0
+     * <pre>
+     * 启用虚拟背景功能后，您可以使用自定义背景图片替换本地用户的原始背景图片。
+     * 替换后，频道内所有用户都可以看到自定义背景图片。
+     *  <b>NOTE:</b>
+     * - 您可以通过onVirtualBackgroundSourceEnabled回调查看虚拟背景是否开启成功或出错原因。
+     * - 建议您使用配备 i5 CPU 及更高性能的设备。
+     * - 建议您在满足以下条件的场景中使用该功能：
+     * - 采用高清摄像设备，环境光线均匀。
+     * - 捕获的视频图像整洁，用户肖像半长且基本无遮挡，并且背景是与用户衣服颜色不同的单一颜色。
+     * - 虚拟背景功能不支持 Texture 格式的视频或通过 Push 方法从自定义视频捕获中获取的视频。
+     * </pre>
+     * @param enable 是否开启虚拟背景。
+     * <pre>
+     * - true 开启虚拟背景。
+     * - false 关闭虚拟背景
+     * </pre>
+     * @param {object} backgroundSource 自定义背景图像:
+     * @param {number} backgroundSource.background_source_type 自定义背景图片的类型
+     * <pre>
+     * - 1 背景图像为纯色（默认）
+     * - 2 背景图像只支持 PNG 或 JPG 格式的文件
+     * </pre>
+     * @param {number} backgroundSource.color 自定义背景图像的颜色。格式为RGB定义的十六进制整数，不带#号.
+     * @param {string} backgroundSource.source 自定义背景图片的本地绝对路径。支持 PNG 和 JPG 格式。
+     * @return
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    enableVirtualBackground(enable: boolean, backgroundSource: VirtualBackgroundSource): number;
+    /**
+    * 开启并设置云代理服务。
+    * @since V5.4.0
+    * <pre>
+    * 在内网环境下，如果用户防火墙开启了网络限制，请参考《使用云代理》将指定 IP 地址和端口号加入防火墙白名单，然后调用此方法开启云代理，并将 proxyType 参数设置为 NERtcTransportTypeUDPProxy(1)，即指定使用 UDP 协议的云代理。
+    * <b>NOTE:</b>
+    * - 请在加入房间前调用此方法。
+    * </pre>
+    * @param {number} proxyType 云代理类型。
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他: 调用失败
+    * </pre>
+    */
     setCloudProxy(type: number): number;
+    /**
+     * 开启或关闭本地数据通道。
+     * @since V5.4.0
+     * <pre>
+     * <b>NOTE:</b>
+     * - 该方法加入房间后才可调用。
+     * - 成功启用或禁用本地数据通道后，远端会触发 onUserDataStop 或 onUserDataStart  回调。
+     * </pre>
+     * @param {boolean} enable 是否启用本地数据通道:
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     enableLocalData(enable: boolean): number;
-    subscribeRemoteData(uid: number, sub: boolean): number;
-    sendData(data: any): number;
+    /**
+     * 取消或恢复订阅指定远端用户数据通道流。
+     * @since V5.4.0
+     * <pre>
+     * 加入房间时，默认订阅所有远端用户的数据通道流，您可以通过此方法取消或恢复订阅指定远端用户的数据通道流。
+     * <b>NOTE:</b>
+     * - 当kNERtcKeyAutoSubscribeData默认打开时，用户不能手动修改数据通道订阅状态
+     * </pre>
+     * @param {number} uid  指定用户的 ID。
+     * @param {boolean} subscribe 是否订阅远端用户数据通道流。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    subscribeRemoteData(uid: number, subscribe: boolean): number;
+    /**
+     * 通过数据通道发送数据。
+     * @since v5.4.0
+     * @param {ArrayBuffer} data 自定义数据。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功；
+     * - 其他: 方法调用失败。
+     * </pre>
+     */
+    sendData(data: ArrayBuffer): number;
+    /**
+    * 开启美颜功能模块。
+    * @since V5.4.0
+    * <pre>
+    * 调用此接口后，开启美颜引擎。如果后续不再需要使用美颜功能，可以调用 `stopBeauty` 结束美颜功能模块，销毁美颜引擎并释放资源。
+    * 开启美颜功能模块后，默认无美颜效果，您需要通过 `setBeautyEffect` 或其他滤镜、贴纸相关接口设置美颜或滤镜效果。
+    * <b>NOTE:</b>
+    * - 该方法需要在 `enableLocalVideo` 之前设置。
+    * - 该方法仅适用于 Windows 平台。
+    * </pre>
+    * @param {String} file_path 文件文件绝对路径。（例：windows环境下传入xxx\data\beauty\nebeauty）
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功
+    * - 其他: 调用失败
+    * </pre>
+    */
     startBeauty(file_path: string): number;
+    /**
+     * 结束美颜功能模块。
+     * @since V5.4.0
+     * <pre>
+     * 如果后续不再需要使用美颜功能，可以调用 `stopBeauty` 结束美颜功能模块，SDK 会自动销毁美颜引擎并释放资源。
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows 平台。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     stopBeauty(): number;
+    /**
+     * 暂停或恢复美颜效果。
+     * @since V5.4.0
+     * <pre>
+     * 通过此接口实现取消美颜效果后，包括全局美颜、滤镜在内的所有美颜效果都会暂时关闭，直至重新恢复美颜效果。
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows 平台。
+     * </pre>
+     * @param {Boolean} enabled 是否恢复美颜效果。
+     * <pre>
+     * - true 恢复美颜效果。
+     * - false 取消美颜效果。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     enableBeauty(enable: boolean): number;
+    /**
+     * 获取指定美颜类型的强度设置。
+     * @since V5.4.0
+     * <pre>
+     * 通过接口 `setBeautyEffect` 设置美颜效果及强度后，可以通过此接口查看指定美颜效果的强度设置。
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows 平台。
+     * </pre>
+     * @param {number} type 美颜类型
+     * @return {number} 指定美颜类型的强度
+     */
     getBeautyEffect(type: number): number;
+    /**
+     * 设置美颜效果
+     * @since V5.4.0
+     * <pre>
+     * 通过此接口可以实现设置磨皮、美白、大眼等多种全局美颜类型和对应的美颜强度。
+     * <b>NOTE:</b>
+     * - 请在引擎初始化之后调用此接口，且该方法在加入房间前后均可调用。
+     * - 您可以多次调用此接口以叠加多种全局美颜效果，也可以在此基础上通过其他方法叠加滤镜等自定义效果。
+     * - 该方法仅适用于 Windows 平台。
+     * </pre>
+     * @param {number} type 美颜类型:
+     * <pre>
+     * - 0 美牙
+     * - 1 亮眼
+     * - 2 美白
+     * - 3 磨皮
+     * - 4 小鼻
+     * - 5 眼距调整
+     * - 6 眼角调整
+     * - 7 嘴型调整
+     * - 8 大眼
+     * - 9 小脸
+     * - 10 下巴调整
+     * - 11 瘦脸
+     * - 12 红润
+     * - 13 长鼻
+     * - 14 人中
+     * - 15 嘴角
+     * - 16 圆眼
+     * - 17 开眼角
+     * </pre>
+     * @param {number} level 对应美颜类型的强度[1, 100]
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     setBeautyEffect(type: number, level: number): number;
+    /**
+     * 添加滤镜效果。
+     * @since V5.4.0
+     * <pre>
+     * 通过此接口可以实现加载滤镜资源，并添加对应的滤镜效果；若您需要更换滤镜，重复调用此接口使用新的滤镜资源即可。
+     * <b>NOTE:</b>
+     * - 请先调用 startBeauty 方法开启美颜功能模块。
+     * - 请在引擎初始化之后调用此接口，且该方法在加入房间前后均可调用。
+     * - 该方法仅适用于 Windows 平台。
+     * - 使用滤镜、贴纸和美妆等自定义美颜效果之前，请联系商务经理获取美颜资源或模型。
+     * - 滤镜效果可以和全局美颜、贴纸、美妆等效果互相叠加，但是不支持叠加多个滤镜。
+     * </pre>
+     * @param {String} file_path 滤镜资源或模型所在的绝对路径。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     addBeautyFilter(file_path: string): number;
+    /**
+     * 取消滤镜效果。
+     * @since V5.4.0
+     * <pre>
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows 平台。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     removeBeautyFilter(): number;
+    /**
+     * 设置滤镜强度。
+     * @since V5.4.0
+     * <pre>
+     * 取值越大，滤镜强度越大，开发者可以根据业务需求自定义设置滤镜强度。
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows 平台。
+     * - 滤镜强度设置实时生效，更换滤镜后需要重新设置滤镜强度，否则强度取默认值。
+     * </pre>
+     * @param {number} level 滤镜强度。取值范围为 [0 - 100]，默认值为 50。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     setBeautyFilterLevel(level: number): number;
+    /**
+     * （此接口为 beta 版本）添加贴纸效果。
+     * @since V5.4.0
+     * <pre>
+     * 此接口用于加载贴纸资源，添加对应的贴纸效果。需要更换贴纸时，重复调用此接口使用新的贴纸资源即可。
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows 平台。
+     * - 使用滤镜、贴纸和美妆等自定义美颜效果之前，需要先准备好对应的美颜资源或模型。
+     * - 贴纸效果可以和全局美颜、滤镜、美妆等效果互相叠加，但是不支持叠加多个贴纸。
+     * </pre>
+     * @param {String} file_path 贴纸资源或模型所在的绝对路径。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     addBeautySticker(file_path: string): number;
+    /**
+     * 此接口为 beta 版本）取消贴纸效果。
+     * @since V5.4.0
+     * <pre>
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows 平台。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     removeBeautySticker(): number;
+    /**
+     * （此接口为 beta 版本）添加美妆效果。
+     * @since V5.4.0
+     * <pre>
+     * 此接口用于加载美妆模型，添加对应的美妆效果。需要更换美妆效果时，重复调用此接口使用新的美妆模型即可。
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows 平台。
+     * - 使用滤镜、贴纸和美妆等自定义美颜效果之前，需要先准备好对应的美颜资源或模型。
+     * - 美妆效果可以和全局美颜、滤镜、贴纸等效果互相叠加，但是不支持叠加多个美妆效果。
+     * </pre>
+     * @param {String} file_path 美妆模型所在的绝对路径。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     addBeautyMakeup(file_path: string): number;
+    /**
+     * （此接口为 beta 版本）取消美妆效果。
+     * @since V5.4.0
+     * <pre>
+     * <b>NOTE:</b>
+     * - 该方法仅适用于 Windows 平台。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     removeBeautyMakeup(): number;
-    setLocalVoiceReverbParam(param: any): number;
+    /**
+     * 设置本地语音混响效果。
+     * @since V5.4.0
+     * <pre>
+     * 该方法在加入房间前后都能调用，通话结束后重置为默认的关闭状态。
+     * </pre>
+     * @param {object} param 混响参数
+     * @param {number} param.wetGain 湿信号，取值范围为 0 ~ 1，默认值为 0.0f。
+     * @param {number} param.dryGain 干信号，取值范围为 0 ~ 1，默认值为 1.0f。
+     * @param {number} param.damping 混响阻尼，取值范围为 0 ~ 1，默认值为 1.0f。
+     * @param {number} param.roomSize 房间大小，取值范围为 0.1 ~ 2，默认值为 0.1f。
+     * @param {number} param.decayTime 持续强度（余响），取值范围为 0.1 ~ 20，默认值为 0.1f。
+     * @param {number} param.preDelay 延迟长度，取值范围为 0 ~ 1，默认值为 0.0f。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    setLocalVoiceReverbParam(param: NERtcReverbParam): number;
+    /**
+     * 开启或关闭本地媒体流（主流）的发送。
+     * @since V5.4.0
+     * <pre>
+     * - 该方法用于开始或停止向网络发送本地音频或视频数据。
+     * - 该方法不影响接收或播放远端媒体流，也不会影响本地音频或视频的采集状态。
+     * <b>NOTE:</b>
+     * - 该方法暂时仅支持控制音频流的发送。
+     * - 该方法在加入房间前后均可调用。
+     * - 停止发送媒体流的状态会在通话结束后被重置为允许发送。
+     * - 成功调用该方法切换本地用户的发流状态后，房间内其他用户会收到onUserAudioStart（开启发送音频）或 onUserAudioStop（停止发送音频）的回调。
+     * </pre>
+     * @param {boolean} enabled 是否发布本地媒体流。
+     * <pre>
+     * - true 布本地媒体流(默认)。
+     * - false 不发布本地媒体流。
+     * </pre>
+     * @param {number} media_type 媒体发布类型，暂时仅支持音频。
+     * <pre>
+     * - 0 音频 pub 类型。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     enableMediaPub(enabled: boolean, mediaType: number): number;
+    /**
+     * 更新权限密钥。
+     * @since V5.4.0
+     * <pre>
+     * - 通过本接口可以实现当用户权限被变更，或者收到权限密钥即将过期的回调onPermissionKeyWillExpire时，更新权限密钥。
+     * <b>NOTE:</b>
+     * - 请确保已开通高级 Token 鉴权功能，具体请联系网易云信商务经理。
+     * - 请在引擎初始化之后调用此接口，且该方法仅可在加入房间后调用。
+     * - 适用于变更指定用户加入、创建房间或上下麦时发布流相关权限的场景。
+     * </pre>
+     * @param {string} key 新的权限密钥
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     updatePermissionKey(key: string): number;
     /**
      * init event handler
