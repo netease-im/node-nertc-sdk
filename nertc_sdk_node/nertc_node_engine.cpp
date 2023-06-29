@@ -447,14 +447,15 @@ NIM_SDK_NODE_API_DEF(initialize)
             context.log_dir_path = log_path_.c_str();
         }
         context.event_handler = _event_handler.get();
-        ret = rtc_engine_->initialize(context);
-        std::string para = "{\"sdk.business.scenario.type\": 6}";
+        std::string para = "{\"sdk.business.scenario.type\": 6, \"sdk.enable.encrypt.log\": false}";
         ret = rtc_engine_->setParameters(para.c_str());
+        ret = rtc_engine_->initialize(context);
         if (ret == 0)
         {
             rtc_engine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void **)&_adm);
             rtc_engine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void **)&_vdm);
         }
+        rtc_engine_->setStatsObserver(_stats_observer.get());
         std::string log_directory(context.log_dir_path);
         auto error_code = nelog::InitailizeLogFileStream(
                           log_directory.c_str(),
@@ -2021,7 +2022,6 @@ NIM_SDK_NODE_API_DEF(onStatsObserver)
     INIT_ENV
     do
     {
-        rtc_engine_->setStatsObserver(_stats_observer.get());
         std::string eventName;
         bool enable;
         napi_get_value_utf8_string(info[0], eventName);
@@ -2032,11 +2032,7 @@ NIM_SDK_NODE_API_DEF(onStatsObserver)
         }
         if (!enable)
         {
-            auto sz = _stats_observer->removeEventHandler(eventName);
-            if (sz == 0)
-            {
-                rtc_engine_->setStatsObserver(nullptr);
-            }
+            _stats_observer->removeEventHandler(eventName);
         }
         else
         {
