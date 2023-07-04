@@ -242,6 +242,38 @@ private:
 
 };
 
+class NertcNodeAudioFrameObserverHandler : public EventHandler, public nertc::INERtcAudioFrameObserver
+{
+private:
+    /* data */
+public:
+    NertcNodeAudioFrameObserverHandler(){};
+    ~NertcNodeAudioFrameObserverHandler(){};
+
+public:
+    virtual void onAudioFrameDidRecord(nertc::NERtcAudioFrame* frame) override;
+    
+    virtual void onSubStreamAudioFrameDidRecord(nertc::NERtcAudioFrame* frame) override;
+
+    virtual void onAudioFrameWillPlayback(nertc::NERtcAudioFrame* frame) override;
+
+    virtual void onMixedAudioFrame(nertc::NERtcAudioFrame* frame) override;
+
+    virtual void onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame) override;
+
+    virtual void onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame, nertc::channel_id_t cid) override;
+
+    virtual void onPlaybackSubStreamAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame,
+                                                           nertc::channel_id_t cid) override;
+
+
+private:
+    void Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame* frame);
+
+    void Node_onAudioFrameWillPlayback(nertc::NERtcAudioFrame* frame);
+
+
+};
 
 
 }

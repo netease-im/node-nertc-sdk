@@ -50,7 +50,8 @@ napi_status nertc_rever_param_obj_to_struct(const Napi::Env& env, const Napi::Ob
 
 //struct->obj
 napi_status nertc_camera_capture_struct_to_obj(const Napi::Env env,  nertc::NERtcCameraCaptureConfig& config,  Napi::Object& obj);
-
+napi_status nertc_audio_format_to_obj(const Napi::Env env, const nertc::NERtcAudioFormat& config,  Napi::Object& obj);
+napi_status nertc_audio_frame_to_obj(const Napi::Env env, const nertc::NERtcAudioFrame& config,  Napi::Object& obj);
 
 }
 

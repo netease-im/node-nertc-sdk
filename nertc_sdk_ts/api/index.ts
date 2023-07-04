@@ -5494,6 +5494,46 @@ class NERtcEngine extends EventEmitter {
             fire('onUserDataBufferedAmountChanged', uid, amount);
         });
 
+        /**
+         * 采集音频数据回调。
+         * <pre>
+         * 有本地音频数据驱动就会回调。
+         * </pre>
+         * @event NERtcEngine#onAudioFrameEvent
+         * @param {object} frame 音频帧。
+         * @param {number} frame.format 音频格式。
+         * @param {number} frame.format.type 音频类型, 默认：0 PCM 音频格式。
+         * @param {number} frame.format.channels 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。
+         * @param {number} frame.format.sample_rate 采样率。
+         * @param {number} frame.format.bytes_per_sample 每个采样点的字节数。对于 PCM 来说，一般使用 16 bit，即两个字节。
+         * @param {number} frame.format.samples_per_channel 每个房间的样本数量。
+         * @param {number} frame.data 数据缓冲区。有效数据长度为：samples_per_channel * channels * bytes_per_sample。
+         * @param {number} frame.sync_timestamp 同步音频主辅流的时间戳，一般只有在同时开启外部音频主流及辅流输入时用到。
+         */
+        this.nertcEngine.onAudioFrameEvent('onAudioFrameDidRecord', function (frame: any) {
+            fire('onAudioFrameDidRecord', frame);
+        });
+
+        /**
+         *播放音频数据回调，用于声音处理等操作。
+         * <pre>
+         * 有本地音频数据驱动就会回调。
+         * </pre>
+         * @event NERtcEngine#onAudioFrameEvent
+         * @param {object} frame 音频帧。
+         * @param {number} frame.format 音频格式。
+         * @param {number} frame.format.type 音频类型, 默认：0 PCM 音频格式。
+         * @param {number} frame.format.channels 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。
+         * @param {number} frame.format.sample_rate 采样率。
+         * @param {number} frame.format.bytes_per_sample 每个采样点的字节数。对于 PCM 来说，一般使用 16 bit，即两个字节。
+         * @param {number} frame.format.samples_per_channel 每个房间的样本数量。
+         * @param {number} frame.data 数据缓冲区。有效数据长度为：samples_per_channel * channels * bytes_per_sample。
+         * @param {number} frame.sync_timestamp 同步音频主辅流的时间戳，一般只有在同时开启外部音频主流及辅流输入时用到。
+         */
+        this.nertcEngine.onAudioFrameEvent('onAudioFrameWillPlayback', function (frame: any) {
+            fire('onAudioFrameWillPlayback', frame);
+        });
+
         this.nertcEngine.onVideoFrame(function (infos: any) {
             self.doVideoFrameReceived(infos);
         });

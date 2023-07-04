@@ -180,6 +180,7 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(setupVideoCanvas),
         SET_PROTOTYPE(onVideoFrame),
         SET_PROTOTYPE(onEvent),
+        SET_PROTOTYPE(onAudioFrameEvent),
     
         // 3.9
         SET_PROTOTYPE(setClientRole),
@@ -393,6 +394,7 @@ NertcNodeEngine::NertcNodeEngine(const Napi::CallbackInfo& info)
     _event_handler = std::make_shared<NertcNodeEventHandler>();
     _stats_observer = std::make_shared<NertcNodeRtcMediaStatsHandler>();
     _qs_handler = std::make_shared<NertcNodeVideoEncoderQosObserver>();
+    _audio_observer = std::make_shared<NertcNodeAudioFrameObserverHandler>();
 #ifdef WIN32
     _windows_helper = new WindowsHelpers();
     window_capture_helper_.reset(new WindowCaptureHelper());
@@ -454,6 +456,7 @@ NIM_SDK_NODE_API_DEF(initialize)
         {
             rtc_engine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void **)&_adm);
             rtc_engine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void **)&_vdm);
+            rtc_engine_->setAudioFrameObserver(_audio_observer.get());
         }
         rtc_engine_->setStatsObserver(_stats_observer.get());
         std::string log_directory(context.log_dir_path);
@@ -475,6 +478,8 @@ NIM_SDK_NODE_API_DEF(release)
     do
     {
         LOG_F(INFO, "-------------sdk release-------------");
+        rtc_engine_->setAudioFrameObserver(nullptr);
+        _audio_observer->removeAll();
         ret = rtc_engine_->stopVideoPreview();
 		// NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
 		// pTransporter->stopFlushVideo();
@@ -682,6 +687,19 @@ NIM_SDK_NODE_API_DEF(onEvent)
     napi_get_value_function(info[1], function);
   
     _event_handler->addEvent(event_name, std::move(function));
+    auto ret_value = env.Null();
+    return ret_value;
+}
+
+NIM_SDK_NODE_API_DEF(onAudioFrameEvent)
+{
+    auto env = info.Env();
+    std::string event_name = "";
+    Napi::FunctionReference function;
+    napi_get_value_utf8_string(info[0], event_name);
+    napi_get_value_function(info[1], function);
+  
+    _audio_observer->addEvent(event_name, std::move(function));
     auto ret_value = env.Null();
     return ret_value;
 }
