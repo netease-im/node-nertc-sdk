@@ -1919,39 +1919,32 @@ void NertcNodeAudioFrameObserverHandler::onAudioFrameDidRecord(nertc::NERtcAudio
 
 void NertcNodeAudioFrameObserverHandler::Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame* frame)
 {
- try{
-        auto it = _callbacks.find("onAudioFrameDidRecord");
-        if (it != _callbacks.end())
-        {  
-            auto function_reference = it->second;
-            auto env = function_reference->function.Env();
-            Napi::Object obj = Napi::Object::New(env);
-            nertc_audio_frame_to_obj(env, *frame, obj);
-            const std::vector<napi_value> args = {obj};
-            function_reference->function.Call(args);
+    auto it = _callbacks.find("onAudioFrameDidRecord");
+    if (it != _callbacks.end())
+    {  
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        Napi::Object obj = Napi::Object::New(env);
+        nertc_audio_frame_to_obj(env, *frame, obj);
+        const std::vector<napi_value> args = {obj};
+        function_reference->function.Call(args);
 
-            if(frame && frame->data) {
-                free((void*)frame->data);
-                frame->data = nullptr;
-                delete frame;
-                frame = nullptr;
-            }
+        if(frame && frame->data) {
+            free((void*)frame->data);
+            frame->data = nullptr;
+            delete frame;
+            frame = nullptr;
         }
-    }catch(...){
-        LOG_F(INFO, "Node_onRemoteAudioVolumeIndication exception");
     }
-
 }
 
 void NertcNodeAudioFrameObserverHandler::onSubStreamAudioFrameDidRecord(nertc::NERtcAudioFrame* frame)
 {
-    try{
-       
-
-
-    }catch(...){
-        LOG_F(INFO, "onSubStreamAudioFrameDidRecord exception");
-    }
+    // try{
+    //    LOG_F(INFO, "onSubStreamAudioFrameDidRecord");
+    // }catch(...){
+    //     LOG_F(INFO, "onSubStreamAudioFrameDidRecord exception");
+    // }
 }
 
 void NertcNodeAudioFrameObserverHandler::onAudioFrameWillPlayback(nertc::NERtcAudioFrame* frame)
@@ -1977,74 +1970,67 @@ void NertcNodeAudioFrameObserverHandler::onAudioFrameWillPlayback(nertc::NERtcAu
 
 void NertcNodeAudioFrameObserverHandler::Node_onAudioFrameWillPlayback(nertc::NERtcAudioFrame* frame)
 {
-    try{
-        auto it = _callbacks.find("onAudioFrameWillPlayback");
-        if (it != _callbacks.end())
-        {  
-            auto function_reference = it->second;
-            auto env = function_reference->function.Env();
-            Napi::Object obj = Napi::Object::New(env);
-            nertc_audio_frame_to_obj(env, *frame, obj);
-            const std::vector<napi_value> args = {obj};
-            function_reference->function.Call(args);
+    auto it = _callbacks.find("onAudioFrameWillPlayback");
+    if (it != _callbacks.end())
+    {  
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        Napi::Object obj = Napi::Object::New(env);
+        nertc_audio_frame_to_obj(env, *frame, obj);
+        const std::vector<napi_value> args = {obj};
+        function_reference->function.Call(args);
 
-            if(frame && frame->data) {
-                free((void*)frame->data);
-                frame->data = nullptr;
-                delete frame;
-                frame = nullptr;
-            }
+        if(frame && frame->data) {
+            free((void*)frame->data);
+            frame->data = nullptr;
+            delete frame;
+            frame = nullptr;
         }
-    }catch(...){
-        LOG_F(INFO, "Node_onAudioFrameWillPlayback exception");
     }
-
 }
 
 
 void NertcNodeAudioFrameObserverHandler::onMixedAudioFrame(nertc::NERtcAudioFrame* frame)
 {
-    try{
-       
-
-
-    }catch(...){
-        LOG_F(INFO, "onMixedAudioFrame exception");
-    }
+    // try{
+    //    LOG_F(INFO, "onMixedAudioFrame");
+    // }catch(...){
+    //     LOG_F(INFO, "onMixedAudioFrame exception");
+    // }
 }
 
 void NertcNodeAudioFrameObserverHandler::onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame)
 {
-    try{
+    // try{
        
 
 
-    }catch(...){
-        LOG_F(INFO, "onPlaybackAudioFrameBeforeMixing exception");
-    }
+    // }catch(...){
+    //     LOG_F(INFO, "onPlaybackAudioFrameBeforeMixing exception");
+    // }
 }
 
 void NertcNodeAudioFrameObserverHandler::onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame, nertc::channel_id_t cid)
 {
-    try{
+    // try{
        
 
 
-    }catch(...){
-        LOG_F(INFO, "onPlaybackAudioFrameBeforeMixing2 exception");
-    }
+    // }catch(...){
+    //     LOG_F(INFO, "onPlaybackAudioFrameBeforeMixing2 exception");
+    // }
 }
 
 void NertcNodeAudioFrameObserverHandler::onPlaybackSubStreamAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame,
                                                            nertc::channel_id_t cid)
 {
-    try{
+    // try{
        
 
 
-    }catch(...){
-        LOG_F(INFO, "onPlaybackSubStreamAudioFrameBeforeMixing exception");
-    }
+    // }catch(...){
+    //     LOG_F(INFO, "onPlaybackSubStreamAudioFrameBeforeMixing exception");
+    // }
 }
 
 }
