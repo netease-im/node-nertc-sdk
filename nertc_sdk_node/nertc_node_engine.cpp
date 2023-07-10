@@ -520,10 +520,10 @@ NIM_SDK_NODE_API_DEF(joinChannel)
         std::string token = "";
         std::string channel_name = "";
         // nertc::uid_t uid = 0;
-        unsigned int uid = 0;
+        int64_t uid = 0;
         napi_get_value_utf8_string(info[0], token);
         napi_get_value_utf8_string(info[1], channel_name);
-        napi_get_value_uint32(info[2], uid);
+        napi_get_value_int64(info[2], uid);
         LOG_F(INFO, "channel_name:%s, uid:%llu", channel_name.c_str(), uid);
         ret = rtc_engine_->joinChannel(token.length() == 0 ? "" : token.c_str(), channel_name.c_str(), uid);
         // NodeVideoFrameTransporter *pTransporter = getNodeVideoFrameTransporter();
@@ -540,10 +540,10 @@ NIM_SDK_NODE_API_DEF(joinChannelEx)
         std::string token = "";
         std::string channel_name = "";
         nertc::NERtcJoinChannelOptions option;
-        unsigned int uid = 0;
+        int64_t uid = 0;
         napi_get_value_utf8_string(info[0], token);
         napi_get_value_utf8_string(info[1], channel_name);
-        napi_get_value_uint32(info[2], uid);
+        napi_get_value_int64(info[2], uid);
 		Napi::Object obj = info[3].As<Napi::Object>();
         nertc_channel_option_to_struct(env, obj, option);
         LOG_F(INFO, "joinChannelwithoption channel_name:%s, uid:%llu", channel_name.c_str(), uid);
@@ -639,10 +639,10 @@ NIM_SDK_NODE_API_DEF(setupVideoCanvas)
     INIT_ENV
     do{
         // nertc::uid_t uid = 0;
-        uint32_t uid;
+        int64_t uid;
         bool lossless = true;
         bool enable;
-        napi_get_value_uint32(info[0], uid);
+        napi_get_value_int64(info[0], uid);
         // napi_get_value_bigint_uint64(env, info[0], &uid, &lossless);
         napi_get_value_bool(info[1], enable);
         LOG_F(INFO, "uid:%llu, enable:%d", uid, enable);
@@ -729,9 +729,9 @@ NIM_SDK_NODE_API_DEF(setupSubStreamVideoCanvas)
     do
     {
         // uint64_t uid;
-        unsigned int uid;
+        int64_t uid;
         bool enable;
-        napi_get_value_uint32(info[0], uid);
+        napi_get_value_int64(info[0], uid);
         napi_get_value_bool(info[1], enable);
         LOG_F(INFO, "uid:%llu, enable:%d", uid, enable);
         nertc::NERtcVideoCanvas canvas;
@@ -953,9 +953,9 @@ NIM_SDK_NODE_API_DEF(adjustUserPlaybackSignalVolume)
     INIT_ENV
     do
     {
-        uint32_t uid = 0;
+        int64_t uid = 0;
         int volume = 0;
-        napi_get_value_uint32(info[0], uid);
+        napi_get_value_int64(info[0], uid);
         napi_get_value_int32(info[1], volume);
         LOG_F(INFO, "uid:%llu volume:%d", uid, volume);
         ret = rtc_engine_->adjustUserPlaybackSignalVolume(uid, volume);
@@ -3311,8 +3311,8 @@ NIM_SDK_NODE_API_DEF(setRemoteHighPriorityAudioStream)
     {
         bool enabled;
         napi_get_value_bool(info[0], enabled);
-        unsigned int uid = 0;
-        napi_get_value_uint32(info[1], uid);
+        int64_t uid = 0;
+        napi_get_value_int64(info[1], uid);
         LOG_F(INFO, "enabled:%d uid:%d", enabled, uid);
         ret = rtc_engine_->setRemoteHighPriorityAudioStream(enabled, uid);
     } while (false);
