@@ -1992,11 +1992,44 @@ void NertcNodeAudioFrameObserverHandler::Node_onAudioFrameWillPlayback(nertc::NE
 
 void NertcNodeAudioFrameObserverHandler::onMixedAudioFrame(nertc::NERtcAudioFrame* frame)
 {
-    // try{
-    //    LOG_F(INFO, "onMixedAudioFrame");
-    // }catch(...){
-    //     LOG_F(INFO, "onMixedAudioFrame exception");
-    // }
+    if(frame && frame->data) {
+        nertc::NERtcAudioFrame* copy_frame = new nertc::NERtcAudioFrame();
+        copy_frame->format = frame->format;
+        copy_frame->sync_timestamp = frame->sync_timestamp;
+
+        int data_len = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
+        void* dst_data = (void*)malloc(data_len);
+        memset(dst_data, 0, data_len) ;
+        if(nullptr != dst_data){
+            memcpy(dst_data, frame->data, data_len);
+            copy_frame->data = dst_data;
+
+            nim_node::node_async_call::async_call([=]() {
+                Node_onMixedAudioFrame(copy_frame);
+            });
+        }      
+    }
+}
+
+void NertcNodeAudioFrameObserverHandler::Node_onMixedAudioFrame(nertc::NERtcAudioFrame* frame)
+{
+    auto it = _callbacks.find("onMixedAudioFrame");
+    if (it != _callbacks.end())
+    {  
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        Napi::Object obj = Napi::Object::New(env);
+        nertc_audio_frame_to_obj(env, *frame, obj);
+        const std::vector<napi_value> args = {obj};
+        function_reference->function.Call(args);
+
+        if(frame && frame->data) {
+            free((void*)frame->data);
+            frame->data = nullptr;
+            delete frame;
+            frame = nullptr;
+        }
+    }
 }
 
 void NertcNodeAudioFrameObserverHandler::onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame)

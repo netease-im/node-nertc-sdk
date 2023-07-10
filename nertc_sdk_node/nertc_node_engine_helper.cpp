@@ -692,6 +692,21 @@ napi_status nertc_audio_effect_option_obj_to_struct(const Napi::Env& env, const 
             out_u = obj.Get(static_cast<napi_value>(Napi::String::New(env,"playback_volume"))).As<Napi::Number>().Uint32Value();
             option[i].playback_volume = out_u;
         }
+        if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"start_timestamp"))))
+        {
+            out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"start_timestamp"))).As<Napi::Number>().Int32Value();
+            option[i].start_timestamp = out_i;
+        }
+        if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"send_with_audio_type"))))
+        {
+            out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"send_with_audio_type"))).As<Napi::Number>().Int32Value();
+            option[i].send_with_audio_type = (nertc::NERtcAudioStreamType)out_i;
+        }
+        if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"progress_interval"))))
+        {
+            out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"progress_interval"))).As<Napi::Number>().Int32Value();
+            option[i].progress_interval = out_i;
+        }
     }
     return napi_ok;
 }

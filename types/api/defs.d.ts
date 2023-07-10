@@ -778,7 +778,7 @@ export interface NERtcEngineAPI {
     setupVideoCanvas(uid: number, enabled: Boolean): number;
     onVideoFrame(callback: Function): number;
     onEvent(eventName: String, callback: Function): void;
-    onAudioFrameEvent(eventName: String, callback: Function): void;
+    onAudioFrameEvent(eventName: String, callback: Function, enable: boolean): void;
     getConnectionState(): number;
     muteLocalAudioStream(enabled: Boolean): number;
     setAudioProfile(profile: NERtcAudioProfileType, scenario: NERtcAudioScenarioType): number;

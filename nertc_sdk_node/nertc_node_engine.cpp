@@ -449,7 +449,7 @@ NIM_SDK_NODE_API_DEF(initialize)
             context.log_dir_path = log_path_.c_str();
         }
         context.event_handler = _event_handler.get();
-        std::string para = "{\"sdk.business.scenario.type\": 6, \"sdk.enable.encrypt.log\": false}";
+        std::string para = "{\"sdk.business.scenario.type\": 6, \"sdk.enable.encrypt.log\": false, \"video.h265.decoder.type\": false , \"video.h265.encoder.type\": false}";
         ret = rtc_engine_->setParameters(para.c_str());
         ret = rtc_engine_->initialize(context);
         if (ret == 0)
@@ -695,11 +695,16 @@ NIM_SDK_NODE_API_DEF(onAudioFrameEvent)
 {
     auto env = info.Env();
     std::string event_name = "";
+    bool enable;
     Napi::FunctionReference function;
     napi_get_value_utf8_string(info[0], event_name);
     napi_get_value_function(info[1], function);
-  
-    _audio_observer->addEvent(event_name, std::move(function));
+    napi_get_value_bool(info[2], enable);
+    if(enable) {
+        _audio_observer->addEvent(event_name, std::move(function));
+    } else {
+        _audio_observer->removeEventHandler(event_name);
+    }
     auto ret_value = env.Null();
     return ret_value;
 }

@@ -269,6 +269,7 @@ public:
 
 private:
     void Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame* frame);
+    void Node_onMixedAudioFrame(nertc::NERtcAudioFrame* frame);
 
     void Node_onAudioFrameWillPlayback(nertc::NERtcAudioFrame* frame);
 

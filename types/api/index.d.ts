@@ -3584,6 +3584,7 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     updatePermissionKey(key: string): number;
+    setAudioFrameObserver(enable: boolean): void;
     /**
      * init event handler
      * @private
