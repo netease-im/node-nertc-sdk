@@ -817,28 +817,28 @@ void NertcNodeEventHandler::onCaptureVideoFrame(void *data,
                                                 uint32_t stride[kNERtcMaxPlaneCount],
                                                 nertc::NERtcVideoRotation rotation)
 {
-    if (_callbacks.find("onCaptureVideoFrame") == _callbacks.end())
-    {
-        return;
-    }
+    // if (_callbacks.find("onCaptureVideoFrame") == _callbacks.end())
+    // {
+    //     return;
+    // }
 
-    if(nertc::kNERtcVideoTypeI420 == type || nertc::kNERtcVideoTypeNV12 == type || nertc::kNERtcVideoTypeNV21 == type)
-    {
-        int data_len = offset[2] + stride[2] * height/2;
-        void* dst_data = (void*)malloc(data_len);
-        memset(dst_data, 0, data_len + 1) ;
-        if(data && (data_len > 0)){
-            memcpy(dst_data, data, data_len);
-            uint32_t offset_copy[kNERtcMaxPlaneCount] = {};
-            memcpy(offset_copy, offset, kNERtcMaxPlaneCount * sizeof(uint32_t));
-            uint32_t stride_copy[kNERtcMaxPlaneCount] = {};
-            memcpy(stride_copy, stride, kNERtcMaxPlaneCount * sizeof(uint32_t));
-			nim_node::node_async_call::async_call([=]() {
-				Node_onCaptureVideoFrame(dst_data, type, width, height, count, const_cast<uint32_t*>(offset_copy), const_cast<uint32_t*>(stride_copy), rotation);
-			});
+    // if(nertc::kNERtcVideoTypeI420 == type || nertc::kNERtcVideoTypeNV12 == type || nertc::kNERtcVideoTypeNV21 == type)
+    // {
+    //     int data_len = offset[2] + stride[2] * height/2;
+    //     void* dst_data = (void*)malloc(data_len);
+    //     memset(dst_data, 0, data_len + 1) ;
+    //     if(data && (data_len > 0)){
+    //         memcpy(dst_data, data, data_len);
+    //         uint32_t offset_copy[kNERtcMaxPlaneCount] = {};
+    //         memcpy(offset_copy, offset, kNERtcMaxPlaneCount * sizeof(uint32_t));
+    //         uint32_t stride_copy[kNERtcMaxPlaneCount] = {};
+    //         memcpy(stride_copy, stride, kNERtcMaxPlaneCount * sizeof(uint32_t));
+	// 		nim_node::node_async_call::async_call([=]() {
+	// 			Node_onCaptureVideoFrame(dst_data, type, width, height, count, const_cast<uint32_t*>(offset_copy), const_cast<uint32_t*>(stride_copy), rotation);
+	// 		});
             
-        }
-    }   
+    //     }
+    // }   
 }
 
 void NertcNodeEventHandler::Node_onCaptureVideoFrame(void *data,
@@ -1762,23 +1762,23 @@ void NertcNodeRtcMediaStatsHandler::Node_onNetworkQuality(nertc::NERtcNetworkQua
 //NertcNodeAudioFrameObserverHandler
 void NertcNodeAudioFrameObserverHandler::onAudioFrameDidRecord(nertc::NERtcAudioFrame* frame)
 {
-    if(frame && frame->data) {
-        nertc::NERtcAudioFrame* copy_frame = new nertc::NERtcAudioFrame();
-        copy_frame->format = frame->format;
-        copy_frame->sync_timestamp = frame->sync_timestamp;
+    // if(frame && frame->data) {
+    //     nertc::NERtcAudioFrame* copy_frame = new nertc::NERtcAudioFrame();
+    //     copy_frame->format = frame->format;
+    //     copy_frame->sync_timestamp = frame->sync_timestamp;
 
-        int data_len = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
-        void* dst_data = (void*)malloc(data_len);
-        memset(dst_data, 0, data_len) ;
-        if(nullptr != dst_data){
-            memcpy(dst_data, frame->data, data_len);
-            copy_frame->data = dst_data;
+    //     int data_len = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
+    //     void* dst_data = (void*)malloc(data_len);
+    //     memset(dst_data, 0, data_len) ;
+    //     if(nullptr != dst_data){
+    //         memcpy(dst_data, frame->data, data_len);
+    //         copy_frame->data = dst_data;
 
-            nim_node::node_async_call::async_call([=]() {
-                Node_onAudioFrameDidRecord(copy_frame);
-            });
-        }      
-    }
+    //         nim_node::node_async_call::async_call([=]() {
+    //             Node_onAudioFrameDidRecord(copy_frame);
+    //         });
+    //     }      
+    // }
 }
 
 void NertcNodeAudioFrameObserverHandler::Node_onAudioFrameDidRecord(nertc::NERtcAudioFrame* frame)
@@ -1809,33 +1809,33 @@ void NertcNodeAudioFrameObserverHandler::Node_onAudioFrameDidRecord(nertc::NERtc
 
 void NertcNodeAudioFrameObserverHandler::onSubStreamAudioFrameDidRecord(nertc::NERtcAudioFrame* frame)
 {
-    try{
+    // try{
        
 
 
-    }catch(...){
-        LOG_F(INFO, "onSubStreamAudioFrameDidRecord exception");
-    }
+    // }catch(...){
+    //     LOG_F(INFO, "onSubStreamAudioFrameDidRecord exception");
+    // }
 }
 
 void NertcNodeAudioFrameObserverHandler::onAudioFrameWillPlayback(nertc::NERtcAudioFrame* frame)
 {
-    if(frame && frame->data) {
-        nertc::NERtcAudioFrame* copy_frame = new nertc::NERtcAudioFrame();
-        copy_frame->format = frame->format;
-        copy_frame->sync_timestamp = frame->sync_timestamp;
+    // if(frame && frame->data) {
+    //     nertc::NERtcAudioFrame* copy_frame = new nertc::NERtcAudioFrame();
+    //     copy_frame->format = frame->format;
+    //     copy_frame->sync_timestamp = frame->sync_timestamp;
 
-        int data_len = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
-        void* dst_data = (void*)malloc(data_len);
-        memset(dst_data, 0, data_len) ;
-        if(nullptr != dst_data){
-            memcpy(dst_data, frame->data, data_len);
-            copy_frame->data = dst_data;
-            nim_node::node_async_call::async_call([=]() {
-                Node_onAudioFrameWillPlayback(copy_frame);
-            });
-        }     
-    }
+    //     int data_len = frame->format.samples_per_channel * frame->format.channels * frame->format.bytes_per_sample;
+    //     void* dst_data = (void*)malloc(data_len);
+    //     memset(dst_data, 0, data_len) ;
+    //     if(nullptr != dst_data){
+    //         memcpy(dst_data, frame->data, data_len);
+    //         copy_frame->data = dst_data;
+    //         nim_node::node_async_call::async_call([=]() {
+    //             Node_onAudioFrameWillPlayback(copy_frame);
+    //         });
+    //     }     
+    // }
 
 }
 
@@ -1868,47 +1868,47 @@ void NertcNodeAudioFrameObserverHandler::Node_onAudioFrameWillPlayback(nertc::NE
 
 void NertcNodeAudioFrameObserverHandler::onMixedAudioFrame(nertc::NERtcAudioFrame* frame)
 {
-    try{
+    // try{
        
 
 
-    }catch(...){
-        LOG_F(INFO, "onMixedAudioFrame exception");
-    }
+    // }catch(...){
+    //     LOG_F(INFO, "onMixedAudioFrame exception");
+    // }
 }
 
 void NertcNodeAudioFrameObserverHandler::onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame)
 {
-    try{
+    // try{
        
 
 
-    }catch(...){
-        LOG_F(INFO, "onPlaybackAudioFrameBeforeMixing exception");
-    }
+    // }catch(...){
+    //     LOG_F(INFO, "onPlaybackAudioFrameBeforeMixing exception");
+    // }
 }
 
 void NertcNodeAudioFrameObserverHandler::onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame, nertc::channel_id_t cid)
 {
-    try{
+    // try{
        
 
 
-    }catch(...){
-        LOG_F(INFO, "onPlaybackAudioFrameBeforeMixing2 exception");
-    }
+    // }catch(...){
+    //     LOG_F(INFO, "onPlaybackAudioFrameBeforeMixing2 exception");
+    // }
 }
 
 void NertcNodeAudioFrameObserverHandler::onPlaybackSubStreamAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame,
                                                            nertc::channel_id_t cid)
 {
-    try{
+    // try{
        
 
 
-    }catch(...){
-        LOG_F(INFO, "onPlaybackSubStreamAudioFrameBeforeMixing exception");
-    }
+    // }catch(...){
+    //     LOG_F(INFO, "onPlaybackSubStreamAudioFrameBeforeMixing exception");
+    // }
 }
 
 
