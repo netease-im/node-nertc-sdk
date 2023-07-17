@@ -7,7 +7,8 @@
 using namespace nemeeting_util;
 namespace nertc_node
 {
-napi_status nertc_engine_context_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcEngineContext& context){
+napi_status nertc_engine_context_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcEngineContext& context)
+{
     // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"app_key"))))
     //     {
     //         app_key_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"app_key"))).As<Napi::String>().Utf8Value();
@@ -124,7 +125,7 @@ napi_status nertc_engine_context_obj_to_struct(const Napi::Env& env, const Napi:
     return napi_ok;
 }
 
-napi_status nertc_window_id_list_to_struct(const Napi::Env& env, const Napi::Object& obj, std::set<int64_t>& list)
+napi_status nertc_window_id_list_to_struct(const Napi::Env& env, const Napi::Object& obj, std::set<int64_t>& list) 
 {
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"excluded_window_list"))))
     {
@@ -492,12 +493,6 @@ napi_status nertc_stats_to_obj(const Napi::Env env, const nertc::NERtcStats& con
 
 napi_status nertc_audio_send_stats_to_obj(const Napi::Env env, const nertc::NERtcAudioSendStats& config,  Napi::Object& obj)
 {
-    /*obj.Set(static_cast<napi_value>(Napi::String::New(env,"num_channels")), config.num_channels);
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"sent_sample_rate")), config.sent_sample_rate);
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"sent_bitrate")), config.sent_bitrate);
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"audio_loss_rate")), config.audio_loss_rate);
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"rtt")), config.rtt);
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"volume")), config.volume);*/
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"audio_layers_count")), config.audio_layers_count);
     Napi::Array s = Napi::Array::New(env);
 	for (auto i = 0; i < (int)config.audio_layers_count; i++) {
@@ -526,12 +521,6 @@ napi_status nertc_audio_send_stats_to_obj(const Napi::Env env, const nertc::NERt
 
 napi_status nertc_audio_recv_stats_to_obj(const Napi::Env env, const  nertc::NERtcAudioRecvStats& config,  Napi::Object& obj)
 {
-   /* obj.Set(static_cast<napi_value>(Napi::String::New(env,"uid")), config.uid);
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"received_bitrate")), config.received_bitrate);
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"total_frozen_time")), config.total_frozen_time);
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"frozen_rate")), config.frozen_rate);
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"audio_loss_rate")), config.audio_loss_rate);
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"volume")), config.volume);*/
 	obj.Set(static_cast<napi_value>(Napi::String::New(env, "uid")), config.uid);
 	obj.Set(static_cast<napi_value>(Napi::String::New(env, "audio_layers_count")), config.audio_layers_count);
 	Napi::Array s = Napi::Array::New(env);
@@ -593,7 +582,6 @@ napi_status nertc_audio_effect_option_obj_to_struct(const Napi::Env& env, const 
         if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"path"))))
         {
             out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"path"))).As<Napi::String>().Utf8Value();
-            // 实际内容长度超出了可以容纳的缓冲区长度，缓冲区要包含 \0 结尾字符串，实际内容需要小于缓冲区大小
             if (out.length() >= kNERtcMaxURILength)
                 return napi_invalid_arg;
             memset(option[i].path, 0, kNERtcMaxURILength);
@@ -637,7 +625,6 @@ napi_status nertc_audio_mixing_option_obj_to_struct(const Napi::Env& env, const 
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"path"))))
     {
         out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"path"))).As<Napi::String>().Utf8Value();
-        // 实际内容长度超出了可以容纳的缓冲区长度，缓冲区要包含 \0 结尾字符串，实际内容需要小于缓冲区大小
         if (out.length() >= kNERtcMaxURILength)
             return napi_invalid_arg;
         memset(option.path, 0, kNERtcMaxURILength);

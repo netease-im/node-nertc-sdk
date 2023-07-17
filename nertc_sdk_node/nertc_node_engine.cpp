@@ -194,7 +194,7 @@ NertcNodeEngine::NertcNodeEngine(const Napi::CallbackInfo& info)
     rtc_engine_ = (nertc::IRtcEngineEx *)createNERtcEngine();
     _event_handler = std::make_shared<NertcNodeEventHandler>();
     _stats_observer = std::make_shared<NertcNodeRtcMediaStatsHandler>();
-    _audio_observer = std::make_shared<NertcNodeAudioFrameObserverHandler>();
+    // _audio_observer = std::make_shared<NertcNodeAudioFrameObserverHandler>();
 #ifdef WIN32
     _windows_helper = new WindowsHelpers();
     window_capture_helper_.reset(new WindowCaptureHelper());
@@ -252,7 +252,7 @@ NIM_SDK_NODE_API_DEF(initialize)
         {
             rtc_engine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void **)&_adm);
             rtc_engine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void **)&_vdm);
-            rtc_engine_->setAudioFrameObserver(_audio_observer.get());
+            // rtc_engine_->setAudioFrameObserver(_audio_observer.get());
         }
         std::string log_directory(context.log_dir_path);
         auto error_code = nelog::InitailizeLogFileStream(
@@ -273,7 +273,7 @@ NIM_SDK_NODE_API_DEF(release)
     do
     {
         rtc_engine_->setAudioFrameObserver(nullptr);
-        _audio_observer->removeAll();
+        // _audio_observer->removeAll();
         _event_handler->removeAll();
         _stats_observer->removeAll();
         LOG_F(INFO, "-------------sdk release-------------");
@@ -455,7 +455,7 @@ NIM_SDK_NODE_API_DEF(onAudioFrameEvent)
     napi_get_value_utf8_string(info[0], event_name);
     napi_get_value_function(info[1], function);
   
-    _audio_observer->addEvent(event_name, std::move(function));
+    // _audio_observer->addEvent(event_name, std::move(function));
     auto ret_value = env.Null();
     return ret_value;
 }
