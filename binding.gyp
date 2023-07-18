@@ -176,7 +176,7 @@
                 './nertc_sdk/NERtcnn.framework',
                 './nertc_sdk/NERtcPersonSegment.framework',
                 './nertc_sdk/NERtcScreenShareEnhance.framework',
-                './nertc_sdk/NERtcSuperResolution.framework'
+                './nertc_sdk/NERtcSuperResolution.framework',
                 './nertc_sdk/NERtcVideoDenoise.framework'
               ]
             }],
@@ -201,6 +201,7 @@
                 'NERtcPersonSegment.framework',
                 'NERtcScreenShareEnhance.framework',
                 'NERtcSuperResolution.framework',
+                'NERtcVideoDenoise.framework',
                 # 'Foundation.framework',
                 # 'nertc_sdk_Mac.framework',
                 # 'NEFundation_Mac.framework',
