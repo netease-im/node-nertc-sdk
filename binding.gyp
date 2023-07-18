@@ -177,6 +177,7 @@
                 './nertc_sdk/NERtcPersonSegment.framework',
                 './nertc_sdk/NERtcScreenShareEnhance.framework',
                 './nertc_sdk/NERtcSuperResolution.framework'
+                './nertc_sdk/NERtcVideoDenoise.framework'
               ]
             }],
             'defines': [
