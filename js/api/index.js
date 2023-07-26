@@ -2068,6 +2068,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * </pre>
      */
     setVideoDevice(id) {
+        console.log(`nertc js setVideoDevice id:${id}`)
         return this.nertcEngine.setDevice(id);
     }
     /**
@@ -2075,7 +2076,9 @@ class NERtcEngine extends events_1.EventEmitter {
      * @returns {String} 设备ID
      */
     getVideoDevice() {
-        return this.nertcEngine.getDevice();
+        let id = this.nertcEngine.getDevice();
+        console.log(`nertc js getVideoDevice id:${id}`)
+        return id
     }
     /**
      * 设置 SDK 预设的人声的变声音效。

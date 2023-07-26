@@ -2383,6 +2383,7 @@ NIM_SDK_NODE_API_DEF(setDevice)
         {
             break;
         }
+        LOG_F(INFO, "deviceId:%s", device.c_str());
         ret = _vdm->setDevice(device.c_str());
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
@@ -2397,7 +2398,7 @@ NIM_SDK_NODE_API_DEF(getDevice)
     {
         ret = _vdm->getDevice(id);
     } while (false);
-    LOG_F(INFO, "ret:%d", ret);
+    LOG_F(INFO, "ret:%d deviceId:%s", ret, (char*)id);
     return Napi::String ::New(env,  ret== 0 ? (char*)id : "");
 }
 
