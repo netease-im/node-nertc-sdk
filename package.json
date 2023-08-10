@@ -1,6 +1,6 @@
 {
   "name": "nertc-electron-sdk",
-  "version": "4.4.8-rc-953",
+  "version": "4.6.26-rc-994",
   "description": "nertc-electron-sdk",
   "main": "js/nertc_sdk.js",
   "types": "types/nertc_sdk.d.ts",
@@ -32,8 +32,8 @@
     "tar": "^6.1.11"
   },
   "scripts": {
-    "gyp": "node-gyp clean && node-gyp configure --python=/usr/bin/python3 --arch x86_x64 --target=16.0.0 --dist-url=https://electronjs.org/headers && node-gyp  build",
-    "cmake": "cmake-js compile -r electron -v 16.0.2 -a x86_64 -p 5 ",
+    "gyp": "node-gyp clean && node-gyp configure --python=/usr/bin/python3 --arch x86_x64 --target=14.2.9 --dist-url=https://electronjs.org/headers && node-gyp  build",
+    "cmake": "cmake-js compile -r electron -v 14.2.9 -a x86_64 -p 5 ",
     "build:dts": "rimraf ./types && tsc -p config_dts.json",
     "prebuild:ts": "npm run build:dts",
     "build:ts": "rimraf ./js && tsc -p config_ts.json",
@@ -52,7 +52,7 @@
     "name-addon": "nertc",
     "build-tool": "node-gyp",
     "binary-dir": "build/Release",
-    "sdk-group": "NERtcSDK",
+    "sdk-group": "NERtcSDK_Special",
     "addon-group": "electron"
   },
   "repository": {
