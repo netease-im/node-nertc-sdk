@@ -237,13 +237,14 @@ NIM_SDK_NODE_API_DEF(initialize)
             app_key_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"app_key"))).As<Napi::String>().Utf8Value();
             context.app_key = app_key_.c_str();
         }
-        // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"log_dir_path"))))
-        // {
-        //     log_path_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"log_dir_path"))).As<Napi::String>().Utf8Value();
-        //     context.log_dir_path = log_path_.c_str();
-        // }
-        std::string logPath = "/tmp";
-        context.log_dir_path = logPath.c_str();
+        if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"log_dir_path"))))
+        {
+            log_path_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"log_dir_path"))).As<Napi::String>().Utf8Value();
+            context.log_dir_path = log_path_.c_str();
+        } else {
+            std::string logPath = "/tmp";
+            context.log_dir_path = logPath.c_str();
+        }
         context.event_handler = _event_handler.get();
         ret = rtc_engine_->initialize(context);
         if (ret == 0)
