@@ -1,6 +1,6 @@
 {
   "name": "nertc-electron-sdk",
-  "version": "4.4.8-rc-953",
+  "version": "4.6.51-rc-955",
   "description": "nertc-electron-sdk",
   "main": "js/nertc_sdk.js",
   "types": "types/nertc_sdk.d.ts",
@@ -52,7 +52,7 @@
     "name-addon": "nertc",
     "build-tool": "node-gyp",
     "binary-dir": "build/Release",
-    "sdk-group": "NERtcSDK",
+    "sdk-group": "NERtcSDK_Special",
     "addon-group": "electron"
   },
   "repository": {
