@@ -31,6 +31,7 @@
     "tar": "^6.1.11"
   },
   "scripts": {
+    "gyp": "node-gyp clean && node-gyp configure --python=/usr/bin/python3 --arch x86_x64 --target=14.2.9 --dist-url=https://electronjs.org/headers && node-gyp  build",
     "build:dts": "rimraf ./types && tsc -p config_dts.json",
     "prebuild:ts": "npm run build:dts",
     "build:ts": "rimraf ./js && tsc -p config_ts.json",
