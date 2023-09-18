@@ -1100,13 +1100,13 @@ void NertcNodeEventHandler::Node_onRemoteSubscribeFallbackToAudioOnly(nertc::uid
 
 void NertcNodeEventHandler::onPullExternalAudioFrame(Napi::FunctionReference&& function, const std::shared_ptr<unsigned char>& data, uint32_t length)
 {
-    // auto callback = new EventCallback();
-    std::shared_ptr<EventCallback> callback = std::make_shared<EventCallback>();// auto callback = new EventCallback();
+    std::shared_ptr<EventCallback> callback = std::make_shared<EventCallback>();
     callback->function = std::move(function);
 
     nim_node::node_async_call::async_call([=]() {
         auto env = callback->function.Env();
-        Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, data.get(), length);
+        Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, length);
+        std::memcpy(arrayBuffer.Data(), data.get(), length);
         const std::vector<napi_value> args = {arrayBuffer};
         callback->function.Call(args);
     });

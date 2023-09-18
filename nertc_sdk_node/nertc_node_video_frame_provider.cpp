@@ -255,8 +255,9 @@ unsigned char* dstYPlane, unsigned char* dstUPlane, unsigned char* dstVPlane, in
 
 #define NODE_SET_OBJ_PROP_HEADER(obj, it) \
     { \
-        Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, (it)->buffer, (it)->length); \
-        Napi::MaybeOrValue<bool> ret = obj.Set(Napi::String::New(env, "header"), arrayBuffer); \
+        Napi::ArrayBuffer tmpArrayBuffer = Napi::ArrayBuffer::New(env, (it)->length);\
+        memcpy(tmpArrayBuffer.Data(), (it)->buffer, (it)->length);\
+        Napi::MaybeOrValue<bool> ret = obj.Set(Napi::String::New(env, "header"), tmpArrayBuffer); \
         if(!ret){\
             break;\
         }\
@@ -264,8 +265,9 @@ unsigned char* dstYPlane, unsigned char* dstUPlane, unsigned char* dstVPlane, in
 
 #define NODE_SET_OBJ_PROP_DATA(obj, name, it) \
     { \
-        Napi::ArrayBuffer arrayBuffer1 = Napi::ArrayBuffer::New(env, (it)->buffer, (it)->length);  \
-        Napi::Uint8Array buff = Napi::TypedArrayOf<uint8_t>::New(env, arrayBuffer1.ByteLength(), arrayBuffer1, 0, napi_uint8_array);\
+        Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, (it)->length);\
+        memcpy(arrayBuffer.Data(), (it)->buffer, (it)->length);\
+        Napi::Uint8Array buff = Napi::TypedArrayOf<uint8_t>::New(env, arrayBuffer.ByteLength(), arrayBuffer, 0, napi_uint8_array);\
         Napi::MaybeOrValue<bool> ret = obj.Set(Napi::String::New(env, name), buff); \
         if(!ret){\
             break;\
