@@ -860,7 +860,9 @@ void NertcNodeEventHandler::Node_onCaptureVideoFrame(void *data,
 			int len2 = stride[2];
 			int len3 = height;
             int data_len = len1 + len2 * len3 /2;
-			auto param1 = Napi::ArrayBuffer::New(env, data, data_len);
+            Napi::ArrayBuffer param1 = Napi::ArrayBuffer::New(env, data_len);
+            memcpy(param1.Data(), data, data_len);
+			// auto param1 = Napi::ArrayBuffer::New(env, data, data_len);
             auto param2 = Napi::Number::New(env, (int)type);
             auto param3 = Napi::Number::New(env, width);
             auto param4 = Napi::Number::New(env, height);
@@ -1453,7 +1455,8 @@ void NertcNodeEventHandler::onPullExternalAudioFrame(Napi::FunctionReference&& f
 
     nim_node::node_async_call::async_call([=]() {
         auto env = callback->function.Env();
-        Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, data.get(), length);
+        Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, length);
+        memcpy(arrayBuffer.Data(), data.get(), length);
         const std::vector<napi_value> args = {arrayBuffer};
         callback->function.Call(args);
     });

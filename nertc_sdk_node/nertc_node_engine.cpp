@@ -2453,7 +2453,8 @@ NIM_SDK_NODE_API_DEF(enumerateScreenCaptureSourceInfo)
                     thumb.Set(Napi::String::New(env, "length"), Napi::Number::New(env, size));
                     thumb.Set(Napi::String::New(env, "width"), Napi::Number::New(env, thumbWidth));
                     thumb.Set(Napi::String::New(env, "height"), Napi::Number::New(env, thumbHeight));
-                    Napi::ArrayBuffer buff = Napi::ArrayBuffer::New(env, data, size);
+                    Napi::ArrayBuffer buff = Napi::ArrayBuffer::New(env, size);
+                    memcpy(buff.Data(), data, size);
                     Napi::Uint8Array dataarray = Napi::TypedArrayOf<uint8_t>::New(env, buff.ByteLength(), buff, 0, napi_uint8_array);
                     thumb.Set(Napi::String::New(env, "buffer"), dataarray);
                     obj.Set(Napi::String::New(env, "thumbBGRA"), thumb);
@@ -2481,7 +2482,8 @@ NIM_SDK_NODE_API_DEF(enumerateScreenCaptureSourceInfo)
                     thumb.Set(Napi::String::New(env, "length"), Napi::Number::New(env, size));
                     thumb.Set(Napi::String::New(env, "width"), Napi::Number::New(env, thumbWidth));
                     thumb.Set(Napi::String::New(env, "height"), Napi::Number::New(env, thumbHeight));
-                    Napi::ArrayBuffer buff = Napi::ArrayBuffer::New(env, data, size);
+                    Napi::ArrayBuffer buff = Napi::ArrayBuffer::New(env, size);
+                    memcpy(buff.Data(), data, size);
                     Napi::Uint8Array dataarray = Napi::TypedArrayOf<uint8_t>::New(env, buff.ByteLength(), buff, 0, napi_uint8_array);
                     thumb.Set(Napi::String::New(env, "buffer"), dataarray);
                     obj.Set(Napi::String::New(env, "thumbBGRA"), thumb);
@@ -2497,7 +2499,8 @@ NIM_SDK_NODE_API_DEF(enumerateScreenCaptureSourceInfo)
                         icon.Set(Napi::String::New(env, "length"), Napi::Number::New(env, iconSize));
                         icon.Set(Napi::String::New(env, "width"), Napi::Number::New(env, thumbWidth));
                         icon.Set(Napi::String::New(env, "height"), Napi::Number::New(env, thumbHeight));
-                        Napi::ArrayBuffer buff = Napi::ArrayBuffer::New(env, data, iconSize);
+                        Napi::ArrayBuffer buff = Napi::ArrayBuffer::New(env, iconSize);
+                        memcpy(buff.Data(), data, iconSize);
                         Napi::Uint8Array dataarray = Napi::TypedArrayOf<uint8_t>::New(env, buff.ByteLength(), buff, 0, napi_uint8_array);
                         icon.Set(Napi::String::New(env, "buffer"), dataarray);
                         obj.Set(Napi::String::New(env, "thumbBGRA"), icon);
@@ -2515,7 +2518,8 @@ NIM_SDK_NODE_API_DEF(enumerateScreenCaptureSourceInfo)
                 icon.Set(Napi::String::New(env, "length"), Napi::Number::New(env, iconSize));
                 icon.Set(Napi::String::New(env, "width"), Napi::Number::New(env, iconWidth));
                 icon.Set(Napi::String::New(env, "height"), Napi::Number::New(env, iconHeight));
-                Napi::ArrayBuffer buff = Napi::ArrayBuffer::New(env, data, iconSize);
+                Napi::ArrayBuffer buff = Napi::ArrayBuffer::New(env, iconSize);
+                memcpy(buff.Data(), data, iconSize);
                 Napi::Uint8Array dataarray = Napi::TypedArrayOf<uint8_t>::New(env, buff.ByteLength(), buff, 0, napi_uint8_array);
                 icon.Set(Napi::String::New(env, "buffer"), dataarray);
                 obj.Set(Napi::String::New(env, "iconBGRA"), icon);

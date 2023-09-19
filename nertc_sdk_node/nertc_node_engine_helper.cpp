@@ -895,7 +895,8 @@ napi_status nertc_audio_frame_to_obj(const Napi::Env env, const nertc::NERtcAudi
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"format")), obj_format);
     
     int length = config.format.samples_per_channel * config.format.channels * config.format.bytes_per_sample;
-    Napi::ArrayBuffer dataBuffer = Napi::ArrayBuffer::New(env, config.data, length);
+    Napi::ArrayBuffer dataBuffer = Napi::ArrayBuffer::New(env, length);
+    memcpy(dataBuffer.Data(), config.data, length);
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"data")), dataBuffer);
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"sync_timestamp")), config.sync_timestamp);
     return napi_ok;
