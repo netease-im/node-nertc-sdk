@@ -1144,7 +1144,8 @@ void NertcNodeEventHandler::onPullExternalAudioFrame(Napi::FunctionReference&& f
 
     nim_node::node_async_call::async_call([=]() {
         auto env = callback->function.Env();
-        Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, data.get(), length);
+        Napi::ArrayBuffer arrayBuffer = Napi::ArrayBuffer::New(env, length);
+        memcpy(arrayBuffer.Data(), data.get(), length);
         const std::vector<napi_value> args = {arrayBuffer};
         callback->function.Call(args);
     });
