@@ -1037,6 +1037,7 @@ NIM_SDK_NODE_API_DEF(enableEncryption)
     {
         bool enable;
         nertc::NERtcEncryptionConfig config;
+        config.mode = nertc::kNERtcGMCryptoSM4ECB;
         napi_get_value_bool(info[0], enable);
         Napi::Object obj = info[1].As<Napi::Object>();
         std::string out;
@@ -1046,13 +1047,28 @@ NIM_SDK_NODE_API_DEF(enableEncryption)
             out_32 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"mode"))).As<Napi::Number>().Int32Value();
             config.mode = (nertc::NERtcEncryptionMode)out_32;
         }
-        if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"key"))))
+        switch (config.mode)
         {
-            out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"key"))).As<Napi::String>().Utf8Value();
-            memset(config.key, 0, kNERtcEncryptByteLength * sizeof(char));
-            memcpy(config.key, out.c_str(), out.size() * sizeof(char));
+            case nertc::kNERtcGMCryptoSM4ECB:
+                if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"key"))))
+                {
+                    out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"key"))).As<Napi::String>().Utf8Value();
+                    memset(config.key, 0, kNERtcEncryptByteLength * sizeof(char));
+                    memcpy(config.key, out.c_str(), out.size() * sizeof(char));
+                }
+                ret = rtc_engine_->enableEncryption(enable, config);
+                break;
+            case nertc::NERtcEncryptionModeCustom:
+                if(enable) {
+                    config.observer = _packet_observer.get();
+                } else {
+                    config.observer = nullptr;
+                }
+                ret = rtc_engine_->enableEncryption(enable, config);
+                break;
+            default:
+                break;
         }
-        ret = rtc_engine_->enableEncryption(enable, config);
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
