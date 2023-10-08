@@ -1381,4 +1381,104 @@ void NertcNodeRtcMediaStatsHandler::Node_onNetworkQuality(nertc::NERtcNetworkQua
     }
 }
 
+
+bool NertcNodeRtcPacketObserver::onSendAudioPacket(nertc::NERtcMediaPacket &packet) {
+    //发送的音频数据加密
+
+// #if 0
+//     int size = packet.size;
+//     unsigned char *buffer = (unsigned char *)packet.buffer;
+//     for (int i = 0; i < size; ++i)
+//     {
+//         buffer[i] = ~(buffer[i]);
+//     }
+
+// #else
+//     std::string key = "I_AM_A_KEY";
+//     RC4_KEY rc4_key;
+//     RC4_set_key(&rc4_key, key.length(), (const unsigned char *)key.c_str());
+
+//     int length = packet.size;
+//     unsigned char *buffer = (unsigned char *)packet.buffer;
+//     std::unique_ptr<unsigned char[]> ciphertext(new unsigned char[length]);
+//     RC4(&rc4_key, length, buffer, ciphertext.get());
+//     memcpy(buffer, ciphertext.get(), length);
+// #endif
+
+    return true;
+}
+
+bool NertcNodeRtcPacketObserver::onSendVideoPacket(nertc::NERtcMediaPacket &packet) {
+    // 发送的视频数据加密
+
+// #if 0
+//     int size = packet.size;
+//     unsigned char *buffer = (unsigned char *)packet.buffer;
+//     for (int i = 0; i < size; ++i) {
+//         buffer[i] = ~(buffer[i]);
+//     }
+// #else
+//     std::string key = "I_AM_A_KEY";
+//     RC4_KEY rc4_key;
+//     RC4_set_key(&rc4_key, key.length(), (const unsigned char *)key.c_str());
+
+//     int length = packet.size;
+//     unsigned char *buffer = (unsigned char *)packet.buffer;
+//     std::unique_ptr<unsigned char[]> ciphertext(new unsigned char[length]);
+//     RC4(&rc4_key, length, buffer, ciphertext.get());
+//     memcpy(buffer, ciphertext.get(), length);
+// #endif
+
+    return true;
+}
+
+bool NertcNodeRtcPacketObserver::onReceiveAudioPacket(nertc::NERtcMediaPacket &packet) {
+    // 接收的音频数据解密
+
+// #if 0
+//     int size = packet.size;
+//     unsigned char *buffer = (unsigned char *)packet.buffer;
+//     for (int i = 0; i < size; ++i) {
+//         buffer[i] = ~(buffer[i]);
+//     }
+// #else
+//     std::string key = "I_AM_A_KEY";
+//     RC4_KEY rc4_key;
+//     RC4_set_key(&rc4_key, key.length(), (const unsigned char *)key.c_str());
+
+//     int length = packet.size;
+//     unsigned char *buffer = (unsigned char *)packet.buffer;
+//     std::unique_ptr<unsigned char[]> decrypt(new unsigned char[length]);
+//     RC4(&rc4_key, length, buffer, decrypt.get());
+//     memcpy(buffer, decrypt.get(), length);
+// #endif
+
+    return true;
+}
+
+bool NertcNodeRtcPacketObserver::onReceiveVideoPacket(nertc::NERtcMediaPacket &packet) {
+    // 接收视频数据解密
+
+// #if 0
+//     int size = packet.size;
+//     unsigned char *buffer = (unsigned char *)packet.buffer;
+//     for (int i = 0; i < size; ++i) {
+//         buffer[i] = ~(buffer[i]);
+//     }
+// #else
+//     std::string key = "I_AM_A_KEY";
+//     RC4_KEY rc4_key;
+//     RC4_set_key(&rc4_key, key.length(), (const unsigned char *)key.c_str());
+
+//     int length = packet.size;
+//     unsigned char *buffer = (unsigned char *)packet.buffer;
+//     std::unique_ptr<unsigned char[]> decrypt(new unsigned char[length]);
+//     RC4(&rc4_key, length, buffer, decrypt.get());
+//     memcpy(buffer, decrypt.get(), length);
+// #endif
+
+    return true;
+}
+
+
 }

@@ -599,6 +599,24 @@ private:
 
 }; 
 
+class NertcNodeRtcPacketObserver : public nertc::INERtcPacketObserver
+{
+private:
+    /* data */
+public:
+    NertcNodeRtcPacketObserver(){};
+    ~NertcNodeRtcPacketObserver(){};
+
+public:
+    virtual bool onSendAudioPacket(nertc::NERtcMediaPacket &packet) override;
+    virtual bool onSendVideoPacket(nertc::NERtcMediaPacket &packet) override;
+    virtual bool onReceiveAudioPacket(nertc::NERtcMediaPacket &packet) override;
+    virtual bool onReceiveVideoPacket(nertc::NERtcMediaPacket &packet) override;
+
+
+
+}
+
 
 
 

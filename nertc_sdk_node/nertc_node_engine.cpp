@@ -193,6 +193,8 @@ NertcNodeEngine::NertcNodeEngine(const Napi::CallbackInfo& info)
     rtc_engine_ = (nertc::IRtcEngineEx *)createNERtcEngine();
     _event_handler = std::make_shared<NertcNodeEventHandler>();
     _stats_observer = std::make_shared<NertcNodeRtcMediaStatsHandler>();
+    _packet_observer = std::make_shared<NertcNodeRtcPacketObserver>();
+
 #ifdef WIN32
     _windows_helper = new WindowsHelpers();
     window_capture_helper_.reset(new WindowCaptureHelper());
