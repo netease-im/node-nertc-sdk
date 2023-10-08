@@ -65,7 +65,11 @@
     "config_dts.json",
     "config_ts.json",
     "just-task.js",
-    "package.json"
+    "package.json",
+    "nertc_sdk_node",
+    "shared",
+    "binding.gyp",
+    "package-lock.json"
   ],
   "keywords": [
     "nim",
