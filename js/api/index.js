@@ -2538,8 +2538,9 @@ class NERtcEngine extends events_1.EventEmitter {
      * @param {number} config.mode 媒体流加密模式。
      * <pre>
      * - 0: 128 位 SM4 加密，ECB 模式
+     * - 1: 自定义加密（需自定义NertcNodeRtcPacketObserver中相关回调）
      * </pre>
-     * @param {String} config.key 媒体流加密密钥。字符串类型，推荐设置为英文字符串。
+     * @param {String} config.key 媒体流加密密钥。字符串类型，推荐设置为英文字符串，仅国密时生效，自定义加密设置为空即可。
      * @return
      * <pre>
      * - 0: 方法调用成功
