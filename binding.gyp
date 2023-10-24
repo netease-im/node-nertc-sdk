@@ -241,7 +241,7 @@
               './shared/log/base/file/file_posix.cc',
             ],
             'xcode_settings': {
-              'ARCHS': [ 'x86_64' ],
+              'ARCHS': [ 'x86_64', 'arm64' ],
               'MACOSX_DEPLOYMENT_TARGET': '10.14',
               'EXCUTABLE_EXTENSION': 'node',
               'FRAMEWORK_SEARCH_PATHS': [
@@ -250,6 +250,9 @@
               'DEBUG_INFORMATION_FORMAT': 'dwarf-with-dsym',
               'OTHER_CFLAGS': [
               ],
+              "LD_RUNPATH_SEARCH_PATHS": [
+                 "@loader_path"
+               ]
             }
           }
         ]
