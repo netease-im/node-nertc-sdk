@@ -44,7 +44,7 @@
     "prebuild:ts": "npm run build:dts",
     "build:ts": "rimraf ./js && tsc -p config_ts.json",
     "install": "node ./pre-build.js install --fall-back-to-build",
-    "clean": "node ./pre-build.j clean",
+    "clean": "node ./pre-build.js clean",
     "install:ia32": "node ./pre-build.js install -a ia32",
     "install:x64": "node ./pre-build.js install -a x64",
     "build:win32:x64": "node ./pre-build.js build -r electron -rv 9.4.4 10.4.7 11.5.0 13.6.9 14.2.5 15.3.6 16.0.8 -a x64 -p",
