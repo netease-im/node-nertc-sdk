@@ -42,9 +42,9 @@
     "clean": "node-pre-build clean",
     "install:ia32": "node-pre-build install -a ia32",
     "install:x64": "node-pre-build install -a x64",
-    "build:win32:x64": "node-pre-build build -r electron -rv 9.0.4 10.4.7 11.5.0 13.6.9 14.2.5 15.3.6 16.0.8 -a x64 -p",
-    "build:win32:ia32": "node-pre-build build -r electron -rv 9.0.4 10.4.7 11.5.0 13.6.9 14.2.5 15.3.6 16.0.8 -a ia32 -p",
-    "build:darwin": "node-pre-build build -r electron -rv 9.0.4 10.4.7 11.5.0 13.6.9 14.2.5 15.3.6 16.0.8 -a x64 -p",
+    "build:win32:x64": "node-pre-build build -r electron -rv 17.0.0 18.0.0 -a x64 -p",
+    "build:win32:ia32": "node-pre-build build -r electron -rv 17.0.0 18.0.0 -a ia32 -p",
+    "build:darwin": "node-pre-build build -r electron -rv 17.0.0 18.0.0 -a x64 -p",
     "build:api": "jsdoc -c ./scripts/conf.json -t ./node_modules/ink-docstrap/template"
   },
   "node_pre_build": {
