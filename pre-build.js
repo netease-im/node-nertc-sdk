@@ -219,10 +219,7 @@ program
     .action((options) => {
       if (fse.pathExistsSync(sdk_path) && fse.readdirSync(sdk_path).length > 0) {
         console.info(`[node_pre_build] sdk already installed in ${sdk_path}.`);
-        console.info(`[node_pre_build] removing ${sdk_path}.`);
-        fse.removeSync(sdk_path);
-        console.info(`[node_pre_build] removing ${temp_path}.`);
-        fse.removeSync(temp_path);
+        return;
       }
       install(options);
     });
@@ -262,7 +259,7 @@ program
       
       console.log(`---platform:${platform} arch:${arch_array[0]}-----`)
       build(arch_array[0]);
-      
+
       if (!options.pack) {
         return;
       };
