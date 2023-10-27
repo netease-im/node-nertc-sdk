@@ -138,8 +138,7 @@ function downloadAddon(name_addon, arch, fallBackToBuild, publish_json) {
     addon_list.forEach((member) => {
       if (member.filename.includes(name_addon) &&
         member.filename.includes(platform) && 
-        member.filename.includes(arch) &&
-        member.filename.includes(abi_version)) {
+        member.filename.includes(arch)) {
         addon_url = member.cdnlink;
       }
     });
@@ -263,23 +262,24 @@ program
       
       console.log(`---platform:${platform} arch:${arch_array[0]}-----`)
       build(arch_array[0]);
-        if (!options.pack) {
-          return;
-        };
-        let package_name = `${process.cwd() + '/' + package_dir}/${name_addon}-v${package_json.version}-${platform}-${arch_array[0]}.tar.gz`
-        console.log(`package_name:${package_name}`)
-        tar.create({
-          gzip: true,
-          sync: true,
-          cwd: process.cwd() + '/' + binary_dir,
-          file: package_name,
-          filter: (path, stat) => {
-            if (path.match(/\.pdb|\.node/g) !== null) {
-              console.info(`[node_pre_build] ${path} packed.`);
-              return true;
-            }
-          },
-        }, fse.readdirSync(process.cwd() + '/' + binary_dir));
+      
+      if (!options.pack) {
+        return;
+      };
+      let package_name = `${process.cwd() + '/' + package_dir}/${name_addon}-v${package_json.version}-${platform}-${arch_array[0]}.tar.gz`
+      console.log(`package_name:${package_name}`)
+      tar.create({
+        gzip: true,
+        sync: true,
+        cwd: process.cwd() + '/' + binary_dir,
+        file: package_name,
+        filter: (path, stat) => {
+          if (path.match(/\.pdb|\.node/g) !== null) {
+            console.info(`[node_pre_build] ${path} packed.`);
+            return true;
+          }
+        },
+      }, fse.readdirSync(process.cwd() + '/' + binary_dir));
       
     });
 
