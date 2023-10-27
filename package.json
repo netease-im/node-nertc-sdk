@@ -73,6 +73,7 @@
     "config_dts.json",
     "config_ts.json",
     "just-task.js",
+    "pre-build.js",
     "package.json"
   ],
   "keywords": [
