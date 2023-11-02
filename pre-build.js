@@ -217,6 +217,7 @@ program
     .option('-a, --arch <architecture>', 'architecture of the host machine.')
     .option('--fall-back-to-build [build-script]', 'build when download pre-built binary failed.')
     .action((options) => {
+      console.log(`[node_pre_build] start install`)
       if (fse.pathExistsSync(sdk_path) && fse.readdirSync(sdk_path).length > 0) {
         console.info(`[node_pre_build] sdk already installed in ${sdk_path}.`);
         return;
