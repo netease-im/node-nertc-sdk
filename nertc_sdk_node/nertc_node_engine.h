@@ -250,12 +250,12 @@ public:
     NIM_SDK_NODE_API(getEffectCurrentPosition);
     NIM_SDK_NODE_API(getEffectDuration);
 
-    NIM_SDK_NODE_API(updateSpatializerAudioRecvRange);
-    NIM_SDK_NODE_API(updateSpatializerSelfPosition);
-    NIM_SDK_NODE_API(enableSpatializerRoomEffects);
-    NIM_SDK_NODE_API(setSpatializerRoomProperty);
-    NIM_SDK_NODE_API(setSpatializerRenderMode);
-    NIM_SDK_NODE_API(enableSpatializer);
+    // NIM_SDK_NODE_API(updateSpatializerAudioRecvRange);
+    // NIM_SDK_NODE_API(updateSpatializerSelfPosition);
+    // NIM_SDK_NODE_API(enableSpatializerRoomEffects);
+    // NIM_SDK_NODE_API(setSpatializerRoomProperty);
+    // NIM_SDK_NODE_API(setSpatializerRenderMode);
+    // NIM_SDK_NODE_API(enableSpatializer);
 
 
 private:
