@@ -208,6 +208,7 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         // //4.2.5
         SET_PROTOTYPE(switchChannel),
         SET_PROTOTYPE(switchChannelEx),
+        SET_PROTOTYPE(switchChannelWithOptionsEx),
         SET_PROTOTYPE(setLocalMediaPriority),
         SET_PROTOTYPE(enableLoopbackRecording),
         SET_PROTOTYPE(adjustLoopbackRecordingSignalVolume),
@@ -325,6 +326,8 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(subscribeRemoteSubStreamAudio),
         SET_PROTOTYPE(subscribeAllRemoteAudioStream),
         SET_PROTOTYPE(setAudioSubscribeOnlyBy),
+        SET_PROTOTYPE(setSubscribeAudioAllowlist),
+        SET_PROTOTYPE(setSubscribeAudioBlocklist),
         SET_PROTOTYPE(setStreamAlignmentProperty),
         SET_PROTOTYPE(getNtpTimeOffset),
         SET_PROTOTYPE(setCameraCaptureConfig),
@@ -449,7 +452,7 @@ NIM_SDK_NODE_API_DEF(initialize)
             context.log_dir_path = log_path_.c_str();
         }
         context.event_handler = _event_handler.get();
-        std::string para = "{\"sdk.business.scenario.type\": 6,  \"video.h265.decoder.type\": false , \"video.h265.encoder.type\": false}"; //\"sdk.enable.encrypt.log\": false,
+        std::string para = "{\"sdk.business.scenario.type\": 6,  \"video.h265.decoder.type\": false , \"video.h265.encoder.type\": false}";
         ret = rtc_engine_->setParameters(para.c_str());
         ret = rtc_engine_->initialize(context);
         if (ret == 0)
@@ -1013,6 +1016,28 @@ NIM_SDK_NODE_API_DEF(switchChannelEx)
         nertc_channel_option_to_struct(env, obj, option);
         LOG_F(INFO, "switchChannelwithoption channel_name:%s", channel_name.c_str());
         ret = rtc_engine_->switchChannel(token.c_str(), channel_name.c_str(), option);
+        LOG_F(INFO, "ret:%d", ret);
+    } while (false);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(switchChannelWithOptionsEx)
+{
+    INIT_ENV
+    do
+    {
+        std::string token, channel_name;
+        napi_get_value_utf8_string(info[0], token);
+        napi_get_value_utf8_string(info[1], channel_name);
+        if(channel_name.length() == 0){
+            break;
+        }
+        LOG_F(INFO, "channel_name:%s", channel_name.c_str());
+        nertc::NERtcJoinChannelOptionsEx option;
+        Napi::Object obj = info[2].As<Napi::Object>();
+        nertc_channel_optionex_to_struct(env, obj, option);
+        LOG_F(INFO, "switchChannelWithOptionsEx channel_name:%s", channel_name.c_str());
+        ret = rtc_engine_->switchChannelEx(token.c_str(), channel_name.c_str(), option);
         LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
@@ -3104,6 +3129,64 @@ NIM_SDK_NODE_API_DEF(setAudioSubscribeOnlyBy)
         napi_get_value_int32(info[1], size);
         LOG_F(INFO, "size:%d", size);
         ret = rtc_engine_->setAudioSubscribeOnlyBy(uid_array, size);
+        if (rtc_engine_) {
+          delete[] uid_array;
+        }
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setSubscribeAudioAllowlist)
+{
+    INIT_ENV
+    do
+    {
+        std::set<uint64_t> set_uids;
+        Napi::Object obj = info[0].As<Napi::Object>();
+        nertc_uid_list_to_struct(env, obj, set_uids);
+        nertc::uid_t* uid_array = NULL;
+        int index = 0;
+        if (!set_uids.empty()) {
+            uid_array = new nertc::uid_t[set_uids.size()];
+            for (auto e : set_uids) {
+                *(uid_array + index++) = e;
+            }
+        }
+        int size;
+        napi_get_value_int32(info[1], size);
+        LOG_F(INFO, "size:%d", size);
+        ret = rtc_engine_->setSubscribeAudioAllowlist(uid_array, size);
+        if (rtc_engine_) {
+          delete[] uid_array;
+        }
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setSubscribeAudioBlocklist)
+{
+    INIT_ENV
+    do
+    {
+        int type;
+        napi_get_value_int32(info[0], type);
+        std::set<uint64_t> set_uids;
+        Napi::Object obj = info[1].As<Napi::Object>();
+        nertc_uid_list_to_struct(env, obj, set_uids);
+        nertc::uid_t* uid_array = NULL;
+        int index = 0;
+        if (!set_uids.empty()) {
+            uid_array = new nertc::uid_t[set_uids.size()];
+            for (auto e : set_uids) {
+                *(uid_array + index++) = e;
+            }
+        }
+        int size;
+        napi_get_value_int32(info[2], size);
+        LOG_F(INFO, "size:%d", size);
+        ret = rtc_engine_->setSubscribeAudioBlocklist((nertc::NERtcAudioStreamType)type, uid_array, size);
         if (rtc_engine_) {
           delete[] uid_array;
         }

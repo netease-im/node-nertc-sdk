@@ -108,6 +108,11 @@ napi_status nertc_engine_context_obj_to_struct(const Napi::Env& env, const Napi:
             context.server_config.use_ipv6 = out_b;
         }
     }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"log_file_max_size_KBytes"))))
+    {
+        int area_code_type_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"area_code_type"))).As<Napi::Number>().Int32Value();
+        context.area_code_type = area_code_type_;
+    }
     return napi_ok;
 }
 
@@ -922,6 +927,47 @@ napi_status nertc_channel_option_to_struct(const Napi::Env& env, const Napi::Obj
         ptr[out.length()] = '\0';  
         config.permission_key = ptr;
     }
+    return napi_ok;
+}
+
+napi_status nertc_channel_optionex_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcJoinChannelOptionsEx& config)
+{
+    std::string out;
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"custom_info"))))
+    {
+        out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"custom_info"))).As<Napi::String>().Utf8Value();
+        memset(config.custom_info, 0, kNERtcCustomInfoLength);
+        strncpy(config.custom_info, out.c_str(), kNERtcCustomInfoLength);
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"permission_key"))))
+    {
+        out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"permission_key"))).As<Napi::String>().Utf8Value();
+        const char* cstr  = out.c_str();
+        char* ptr = new char[out.length() + 1];
+        std::strcpy(ptr, cstr);
+        ptr[out.length()] = '\0';  
+        config.permission_key = ptr;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"team_id"))))
+    {
+        int team_id_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"team_id"))).As<Napi::Number>().Int32Value();
+        config.team_id = team_id_;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"mode"))))
+    {
+        int mode_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"mode"))).As<Napi::Number>().Int32Value();
+        config.mode = (nertc::NERtcRangeAudioMode)mode_;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"audible_distance"))))
+    {
+        int audible_distance_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"audible_distance"))).As<Napi::Number>().Int32Value();
+        config.audible_distance = audible_distance_;
+    }
+
     return napi_ok;
 }
 

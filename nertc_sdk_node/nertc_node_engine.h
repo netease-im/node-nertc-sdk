@@ -50,6 +50,7 @@ public:
     NIM_SDK_NODE_API(joinChannelEx);
     NIM_SDK_NODE_API(switchChannel);
     NIM_SDK_NODE_API(switchChannelEx);
+    NIM_SDK_NODE_API(switchChannelWithOptionsEx);
     NIM_SDK_NODE_API(leaveChannel);
     NIM_SDK_NODE_API(enableLocalAudio);
     NIM_SDK_NODE_API(enableLocalVideo);
@@ -209,6 +210,8 @@ public:
     NIM_SDK_NODE_API(subscribeRemoteSubStreamAudio);
     NIM_SDK_NODE_API(subscribeAllRemoteAudioStream);
     NIM_SDK_NODE_API(setAudioSubscribeOnlyBy);
+    NIM_SDK_NODE_API(setSubscribeAudioAllowlist);
+    NIM_SDK_NODE_API(setSubscribeAudioBlocklist);
     NIM_SDK_NODE_API(setStreamAlignmentProperty);
     NIM_SDK_NODE_API(getNtpTimeOffset);
     NIM_SDK_NODE_API(setCameraCaptureConfig);
