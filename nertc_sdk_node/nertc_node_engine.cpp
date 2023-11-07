@@ -1656,9 +1656,9 @@ NIM_SDK_NODE_API_DEF(getParameters)
             break;
         }
         LOG_F(INFO, "para:%s, extra_info:%s", para.c_str(), extra_info.c_str());
-        ret = rtc_engine_->getParameters(para.c_str(), extra_info.c_str());
+        ret  = rtc_engine_->getParameters(para.c_str(), extra_info.c_str());
     } while (false);
-    LOG_F(INFO, "ret:%s", ret);
+    LOG_F(INFO, "ret:%s", ret.c_str());
     return Napi::String::New(env, ret);
 }
 

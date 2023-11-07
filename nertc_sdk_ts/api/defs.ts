@@ -934,6 +934,7 @@ export interface NERtcEngineAPI {
     stopVideoPreview(): number;
     muteLocalVideoStream(enabled: Boolean): number;
     setParameters(parameters: String): number;
+    getParameters(parameters: String, extra_info: String): String;
     startAudioDump(): number;
     stopAudioDump(): number;
     startAudioMixing(opt: NERtcCreateAudioMixingOption): number;
@@ -1086,6 +1087,7 @@ export interface NERtcEngineAPI {
     startBeauty(file_path: string): number;
     stopBeauty(): number;
     enableBeauty(enable: boolean): number;
+    enableBeautyMirrorMode(enable: boolean): number;
     getBeautyEffect(type: number): number;
     setBeautyEffect(type: number, level: number): number;
     addBeautyFilter(file_path: string): number;
@@ -1098,5 +1100,11 @@ export interface NERtcEngineAPI {
     setLocalVoiceReverbParam(param: any): number;
     enableMediaPub(enabled: boolean, mediaType: number): number;
     updatePermissionKey(key: string): number;
+    setRangeAudioMode(mode: number): number;
+    setRangeAudioTeamID(team_id: number): number;
+    setAudioRecvRange(audible_distance: number, conversational_distance: number, roll_off: number, ): number;
+    updateSelfPosition(info: any): number;
+    initSpatializer(): number;
+    enableSpatializer(enable: boolean, apply_to_team: boolean): number;
     onQsObserver(eventName: String, enabled: boolean, callback: Function): void;
 }
