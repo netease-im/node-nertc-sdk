@@ -110,6 +110,7 @@ public:
     NIM_SDK_NODE_API(stopVideoPreview);
     NIM_SDK_NODE_API(muteLocalVideoStream);
     NIM_SDK_NODE_API(setParameters);
+    NIM_SDK_NODE_API(getParameters);
     NIM_SDK_NODE_API(setRecordingAudioFrameParameters);
     NIM_SDK_NODE_API(setPlaybackAudioFrameParameters);
     NIM_SDK_NODE_API(startAudioDump);
@@ -232,7 +233,7 @@ public:
     NIM_SDK_NODE_API(startBeauty);
     NIM_SDK_NODE_API(stopBeauty);
     NIM_SDK_NODE_API(enableBeauty);
-    // NIM_SDK_NODE_API(enableBeautyMirrorMode);
+    NIM_SDK_NODE_API(enableBeautyMirrorMode);
     NIM_SDK_NODE_API(getBeautyEffect);
     NIM_SDK_NODE_API(setBeautyEffect);
     NIM_SDK_NODE_API(addBeautyFilter);
@@ -253,12 +254,15 @@ public:
     NIM_SDK_NODE_API(getEffectCurrentPosition);
     NIM_SDK_NODE_API(getEffectDuration);
 
-    // NIM_SDK_NODE_API(updateSpatializerAudioRecvRange);
-    // NIM_SDK_NODE_API(updateSpatializerSelfPosition);
-    // NIM_SDK_NODE_API(enableSpatializerRoomEffects);
-    // NIM_SDK_NODE_API(setSpatializerRoomProperty);
-    // NIM_SDK_NODE_API(setSpatializerRenderMode);
-    // NIM_SDK_NODE_API(enableSpatializer);
+    NIM_SDK_NODE_API(setRangeAudioMode);
+    NIM_SDK_NODE_API(setRangeAudioTeamID);
+    NIM_SDK_NODE_API(setAudioRecvRange);
+    NIM_SDK_NODE_API(updateSelfPosition);
+    NIM_SDK_NODE_API(enableSpatializerRoomEffects);
+    NIM_SDK_NODE_API(setSpatializerRoomProperty);
+    NIM_SDK_NODE_API(setSpatializerRenderMode);
+    NIM_SDK_NODE_API(initSpatializer);
+    NIM_SDK_NODE_API(enableSpatializer);
 
 
 private:
@@ -269,6 +273,7 @@ private:
     std::shared_ptr<NertcNodeRtcMediaStatsHandler> _stats_observer;
     std::shared_ptr<NertcNodeVideoEncoderQosObserver> _qs_handler;
     std::shared_ptr<NertcNodeAudioFrameObserverHandler> _audio_observer;
+    bool is_qosObserver_init_ = false;
 
 #ifdef WIN32
     nertc_electron_util::WindowsHelpers *_windows_helper = nullptr;

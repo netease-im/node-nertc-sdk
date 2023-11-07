@@ -65,7 +65,11 @@ public:
     virtual void onUserJoined(nertc::uid_t uid, const char* user_name, nertc::NERtcUserJoinExtraInfo join_extra_info) override;
     virtual void onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info) override;
     virtual void onPermissionKeyWillExpire() override;
-    virtual void onUpdatePermissionKey(const char* key, nertc::NERtcErrorCode error, int timeout) override; 
+    virtual void onUpdatePermissionKey(const char* key, nertc::NERtcErrorCode error, int timeout) override;
+    virtual void onRemoteVideoReceiveSizeChanged(nertc::uid_t uid, nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height) override;
+    virtual void onLocalVideoRenderSizeChanged(nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height) override;
+    virtual void onFirstVideoFrameRender(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height, uint64_t elapsed) override;
+    virtual void onLabFeatureCallback(const char* key, const char* param) override;
 
 private:
     void Node_onError(int error_code, std::string msg);
@@ -116,7 +120,10 @@ private:
     void Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info);
     void Node_onPermissionKeyWillExpire();
     void Node_onUpdatePermissionKey(std::string key, nertc::NERtcErrorCode error, int timeout);
-
+    void Node_onRemoteVideoReceiveSizeChanged(nertc::uid_t uid, nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height);
+    void Node_onLocalVideoRenderSizeChanged(nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height);
+    void Node_onFirstVideoFrameRender(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height, uint64_t elapsed);
+    void Node_onLabFeatureCallback(std::string, std::string param);
 
 };
 

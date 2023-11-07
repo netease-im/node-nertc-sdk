@@ -231,12 +231,14 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(setAudioProfile),
         SET_PROTOTYPE(subscribeRemoteAudioStream),
         SET_PROTOTYPE(setVideoConfig),
+        SET_PROTOTYPE(setVideoConfigEx),
         SET_PROTOTYPE(enableDualStreamMode),
         SET_PROTOTYPE(setLocalVideoMirrorMode),
         SET_PROTOTYPE(startVideoPreview),
         SET_PROTOTYPE(stopVideoPreview),
         SET_PROTOTYPE(muteLocalVideoStream),
         SET_PROTOTYPE(setParameters),
+        SET_PROTOTYPE(getParameters),
         SET_PROTOTYPE(setRecordingAudioFrameParameters),
         SET_PROTOTYPE(setPlaybackAudioFrameParameters),
         SET_PROTOTYPE(startAudioDump),
@@ -332,7 +334,6 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(getNtpTimeOffset),
         SET_PROTOTYPE(setCameraCaptureConfig),
         SET_PROTOTYPE(setCameraCaptureConfigEx),
-        SET_PROTOTYPE(setVideoConfigEx),
         SET_PROTOTYPE(setLocalVideoMirrorModeEx),
         SET_PROTOTYPE(startVideoPreviewEx),
         SET_PROTOTYPE(stopVideoPreviewEx),
@@ -349,7 +350,7 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(startBeauty),
         SET_PROTOTYPE(stopBeauty),
         SET_PROTOTYPE(enableBeauty),
-        // SET_PROTOTYPE(enableBeautyMirrorMode),
+        SET_PROTOTYPE(enableBeautyMirrorMode),
         SET_PROTOTYPE(getBeautyEffect),
         SET_PROTOTYPE(setBeautyEffect),
         SET_PROTOTYPE(addBeautyFilter),
@@ -370,12 +371,16 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(getEffectCurrentPosition),
         SET_PROTOTYPE(getEffectDuration),
 
-        // SET_PROTOTYPE(updateSpatializerAudioRecvRange),
-        // SET_PROTOTYPE(updateSpatializerSelfPosition),
-        // SET_PROTOTYPE(enableSpatializerRoomEffects),
-        // SET_PROTOTYPE(setSpatializerRoomProperty),
-        // SET_PROTOTYPE(setSpatializerRenderMode),
-        // SET_PROTOTYPE(enableSpatializer)
+
+        SET_PROTOTYPE(setRangeAudioMode),
+        SET_PROTOTYPE(setRangeAudioTeamID),
+        SET_PROTOTYPE(setAudioRecvRange),
+        SET_PROTOTYPE(updateSelfPosition),
+        SET_PROTOTYPE(enableSpatializerRoomEffects),
+        SET_PROTOTYPE(setSpatializerRoomProperty),
+        SET_PROTOTYPE(setSpatializerRenderMode),
+        SET_PROTOTYPE(initSpatializer),
+        SET_PROTOTYPE(enableSpatializer),
 
     });
 
@@ -787,14 +792,15 @@ NIM_SDK_NODE_API_DEF(setExternalAudioSource)
     INIT_ENV
     do
     {
-        bool enabled;
-        int samp, chan;
-        napi_get_value_bool(info[0], enabled);
-        napi_get_value_int32(info[1], samp);
-        napi_get_value_int32(info[2], chan);
-        LOG_F(INFO, "enabled:%d samp:%d chan:%d", enabled, samp, chan);
-        ret = rtc_engine_->setExternalAudioSource(enabled, samp, chan);
-        LOG_F(INFO, "ret:%d", ret);
+        // Not Supported External Audio
+        // bool enabled;
+        // int samp, chan;
+        // napi_get_value_bool(info[0], enabled);
+        // napi_get_value_int32(info[1], samp);
+        // napi_get_value_int32(info[2], chan);
+        // LOG_F(INFO, "enabled:%d samp:%d chan:%d", enabled, samp, chan);
+        // ret = rtc_engine_->setExternalAudioSource(enabled, samp, chan);
+        // LOG_F(INFO, "ret:%d", ret);
     } while (false);
     return Napi::Number::New(env, ret);
 }
@@ -944,7 +950,7 @@ NIM_SDK_NODE_API_DEF(setLocalVoiceEqualization)
         napi_get_value_int32(info[1], band_gain);
         LOG_F(INFO, "band_frequency:%d band_gain:%d", band_frequency, band_gain);
         ret = rtc_engine_->setLocalVoiceEqualization(
-            static_cast<nertc::NERtcVoiceEqualizationBand>(band_frequency), 
+            (nertc::NERtcVoiceEqualizationBand)(band_frequency), 
             band_gain);
         LOG_F(INFO, "ret:%d", ret);
     } while (false);
@@ -1123,12 +1129,12 @@ NIM_SDK_NODE_API_DEF(startAudioRecording)
     do
     {
         std::string path;
-        uint32_t profile, scenario;
+        uint32_t profile, quality;
         napi_get_value_utf8_string(info[0], path);
         napi_get_value_uint32(info[1], profile);
-        napi_get_value_uint32(info[2], scenario);
-        LOG_F(INFO, "path:%s profile:%d scenario:%d", path.c_str(), profile, scenario);
-        ret = rtc_engine_->startAudioRecording(path.c_str(), profile, (nertc::NERtcAudioRecordingQuality)scenario);
+        napi_get_value_uint32(info[2], quality);
+        LOG_F(INFO, "path:%s profile:%d quality:%d", path.c_str(), profile, quality);
+        ret = rtc_engine_->startAudioRecording(path.c_str(), profile, (nertc::NERtcAudioRecordingQuality)quality);
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
@@ -1498,6 +1504,26 @@ NIM_SDK_NODE_API_DEF(setVideoConfig)
     return Napi::Number::New(env, ret);
 }
 
+NIM_SDK_NODE_API_DEF(setVideoConfigEx)
+{
+    INIT_ENV
+    do
+    {
+        int type;
+        napi_get_value_int32(info[0], type);
+        auto status = napi_ok;
+        nertc::NERtcVideoConfig config = {};
+        status = nertc_video_config_obj_to_struct(env, info[1].As<Napi::Object>(), config);
+        if (status != napi_ok)
+        {
+            break;
+        }
+        ret = rtc_engine_->setVideoConfig((nertc::NERtcVideoStreamType)type, config);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
 NIM_SDK_NODE_API_DEF(enableDualStreamMode)
 {
     INIT_ENV
@@ -1534,7 +1560,7 @@ NIM_SDK_NODE_API_DEF(setLocalVideoMirrorModeEx)
 {
     INIT_ENV
     do{
-        //todo
+        // todo 5510
         // uint32_t type;
         // uint32_t mode;
         // napi_get_value_uint32(info[0], type);
@@ -1609,6 +1635,31 @@ NIM_SDK_NODE_API_DEF(setParameters)
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(getParameters)
+{
+    Napi::Env env = info.Env();
+    std::string ret = "";
+    do
+    {
+        std::string para;
+        napi_get_value_utf8_string(info[0], para);
+        if (para.length() == 0)
+        {
+            break;
+        }
+        std::string extra_info;
+        napi_get_value_utf8_string(info[1], extra_info);
+        if (extra_info.length() == 0)
+        {
+            break;
+        }
+        LOG_F(INFO, "para:%s, extra_info:%s", para.c_str(), extra_info.c_str());
+        ret = rtc_engine_->getParameters(para.c_str(), extra_info.c_str());
+    } while (false);
+    LOG_F(INFO, "ret:%s", ret);
+    return Napi::String::New(env, ret);
 }
 
 NIM_SDK_NODE_API_DEF(setRecordingAudioFrameParameters)
@@ -2098,7 +2149,11 @@ NIM_SDK_NODE_API_DEF(onQsObserver)
     INIT_ENV
     do
     {
-        rtc_engine_->setVideoEncoderQosObserver(_qs_handler.get());
+        if(!is_qosObserver_init_) {
+            rtc_engine_->setVideoEncoderQosObserver(_qs_handler.get());
+            is_qosObserver_init_ = true;
+        }
+        
         std::string eventName;
         bool enable;
         napi_get_value_utf8_string(info[0], eventName);
@@ -3157,7 +3212,7 @@ NIM_SDK_NODE_API_DEF(setSubscribeAudioAllowlist)
         napi_get_value_int32(info[1], size);
         LOG_F(INFO, "size:%d", size);
         ret = rtc_engine_->setSubscribeAudioAllowlist(uid_array, size);
-        if (rtc_engine_) {
+        if (uid_array) {
           delete[] uid_array;
         }
     } while (false);
@@ -3187,7 +3242,7 @@ NIM_SDK_NODE_API_DEF(setSubscribeAudioBlocklist)
         napi_get_value_int32(info[2], size);
         LOG_F(INFO, "size:%d", size);
         ret = rtc_engine_->setSubscribeAudioBlocklist((nertc::NERtcAudioStreamType)type, uid_array, size);
-        if (rtc_engine_) {
+        if (uid_array) {
           delete[] uid_array;
         }
     } while (false);
@@ -3256,25 +3311,6 @@ NIM_SDK_NODE_API_DEF(setCameraCaptureConfigEx)
     return Napi::Number::New(env, ret);;
 }
 
-NIM_SDK_NODE_API_DEF(setVideoConfigEx)
-{
-    INIT_ENV
-    do
-    {
-        int type;
-        napi_get_value_int32(info[0], type);
-        auto status = napi_ok;
-        nertc::NERtcVideoConfig config = {};
-        status = nertc_video_config_obj_to_struct(env, info[1].As<Napi::Object>(), config);
-        if (status != napi_ok)
-        {
-            break;
-        }
-        ret = rtc_engine_->setVideoConfig((nertc::NERtcVideoStreamType)type, config);
-    } while (false);
-    LOG_F(INFO, "ret:%d", ret);
-    return Napi::Number::New(env, ret);
-}
 
 NIM_SDK_NODE_API_DEF(startVideoPreviewEx)
 {
@@ -3337,10 +3373,10 @@ NIM_SDK_NODE_API_DEF(setScreenCaptureMouseCursor)
     INIT_ENV
     do
     {
-        bool enabled = false;
-        napi_get_value_bool(info[0], enabled);
-        LOG_F(INFO, "enabled:%d", enabled);
-        ret = rtc_engine_->setScreenCaptureMouseCursor(enabled);
+        bool capture_cursor = false;
+        napi_get_value_bool(info[0], capture_cursor);
+        LOG_F(INFO, "capture_cursor:%d", capture_cursor);
+        ret = rtc_engine_->setScreenCaptureMouseCursor(capture_cursor);
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
@@ -3519,20 +3555,20 @@ NIM_SDK_NODE_API_DEF(enableBeauty)
     return Napi::Number::New(env, ret);
 }
 
-// NIM_SDK_NODE_API_DEF(enableBeautyMirrorMode)
-// {
-//     INIT_ENV
-//     do
-//     {
-//         bool enable = false;
-//         napi_get_value_bool(info[0], enable);
-//         LOG_F(INFO, "enable:%d", enable);
-//         rtc_engine_->enableBeautyMirrorMode(enable);
-//         ret = 0;
-//     } while (false);
-//     LOG_F(INFO, "ret:%d", ret);
-//     return Napi::Number::New(env, ret);
-// }
+NIM_SDK_NODE_API_DEF(enableBeautyMirrorMode)
+{
+    INIT_ENV
+    do
+    {
+        bool enable = false;
+        napi_get_value_bool(info[0], enable);
+        LOG_F(INFO, "enable:%d", enable);
+        rtc_engine_->enableBeautyMirrorMode(enable);
+        ret = 0;
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
 
 NIM_SDK_NODE_API_DEF(getBeautyEffect)
 {
@@ -3815,98 +3851,141 @@ NIM_SDK_NODE_API_DEF(getEffectDuration)
     return Napi::Number::New(env, ret == 0 ? dur : ret);
 }
 
-// NIM_SDK_NODE_API_DEF(enableSpatializer)
-// {
-//     INIT_ENV
-//     uint64_t dur = 0;
-//     do
-//     {
-//         bool enable;
-//         napi_get_value_bool(info[0], enable);
-//         LOG_F(INFO, "enable:%d", enable);
-//         ret = rtc_engine_->enableSpatializer(enable);
-//     } while (false);
-//     LOG_F(INFO, "ret:%d", ret);
-//     return Napi::Number::New(env, ret);
-// }
+NIM_SDK_NODE_API_DEF(initSpatializer)
+{
+    INIT_ENV
+    uint64_t dur = 0;
+    do
+    {
+        LOG_F(INFO, "initSpatializer");
+        ret = rtc_engine_->initSpatializer();
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
 
-// NIM_SDK_NODE_API_DEF(updateSpatializerAudioRecvRange)
-// {
-//     INIT_ENV
-//     uint64_t dur = 0;
-//     do
-//     {
-//         int32_t audio_distance, conversational_distance, roll_off;
-//         napi_get_value_int32(info[0], audio_distance);
-//         napi_get_value_int32(info[1], conversational_distance);
-//         napi_get_value_int32(info[2], roll_off);
-//         LOG_F(INFO, "audible_distance:%d, conversational_distance:%d, roll_off:%d", audio_distance, conversational_distance, roll_off);
-//         ret = rtc_engine_->updateSpatializerAudioRecvRange(audio_distance, conversational_distance, (nertc::NERtcDistanceRolloffModel)roll_off);
-//     } while (false);
-//     LOG_F(INFO, "ret:%d", ret);
-//     return Napi::Number::New(env, ret);
-// }
-
-// NIM_SDK_NODE_API_DEF(updateSpatializerSelfPosition)
-// {
-//     INIT_ENV
-//     uint64_t dur = 0;
-//     do
-//     {
-//         Napi::Object obj = info[0].As<Napi::Object>();
-//         nertc::NERtcSpatializerPositionInfo info;
-//         nertc_spatializer_position_to_struct(env, obj, info);
-//         ret = rtc_engine_->updateSpatializerSelfPosition(info);
-//     } while (false);
-//     LOG_F(INFO, "ret:%d", ret);
-//     return Napi::Number::New(env, ret);
-// }
-
-// NIM_SDK_NODE_API_DEF(enableSpatializerRoomEffects)
-// {
-//     INIT_ENV
-//     uint64_t dur = 0;
-//     do
-//     {
-//         bool enable;
-//         napi_get_value_bool(info[0], enable);
-//         LOG_F(INFO, "enable:%d", enable);
-//         ret = rtc_engine_->enableSpatializerRoomEffects(enable);
-//     } while (false);
-//     LOG_F(INFO, "ret:%d", ret);
-//     return Napi::Number::New(env, ret);
-// }
+NIM_SDK_NODE_API_DEF(enableSpatializer)
+{
+    INIT_ENV
+    uint64_t dur = 0;
+    do
+    {
+        bool enable;
+        bool apply_to_team;
+        napi_get_value_bool(info[0], enable);
+        napi_get_value_bool(info[1], apply_to_team);
+        LOG_F(INFO, "enable:%d, apply_to_team:%d", enable, apply_to_team);
+        ret = rtc_engine_->enableSpatializer(enable, apply_to_team);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
 
 
-// NIM_SDK_NODE_API_DEF(setSpatializerRoomProperty)
-// {
-//     INIT_ENV
-//     uint64_t dur = 0;
-//     do
-//     {
-//         nertc::NERtcSpatializerRoomProperty config;
-//         Napi::Object obj = info[0].As<Napi::Object>();
-//         nertc_spatializer_room_property_to_struct(env, obj, config);
-//         ret = rtc_engine_->setSpatializerRoomProperty(config);
-//     } while (false);
-//     LOG_F(INFO, "ret:%d", ret);
-//     return Napi::Number::New(env, ret);
-// }
+NIM_SDK_NODE_API_DEF(setRangeAudioMode)
+{
+    INIT_ENV
+    do
+    {
+        int32_t mode;
+        napi_get_value_int32(info[0], mode);
+        LOG_F(INFO, "mode:%d", mode);
+        ret = rtc_engine_->setRangeAudioMode((nertc::NERtcRangeAudioMode)mode);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
 
-// NIM_SDK_NODE_API_DEF(setSpatializerRenderMode)
-// {
-//     INIT_ENV
-//     uint64_t dur = 0;
-//     do
-//     {
-//         int32_t mode;
-//         napi_get_value_int32(info[0], mode);
-//         LOG_F(INFO, "mode:%d", mode);
-//         ret = rtc_engine_->setSpatializerRenderMode((nertc::NERtcSpatializerRenderMode)mode);
-//     } while (false);
-//     LOG_F(INFO, "ret:%d", ret);
-//     return Napi::Number::News(env, ret);
-// }
+NIM_SDK_NODE_API_DEF(setRangeAudioTeamID)
+{
+    INIT_ENV
+    do
+    {
+        int32_t team_id;
+        napi_get_value_int32(info[0], team_id);
+        LOG_F(INFO, "team_id:%d", team_id);
+        ret = rtc_engine_->setRangeAudioTeamID(team_id);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setAudioRecvRange)
+{
+    INIT_ENV
+    uint64_t dur = 0;
+    do
+    {
+        int32_t audio_distance, conversational_distance, roll_off;
+        napi_get_value_int32(info[0], audio_distance);
+        napi_get_value_int32(info[1], conversational_distance);
+        napi_get_value_int32(info[2], roll_off);
+        LOG_F(INFO, "audible_distance:%d, conversational_distance:%d, roll_off:%d", audio_distance, conversational_distance, roll_off);
+        ret = rtc_engine_->setAudioRecvRange(audio_distance, conversational_distance, (nertc::NERtcDistanceRolloffModel)roll_off);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(updateSelfPosition)
+{
+    INIT_ENV
+    uint64_t dur = 0;
+    do
+    {
+        Napi::Object obj = info[0].As<Napi::Object>();
+        nertc::NERtcPositionInfo info;
+        nertc_spatializer_position_to_struct(env, obj, info);
+        ret = rtc_engine_->updateSelfPosition(info);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(enableSpatializerRoomEffects)
+{
+    INIT_ENV
+    uint64_t dur = 0;
+    do
+    {
+        bool enable;
+        napi_get_value_bool(info[0], enable);
+        LOG_F(INFO, "enable:%d", enable);
+        ret = rtc_engine_->enableSpatializerRoomEffects(enable);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+
+NIM_SDK_NODE_API_DEF(setSpatializerRoomProperty)
+{
+    INIT_ENV
+    uint64_t dur = 0;
+    do
+    {
+        nertc::NERtcSpatializerRoomProperty config;
+        Napi::Object obj = info[0].As<Napi::Object>();
+        nertc_spatializer_room_property_to_struct(env, obj, config);
+        ret = rtc_engine_->setSpatializerRoomProperty(config);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setSpatializerRenderMode)
+{
+    INIT_ENV
+    do
+    {
+        int32_t mode;
+        napi_get_value_int32(info[0], mode);
+        LOG_F(INFO, "mode:%d", mode);
+        ret = rtc_engine_->setSpatializerRenderMode((nertc::NERtcSpatializerRenderMode)mode);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
 
 
 

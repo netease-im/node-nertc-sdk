@@ -1098,6 +1098,102 @@ void NertcChannelEventHandler::Node_onUpdatePermissionKey(std::string key, nertc
         function_reference->function.Call(args);
     }
 }
+
+void NertcChannelEventHandler::onRemoteVideoReceiveSizeChanged(nertc::uid_t uid, nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onRemoteVideoReceiveSizeChanged(uid, type, width, height);
+    });
+}
+
+void NertcChannelEventHandler::Node_onRemoteVideoReceiveSizeChanged(nertc::uid_t uid, nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height)
+{
+    auto it = _callbacks.find("onRemoteVideoReceiveSizeChanged");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::Number::New(env, uid);
+        auto param2 = Napi::Number::New(env, (int)type);
+        auto param3 = Napi::Number::New(env, width);
+        auto param4 = Napi::Number::New(env, height);
+        const std::vector<napi_value> args = {param1, param2, param3, param4};
+        function_reference->function.Call(args);
+    }
+}
+
+void NertcChannelEventHandler::onLocalVideoRenderSizeChanged(nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height)
+{
+        nim_node::node_async_call::async_call([=]() {
+        Node_onLocalVideoRenderSizeChanged(type, width, height);
+    });
+
+}
+
+void NertcChannelEventHandler::Node_onLocalVideoRenderSizeChanged(nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height)
+{
+    auto it = _callbacks.find("onLocalVideoRenderSizeChanged");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::Number::New(env, (int)type);
+        auto param2 = Napi::Number::New(env, width);
+        auto param3 = Napi::Number::New(env, height);
+        const std::vector<napi_value> args = {param1, param2, param3};
+        function_reference->function.Call(args);
+    }
+} 
+
+void NertcChannelEventHandler::onFirstVideoFrameRender(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height, uint64_t elapsed)
+{
+        nim_node::node_async_call::async_call([=]() {
+        Node_onFirstVideoFrameRender(type, uid, width, height, elapsed);
+    });
+
+}
+
+void NertcChannelEventHandler::Node_onFirstVideoFrameRender(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height, uint64_t elapsed)
+{
+    auto it = _callbacks.find("onFirstVideoFrameRender");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::Number::New(env, (int)type);
+        auto param2 = Napi::Number::New(env, width);
+        auto param3 = Napi::Number::New(env, height);
+        auto param4 = Napi::Number::New(env, elapsed);
+        const std::vector<napi_value> args = {param1, param2, param3, param4};
+        function_reference->function.Call(args);
+    }
+}
+
+void NertcChannelEventHandler::onLabFeatureCallback(const char* key, const char* param)
+{
+    std::string str_key = key;
+    std::string str_param = param;
+        nim_node::node_async_call::async_call([=]() {
+        Node_onLabFeatureCallback(str_key, str_param);
+    });
+
+}
+
+void NertcChannelEventHandler::Node_onLabFeatureCallback(std::string key, std::string param)
+{
+    auto it = _callbacks.find("onLabFeatureCallback");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        auto param1 = Napi::String::New(env, key);
+        auto param2 = Napi::String::New(env, param);
+        const std::vector<napi_value> args = {param1, param2};
+        function_reference->function.Call(args);
+    }
+}
+
+
 /*******************************************质量透明数据***************************************************/
 void NertcChannelRtcMediaStatsHandler::onRtcStats(const nertc::NERtcStats &stats)
 {

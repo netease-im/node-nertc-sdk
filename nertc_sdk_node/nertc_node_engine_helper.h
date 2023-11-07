@@ -29,7 +29,9 @@ napi_status nertc_channel_optionex_to_struct(const Napi::Env& env, const Napi::O
 napi_status nertc_recording_option_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcAudioRecordingConfiguration& config);
 napi_status nertc_virtual_background_option_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::VirtualBackgroundSource& config);
 napi_status nertc_spatializer_room_property_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcSpatializerRoomProperty& config);
-//napi_status nertc_spatializer_position_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcSpatializerPositionInfo& config);
+napi_status nertc_spatializer_position_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcPositionInfo& config);
+napi_status nertc_position_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcPositionInfo& info);
+
 
 //set object field
 napi_status nertc_stats_to_obj(const Napi::Env env, const nertc::NERtcStats& config,  Napi::Object& obj);

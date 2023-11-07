@@ -51,7 +51,9 @@ public:
     virtual void onDisconnect(nertc::NERtcErrorCode reason) override;
     virtual void onClientRoleChanged(nertc::NERtcClientRole oldRole, nertc::NERtcClientRole newRole) override;
     virtual void onUserJoined(nertc::uid_t uid, const char * user_name) override;
+    virtual void onUserJoined(nertc::uid_t uid, const char* user_name, nertc::NERtcUserJoinExtraInfo join_extra_info) override;
     virtual void onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason) override;
+    virtual void onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info) override;
     virtual void onUserAudioStart(nertc::uid_t uid) override;
     virtual void onUserAudioStop(nertc::uid_t uid) override;
     virtual void onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile) override;
@@ -120,9 +122,11 @@ public:
     virtual void onPermissionKeyWillExpire() override;
     virtual void onUpdatePermissionKey(const char* key, nertc::NERtcErrorCode error, int timeout) override;
     virtual void onApiCallExecuted(const char* api_name, nertc::NERtcErrorCode error, const char* message) override;
-    virtual void onUserJoined(nertc::uid_t uid, const char* user_name, nertc::NERtcUserJoinExtraInfo join_extra_info) override;
-    virtual void onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info) override;
-
+    virtual void onRemoteVideoReceiveSizeChanged(nertc::uid_t uid, nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height) override;
+    virtual void onLocalVideoRenderSizeChanged(nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height) override;
+    virtual void onFirstVideoFrameRender(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height, uint64_t elapsed) override;
+    virtual void onLabFeatureCallback(const char* key, const char* param) override;
+    
 public:
     void onPullExternalAudioFrame(Napi::FunctionReference&& function, const std::shared_ptr<unsigned char>& data, uint32_t length);
 
@@ -138,7 +142,9 @@ private:
     void Node_onDisconnect(nertc::NERtcErrorCode reason);
     void Node_onClientRoleChanged(nertc::NERtcClientRole oldRole, nertc::NERtcClientRole newRole);
     void Node_onUserJoined(nertc::uid_t uid, std::string user_name);
+    void Node_onUserJoined(nertc::uid_t uid, std::string user_name, nertc::NERtcUserJoinExtraInfo join_extra_info);
     void Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason);
+    void Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info);
     void Node_onUserAudioStart(nertc::uid_t uid);
     void Node_onUserAudioStop(nertc::uid_t uid);
     void Node_onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile);
@@ -194,8 +200,12 @@ private:
     void Node_onUserDataBufferedAmountChanged(nertc::uid_t uid, uint64_t previousAmount);
     void Node_onPermissionKeyWillExpire();
     void Node_onApiCallExecuted(std::string api_name, nertc::NERtcErrorCode error, std::string message);
-    void Node_onUserJoined(nertc::uid_t uid, std::string user_name, nertc::NERtcUserJoinExtraInfo join_extra_info);
-    void Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info);
+    void Node_onRemoteVideoReceiveSizeChanged(nertc::uid_t uid, nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height);
+    void Node_onLocalVideoRenderSizeChanged(nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height);
+    void Node_onFirstVideoFrameRender(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height, uint64_t elapsed);
+    void Node_onLabFeatureCallback(std::string key, std::string param);
+    
+    
 };
 
 class NertcNodeRtcMediaStatsHandler : public EventHandler, public nertc::IRtcMediaStatsObserver

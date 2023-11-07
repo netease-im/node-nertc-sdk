@@ -204,6 +204,8 @@ Napi::Object NertcNodeChannel::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(subscribeRemoteSubStreamAudio),
         SET_PROTOTYPE(subscribeAllRemoteAudioStream),
         SET_PROTOTYPE(setAudioSubscribeOnlyBy),
+        SET_PROTOTYPE(setSubscribeAudioAllowlist),
+        SET_PROTOTYPE(setSubscribeAudioBlocklist),
         SET_PROTOTYPE(subscribeRemoteVideoStream),
         SET_PROTOTYPE(subscribeRemoteVideoSubStream),
 
@@ -227,12 +229,16 @@ Napi::Object NertcNodeChannel::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(enableAudioVolumeIndication),
         SET_PROTOTYPE(updatePermissionKey),
 
-        // SET_PROTOTYPE(updateSpatializerAudioRecvRange),
+        SET_PROTOTYPE(setRangeAudioMode),
+        SET_PROTOTYPE(setRangeAudioTeamID),
+        SET_PROTOTYPE(setAudioRecvRange),
         // SET_PROTOTYPE(updateSpatializerSelfPosition),
-        // SET_PROTOTYPE(enableSpatializerRoomEffects),
-        // SET_PROTOTYPE(setSpatializerRoomProperty),
-        // SET_PROTOTYPE(setSpatializerRenderMode),
-        // SET_PROTOTYPE(enableSpatializer),
+        SET_PROTOTYPE(updateSelfPosition),
+        SET_PROTOTYPE(enableSpatializerRoomEffects),
+        SET_PROTOTYPE(setSpatializerRoomProperty),
+        SET_PROTOTYPE(setSpatializerRenderMode),
+        SET_PROTOTYPE(initSpatializer),
+        SET_PROTOTYPE(enableSpatializer),
 
     });
 
@@ -1089,6 +1095,65 @@ NIM_SDK_NODE_API_DEF(setAudioSubscribeOnlyBy)
     return Napi::Number::New(env, ret);
 }
 
+NIM_SDK_NODE_API_DEF(setSubscribeAudioAllowlist)
+{
+    INIT_ENV
+    do
+    {
+        std::set<uint64_t> set_uids;
+        Napi::Object obj = info[0].As<Napi::Object>();
+        nertc_uid_list_to_struct(env, obj, set_uids);
+        nertc::uid_t* uid_array = NULL;
+        int index = 0;
+        if (!set_uids.empty()) {
+            uid_array = new nertc::uid_t[set_uids.size()];
+            for (auto e : set_uids) {
+                *(uid_array + index++) = e;
+            }
+        }
+        int size;
+        napi_get_value_int32(info[1], size);
+        LOG_F(INFO, "size:%d", size);
+        ret = _channel->setSubscribeAudioAllowlist(uid_array, size);
+        if (uid_array) {
+          delete[] uid_array;
+        }
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+
+NIM_SDK_NODE_API_DEF(setSubscribeAudioBlocklist)
+{
+    INIT_ENV
+    do
+    {
+        int type;
+        napi_get_value_int32(info[0], type);
+        std::set<uint64_t> set_uids;
+        Napi::Object obj = info[1].As<Napi::Object>();
+        nertc_uid_list_to_struct(env, obj, set_uids);
+        nertc::uid_t* uid_array = NULL;
+        int index = 0;
+        if (!set_uids.empty()) {
+            uid_array = new nertc::uid_t[set_uids.size()];
+            for (auto e : set_uids) {
+                *(uid_array + index++) = e;
+            }
+        }
+        int size;
+        napi_get_value_int32(info[2], size);
+        LOG_F(INFO, "size:%d", size);
+        ret = _channel->setSubscribeAudioBlocklist((nertc::NERtcAudioStreamType)type, uid_array, size);
+        if (uid_array) {
+          delete[] uid_array;
+        }
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
 NIM_SDK_NODE_API_DEF(subscribeRemoteVideoStream)
 {
     INIT_ENV
@@ -1487,37 +1552,79 @@ NIM_SDK_NODE_API_DEF(updatePermissionKey)
     return Napi::Number::New(env, ret);
 }
 
-// NIM_SDK_NODE_API_DEF(enableSpatializer)
-// {
-//     INIT_ENV
-//     uint64_t dur = 0;
-//     do
-//     {
-//         bool enable;
-//         napi_get_value_bool(info[0], enable);
-//         LOG_F(INFO, "enable:%d", enable);
-//         ret = _channel->enableSpatializer(enable);
-//     } while (false);
-//     LOG_F(INFO, "ret:%d", ret);
-//     return Napi::Number::New(env, ret);
-// }
+NIM_SDK_NODE_API_DEF(initSpatializer)
+{
+    INIT_ENV
+    uint64_t dur = 0;
+    do
+    {
+        ret = _channel->initSpatializer();
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
 
-// NIM_SDK_NODE_API_DEF(updateSpatializerAudioRecvRange)
-// {
-//     INIT_ENV
-//     uint64_t dur = 0;
-//     do
-//     {
-//         int32_t audio_distance, conversational_distance, roll_off;
-//         napi_get_value_int32(info[0], audio_distance);
-//         napi_get_value_int32(info[1], conversational_distance);
-//         napi_get_value_int32(info[2], roll_off);
-//         LOG_F(INFO, "audible_distance:%d, conversational_distance:%d, roll_off:%d", audio_distance, conversational_distance, roll_off);
-//         ret = _channel->updateSpatializerAudioRecvRange(audio_distance, conversational_distance, (nertc::NERtcDistanceRolloffModel)roll_off);
-//     } while (false);
-//     LOG_F(INFO, "ret:%d", ret);
-//     return Napi::Number::New(env, ret);
-// }
+NIM_SDK_NODE_API_DEF(enableSpatializer)
+{
+    INIT_ENV
+    uint64_t dur = 0;
+    do
+    {
+        bool enable;
+        bool apply_to_team;
+        napi_get_value_bool(info[0], enable);
+        napi_get_value_bool(info[1], apply_to_team);
+        LOG_F(INFO, "enable:%d, apply_to_team:%d", enable, apply_to_team);
+        ret = _channel->enableSpatializer(enable, apply_to_team);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setRangeAudioMode)
+{
+    INIT_ENV
+    do
+    {
+        int32_t mode;
+        napi_get_value_int32(info[0], mode);
+        LOG_F(INFO, "mode:%d", mode);
+        ret = _channel->setRangeAudioMode((nertc::NERtcRangeAudioMode)mode);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setRangeAudioTeamID)
+{
+    INIT_ENV
+    do
+    {
+        int32_t team_id;
+        napi_get_value_int32(info[0], team_id);
+        LOG_F(INFO, "team_id:%d", team_id);
+        ret = _channel->setRangeAudioTeamID(team_id);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(setAudioRecvRange)
+{
+    INIT_ENV
+    uint64_t dur = 0;
+    do
+    {
+        int32_t audio_distance, conversational_distance, roll_off;
+        napi_get_value_int32(info[0], audio_distance);
+        napi_get_value_int32(info[1], conversational_distance);
+        napi_get_value_int32(info[2], roll_off);
+        LOG_F(INFO, "audible_distance:%d, conversational_distance:%d, roll_off:%d", audio_distance, conversational_distance, roll_off);
+        ret = _channel->setAudioRecvRange(audio_distance, conversational_distance, (nertc::NERtcDistanceRolloffModel)roll_off);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
 
 // NIM_SDK_NODE_API_DEF(updateSpatializerSelfPosition)
 // {
@@ -1534,51 +1641,64 @@ NIM_SDK_NODE_API_DEF(updatePermissionKey)
 //     return Napi::Number::New(env, ret);
 // }
 
-// NIM_SDK_NODE_API_DEF(enableSpatializerRoomEffects)
-// {
-//     INIT_ENV
-//     uint64_t dur = 0;
-//     do
-//     {
-//         bool enable;
-//         napi_get_value_bool(info[0], enable);
-//         LOG_F(INFO, "enable:%d", enable);
-//         ret = _channel->enableSpatializerRoomEffects(enable);
-//     } while (false);
-//     LOG_F(INFO, "ret:%d", ret);
-//     return Napi::Number::New(env, ret);
-// }
+NIM_SDK_NODE_API_DEF(updateSelfPosition)
+{
+    INIT_ENV
+    do
+    {
+        // nertc::NERtcPositionInfo info = {};
+        // Napi::Object obj = info[0].As<Napi::Object>();
+        // nertc_position_info_to_struct(env, obj, info);
+        // ret = _channel->updateSelfPosition(info);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
+NIM_SDK_NODE_API_DEF(enableSpatializerRoomEffects)
+{
+    INIT_ENV
+    uint64_t dur = 0;
+    do
+    {
+        bool enable;
+        napi_get_value_bool(info[0], enable);
+        LOG_F(INFO, "enable:%d", enable);
+        ret = _channel->enableSpatializerRoomEffects(enable);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
 
 
-// NIM_SDK_NODE_API_DEF(setSpatializerRoomProperty)
-// {
-//     INIT_ENV
-//     uint64_t dur = 0;
-//     do
-//     {
-//         nertc::NERtcSpatializerRoomProperty config;
-//         Napi::Object obj = info[0].As<Napi::Object>();
-//         nertc_spatializer_room_property_to_struct(env, obj, config);
-//         ret = _channel->setSpatializerRoomProperty(config);
-//     } while (false);
-//     LOG_F(INFO, "ret:%d", ret);
-//     return Napi::Number::New(env, ret);
-// }
+NIM_SDK_NODE_API_DEF(setSpatializerRoomProperty)
+{
+    INIT_ENV
+    uint64_t dur = 0;
+    do
+    {
+        nertc::NERtcSpatializerRoomProperty config;
+        Napi::Object obj = info[0].As<Napi::Object>();
+        nertc_spatializer_room_property_to_struct(env, obj, config);
+        ret = _channel->setSpatializerRoomProperty(config);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
 
-// NIM_SDK_NODE_API_DEF(setSpatializerRenderMode)
-// {
-//     INIT_ENV
-//     uint64_t dur = 0;
-//     do
-//     {
-//         int32_t mode;
-//         napi_get_value_int32(info[0], mode);
-//         LOG_F(INFO, "mode:%d", mode);
-//         ret = _channel->setSpatializerRenderMode((nertc::NERtcSpatializerRenderMode)mode);
-//     } while (false);
-//     LOG_F(INFO, "ret:%d", ret);
-//     return Napi::Number::New(env, ret);
-// }
+NIM_SDK_NODE_API_DEF(setSpatializerRenderMode)
+{
+    INIT_ENV
+    do
+    {
+        int32_t mode;
+        napi_get_value_int32(info[0], mode);
+        LOG_F(INFO, "mode:%d", mode);
+        ret = _channel->setSpatializerRenderMode((nertc::NERtcSpatializerRenderMode)mode);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
 
 
 }

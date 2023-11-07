@@ -71,6 +71,8 @@ public:
     NIM_SDK_NODE_API(subscribeRemoteSubStreamAudio); // demo未实现
     NIM_SDK_NODE_API(subscribeAllRemoteAudioStream); // demo未实现
     NIM_SDK_NODE_API(setAudioSubscribeOnlyBy); // demo未实现
+    NIM_SDK_NODE_API(setSubscribeAudioAllowlist);
+    NIM_SDK_NODE_API(setSubscribeAudioBlocklist);
     NIM_SDK_NODE_API(subscribeRemoteVideoStream); // 通过事件调用
     NIM_SDK_NODE_API(subscribeRemoteVideoSubStream); // 通过事件调用
     
@@ -93,12 +95,17 @@ public:
     NIM_SDK_NODE_API(enableAudioVolumeIndication);
     NIM_SDK_NODE_API(updatePermissionKey);
 
-    // NIM_SDK_NODE_API(updateSpatializerAudioRecvRange);
+
+    NIM_SDK_NODE_API(setRangeAudioMode);
+    NIM_SDK_NODE_API(setRangeAudioTeamID);
+    NIM_SDK_NODE_API(setAudioRecvRange);
     // NIM_SDK_NODE_API(updateSpatializerSelfPosition);
-    // NIM_SDK_NODE_API(enableSpatializerRoomEffects);
-    // NIM_SDK_NODE_API(setSpatializerRoomProperty);
-    // NIM_SDK_NODE_API(setSpatializerRenderMode);
-    // NIM_SDK_NODE_API(enableSpatializer);
+    NIM_SDK_NODE_API(updateSelfPosition);
+    NIM_SDK_NODE_API(enableSpatializerRoomEffects);
+    NIM_SDK_NODE_API(setSpatializerRoomProperty);
+    NIM_SDK_NODE_API(setSpatializerRenderMode);
+    NIM_SDK_NODE_API(initSpatializer);
+    NIM_SDK_NODE_API(enableSpatializer);
 
 
 private:
