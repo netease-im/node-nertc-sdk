@@ -166,17 +166,16 @@ Napi::Object NertcNodeChannel::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(getChannelName),
         SET_PROTOTYPE(joinChannel),
         SET_PROTOTYPE(joinChannelWithUid),
-        SET_PROTOTYPE(joinChannelEx),
+        SET_PROTOTYPE(joinChannelWithOptions),
         SET_PROTOTYPE(leaveChannel),
         SET_PROTOTYPE(enableLocalAudio),
         SET_PROTOTYPE(enableLocalSubStreamAudio),
         SET_PROTOTYPE(muteLocalAudioStream),
         SET_PROTOTYPE(muteLocalSubStreamAudio),
         SET_PROTOTYPE(enableLocalVideo),
-        SET_PROTOTYPE(enableLocalVideoEx),
+        SET_PROTOTYPE(enableLocalVideoWithType),
         SET_PROTOTYPE(muteLocalVideoStream),
-        SET_PROTOTYPE(muteLocalVideoStreamEx),
-
+        SET_PROTOTYPE(muteLocalVideoStreamWithType),
         SET_PROTOTYPE(startScreenCaptureByScreenRect),
         SET_PROTOTYPE(startScreenCaptureByDisplayId),
         SET_PROTOTYPE(startScreenCaptureByWindowId),
@@ -187,18 +186,17 @@ Napi::Object NertcNodeChannel::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(resumeScreenCapture),
         SET_PROTOTYPE(setExcludeWindowList),
         SET_PROTOTYPE(updateScreenCaptureParameters),
-
-		SET_PROTOTYPE(setupVideoCanvas),
+        SET_PROTOTYPE(setupVideoCanvas),
         SET_PROTOTYPE(setupSubStreamVideoCanvas),
         SET_PROTOTYPE(setLocalVideoMirrorMode),
-        SET_PROTOTYPE(setLocalVideoMirrorModeEx),
+        SET_PROTOTYPE(setLocalVideoMirrorModeWithType),
         SET_PROTOTYPE(setClientRole),
         SET_PROTOTYPE(setLocalMediaPriority),
         SET_PROTOTYPE(getConnectionState),
         SET_PROTOTYPE(setCameraCaptureConfig),
-        SET_PROTOTYPE(setCameraCaptureConfigEx),
+        SET_PROTOTYPE(setCameraCaptureConfigWithType),
         SET_PROTOTYPE(setVideoConfig),
-        SET_PROTOTYPE(setVideoConfigEx),
+        SET_PROTOTYPE(setVideoConfigWithType),
         SET_PROTOTYPE(enableDualStreamMode),
         SET_PROTOTYPE(subscribeRemoteAudioStream),
         SET_PROTOTYPE(subscribeRemoteSubStreamAudio),
@@ -208,31 +206,25 @@ Napi::Object NertcNodeChannel::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(setSubscribeAudioBlocklist),
         SET_PROTOTYPE(subscribeRemoteVideoStream),
         SET_PROTOTYPE(subscribeRemoteVideoSubStream),
-
         SET_PROTOTYPE(addLiveStreamTask),
         SET_PROTOTYPE(updateLiveStreamTask),
         SET_PROTOTYPE(removeLiveStreamTask),
         SET_PROTOTYPE(sendSEIMsg),
-        SET_PROTOTYPE(sendSEIMsgEx),
-
+        SET_PROTOTYPE(sendSEIMsgWithType),
         SET_PROTOTYPE(adjustUserPlaybackSignalVolume),
         SET_PROTOTYPE(adjustChannelPlaybackSignalVolume),
-
         SET_PROTOTYPE(startChannelMediaRelay),
         SET_PROTOTYPE(updateChannelMediaRelay),
         SET_PROTOTYPE(stopChannelMediaRelay),
-
         SET_PROTOTYPE(setLocalPublishFallbackOption),
         SET_PROTOTYPE(setRemoteSubscribeFallbackOption),
         SET_PROTOTYPE(setRemoteHighPriorityAudioStream),
         SET_PROTOTYPE(enableMediaPub),
-        SET_PROTOTYPE(enableAudioVolumeIndication),
         SET_PROTOTYPE(updatePermissionKey),
-
+        SET_PROTOTYPE(enableAudioVolumeIndication),
         SET_PROTOTYPE(setRangeAudioMode),
         SET_PROTOTYPE(setRangeAudioTeamID),
         SET_PROTOTYPE(setAudioRecvRange),
-        // SET_PROTOTYPE(updateSpatializerSelfPosition),
         SET_PROTOTYPE(updateSelfPosition),
         SET_PROTOTYPE(enableSpatializerRoomEffects),
         SET_PROTOTYPE(setSpatializerRoomProperty),
@@ -403,7 +395,7 @@ NIM_SDK_NODE_API_DEF(joinChannelWithUid)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(joinChannelEx)
+NIM_SDK_NODE_API_DEF(joinChannelWithOptions)
 {
     INIT_ENV
     do
@@ -502,7 +494,7 @@ NIM_SDK_NODE_API_DEF(enableLocalVideo)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(enableLocalVideoEx)
+NIM_SDK_NODE_API_DEF(enableLocalVideoWithType)
 {
     INIT_ENV
     do
@@ -532,7 +524,7 @@ NIM_SDK_NODE_API_DEF(muteLocalVideoStream)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(muteLocalVideoStreamEx)
+NIM_SDK_NODE_API_DEF(muteLocalVideoStreamWithType)
 {
     INIT_ENV
     do
@@ -871,7 +863,7 @@ NIM_SDK_NODE_API_DEF(setLocalVideoMirrorMode)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(setLocalVideoMirrorModeEx)
+NIM_SDK_NODE_API_DEF(setLocalVideoMirrorModeWithType)
 {
     INIT_ENV
     do{
@@ -952,7 +944,7 @@ NIM_SDK_NODE_API_DEF(setCameraCaptureConfig)
     return Napi::Number::New(env, ret);;
 }
 
-NIM_SDK_NODE_API_DEF(setCameraCaptureConfigEx)
+NIM_SDK_NODE_API_DEF(setCameraCaptureConfigWithType)
 {
     INIT_ENV
     Napi::Object obj = Napi::Object::New(env);
@@ -988,7 +980,7 @@ NIM_SDK_NODE_API_DEF(setVideoConfig)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(setVideoConfigEx)
+NIM_SDK_NODE_API_DEF(setVideoConfigWithType)
 {
     INIT_ENV
     do
@@ -1272,7 +1264,7 @@ NIM_SDK_NODE_API_DEF(sendSEIMsg)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(sendSEIMsgEx)
+NIM_SDK_NODE_API_DEF(sendSEIMsgWithType)
 {
     INIT_ENV
     do
@@ -1646,10 +1638,10 @@ NIM_SDK_NODE_API_DEF(updateSelfPosition)
     INIT_ENV
     do
     {
-        // nertc::NERtcPositionInfo info = {};
-        // Napi::Object obj = info[0].As<Napi::Object>();
-        // nertc_position_info_to_struct(env, obj, info);
-        // ret = _channel->updateSelfPosition(info);
+        Napi::Object obj = info[0].As<Napi::Object>();
+        nertc::NERtcPositionInfo info;
+        nertc_spatializer_position_to_struct(env, obj, info);
+        ret = _channel->updateSelfPosition(info);
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);

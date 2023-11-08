@@ -150,8 +150,8 @@ class NERtcChannel extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    joinChannelEx(token: string, uid: number, channelOptions: NERtcJoinChannelOptions): number {
-        return this.rtcChannel.joinChannelEx(token, uid, channelOptions);
+    joinChannelWithOptions(token: string, uid: number, channelOptions: NERtcJoinChannelOptions): number {
+        return this.rtcChannel.joinChannelWithOptions(token, uid, channelOptions);
     }
 
     /**
@@ -309,8 +309,8 @@ class NERtcChannel extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    enableLocalVideoEx(type: number, enabled: boolean): number {
-        return this.rtcChannel.enableLocalVideoEx(type, enabled);
+    enableLocalVideoWithType(type: number, enabled: boolean): number {
+        return this.rtcChannel.enableLocalVideoWithType(type, enabled);
     }
 
     /**
@@ -354,8 +354,8 @@ class NERtcChannel extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    muteLocalVideoStreamEx(type: number, enabled: boolean): number {
-        return this.rtcChannel.muteLocalVideoStreamEx(type, enabled);
+    muteLocalVideoStreamWithType(type: number, enabled: boolean): number {
+        return this.rtcChannel.muteLocalVideoStreamWithType(type, enabled);
     }
 
     /**
@@ -816,8 +816,8 @@ class NERtcChannel extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setLocalVideoMirrorModeEx(type: number, mode: NERtcVideoMirrorMode): number {
-        return this.rtcChannel.setLocalVideoMirrorModeEx(type, mode);
+    setLocalVideoMirrorModeWithType(type: number, mode: NERtcVideoMirrorMode): number {
+        return this.rtcChannel.setLocalVideoMirrorModeWithType(type, mode);
     }
 
     /**
@@ -1010,8 +1010,8 @@ class NERtcChannel extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setCameraCaptureConfigEx(type: number, config: any): number {
-        return this.rtcChannel.setCameraCaptureConfigEx(type, config);
+    setCameraCaptureConfigWithType(type: number, config: any): number {
+        return this.rtcChannel.setCameraCaptureConfigWithType(type, config);
     }
 
     /**
@@ -1150,8 +1150,8 @@ class NERtcChannel extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setVideoConfigEx(type: number, config: NERtcVideoConfig): number {
-        return this.rtcChannel.setVideoConfigEx(type, config);
+    setVideoConfigWithType(type: number, config: NERtcVideoConfig): number {
+        return this.rtcChannel.setVideoConfigWithType(type, config);
     }
 
     /**
@@ -1469,8 +1469,8 @@ class NERtcChannel extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType) {
-        return this.rtcChannel.sendSEIMsgEx(data, type);
+    sendSEIMsgWithType(data: ArrayBuffer, type: NERtcStreamChannelType) {
+        return this.rtcChannel.sendSEIMsgWithType(data, type);
     }
 
     /**
@@ -1734,162 +1734,290 @@ class NERtcChannel extends EventEmitter {
     }
   
     /**
-     * 引擎3D音效算法开关.
-     * @since v5.4.0
+     * 你可以调用该方法指定只订阅的音频流。
      * <pre>
-     * 通话前调用，通话结束后不重置
+     *  - 此接口需要在加入房间成功后调用。
+     *  - 对于调用接口时不在房间的 uid 不生效。
      * </pre>
-     * @param {boolean} enable 是否打开3D音效算法功能.
-     * @returns {number}
+     * @param {Array<Number>} uids 只订阅此用户uid列表 的音频.此列表为全量列表。如果列表为空或 null，取消订阅白名单。例如：[uid1,uid2...]。
+     * @return {number}
      * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    enableSpatializer(enable: boolean): number {
-        return this.rtcChannel.enableSpatializer(enable)
-    }
-    
-    /**
-     * 引擎3D音效算法距离范围设置
-     * @since v5.4.0
-     * <pre>
-     * 依赖enableSpatializer接口开启，通话前调用
-     * </pre>
-     * @param {number} audible_distance 监听器能够听到扬声器并接收其文本消息的距离扬声器的最大距离。[0,1000] 默认值为 32。
-     * @param {number} conversational_distance 控制扬声器音频保持其原始音量的范围，超出该范围时，语音聊天的响度在被听到时开始淡出。
-     * @param {number} roll_off 距离衰减模式:
-     * <pre>
-     * 0: 指数模式
-     * 1: 线性模式
-     * 2: 无衰减
-     * </pre>
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
+     * - 0: 方法调用成功。
+     * - 其他：方法调用失败。
      * </pre>
      */
-    updateSpatializerAudioRecvRange(audible_distance: number, conversational_distance: number, roll_off: number): number {
-        return this.rtcChannel.updateSpatializerAudioRecvRange(audible_distance, conversational_distance, roll_off)
+    setSubscribeAudioAllowlist(uids: Array<Number>): number {
+        return this.rtcChannel.setSubscribeAudioAllowlist(uids);
     }
-  
+
     /**
-     * 引擎3D音效算法中本人坐标方位更新接口
-     * @since v5.4.0
+     * 你可以调用该方法指定不订阅的音频流。
      * <pre>
-     * 依赖enableSpatializer接口开启，enableSpatializer接口关闭后重置设置
+     *  - 此接口需要在加入房间成功后调用。
+     *  - 对于调用接口时不在房间的 uid 不生效。
      * </pre>
-     * @param {obejct} info 3D音效算法中坐标信息。
-     * @param {Array<Number>} info.speaker_position 说话位置信息，默认值{0,0,0}。
-     * @param {Array<Number>} info.speaker_quaternion 说话旋转信息，默认值{0,0,0,0}。
-     * @param {Array<Number>} info.head_position 听觉位置信息，默认值{0,0,0}。
-     * @param {Array<Number>} info.head_quaternion 听觉旋转信息，默认值{0,0,0,0}。
-     * @returns {number}
+     * @param {number} audioStreamType 音频流类型。
      * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
+     * - 0: 主流
+     * - 1: 辅流
+     * </pre>
+     * @param {Array<Number>} uids 只订阅此用户uid列表 的音频.此列表为全量列表。如果列表为空或 null，取消订阅白名单。例如：[uid1,uid2...]。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功。
+     * - 其他：方法调用失败。
      * </pre>
      */
-    updateSpatializerSelfPosition(info: any): number {
-        return this.rtcChannel.updateSpatializerSelfPosition(info)
+    setSubscribeAudioBlocklist(audioStreamType: number, uids: Array<Number>): number {
+        return this.rtcChannel.setSubscribeAudioBlocklist(audioStreamType, uids);
     }
-  
+
     /**
-     * 引擎3D音效算法中房间混响效果开关
-     * @since v5.4.0
+     * 设置玩家本人在房间中的范围语音模式，该设置不影响其他人。
+     * @since V5.5.10
      * <pre>
-     * 依赖enableSpatializer接口开启
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前后均可调用。
+     * <b>NOTE:</b>
+     * - 离开房间后，此参数不会自动重置为默认模式，所以请在每次加入房间之前都调用此方法设置语音模式。
+     * - 加入房间后，可以随时修改语音模式，并立即生效。
      * </pre>
-     * @param {boolean} enable 混响效果开关，默认值关闭
-     * @returns {number}
+     * @param {number} mode 范围语音模式，包括所有人和仅小队两种模式。
      * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
+     * - 0: 默认模式。设置后玩家附近一定范围的人都能听到该玩家讲话，如果范围内也有玩家设置为此模式，则也可以互相通话。
+     * - 1: 小组模式。仅TeamID相同的队友可以互相听到
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    setRangeAudioMode(mode: number): number {
+        return this.rtcChannel.setRangeAudioMode(mode);
+    }
+   
+    /**
+     * 设置范围语音的小队ID。
+     * @since V5.5.10
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前后均可调用。
+     * <b>NOTE:</b>
+     * - 离开房间后，TeamID 失效，需要重新配置TeamID ，请在每次加入房间之前都调用此方法设置 TeamID。
+     * - 离开房间后，TeamID 失效，需要重新配置TeamID ，请在每次加入房间之前都调用此方法设置队伍号。
+     * - 如果离开房间后再加入房间，请在收到退房成功回调（onLeaveChannel）后，再调用此方法设置队伍号。
+     * - 若加入房间后，调用此接口修改队伍号，设置后立即生效。
+     * - 请配合 #setRangeAudioMode  接口一起使用。  
+     * </pre>
+     * @param {number} team_id 小队ID, 有效值: >=0。若team_id = 0，则房间内所有人（不论范围语音的模式是所有人还是仅小队）都可以听到该成员的声音。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    setRangeAudioTeamID(team_id: number): number {
+        return this.rtcChannel.setRangeAudioTeamID(team_id);
+    }
+
+    /**
+     * 设置空间音效的距离衰减属性和语音范围。
+     * @since V5.5.10
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前后均可调用。
+     * <b>NOTE:</b>
+     * - 若要使用范围语音或3D音效功能，加入房间前需要调用一次本接口。
+     * - 仅使用范围语音时，您只需要设置audible_distance参数，其他参数设置不生效，填写默认值即可。
+     * </pre>
+     * @param {number} audible_distance 监听器能够听到扬声器并接收其语音的距离扬声器的最大距离。距离有效范围：[1,max int) ，无默认值。
+     * @param {number} conversational_distance 范围语音场景中，该参数设置的值不起作用，保持默认值即可。空间音效场景中，需要配置该参数。控制音频保持其原始音量的范围，超出该范围时，语音聊天的响度在被听到时开始淡出。
+     * 默认值为 1。
+     * @param {number} roll_off 范围语音场景中，该参数设置的值不起作用，保持默认值即可。
+     * <pre>
+     * - 0: 指数模式
+     * - 1: 线性模式
+     * - 2: 无衰减
+     * - 3: 仅线性衰减,没有方位效果
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    setAudioRecvRange(audible_distance: number, conversational_distance: number, roll_off: number, ): number {
+        return this.rtcChannel.setAudioRecvRange(audible_distance, conversational_distance, roll_off);
+    }
+
+    /**
+     * 更新本地用户的空间位置。
+     * @since V5.5.10
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前后均可调用。
+     * </pre>
+     * @param {Object} info L通过 info 参数设置空间音效中说话者和接收者的空间位置信息。
+     * @param {Array<Number>} info.speaker_position 说话者的位置信息，三个值依次表示X、Y、Z的坐标值。默认值[0,0,0]。
+     * @param {Array<Number>} info.speaker_quaternion 说话者的旋转信息，通过四元组来表示，数据格式为[w, x, y, z]。默认值[0,0,0,0]。
+     * @param {Array<Number>} info.head_position 接收者的位置信息，三个值依次表示X、Y、Z的坐标值。默认值[0,0,0]。
+     * @param {Array<Number>} info.head_quaternion 接收者的旋转信息，通过四元组来表示，数据格式为[w, x, y, z]。默认值[0,0,0,0]。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    updateSelfPosition(info: any): number {
+        return this.rtcChannel.updateSelfPosition(info);
+    }
+
+    /**
+     * 开启或关闭空间音效的房间混响效果.
+     * @since V5.4.0
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前后均可调用。
+     * - 该接口不支持Linux平台
+     * - 请先调用enableSpatializer接口启用空间音效，再调用本接口。
+     * </pre>
+     * @param {boolean} enable 混响效果开关，默认值关闭。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
      * </pre>
      */
     enableSpatializerRoomEffects(enable: boolean): number {
-        return this.rtcChannel.enableSpatializerRoomEffects(enable)
+        return this.rtcChannel.enableSpatializerRoomEffects(enable);
     }
-  
+
     /**
-     * 引擎3D音效算法中房间混响属性
-     * @since v5.4.0
+     * 设置空间音效的房间混响属性。
+     * @since V5.4.0
      * <pre>
-     * 依赖enableSpatializer接口开启
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前才可调用。
+     * - 该接口不支持 Linux。
+     * - 请先调用 \ref  #enableSpatializer 接口启用空间音效，再调用本接口。
      * </pre>
-     * @param {object} room_property 3D音效房间属性设置
-     * @param {number} room_property.room_capacity 空间音效房间大小
+     * @param {Object} config 房间属性。
+     * @param {number} config.room_capacity 房间大小。
      * <pre>
-     * - 0 小房间。
-     * - 1 中等大小房间
-     * - 2 大房间
-     * - 3 巨大房间
-     * - 4 无房间效果
+     * - 0: 小房间。
+     * - 1: 中等大小房间。
+     * - 2: 大房间。
+     * - 3: 巨大房间。
+     * - 4: 无房间效果
      * </pre>
-     * @param {number} room_property.material 房间属性
+     * @param {number} config.material 房间材质。
      * <pre>
-     * - 0 透明的
-     * - 1 声学天花板，未开放
-     * - 2 砖块，未开放
-     * - 3 涂漆的砖块，未开放
-     * - 4 粗糙的混凝土块，未开放
-     * - 5 涂漆的混凝土块，未开放
-     * - 6 厚重的窗帘
-     * - 7 隔音的玻璃纤维，未开放
-     * - 8 薄的的玻璃，未开放
-     * - 9 茂密的草地，未开放
-     * - 10 草地
-     * - 11 铺装了油毡的混凝土，未开放
-     * - 12 大理石
-     * - 13 金属，未开放
-     * - 14 镶嵌木板的混凝土，未开放
-     * - 15 石膏，未开放
-     * - 16 粗糙石膏，未开放
-     * - 17 光滑石膏，未开放
-     * - 18 木板，未开放
-     * - 19 石膏灰胶纸板，未开放
-     * - 20 水面或者冰面，未开放
-     * - 21 木头天花板，未开放
-     * - 22 木头枪板，未开放
-     * - 23 均匀分布，未开放
+     * - 0: 透明的
+     * - 1: 声学天花板，未开放
+     * - 2: 砖块，未开放
+     * - 3: 涂漆的砖块，未开放
+     * - 4: 粗糙的混凝土块，未开放
+     * - 5: 涂漆的混凝土块，未开放
+     * - 6: 厚重的窗帘
+     * - 7: 隔音的玻璃纤维，未开放
+     * - 8: 薄的的玻璃，未开放
+     * - 9: 茂密的草地，未开放
+     * - 10: 草地
+     * - 11: 铺装了油毡的混凝土，未开放
+     * - 12: 大理石
+     * - 13: 金属，未开放
+     * - 14: 镶嵌木板的混凝土，未开放
+     * - 15: 石膏，未开放
+     * - 16: 粗糙石膏，未开放
+     * - 17: 光滑石膏，未开放
+     * - 18: 木板，未开放
+     * - 19: 石膏灰胶纸板，未开放
+     * - 20: 水面或者冰面，未开放
+     * - 21: 木头天花板，未开放
+     * - 22: 木头枪板，未开放
+     * - 23: 均匀分布，未开放
      * </pre>
-     * @param {number} room_property.reflection_scalar 反射比例，默认值1.0
-     * @param {number} room_property.reverb_gain 混响增益比例因子，默认值1.0
-     * @param {number} room_property.reverb_time 混响时间比例因子，默认值1.0
-     * @param {number} room_property.reverb_brightness 混响亮度，默认值1.0
-     * @returns {number}
+     * @param {number} config.reflection_scalar 反射比例，默认值1.0。
+     * @param {number} config.reverb_gain 混响增益比例因子，默认值1.0。
+     * @param {number} config.reverb_time 混响时间比例因子，默认值1.0。
+     * @param {number} config.reverb_brightness 混响亮度，默认值1.0。
+     * @return {number}
      * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
      * </pre>
      */
-    setSpatializerRoomProperty(room_property: any): number {
-        return this.rtcChannel.setSpatializerRoomProperty(room_property)
+    setSpatializerRoomProperty(config: any): number {
+        return this.rtcChannel.updateSelfPosition(config);
     }
   
     /**
-     * 引擎3D音效算法中渲染模式
-     * @since v5.4.0
+     * 设置空间音效的渲染模式。
+     * @since V5.4.0
      * <pre>
-     * 依赖enableSpatializer接口开启
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前才可调用。
+     * <b>NOTE:</b>
+     * - 该接口不支持 Linux 平台。
+     * - 请先调用 \ref  #enableSpatializer 接口启用空间音效，再调用本接口。
      * </pre>
-     * @param {number} mode 空间音效渲染模式:
+     * @param {number} mode 渲染模式。
      * <pre>
-     * - 0 立体声
-     * - 1 双声道低
-     * - 2 双声道中
-     * - 3 双声道高
-     * - 4 仅房间音效
+     * - 0: 立体声
+     * - 1: 双声道低
+     * - 2: 双声道中
+     * - 3: 双声道高
+     * - 4: 仅房间音效
      * </pre>
-     * @returns {number}
+     * @return {number}
      * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
      * </pre>
      */
     setSpatializerRenderMode(mode: number): number {
-        return this.rtcChannel.setSpatializerRenderMode(mode)
+        return this.rtcChannel.setSpatializerRenderMode(mode);
+    }
+    
+    /**
+     * 初始化引擎3D音效算法。
+     * @since V5.5.10
+     * <pre>
+     * - 此接口在加入房间前调用后均可调用。
+     * <b>NOTE:</b>
+     * - 该接口不支持 Linux 平台。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    initSpatializer(): number {
+        return this.rtcChannel.initSpatializer();
+    }
+    
+    /**
+     * 开启或关闭空间音效。
+     * @since V5.4.0
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前后均可调用。
+     * <b>NOTE:</b>
+     * - 该接口不支持 Linux 平台。
+     * - 开启空间音效后，通话结束时仍保留该开关状态，不重置。
+     * - 请先调用 \ref  #initSpatializer 接口初始化空间音效算法，再调用本接口。
+     * </pre>
+     * @param {boolean} enable 是否打开3D音效算法功能，默认为关闭状态。
+     * <pre>
+     * - true: 开启空间音效。
+     * - false: 关闭空间音效。
+     * </pre>
+     * @param {boolean} apply_to_team 是否仅本小队开启3D音效。默认为 false。
+     * <pre>
+     * - true: 仅在接收本小队的语音时有3D音效。
+     * - false: 接收到所有的语音都有3D音效。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    enableSpatializer(enable: boolean, apply_to_team: boolean): number {
+        return this.rtcChannel.enableSpatializer(enable, apply_to_team);
     }
   
     initEventHandler() {
@@ -2111,11 +2239,11 @@ class NERtcChannel extends EventEmitter {
          * @param {object} extra_info 一些可选信息:
          * @param {string} extra_info.custom_info 自定义信息，来源于远端用户joinChannel时填的 {@link NERtcJoinChannelOptions#custom_info}参数，默认为空字符串。
          */
-        this.rtcChannel.onEvent('onUserJoinedEx', function (
+        this.rtcChannel.onEvent('onUserJoinedWithExtraInfo', function (
             uid: number, 
             userName: number, 
             extra_info: any) {
-            fire('onUserJoinedEx', uid, userName, extra_info);
+            fire('onUserJoinedWithExtraInfo', uid, userName, extra_info);
         });
   
         /**
@@ -2160,11 +2288,11 @@ class NERtcChannel extends EventEmitter {
          * @param {object} extra_info 一些可选信息:
          * @param {string} extra_info.custom_info 自定义信息，来源于远端用户joinChannel时填的 {@link NERtcJoinChannelOptions#custom_info}参数，默认为空字符串。
          */
-        this.rtcChannel.onEvent('onUserLeftEx', function (
+        this.rtcChannel.onEvent('onUserLeftWithExtraInfo', function (
             uid: number, 
             reason: number, 
             extra_info: any) {
-            fire('onUserLeftEx', uid, reason, extra_info);
+            fire('onUserLeftWithExtraInfo', uid, reason, extra_info);
         });
 
         /**
@@ -2285,12 +2413,12 @@ class NERtcChannel extends EventEmitter {
          * @param {number} uid 远端用户ID。
          * @param {boolean} mute 是否禁视频流。
          */
-        this.rtcChannel.onEvent('onUserVideoMuteEx', function (
+        this.rtcChannel.onEvent('onUserVideoMuteWithType', function (
           streamType: number, 
           uid: number, 
           mute: boolean
         ) {
-            fire('onUserVideoMuteEx', streamType, uid, mute);
+            fire('onUserVideoMuteWithType', streamType, uid, mute);
         });
   
         /**
@@ -2379,11 +2507,11 @@ class NERtcChannel extends EventEmitter {
          * </pre>
          * @param {number} uid 用户 ID，指定是哪个用户的视频流。
          */
-        this.rtcChannel.onEvent('onFirstVideoDataReceivedEx', function (
+        this.rtcChannel.onEvent('onFirstVideoDataReceivedWithType', function (
           type: number, 
           uid: number
         ) {
-            fire('onFirstVideoDataReceivedEx', type, uid);
+            fire('onFirstVideoDataReceivedWithType', type, uid);
         });
   
         /**
@@ -2431,13 +2559,13 @@ class NERtcChannel extends EventEmitter {
          * @param {number} width 视频流宽（px）。
          * @param {number} height 视频流高（px）。
          */
-        this.rtcChannel.onEvent('onFirstVideoFrameDecodedEx', function (
+        this.rtcChannel.onEvent('onFirstVideoFrameDecodedWithType', function (
             type: number, 
             uid: number, 
             width: number, 
             height: number
         ) {
-            fire('onFirstVideoFrameDecodedEx', type, uid, width, height);
+            fire('onFirstVideoFrameDecodedWithType', type, uid, width, height);
         });
   
         /**
@@ -2455,7 +2583,7 @@ class NERtcChannel extends EventEmitter {
         ) {
             fire('onLocalAudioVolumeIndication', volume);
         });
-  
+
         /**
          * 提示频道内本地用户瞬时音量的回调。
          * @since V5.4.0
@@ -2895,6 +3023,97 @@ class NERtcChannel extends EventEmitter {
         this.rtcChannel.onStatsObserver('onNetworkQuality', true, function (uc: number, stats: Array<NERtcNetworkQualityInfo>) {
             fire('onNetworkQuality', uc, stats);
         });
+
+        /**
+         * 接收的远端视频分辨率变化回调。
+         * @since V5.4.1
+         * <pre>
+          * 当远端用户视频流的分辨率发生变化时，会触发此回调，例如推流端调用 SetVideoConfig 更改了编码分辨率设置，本地会收到该远端用户分辨率变化通知。
+          * </pre>
+         * @event NERtcChannel#onRemoteVideoReceiveSizeChanged
+         * @param {number} uid 远端用户ID，指定是哪个用户的视频流
+         * @param {number} type 视频通道类型
+         * <pre>
+         * - 0 主流
+         * - 1 辅流
+         * </pre>
+         * @param {number} width 视频采集的宽，单位为 px
+         * @param {number} height 视频采集的高，单位为 px
+         */
+        this.rtcChannel.onEvent('onRemoteVideoReceiveSizeChanged', function (
+            uid: number, 
+            type: number, 
+            width: number,
+            height: number
+        ) {
+            fire('onRemoteVideoReceiveSizeChanged', uid, type, width, height);
+        });
+
+        /**
+         * 本地视频预览的分辨率变化回调, 与是否进入房间的状态无关，与硬件状态有关，也适用于预览。
+         * @since V5.4.1
+         * <pre>
+          * 当本地视频的分辨率发生变化，会触发此回调。
+          * 当调用 SetCaptureConfig 设置采集分辨率或调用 SetVideoConfig 设置编码属性时可以触发该回调。回调的分辨率宽和高为本地预览的宽和高，和实际编码发送的分辨率不一定一致
+          * 开发者可以根据该回调的分辨率来动态调整预览视图的比例等。
+          * </pre>
+         * @event NERtcChannel#onLocalVideoRenderSizeChanged
+         * @param {number} type 视频通道类型
+         * <pre>
+         * - 0 主流
+         * - 1 辅流
+         * </pre>
+         * @param {number} width 视频采集的宽，单位为 px
+         * @param {number} height 视频采集的高，单位为 px
+         */
+        this.rtcChannel.onEvent('onLocalVideoRenderSizeChanged', function (
+            type: number, 
+            width: number,
+            height: number
+        ) {
+            fire('onLocalVideoRenderSizeChanged', type, width, height);
+        });
+
+        /**
+         * 已接收到远端视频首帧并完成渲染的回调。
+         * <pre>
+          * 当 SDK 收到远端视频的第一帧并渲染成功时，会触发该回调。
+          * </pre>
+         * @event NERtcChannel#onFirstVideoFrameRender
+         * @param {number} type 视频通道类型
+         * <pre>
+         * - 0 主流
+         * - 1 辅流
+         * </pre>
+         * @param {number} uid 用户 ID，提示是哪个用户的视频流。
+         * @param {number} width 首帧视频的宽度，单位为 px。
+         * @param {number} height 视频采集的高，单位为 px
+         * * @param {number} 首帧视频的高度，单位为 px。
+         */
+        this.rtcChannel.onEvent('onFirstVideoFrameRender', function (
+            type: number, 
+            uid: number, 
+            width: number,
+            height: number,
+            elapsed: number
+        ) {
+            fire('onFirstVideoFrameRender', type, uid, type, width, height, elapsed);
+        });
+
+        /**
+         * 实验功能回调接口，用于回调一些非正式的事件及数据通知。
+         * @event NERtcChannel#onLabFeatureCallback
+         * @param {string} key 返回回调类型。
+         * @param {string} param 值内容。对应字符串的参数值，如果是结构体对象，需要转成json格式。
+         */
+        this.rtcChannel.onEvent('onLabFeatureCallback', function (
+            key: string, 
+            param: string
+        ) {
+            fire('onLabFeatureCallback', key, param);
+        });
+
+
 
     }
     

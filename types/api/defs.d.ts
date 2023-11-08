@@ -16,6 +16,18 @@ export interface NERtcJoinChannelOptions {
     custom_info: string; /**< 自定义信息，最长支持 127 个字符。 <127chars */
     permission_key: string; /**< 权限密钥。能控制通话时长及媒体权限能力。*/
 }
+/** 日志级别。 */
+export declare enum NERtcRangeAudioMode {
+    NERtcRangeAudioModeDefault = 0,
+    NERtcRangeAudioModeTeam = 1
+}
+export interface NERtcJoinChannelOptionsEx {
+    custom_info: string; /**< 自定义信息，最长支持 127 个字符。 <127chars */
+    permission_key: string; /**< 权限密钥。能控制通话时长及媒体权限能力。*/
+    team_id: number; /**< 小队号。*/
+    mode: NERtcRangeAudioMode; /**<  语音模式。 */
+    audible_distance: number; /**< 语音接收范围。*/
+}
 /** 音频帧请求格式。*/
 export interface NERtcAudioFrameRequestFormat {
     channels: number; /**< 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。*/
@@ -771,9 +783,12 @@ export interface NERtcEngineAPI {
     release(): void;
     setChannelProfile(profile: NERtcChannelProfileType): number;
     joinChannel(token: String, channelName: String, uid: number): number;
+    joinChannelWithOptions(token: string, channelName: string, uid: number, channelOptions: NERtcJoinChannelOptions): number;
+    switchChannelWithOptionsEx(token: string, channelName: string, channelOptions: NERtcJoinChannelOptionsEx): number;
     leaveChannel(): number;
     enableLocalAudio(enabled: Boolean): number;
     enableLocalVideo(enabled: Boolean): number;
+    enableLocalVideoWithType(streamType: NERtcVideoStreamType, enabled: boolean): number;
     subscribeRemoteVideoStream(uid: number, type: NERtcRemoteVideoStreamType, subscribe: Boolean): number;
     setupVideoCanvas(uid: number, enabled: Boolean): number;
     onVideoFrame(callback: Function): number;
@@ -789,6 +804,7 @@ export interface NERtcEngineAPI {
     stopVideoPreview(): number;
     muteLocalVideoStream(enabled: Boolean): number;
     setParameters(parameters: String): number;
+    getParameters(parameters: String, extra_info: String): String;
     startAudioDump(): number;
     stopAudioDump(): number;
     startAudioMixing(opt: NERtcCreateAudioMixingOption): number;
@@ -864,7 +880,7 @@ export interface NERtcEngineAPI {
     stopSystemAudioLoopbackCapture(): number;
     setSystemAudioLoopbackCaptureVolume(volume: number): number;
     sendSEIMsg(data: ArrayBuffer): number;
-    sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType): number;
+    sendSEIMsgWithType(data: ArrayBuffer, type: NERtcStreamChannelType): number;
     setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number;
     pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number;
     setAudioEffectPreset(type: NERtcVoiceChangerType): number;
@@ -897,16 +913,16 @@ export interface NERtcEngineAPI {
     setStreamAlignmentProperty(enable: boolean): number;
     getNtpTimeOffset(): number;
     setCameraCaptureConfig(config: any): number;
-    setCameraCaptureConfigEx(type: number, config: any): number;
-    setVideoConfigEx(type: number, config: NERtcVideoConfig): number;
-    setLocalVideoMirrorModeEx(type: number, mode: NERtcVideoMirrorMode): number;
-    startVideoPreviewEx(type: number): number;
-    stopVideoPreviewEx(type: number): number;
-    muteLocalVideoStreamEx(type: number, enabled: boolean): number;
+    setCameraCaptureConfigWithType(type: number, config: any): number;
+    setVideoConfigWithType(type: number, config: NERtcVideoConfig): number;
+    setLocalVideoMirrorModeWithType(type: number, mode: NERtcVideoMirrorMode): number;
+    startVideoPreviewWithType(type: number): number;
+    stopVideoPreviewWithType(type: number): number;
+    muteLocalVideoStreamWithType(type: number, enabled: boolean): number;
     setRecordingAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number;
     setPlaybackAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number;
     setMixedAudioFrameParameters(sample_rate: number): number;
-    startAudioDumpEx(type: number): number;
+    startAudioDumpWithType(type: number): number;
     setAudioMixingPitch(pitch: number): number;
     getAudioMixingPitch(): number;
     setEffectPitch(effectId: number, pitch: number): number;
@@ -922,8 +938,8 @@ export interface NERtcEngineAPI {
     setSpatializerRenderMode(mode: number): number;
     enableAudioVolumeIndicationEx(enabled: boolean, interval: number, enableVad: boolean): number;
     setScreenCaptureMouseCursor(capture_cursor: boolean): number;
-    setDeviceEx(id: string, type: number): number;
-    getDeviceEx(type: number): string;
+    setDeviceWithType(id: string, streamType: NERtcVideoStreamType): number;
+    getDeviceWithType(streamType: NERtcVideoStreamType): string;
     adjustChannelPlaybackSignalVolume(volume: number): number;
     switchChannelEx(token: string, channelName: string, option: any): number;
     startAudioRecordingWithConfig(config: any): number;
@@ -940,6 +956,7 @@ export interface NERtcEngineAPI {
     startBeauty(file_path: string): number;
     stopBeauty(): number;
     enableBeauty(enable: boolean): number;
+    enableBeautyMirrorMode(enable: boolean): number;
     getBeautyEffect(type: number): number;
     setBeautyEffect(type: number, level: number): number;
     addBeautyFilter(file_path: string): number;
@@ -952,5 +969,13 @@ export interface NERtcEngineAPI {
     setLocalVoiceReverbParam(param: any): number;
     enableMediaPub(enabled: boolean, mediaType: number): number;
     updatePermissionKey(key: string): number;
+    setRangeAudioMode(mode: number): number;
+    setRangeAudioTeamID(team_id: number): number;
+    setAudioRecvRange(audible_distance: number, conversational_distance: number, roll_off: number): number;
+    updateSelfPosition(info: any): number;
+    initSpatializer(): number;
+    enableSpatializer(enable: boolean, apply_to_team: boolean): number;
     onQsObserver(eventName: String, enabled: boolean, callback: Function): void;
+    setSubscribeAudioAllowlist(uids: Array<Number>): number;
+    setSubscribeAudioBlocklist(audioStreamType: number, uids: Array<Number>): number;
 }

@@ -456,7 +456,7 @@ void NertcChannelEventHandler::onUserVideoMute(nertc::NERtcVideoStreamType video
 
 void NertcChannelEventHandler::Node_onUserVideoMuteEx(nertc::NERtcVideoStreamType type, nertc::uid_t uid, bool mute)
 {
-    auto it = _callbacks.find("onUserVideoMuteEx");
+    auto it = _callbacks.find("onUserVideoMuteWithType");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;
@@ -585,7 +585,7 @@ void NertcChannelEventHandler::onFirstVideoDataReceived(nertc::NERtcVideoStreamT
 
 void NertcChannelEventHandler::Node_onFirstVideoDataReceived(nertc::NERtcVideoStreamType type, nertc::uid_t uid)
 {
-    auto it = _callbacks.find("onFirstVideoDataReceivedEx");
+    auto it = _callbacks.find("onFirstVideoDataReceivedWithType");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;
@@ -651,7 +651,7 @@ void NertcChannelEventHandler::onFirstVideoFrameDecoded(nertc::NERtcVideoStreamT
 
 void NertcChannelEventHandler::Node_onFirstVideoFrameDecoded(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height)
 {
-    auto it = _callbacks.find("onFirstVideoFrameDecodedEx");
+    auto it = _callbacks.find("onFirstVideoFrameDecodedWithType");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;
@@ -1019,7 +1019,7 @@ void NertcChannelEventHandler::onUserJoined(nertc::uid_t uid, const char* user_n
 
 void NertcChannelEventHandler::Node_onUserJoined(nertc::uid_t uid, std::string user_name, nertc::NERtcUserJoinExtraInfo join_extra_info)
 {
-    auto it = _callbacks.find("onUserJoinedEx");
+    auto it = _callbacks.find("onUserJoinedWithExtraInfo");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;
@@ -1042,7 +1042,7 @@ void NertcChannelEventHandler::onUserLeft(nertc::uid_t uid, nertc::NERtcSessionL
 
 void NertcChannelEventHandler::Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info)
 {
-    auto it = _callbacks.find("onUserLeftEx");
+    auto it = _callbacks.find("onUserLeftWithExtraInfo");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;

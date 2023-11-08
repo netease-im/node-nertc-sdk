@@ -323,7 +323,7 @@ void NertcNodeEventHandler::onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeav
 
 void NertcNodeEventHandler::Node_onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason, nertc::NERtcUserJoinExtraInfo leave_extra_info)
 {
-    auto it = _callbacks.find("onUserLeftEx");
+    auto it = _callbacks.find("onUserLeftWithExtraInfo");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;
@@ -664,7 +664,7 @@ void NertcNodeEventHandler::onFirstVideoDataReceived(nertc::NERtcVideoStreamType
 
 void NertcNodeEventHandler::Node_onFirstVideoDataReceived(nertc::NERtcVideoStreamType type, nertc::uid_t uid)
 {
-    auto it = _callbacks.find("onFirstVideoDataReceivedEx");
+    auto it = _callbacks.find("onFirstVideoDataReceivedWithType");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;
@@ -730,7 +730,7 @@ void NertcNodeEventHandler::onFirstVideoFrameDecoded(nertc::NERtcVideoStreamType
 
 void NertcNodeEventHandler::Node_onFirstVideoFrameDecoded(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height)
 {
-    auto it = _callbacks.find("onFirstVideoFrameDecodedEx");
+    auto it = _callbacks.find("onFirstVideoFrameDecodedWithType");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;
@@ -1392,12 +1392,12 @@ void NertcNodeEventHandler::Node_onVirtualBackgroundSourceEnabled(bool enabled, 
     }
 }
 
-void NertcNodeEventHandler::onLocalVideoWatermarkState(nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state)
-{
-    nim_node::node_async_call::async_call([=]() {
-        Node_onLocalVideoWatermarkState(videoStreamType, state);
-    });
-}
+// void NertcNodeEventHandler::onLocalVideoWatermarkState(nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state)
+// {
+//     // nim_node::node_async_call::async_call([=]() {
+//     //     Node_onLocalVideoWatermarkState(videoStreamType, state);
+//     // });
+// }
 
 void NertcNodeEventHandler::Node_onLocalVideoWatermarkState(nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state)
 {
@@ -1586,7 +1586,7 @@ void NertcNodeEventHandler::onUserJoined(nertc::uid_t uid, const char* user_name
 
 void NertcNodeEventHandler::Node_onUserJoined(nertc::uid_t uid, std::string user_name, nertc::NERtcUserJoinExtraInfo join_extra_info)
 {
-    auto it = _callbacks.find("onUserJoinedEx");
+    auto it = _callbacks.find("onUserJoinedWithExtraInfo");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;

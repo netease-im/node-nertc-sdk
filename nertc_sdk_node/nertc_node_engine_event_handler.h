@@ -113,7 +113,7 @@ public:
     virtual void onMediaRightChange(bool is_audio_banned, bool is_video_banned) override;
     virtual void onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result) override;
     virtual void onVirtualBackgroundSourceEnabled(bool enabled, nertc::NERtcVirtualBackgroundSourceStateReason reason) override;
-    virtual void onLocalVideoWatermarkState(nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state) override;
+    // virtual void onLocalVideoWatermarkState(nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state) override;
     virtual void onUserDataReceiveMessage(nertc::uid_t uid, void* pData, uint64_t size) override;
     virtual void onUserDataStart(nertc::uid_t uid) override;
     virtual void onUserDataStop(nertc::uid_t uid) override;

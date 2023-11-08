@@ -169,79 +169,70 @@ Napi::FunctionReference NertcNodeEngine::constructor;
 Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
     Napi::Function func = DefineClass(env, "NertcNodeEngine", {
         SET_PROTOTYPE(initialize),
+        SET_PROTOTYPE(initialize),
         SET_PROTOTYPE(release),
+        SET_PROTOTYPE(setClientRole),
         SET_PROTOTYPE(setChannelProfile),
         SET_PROTOTYPE(joinChannel),
-        SET_PROTOTYPE(joinChannelEx),
+        SET_PROTOTYPE(joinChannelWithOptions),
+        SET_PROTOTYPE(switchChannel),
+        SET_PROTOTYPE(switchChannelWithOptions),
+        SET_PROTOTYPE(switchChannelWithOptionsEx),
         SET_PROTOTYPE(leaveChannel),
         SET_PROTOTYPE(enableLocalAudio),
-        SET_PROTOTYPE(enableLocalVideo),
-        SET_PROTOTYPE(subscribeRemoteVideoStream),
         SET_PROTOTYPE(setupVideoCanvas),
+        SET_PROTOTYPE(enableLocalVideo),
+        SET_PROTOTYPE(enableLocalVideoWithType),
+        SET_PROTOTYPE(subscribeRemoteVideoStream),
+    
+    
         SET_PROTOTYPE(onVideoFrame),
         SET_PROTOTYPE(onEvent),
-        SET_PROTOTYPE(onAudioFrameEvent),
+        // SET_PROTOTYPE(onAudioFrameEvent),
+        SET_PROTOTYPE(onStatsObserver),
+        SET_PROTOTYPE(onQsObserver),
     
-        // 3.9
-        SET_PROTOTYPE(setClientRole),
-        SET_PROTOTYPE(setupSubStreamVideoCanvas),
-        SET_PROTOTYPE(subscribeRemoteVideoSubStream),
-        SET_PROTOTYPE(setMixedAudioFrameParameters),
-        SET_PROTOTYPE(setExternalAudioSource),
-        SET_PROTOTYPE(pushExternalAudioFrame),
-        SET_PROTOTYPE(pushExternalVideoFrame),
     
-        // 4.0
-        SET_PROTOTYPE(sendSEIMsg),
-        SET_PROTOTYPE(sendSEIMsgEx),
-        SET_PROTOTYPE(setExternalAudioRender),
-        SET_PROTOTYPE(pullExternalAudioFrame),
-    
-        // 4.1.1
+        SET_PROTOTYPE(getConnectionState),
+        SET_PROTOTYPE(muteLocalAudioStream),
+        SET_PROTOTYPE(enableLocalSubStreamAudio),
+        SET_PROTOTYPE(muteLocalSubStreamAudio),
+        SET_PROTOTYPE(setAudioProfile),
         SET_PROTOTYPE(setAudioEffectPreset),
         SET_PROTOTYPE(setVoiceBeautifierPreset),
         SET_PROTOTYPE(setLocalVoicePitch),
         SET_PROTOTYPE(setLocalVoiceEqualization),
-        SET_PROTOTYPE(adjustUserPlaybackSignalVolume),
-        SET_PROTOTYPE(adjustChannelPlaybackSignalVolume),
-    
-        // //4.2.5
-        SET_PROTOTYPE(switchChannel),
-        SET_PROTOTYPE(switchChannelEx),
-        SET_PROTOTYPE(switchChannelWithOptionsEx),
-        SET_PROTOTYPE(setLocalMediaPriority),
-        SET_PROTOTYPE(enableLoopbackRecording),
-        SET_PROTOTYPE(adjustLoopbackRecordingSignalVolume),
-        SET_PROTOTYPE(setExcludeWindowList),
-        SET_PROTOTYPE(startAudioRecording),
-        SET_PROTOTYPE(startAudioRecordingWithConfig),
-        SET_PROTOTYPE(stopAudioRecording),
-        SET_PROTOTYPE(startChannelMediaRelay),
-        SET_PROTOTYPE(updateChannelMediaRelay),
-        SET_PROTOTYPE(stopChannelMediaRelay),
-        SET_PROTOTYPE(setLocalPublishFallbackOption),
-        SET_PROTOTYPE(setRemoteSubscribeFallbackOption),
-        SET_PROTOTYPE(enableSuperResolution),
-        SET_PROTOTYPE(enableEncryption),
-        SET_PROTOTYPE(startLastmileProbeTest),
-        SET_PROTOTYPE(stopLastmileProbeTest),
-
-        SET_PROTOTYPE(getConnectionState),
-        SET_PROTOTYPE(muteLocalAudioStream),
-        SET_PROTOTYPE(setAudioProfile),
         SET_PROTOTYPE(subscribeRemoteAudioStream),
+        SET_PROTOTYPE(subscribeRemoteSubStreamAudio),
+        SET_PROTOTYPE(subscribeAllRemoteAudioStream),
+        SET_PROTOTYPE(setAudioSubscribeOnlyBy),
+        SET_PROTOTYPE(setSubscribeAudioAllowlist),
+        SET_PROTOTYPE(setSubscribeAudioBlocklist),
+        SET_PROTOTYPE(setStreamAlignmentProperty),
+        SET_PROTOTYPE(getNtpTimeOffset),
+        SET_PROTOTYPE(setCameraCaptureConfig),
+        SET_PROTOTYPE(setCameraCaptureConfigWithType),
         SET_PROTOTYPE(setVideoConfig),
-        SET_PROTOTYPE(setVideoConfigEx),
+        SET_PROTOTYPE(setVideoConfigWithType),
         SET_PROTOTYPE(enableDualStreamMode),
+        SET_PROTOTYPE(setupSubStreamVideoCanvas),
         SET_PROTOTYPE(setLocalVideoMirrorMode),
+        SET_PROTOTYPE(setLocalVideoMirrorModeWithType),
+        SET_PROTOTYPE(subscribeRemoteVideoSubStream),
         SET_PROTOTYPE(startVideoPreview),
+        SET_PROTOTYPE(startVideoPreviewWithType),
         SET_PROTOTYPE(stopVideoPreview),
+        SET_PROTOTYPE(stopVideoPreviewWithType),
         SET_PROTOTYPE(muteLocalVideoStream),
+        SET_PROTOTYPE(muteLocalVideoStreamWithType),
+        SET_PROTOTYPE(setLocalMediaPriority),
         SET_PROTOTYPE(setParameters),
         SET_PROTOTYPE(getParameters),
         SET_PROTOTYPE(setRecordingAudioFrameParameters),
         SET_PROTOTYPE(setPlaybackAudioFrameParameters),
+        SET_PROTOTYPE(setMixedAudioFrameParameters),
         SET_PROTOTYPE(startAudioDump),
+        SET_PROTOTYPE(startAudioDumpWithType),
         SET_PROTOTYPE(stopAudioDump),
         SET_PROTOTYPE(startAudioMixing),
         SET_PROTOTYPE(stopAudioMixing),
@@ -254,12 +245,8 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(getAudioMixingDuration),
         SET_PROTOTYPE(getAudioMixingCurrentPosition),
         SET_PROTOTYPE(setAudioMixingPosition),
-        SET_PROTOTYPE(setAudioMixingPitch),
-        SET_PROTOTYPE(getAudioMixingPitch),
         SET_PROTOTYPE(playEffect),
         SET_PROTOTYPE(stopEffect),
-        SET_PROTOTYPE(setEffectPitch),
-        SET_PROTOTYPE(getEffectPitch),
         SET_PROTOTYPE(stopAllEffects),
         SET_PROTOTYPE(pauseEffect),
         SET_PROTOTYPE(resumeEffect),
@@ -269,26 +256,93 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(getEffectSendVolume),
         SET_PROTOTYPE(setEffectPlaybackVolume),
         SET_PROTOTYPE(getEffectPlaybackVolume),
+        SET_PROTOTYPE(setAudioMixingPitch),
+        SET_PROTOTYPE(getAudioMixingPitch),
+        SET_PROTOTYPE(setEffectPitch),
+        SET_PROTOTYPE(getEffectPitch),
+        SET_PROTOTYPE(enableLoopbackRecording),
+        SET_PROTOTYPE(adjustLoopbackRecordingSignalVolume),
         SET_PROTOTYPE(enableEarback),
         SET_PROTOTYPE(setEarbackVolume),
-        SET_PROTOTYPE(onStatsObserver),
-        SET_PROTOTYPE(onQsObserver),
         SET_PROTOTYPE(enableAudioVolumeIndication),
         SET_PROTOTYPE(enableAudioVolumeIndicationEx),
         SET_PROTOTYPE(startScreenCaptureByScreenRect),
         SET_PROTOTYPE(startScreenCaptureByDisplayId),
         SET_PROTOTYPE(startScreenCaptureByWindowId),
         SET_PROTOTYPE(updateScreenCaptureRegion),
+        SET_PROTOTYPE(setScreenCaptureMouseCursor),
         SET_PROTOTYPE(stopScreenCapture),
         SET_PROTOTYPE(pauseScreenCapture),
         SET_PROTOTYPE(resumeScreenCapture),
-        SET_PROTOTYPE(setExternalVideoSource),
+        SET_PROTOTYPE(setExcludeWindowList),
+        SET_PROTOTYPE(updateScreenCaptureParameters),
+        // SET_PROTOTYPE(setExternalVideoSource),
+        // SET_PROTOTYPE(setExternalVideoSourceEx),
+        // SET_PROTOTYPE(pushExternalVideoFrame),
+        // SET_PROTOTYPE(setExternalAudioSource),
+        // SET_PROTOTYPE(pushExternalAudioFrame),
+        // SET_PROTOTYPE(setExternalAudioRender),
+        // SET_PROTOTYPE(pullExternalAudioFrame), //todo
         SET_PROTOTYPE(getVersion),
         SET_PROTOTYPE(getErrorDescription),
         SET_PROTOTYPE(uploadSdkInfo),
         SET_PROTOTYPE(addLiveStreamTask),
         SET_PROTOTYPE(updateLiveStreamTask),
         SET_PROTOTYPE(removeLiveStreamTask),
+        SET_PROTOTYPE(sendSEIMsg),
+        SET_PROTOTYPE(sendSEIMsgWithType),
+        SET_PROTOTYPE(startAudioRecording),
+        SET_PROTOTYPE(startAudioRecordingWithConfig),
+        SET_PROTOTYPE(stopAudioRecording),
+        SET_PROTOTYPE(adjustUserPlaybackSignalVolume),
+        SET_PROTOTYPE(adjustChannelPlaybackSignalVolume),
+        SET_PROTOTYPE(startChannelMediaRelay),
+        SET_PROTOTYPE(updateChannelMediaRelay),
+        SET_PROTOTYPE(stopChannelMediaRelay),
+        SET_PROTOTYPE(setLocalPublishFallbackOption),
+        SET_PROTOTYPE(setRemoteSubscribeFallbackOption),
+        SET_PROTOTYPE(enableSuperResolution),
+        SET_PROTOTYPE(enableEncryption),
+        SET_PROTOTYPE(startLastmileProbeTest),
+        SET_PROTOTYPE(stopLastmileProbeTest),
+        SET_PROTOTYPE(setRemoteHighPriorityAudioStream),
+        SET_PROTOTYPE(checkNECastAudioDriver),
+        SET_PROTOTYPE(enableVirtualBackground),
+        SET_PROTOTYPE(setCloudProxy),
+        SET_PROTOTYPE(enableLocalData),
+        SET_PROTOTYPE(subscribeRemoteData),
+        SET_PROTOTYPE(sendData),
+        SET_PROTOTYPE(startBeauty),
+        SET_PROTOTYPE(stopBeauty),
+        SET_PROTOTYPE(enableBeauty),
+        // SET_PROTOTYPE(enableBeautyMirrorMode),
+        SET_PROTOTYPE(getBeautyEffect),
+        SET_PROTOTYPE(setBeautyEffect),
+        SET_PROTOTYPE(addBeautyFilter),
+        SET_PROTOTYPE(removeBeautyFilter),
+        SET_PROTOTYPE(setBeautyFilterLevel),
+        SET_PROTOTYPE(addBeautySticker),
+        SET_PROTOTYPE(removeBeautySticker),
+        SET_PROTOTYPE(addBeautyMakeup),
+        SET_PROTOTYPE(removeBeautyMakeup),
+        SET_PROTOTYPE(setLocalVoiceReverbParam),
+        SET_PROTOTYPE(enableMediaPub),
+        SET_PROTOTYPE(updatePermissionKey),
+        SET_PROTOTYPE(setEffectPosition),
+        SET_PROTOTYPE(getEffectCurrentPosition),
+        SET_PROTOTYPE(getEffectDuration),
+        SET_PROTOTYPE(setRangeAudioMode),
+        SET_PROTOTYPE(setRangeAudioTeamID),
+        SET_PROTOTYPE(setAudioRecvRange),
+        SET_PROTOTYPE(updateSelfPosition),
+        SET_PROTOTYPE(enableSpatializerRoomEffects),
+        SET_PROTOTYPE(setSpatializerRoomProperty),
+        SET_PROTOTYPE(setSpatializerRenderMode),
+        SET_PROTOTYPE(initSpatializer),
+        SET_PROTOTYPE(enableSpatializer),
+    
+    
+        // adm
         SET_PROTOTYPE(enumerateRecordDevices),
         SET_PROTOTYPE(setRecordDevice),
         SET_PROTOTYPE(getRecordDevice),
@@ -311,76 +365,16 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(stopPlayoutDeviceTest),
         SET_PROTOTYPE(startAudioDeviceLoopbackTest),
         SET_PROTOTYPE(stopAudioDeviceLoopbackTest),
+    
+        // vdm
         SET_PROTOTYPE(enumerateCaptureDevices),
         SET_PROTOTYPE(setDevice),
+        SET_PROTOTYPE(setDeviceWithType),
         SET_PROTOTYPE(getDevice),
-        SET_PROTOTYPE(setDeviceEx),
-        SET_PROTOTYPE(getDeviceEx),
-        SET_PROTOTYPE(enumerateScreenCaptureSourceInfo),
-        SET_PROTOTYPE(startSystemAudioLoopbackCapture),
-        SET_PROTOTYPE(stopSystemAudioLoopbackCapture),
-        SET_PROTOTYPE(setSystemAudioLoopbackCaptureVolume),
-
-        //4.6.20
-        SET_PROTOTYPE(enableLocalVideoEx),
-        SET_PROTOTYPE(enableLocalSubStreamAudio),
-        SET_PROTOTYPE(muteLocalSubStreamAudio),
-        SET_PROTOTYPE(subscribeRemoteSubStreamAudio),
-        SET_PROTOTYPE(subscribeAllRemoteAudioStream),
-        SET_PROTOTYPE(setAudioSubscribeOnlyBy),
-        SET_PROTOTYPE(setSubscribeAudioAllowlist),
-        SET_PROTOTYPE(setSubscribeAudioBlocklist),
-        SET_PROTOTYPE(setStreamAlignmentProperty),
-        SET_PROTOTYPE(getNtpTimeOffset),
-        SET_PROTOTYPE(setCameraCaptureConfig),
-        SET_PROTOTYPE(setCameraCaptureConfigEx),
-        SET_PROTOTYPE(setLocalVideoMirrorModeEx),
-        SET_PROTOTYPE(startVideoPreviewEx),
-        SET_PROTOTYPE(stopVideoPreviewEx),
-        SET_PROTOTYPE(muteLocalVideoStreamEx),
-        SET_PROTOTYPE(startAudioDumpEx),
-        SET_PROTOTYPE(setScreenCaptureMouseCursor),
-        SET_PROTOTYPE(updateScreenCaptureParameters),
-        SET_PROTOTYPE(setExternalVideoSourceEx),
-        SET_PROTOTYPE(setRemoteHighPriorityAudioStream),
-        SET_PROTOTYPE(checkNECastAudioDriver),
-        SET_PROTOTYPE(enableFaceEnhance),
-        SET_PROTOTYPE(enableVirtualBackground),
-        SET_PROTOTYPE(setCloudProxy),
-        SET_PROTOTYPE(startBeauty),
-        SET_PROTOTYPE(stopBeauty),
-        SET_PROTOTYPE(enableBeauty),
-        SET_PROTOTYPE(enableBeautyMirrorMode),
-        SET_PROTOTYPE(getBeautyEffect),
-        SET_PROTOTYPE(setBeautyEffect),
-        SET_PROTOTYPE(addBeautyFilter),
-        SET_PROTOTYPE(removeBeautyFilter),
-        SET_PROTOTYPE(setBeautyFilterLevel),
-        SET_PROTOTYPE(addBeautySticker),
-        SET_PROTOTYPE(removeBeautySticker),
-        SET_PROTOTYPE(addBeautyMakeup),
-        SET_PROTOTYPE(removeBeautyMakeup),
-        SET_PROTOTYPE(setLocalVoiceReverbParam),
-        SET_PROTOTYPE(enableMediaPub),
-
-        SET_PROTOTYPE(enableLocalData),
-        SET_PROTOTYPE(subscribeRemoteData),
-        SET_PROTOTYPE(sendData),
-        SET_PROTOTYPE(updatePermissionKey),
-        SET_PROTOTYPE(setEffectPosition),
-        SET_PROTOTYPE(getEffectCurrentPosition),
-        SET_PROTOTYPE(getEffectDuration),
-
-
-        SET_PROTOTYPE(setRangeAudioMode),
-        SET_PROTOTYPE(setRangeAudioTeamID),
-        SET_PROTOTYPE(setAudioRecvRange),
-        SET_PROTOTYPE(updateSelfPosition),
-        SET_PROTOTYPE(enableSpatializerRoomEffects),
-        SET_PROTOTYPE(setSpatializerRoomProperty),
-        SET_PROTOTYPE(setSpatializerRenderMode),
-        SET_PROTOTYPE(initSpatializer),
-        SET_PROTOTYPE(enableSpatializer),
+        SET_PROTOTYPE(getDeviceWithType),
+    
+        // CUSTOM
+		SET_PROTOTYPE(enumerateScreenCaptureSourceInfo),
 
     });
 
@@ -541,7 +535,7 @@ NIM_SDK_NODE_API_DEF(joinChannel)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(joinChannelEx)
+NIM_SDK_NODE_API_DEF(joinChannelWithOptions)
 {
     INIT_ENV
     do{
@@ -607,7 +601,7 @@ NIM_SDK_NODE_API_DEF(enableLocalVideo)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(enableLocalVideoEx)
+NIM_SDK_NODE_API_DEF(enableLocalVideoWithType)
 {
     INIT_ENV
     do
@@ -699,23 +693,23 @@ NIM_SDK_NODE_API_DEF(onEvent)
     return ret_value;
 }
 
-NIM_SDK_NODE_API_DEF(onAudioFrameEvent)
-{
-    auto env = info.Env();
-    std::string event_name = "";
-    bool enable;
-    Napi::FunctionReference function;
-    napi_get_value_utf8_string(info[0], event_name);
-    napi_get_value_function(info[1], function);
-    napi_get_value_bool(info[2], enable);
-    if(enable) {
-        _audio_observer->addEvent(event_name, std::move(function));
-    } else {
-        _audio_observer->removeEventHandler(event_name);
-    }
-    auto ret_value = env.Null();
-    return ret_value;
-}
+// NIM_SDK_NODE_API_DEF(onAudioFrameEvent)
+// {
+//     auto env = info.Env();
+//     std::string event_name = "";
+//     bool enable;
+//     Napi::FunctionReference function;
+//     napi_get_value_utf8_string(info[0], event_name);
+//     napi_get_value_function(info[1], function);
+//     napi_get_value_bool(info[2], enable);
+//     if(enable) {
+//         _audio_observer->addEvent(event_name, std::move(function));
+//     } else {
+//         _audio_observer->removeEventHandler(event_name);
+//     }
+//     auto ret_value = env.Null();
+//     return ret_value;
+// }
 
 NIM_SDK_NODE_API_DEF(setClientRole)
 {
@@ -787,43 +781,43 @@ NIM_SDK_NODE_API_DEF(setMixedAudioFrameParameters)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(setExternalAudioSource)
-{
-    INIT_ENV
-    do
-    {
-        // Not Supported External Audio
-        // bool enabled;
-        // int samp, chan;
-        // napi_get_value_bool(info[0], enabled);
-        // napi_get_value_int32(info[1], samp);
-        // napi_get_value_int32(info[2], chan);
-        // LOG_F(INFO, "enabled:%d samp:%d chan:%d", enabled, samp, chan);
-        // ret = rtc_engine_->setExternalAudioSource(enabled, samp, chan);
-        // LOG_F(INFO, "ret:%d", ret);
-    } while (false);
-    return Napi::Number::New(env, ret);
-}
+// NIM_SDK_NODE_API_DEF(setExternalAudioSource)
+// {
+//     INIT_ENV
+//     do
+//     {
+//         // Not Supported External Audio
+//         // bool enabled;
+//         // int samp, chan;
+//         // napi_get_value_bool(info[0], enabled);
+//         // napi_get_value_int32(info[1], samp);
+//         // napi_get_value_int32(info[2], chan);
+//         // LOG_F(INFO, "enabled:%d samp:%d chan:%d", enabled, samp, chan);
+//         // ret = rtc_engine_->setExternalAudioSource(enabled, samp, chan);
+//         // LOG_F(INFO, "ret:%d", ret);
+//     } while (false);
+//     return Napi::Number::New(env, ret);
+// }
 
-NIM_SDK_NODE_API_DEF(pushExternalAudioFrame)
-{
-    INIT_ENV
-    do
-    {
-        //todo
-    } while (false);
-    return Napi::Number::New(env, ret);
-}
+// NIM_SDK_NODE_API_DEF(pushExternalAudioFrame)
+// {
+//     INIT_ENV
+//     do
+//     {
+//         //todo
+//     } while (false);
+//     return Napi::Number::New(env, ret);
+// }
 
-NIM_SDK_NODE_API_DEF(pushExternalVideoFrame)
-{
-    INIT_ENV
-    do
-    {
-        //todo
-    } while (false);
-    return Napi::Number::New(env, ret);
-}
+// NIM_SDK_NODE_API_DEF(pushExternalVideoFrame)
+// {
+//     INIT_ENV
+//     do
+//     {
+//         //todo
+//     } while (false);
+//     return Napi::Number::New(env, ret);
+// }
 
 NIM_SDK_NODE_API_DEF(sendSEIMsg)
 {
@@ -842,7 +836,7 @@ NIM_SDK_NODE_API_DEF(sendSEIMsg)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(sendSEIMsgEx)
+NIM_SDK_NODE_API_DEF(sendSEIMsgWithType)
 {
     INIT_ENV
     do
@@ -862,40 +856,40 @@ NIM_SDK_NODE_API_DEF(sendSEIMsgEx)
 }
 
 
-NIM_SDK_NODE_API_DEF(setExternalAudioRender)
-{
-    INIT_ENV
-    do
-    {
-        bool enable;
-        int sample_rate = 0;
-        int channels = 0;
-        napi_get_value_bool(info[0], enable);
-        napi_get_value_int32(info[1], sample_rate);
-        napi_get_value_int32(info[2], channels);
-        LOG_F(INFO, "enable:%d sample_rate:%d channels:%d", enable, sample_rate, channels);
-        ret = rtc_engine_->setExternalAudioRender(enable, sample_rate, channels);
-        LOG_F(INFO, "ret:%d", ret);
-    } while (false);
-    return Napi::Number::New(env, ret);
-}
+// NIM_SDK_NODE_API_DEF(setExternalAudioRender)
+// {
+//     INIT_ENV
+//     do
+//     {
+//         bool enable;
+//         int sample_rate = 0;
+//         int channels = 0;
+//         napi_get_value_bool(info[0], enable);
+//         napi_get_value_int32(info[1], sample_rate);
+//         napi_get_value_int32(info[2], channels);
+//         LOG_F(INFO, "enable:%d sample_rate:%d channels:%d", enable, sample_rate, channels);
+//         ret = rtc_engine_->setExternalAudioRender(enable, sample_rate, channels);
+//         LOG_F(INFO, "ret:%d", ret);
+//     } while (false);
+//     return Napi::Number::New(env, ret);
+// }
 
-NIM_SDK_NODE_API_DEF(pullExternalAudioFrame)
-{
-    INIT_ENV
-    do
-    {
-        int length = 0;
-        Napi::FunctionReference function;
-        napi_get_value_int32(info[0], length);
-        napi_get_value_function(info[1], function);
-        auto shared_data = std::make_shared<unsigned char>(length);
-        ret = rtc_engine_->pullExternalAudioFrame(shared_data.get(), length);
-        _event_handler->onPullExternalAudioFrame(std::move(function), shared_data, length);
-    } while (false);
-    LOG_F(INFO, "ret:%d", ret);
-    return Napi::Number::New(env, ret);
-}
+// NIM_SDK_NODE_API_DEF(pullExternalAudioFrame)
+// {
+//     INIT_ENV
+//     do
+//     {
+//         int length = 0;
+//         Napi::FunctionReference function;
+//         napi_get_value_int32(info[0], length);
+//         napi_get_value_function(info[1], function);
+//         auto shared_data = std::make_shared<unsigned char>(length);
+//         ret = rtc_engine_->pullExternalAudioFrame(shared_data.get(), length);
+//         _event_handler->onPullExternalAudioFrame(std::move(function), shared_data, length);
+//     } while (false);
+//     LOG_F(INFO, "ret:%d", ret);
+//     return Napi::Number::New(env, ret);
+// }
 
 NIM_SDK_NODE_API_DEF(setAudioEffectPreset)
 {
@@ -1005,7 +999,7 @@ NIM_SDK_NODE_API_DEF(switchChannel)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(switchChannelEx)
+NIM_SDK_NODE_API_DEF(switchChannelWithOptions)
 {
     INIT_ENV
     do
@@ -1504,7 +1498,7 @@ NIM_SDK_NODE_API_DEF(setVideoConfig)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(setVideoConfigEx)
+NIM_SDK_NODE_API_DEF(setVideoConfigWithType)
 {
     INIT_ENV
     do
@@ -1556,7 +1550,7 @@ NIM_SDK_NODE_API_DEF(setLocalVideoMirrorMode)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(setLocalVideoMirrorModeEx)
+NIM_SDK_NODE_API_DEF(setLocalVideoMirrorModeWithType)
 {
     INIT_ENV
     do{
@@ -2398,19 +2392,19 @@ NIM_SDK_NODE_API_DEF(resumeScreenCapture)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(setExternalVideoSource)
-{
-    INIT_ENV
-    do
-    {
-        bool enabled;
-        napi_get_value_bool(info[0], enabled);
-        LOG_F(INFO, "enabled:%d", enabled);
-        ret = rtc_engine_->setExternalVideoSource(enabled);
-    } while (false);
-    LOG_F(INFO, "ret:%d", ret);
-    return Napi::Number::New(env, ret);
-}
+// NIM_SDK_NODE_API_DEF(setExternalVideoSource)
+// {
+//     INIT_ENV
+//     do
+//     {
+//         bool enabled;
+//         napi_get_value_bool(info[0], enabled);
+//         LOG_F(INFO, "enabled:%d", enabled);
+//         ret = rtc_engine_->setExternalVideoSource(enabled);
+//     } while (false);
+//     LOG_F(INFO, "ret:%d", ret);
+//     return Napi::Number::New(env, ret);
+// }
 
 NIM_SDK_NODE_API_DEF(getVersion)
 {
@@ -2892,7 +2886,7 @@ NIM_SDK_NODE_API_DEF(setDevice)
     return Napi::Number ::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(setDeviceEx)
+NIM_SDK_NODE_API_DEF(setDeviceWithType)
 {
     INIT_ENV
     do
@@ -2923,7 +2917,7 @@ NIM_SDK_NODE_API_DEF(getDevice)
     return Napi::String ::New(env,  ret== 0 ? (char*)id : "");
 }
 
-NIM_SDK_NODE_API_DEF(getDeviceEx)
+NIM_SDK_NODE_API_DEF(getDeviceWithType)
 {
     INIT_ENV
     int type;
@@ -3065,45 +3059,6 @@ NIM_SDK_NODE_API_DEF(enumerateScreenCaptureSourceInfo)
     } while (false);
 #endif
     return arr;
-}
-
-
-NIM_SDK_NODE_API_DEF(startSystemAudioLoopbackCapture)
-{
-    INIT_ENV
-    do
-    {
-#ifdef WIN32
-        // ret = rtc_engine_->startSystemAudioLoopbackCapture();
-#endif
-    } while (false);
-    return Napi::Number::New(env, ret);
-}
-
-NIM_SDK_NODE_API_DEF(stopSystemAudioLoopbackCapture)
-{
-    INIT_ENV
-    do
-    {
-#ifdef WIN32
-        // ret = rtc_engine_->stopSystemAudioLoopbackCapture();
-#endif
-    } while (false);
-    return Napi::Number ::New(env, ret);
-}
-
-NIM_SDK_NODE_API_DEF(setSystemAudioLoopbackCaptureVolume)
-{
-    INIT_ENV
-    do
-    {
-        uint32_t vol;
-        napi_get_value_uint32(info[0], vol);
-#ifdef WIN32
-        // ret = rtc_engine_->setSystemAudioLoopbackCaptureVolume(vol);
-#endif
-    } while (false);
-    return Napi::Number ::New(env, ret);
 }
 
 NIM_SDK_NODE_API_DEF(enableLocalSubStreamAudio)
@@ -3292,7 +3247,7 @@ NIM_SDK_NODE_API_DEF(setCameraCaptureConfig)
     return Napi::Number::New(env, ret);;
 }
 
-NIM_SDK_NODE_API_DEF(setCameraCaptureConfigEx)
+NIM_SDK_NODE_API_DEF(setCameraCaptureConfigWithType)
 {
     INIT_ENV
     Napi::Object obj = Napi::Object::New(env);
@@ -3312,7 +3267,7 @@ NIM_SDK_NODE_API_DEF(setCameraCaptureConfigEx)
 }
 
 
-NIM_SDK_NODE_API_DEF(startVideoPreviewEx)
+NIM_SDK_NODE_API_DEF(startVideoPreviewWithType)
 {
     INIT_ENV
     do
@@ -3325,7 +3280,7 @@ NIM_SDK_NODE_API_DEF(startVideoPreviewEx)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(stopVideoPreviewEx)
+NIM_SDK_NODE_API_DEF(stopVideoPreviewWithType)
 {
     INIT_ENV
     do
@@ -3338,7 +3293,7 @@ NIM_SDK_NODE_API_DEF(stopVideoPreviewEx)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(muteLocalVideoStreamEx)
+NIM_SDK_NODE_API_DEF(muteLocalVideoStreamWithType)
 {
     INIT_ENV
     do
@@ -3354,7 +3309,7 @@ NIM_SDK_NODE_API_DEF(muteLocalVideoStreamEx)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(startAudioDumpEx)
+NIM_SDK_NODE_API_DEF(startAudioDumpWithType)
 {
     INIT_ENV
     do
@@ -3411,21 +3366,21 @@ NIM_SDK_NODE_API_DEF(updateScreenCaptureParameters)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(setExternalVideoSourceEx)
-{
-    INIT_ENV
-    do
-    {
-        int type = 0;
-        bool enabled;
-        napi_get_value_int32(info[0], type);
-        napi_get_value_bool(info[1], enabled);
-        LOG_F(INFO, "type:%d enabled:%d", type, enabled);
-        ret = rtc_engine_->setExternalVideoSource((nertc::NERtcVideoStreamType)type, enabled);
-    } while (false);
-    LOG_F(INFO, "ret:%d", ret);
-    return Napi::Number::New(env, ret);
-}
+// NIM_SDK_NODE_API_DEF(setExternalVideoSourceEx)
+// {
+//     INIT_ENV
+//     do
+//     {
+//         int type = 0;
+//         bool enabled;
+//         napi_get_value_int32(info[0], type);
+//         napi_get_value_bool(info[1], enabled);
+//         LOG_F(INFO, "type:%d enabled:%d", type, enabled);
+//         ret = rtc_engine_->setExternalVideoSource((nertc::NERtcVideoStreamType)type, enabled);
+//     } while (false);
+//     LOG_F(INFO, "ret:%d", ret);
+//     return Napi::Number::New(env, ret);
+// }
 
 NIM_SDK_NODE_API_DEF(setRemoteHighPriorityAudioStream)
 {
@@ -3449,20 +3404,6 @@ NIM_SDK_NODE_API_DEF(checkNECastAudioDriver)
     do
     {
         ret = rtc_engine_->checkNECastAudioDriver();
-    } while (false);
-    LOG_F(INFO, "ret:%d", ret);
-    return Napi::Number::New(env, ret);
-}
-
-NIM_SDK_NODE_API_DEF(enableFaceEnhance)
-{
-    INIT_ENV
-    do
-    {
-        bool enabled = false;
-        napi_get_value_bool(info[0], enabled);
-        LOG_F(INFO, "enabled:%d", enabled);
-        // ret = rtc_engine_->enableFaceEnhance(enabled);
     } while (false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
@@ -3555,20 +3496,20 @@ NIM_SDK_NODE_API_DEF(enableBeauty)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(enableBeautyMirrorMode)
-{
-    INIT_ENV
-    do
-    {
-        bool enable = false;
-        napi_get_value_bool(info[0], enable);
-        LOG_F(INFO, "enable:%d", enable);
-        rtc_engine_->enableBeautyMirrorMode(enable);
-        ret = 0;
-    } while (false);
-    LOG_F(INFO, "ret:%d", ret);
-    return Napi::Number::New(env, ret);
-}
+// NIM_SDK_NODE_API_DEF(enableBeautyMirrorMode)
+// {
+//     INIT_ENV
+//     do
+//     {
+//         bool enable = false;
+//         napi_get_value_bool(info[0], enable);
+//         LOG_F(INFO, "enable:%d", enable);
+//         rtc_engine_->enableBeautyMirrorMode(enable);
+//         ret = 0;
+//     } while (false);
+//     LOG_F(INFO, "ret:%d", ret);
+//     return Napi::Number::New(env, ret);
+// }
 
 NIM_SDK_NODE_API_DEF(getBeautyEffect)
 {

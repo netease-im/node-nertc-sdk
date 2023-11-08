@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { IRenderer } from '../renderer';
-import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcAudioFrameRequestFormat, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcPullExternalAudioFrameCb, NERtcChannelMediaRelayConfiguration, NERtcVideoStreamType, NERtcMediaPriorityType, NERtcScreenCaptureWindowParam, NERtcAudioRecordingQuality, NERtcEncryptionConfig, NERtcJoinChannelOptions, NERtcCameraCaptureConfig, NERtcDistanceRolloffModel, NERtcSpatializerPositionInfo, NERtcSpatializerRoomProperty, NERtcSpatializerRenderMode, NERtcAudioRecordingConfiguration, VirtualBackgroundSource, NERtcReverbParam } from './defs';
+import { NERtcEngineAPI, NERtcEngineContext, NERtcChannelProfileType, NERtcRemoteVideoStreamType, NERtcVideoCanvas, NERtcErrorCode, NERtcSessionLeaveReason, NERtcVideoProfileType, NERtcAudioProfileType, NERtcAudioScenarioType, NERtcVideoConfig, NERtcAudioFrameRequestFormat, NERtcCreateAudioMixingOption, NERtcCreateAudioEffectOption, NERtcRectangle, NERtcScreenCaptureParameters, NERtcDevice, NERtcStats, NERtcAudioSendStats, NERtcAudioRecvStats, NERtcVideoSendStats, NERtcVideoRecvStats, NERtcNetworkQualityInfo, NERtcClientRole, NERtcConnectionStateType, NERtcReasonConnectionChangedType, NERtcAudioDeviceType, NERtcAudioDeviceState, NERtcAudioMixingState, NERtcAudioMixingErrorCode, NERtcAudioVolumeInfo, NERtcLiveStreamStateCode, NERtcLiveStreamTaskInfo, NERtcVideoMirrorMode, NERtcVideoScalingMode, NERtcVoiceChangerType, NERtcVoiceBeautifierType, NERtcVoiceEqualizationBand, NERtcStreamChannelType, NERtcChannelMediaRelayConfiguration, NERtcVideoStreamType, NERtcMediaPriorityType, NERtcScreenCaptureWindowParam, NERtcAudioRecordingQuality, NERtcEncryptionConfig, NERtcJoinChannelOptions, NERtcJoinChannelOptionsEx, NERtcCameraCaptureConfig, NERtcAudioRecordingConfiguration, VirtualBackgroundSource, NERtcReverbParam } from './defs';
 import { EventEmitter } from 'events';
 /**
  * @class NERtcEngine
@@ -143,7 +143,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    joinChannelEx(token: string, channelName: string, uid: number, channelOptions: NERtcJoinChannelOptions): number;
+    joinChannelWithOptions(token: string, channelName: string, uid: number, channelOptions: NERtcJoinChannelOptions): number;
     /**
      * 离开频道。
      * <pre>
@@ -278,7 +278,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    enableLocalVideoEx(streamType: NERtcVideoStreamType, enabled: boolean): number;
+    enableLocalVideoWithType(streamType: NERtcVideoStreamType, enabled: boolean): number;
     /**
      * 订阅 / 取消订阅指定远端用户的视频流。对方打开视频后需要主动订阅
      * @param {number} uid 指定用户的用户 ID。
@@ -469,6 +469,39 @@ declare class NERtcEngine extends EventEmitter {
      */
     setAudioSubscribeOnlyBy(uids: Array<Number>, size: number): number;
     /**
+     * 你可以调用该方法指定只订阅的音频流。
+     * <pre>
+     *  - 此接口需要在加入房间成功后调用。
+     *  - 对于调用接口时不在房间的 uid 不生效。
+     * </pre>
+     * @param {Array<Number>} uids 只订阅此用户uid列表 的音频.此列表为全量列表。如果列表为空或 null，取消订阅白名单。例如：[uid1,uid2...]。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功。
+     * - 其他：方法调用失败。
+     * </pre>
+     */
+    setSubscribeAudioAllowlist(uids: Array<Number>): number;
+    /**
+     * 你可以调用该方法指定不订阅的音频流。
+     * <pre>
+     *  - 此接口需要在加入房间成功后调用。
+     *  - 对于调用接口时不在房间的 uid 不生效。
+     * </pre>
+     * @param {number} audioStreamType 音频流类型。
+     * <pre>
+     * - 0: 主流
+     * - 1: 辅流
+     * </pre>
+     * @param {Array<Number>} uids 只订阅此用户uid列表 的音频.此列表为全量列表。如果列表为空或 null，取消订阅白名单。例如：[uid1,uid2...]。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功。
+     * - 其他：方法调用失败。
+     * </pre>
+     */
+    setSubscribeAudioBlocklist(audioStreamType: number, uids: Array<Number>): number;
+    /**
      * 开启精准对齐。
      * @since V5.4.0
      * <pre>
@@ -546,7 +579,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setCameraCaptureConfigEx(streamType: NERtcVideoStreamType, config: NERtcCameraCaptureConfig): number;
+    setCameraCaptureConfigWithType(streamType: NERtcVideoStreamType, config: NERtcCameraCaptureConfig): number;
     /**
      * 设置视频配置。
      * <pre>
@@ -693,7 +726,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setVideoConfigEx(streamType: NERtcVideoStreamType, config: NERtcVideoConfig): number;
+    setVideoConfigWithType(streamType: NERtcVideoStreamType, config: NERtcVideoConfig): number;
     /**
      * 设置视频双流发送。
      * <pre>
@@ -821,7 +854,7 @@ declare class NERtcEngine extends EventEmitter {
     * - 其他: 方法调用失败。
     * </pre>
     */
-    setLocalVideoMirrorModeEx(streamType: NERtcVideoStreamType, mode: NERtcVideoMirrorMode): number;
+    setLocalVideoMirrorModeWithType(streamType: NERtcVideoStreamType, mode: NERtcVideoMirrorMode): number;
     /**
      * 设置远端用户辅流视图。
      * <pre>
@@ -902,7 +935,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    startVideoPreviewEx(streamType: number): number;
+    startVideoPreviewWithType(streamType: number): number;
     /**
      * 停止视频预览。
      * <pre>
@@ -931,7 +964,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    stopVideoPreviewEx(streamType: number): number;
+    stopVideoPreviewWithType(streamType: number): number;
     /**
      * 开关本地视频发送。
      * <pre>
@@ -970,7 +1003,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    muteLocalVideoStreamEx(streamType: number, enabled: boolean): number;
+    muteLocalVideoStreamWithType(streamType: number, enabled: boolean): number;
     /**
      * 通过 JSON 配置 SDK 提供技术预览或特别定制功能。以标准化方式公开 JSON 选项。
      * @param {object} parameters JSON 字符串形式的参数
@@ -1024,6 +1057,19 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     setParameters(parameters: String): number;
+    /**
+     * 以String 的形式获取一些内部参数。
+     * @since V5.3.0
+     * <pre>
+    * <b>NOTE:</b>
+     * - 此接口为隐藏接口，需要特定参数及特定时机，详情联系技术支持。
+     * - 请在初始化后调用该方法，且该方法在加入房间前后均可调用。
+     * </pre>
+     * @param {String} parameters 音视频通话的参数集合.
+     * @param {String} extra_info 额外的信息。
+     * @returns {String} 内部参数信息。
+     */
+    getParameters(parameters: String, extra_info: String): String;
     /**
     * 设置采集的音频格式。
     * @since V5.4.0
@@ -1122,7 +1168,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    startAudioDumpEx(type: number): number;
+    startAudioDumpWithType(type: number): number;
     /**
      * 结束音频dump。
      * @returns {number}
@@ -1506,147 +1552,6 @@ declare class NERtcEngine extends EventEmitter {
      */
     getEffectPlaybackVolume(effectId: number): number;
     /**
-     * 引擎3D音效算法开关.
-     * @since v5.4.0
-     * <pre>
-     * 通话前调用，通话结束后不重置
-     * </pre>
-     * @param {boolean} enable 是否打开3D音效算法功能.
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    enableSpatializer(enable: boolean): number;
-    /**
-     * 引擎3D音效算法距离范围设置
-     * @since v5.4.0
-     * <pre>
-     * 依赖enableSpatializer接口开启，通话前调用
-     * </pre>
-     * @param {number} audible_distance 监听器能够听到扬声器并接收其文本消息的距离扬声器的最大距离。[0,1000] 默认值为 32。
-     * @param {number} conversational_distance 控制扬声器音频保持其原始音量的范围，超出该范围时，语音聊天的响度在被听到时开始淡出。
-     * @param {number} roll_off 距离衰减模式:
-     * <pre>
-     * 0: 指数模式
-     * 1: 线性模式
-     * 2: 无衰减
-     * </pre>
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    updateSpatializerAudioRecvRange(audible_distance: number, conversational_distance: number, roll_off: NERtcDistanceRolloffModel): number;
-    /**
-     * 引擎3D音效算法中本人坐标方位更新接口
-     * @since v5.4.0
-     * <pre>
-     * 依赖enableSpatializer接口开启，enableSpatializer接口关闭后重置设置
-     * </pre>
-     * @param {obejct} info 3D音效算法中坐标信息。
-     * @param {Array<Number>} info.speaker_position 说话位置信息，默认值{0,0,0}。
-     * @param {Array<Number>} info.speaker_quaternion 说话旋转信息，默认值{0,0,0,0}。
-     * @param {Array<Number>} info.head_position 听觉位置信息，默认值{0,0,0}。
-     * @param {Array<Number>} info.head_quaternion 听觉旋转信息，默认值{0,0,0,0}。
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    updateSpatializerSelfPosition(info: NERtcSpatializerPositionInfo): number;
-    /**
-     * 引擎3D音效算法中房间混响效果开关
-     * @since v5.4.0
-     * <pre>
-     * 依赖enableSpatializer接口开启
-     * </pre>
-     * @param {boolean} enable 混响效果开关，默认值关闭
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    enableSpatializerRoomEffects(enable: boolean): number;
-    /**
-     * 引擎3D音效算法中房间混响属性
-     * @since v5.4.0
-     * <pre>
-     * 依赖enableSpatializer接口开启
-     * </pre>
-     * @param {object} room_property 3D音效房间属性设置
-     * @param {number} room_property.room_capacity 空间音效房间大小
-     * <pre>
-     * - 0 小房间。
-     * - 1 中等大小房间
-     * - 2 大房间
-     * - 3 巨大房间
-     * - 4 无房间效果
-     * </pre>
-     * @param {number} room_property.material 房间属性
-     * <pre>
-     * - 0 透明的
-     * - 1 声学天花板，未开放
-     * - 2 砖块，未开放
-     * - 3 涂漆的砖块，未开放
-     * - 4 粗糙的混凝土块，未开放
-     * - 5 涂漆的混凝土块，未开放
-     * - 6 厚重的窗帘
-     * - 7 隔音的玻璃纤维，未开放
-     * - 8 薄的的玻璃，未开放
-     * - 9 茂密的草地，未开放
-     * - 10 草地
-     * - 11 铺装了油毡的混凝土，未开放
-     * - 12 大理石
-     * - 13 金属，未开放
-     * - 14 镶嵌木板的混凝土，未开放
-     * - 15 石膏，未开放
-     * - 16 粗糙石膏，未开放
-     * - 17 光滑石膏，未开放
-     * - 18 木板，未开放
-     * - 19 石膏灰胶纸板，未开放
-     * - 20 水面或者冰面，未开放
-     * - 21 木头天花板，未开放
-     * - 22 木头枪板，未开放
-     * - 23 均匀分布，未开放
-     * </pre>
-     * @param {number} room_property.reflection_scalar 反射比例，默认值1.0
-     * @param {number} room_property.reverb_gain 混响增益比例因子，默认值1.0
-     * @param {number} room_property.reverb_time 混响时间比例因子，默认值1.0
-     * @param {number} room_property.reverb_brightness 混响亮度，默认值1.0
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    setSpatializerRoomProperty(room_property: NERtcSpatializerRoomProperty): number;
-    /**
-     * 引擎3D音效算法中渲染模式
-     * @since v5.4.0
-     * <pre>
-     * 依赖enableSpatializer接口开启
-     * </pre>
-     * @param {number} mode 空间音效渲染模式:
-     * <pre>
-     * - 0 立体声
-     * - 1 双声道低
-     * - 2 双声道中
-     * - 3 双声道高
-     * - 4 仅房间音效
-     * </pre>
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    setSpatializerRenderMode(mode: NERtcSpatializerRenderMode): number;
-    /**
      * 开启或关闭耳返。
      * <pre>
      * 请在频道内调用该方法。
@@ -1916,52 +1821,6 @@ declare class NERtcEngine extends EventEmitter {
      */
     resumeScreenCapture(): number;
     /**
-     * 开启声音共享。
-     * @deprecated 该接口已经在 4.1.x 版本后废弃
-     * <pre>
-     * <b>NOTE:</b>
-     * - 该方法仅适用于 Windows。
-     * - 请在频道内调用该方法，该方法会捕获系统声音发送，开启本地语音后工作。
-     * </pre>
-     * @return {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    startSystemAudioLoopbackCapture(): number;
-    /**
-     * 关闭声音共享。
-     * @deprecated 该接口已经在 4.1.x 版本后废弃
-     * <pre>
-     * <b>NOTE:</b>
-     * - 该方法仅适用于 Windows。
-     * - 请在频道内调用该方法，通话结束后自动关闭。
-     * </pre>
-     * @return {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    stopSystemAudioLoopbackCapture(): number;
-    /**
-     * 设置声音共享音量。
-     * @deprecated 该接口已经在 4.1.x 版本后废弃
-     * <pre>
-     * <b>NOTE:</b>
-     * - 该方法仅适用于 Windows。
-     * - 请在频道内调用该方法。
-     * </pre>
-     * @param {number} volume 音效音量范围为 0~100。默认 100 为原始音量。
-     * @return {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    setSystemAudioLoopbackCaptureVolume(volume: number): number;
-    /**
      * 发送媒体补充增强信息（SEI）。
      * @since 4.1.110
      * <pre>
@@ -2007,50 +1866,7 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType): number;
-    /**
-     * 拉取外部音频数据。
-     * @since 4.1.110
-     * <pre>
-     * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
-     * <b>NOTE:</b>
-     * - 该方法需要在加入房间后调用。
-     * - 数据帧时长建议匹配 10ms 周期。
-     * - 该方法在音频渲染设备关闭后不再生效，此时会返回空数据。例如通话结束、通话前扬声器设备测试关闭等情况下，该设置不再生效。
-     * </pre>
-     * @param {boolean} enable 是否外部数据输出
-     * <pre>
-     * - true: 开启外部数据渲染
-     * - false: 关闭外部数据渲染 (默认)
-     * </pre>
-     * @param {number} sampleRate 数据采样率，后续数据按该格式返回。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效
-     * @param {number} channels channels 数据声道数，后续数据按该格式返回。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效。
-     * @return {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number;
-    /**
-     * 拉取外部音频数据。
-     * @since 4.1.110
-     * <pre>
-     * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
-     * <b>NOTE:</b>
-     * - 该方法需要在加入房间后调用。
-     * - 数据帧时长建议匹配 10ms 周期。
-     * - 该方法在音频渲染设备关闭后不再生效，此时会返回空数据。例如通话结束、通话前扬声器设备测试关闭等情况下，该设置不再生效。
-     * </pre>
-     * @param {number} pullLength 待拉取音频数据的字节数，单位为 byte
-     * @param {function} cb 拉取数据的回调函数
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number;
+    sendSEIMsgWithType(data: ArrayBuffer, type: NERtcStreamChannelType): number;
     /**
      * 查询 SDK 版本号。
      * @returns {String} 当前的 SDK 版本号，格式为字符串，如1.0.0.
@@ -2149,7 +1965,7 @@ declare class NERtcEngine extends EventEmitter {
      * @param {number} info.layout.users[].width 画面在主画面的显示宽度，画面右边超出主画面会失败
      * @param {number} info.layout.users[].height 画面在主画面的显示高度，画面底边超出主画面会失败
      * @param {boolean} info.layout.users[].audio_push 是否推送该用户音频流
-     * @param {object} info.layout.users[].bg_image 背景图信息:
+     * @param {object} info.layout.users[].bg_image 背景图信息
      * @param {String} info.layout.users[].bg_image.url 图片地址
      * @param {number} info.layout.users[].bg_image.x 画面离主画面左边距
      * @param {number} info.layout.users[].bg_image.y 画面离主画面上边距
@@ -2582,7 +2398,7 @@ declare class NERtcEngine extends EventEmitter {
     * - 其他: 方法调用失败。
     * </pre>
     */
-    setVideoDeviceEx(id: string, streamType: NERtcVideoStreamType): number;
+    setVideoDeviceWithType(id: string, streamType: NERtcVideoStreamType): number;
     /**
      * 获取当前使用的视频采集设备信息。
      * @returns {String} 设备ID
@@ -2597,7 +2413,7 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      * @returns {String} 设备ID
      */
-    getVideoDeviceEx(streamType: NERtcVideoStreamType): string;
+    getVideoDeviceWithType(streamType: NERtcVideoStreamType): string;
     /**
      * 设置 SDK 预设的人声的变声音效。
      * @since 4.1.110
@@ -2823,7 +2639,34 @@ declare class NERtcEngine extends EventEmitter {
      * - 其他：方法调用失败。
      * </pre>
      */
-    switchChannelEx(token: string, channelName: string, channelOptions: NERtcJoinChannelOptions): number;
+    switchChannelWithOptions(token: string, channelName: string, channelOptions: NERtcJoinChannelOptions): number;
+    /**
+    * 快速切换音视频房间。
+    * @since V5.4.0
+    * <pre>
+    * - 房间场景为直播场景时，房间中角色为观众的成员可以调用该方法从当前房间快速切换至另一个房间。
+    * - 成功调用该方切换房间后，本端用户会先收到离开房间的回调 onLeaveChannel，再收到成功加入新房间的回调 onJoinChannel。远端用户会收到 onUserLeave 和 onUserJoined 回调。
+    * <b>NOTE:</b>
+    * - 快速切换房间功能默认关闭。如需使用，请联系技术支持免费开通。
+    * - 该方法仅适用于直播场景中，角色为观众的音视频房间成员。即已通过接口 setchannelprofile 设置房间场景为直播，通过 setClientRole 设置房间成员的角色为观众。
+    * - 房间成员成功切换房间后，默认订阅房间内所有其他成员的音频流，因此产生用量并影响计费。如果想取消订阅，可以通过调用相应的 subscribeRemoteAudio 方法传入 false 实现。
+    * </pre>
+    * @param {number}  token 安全认证签名（NERTC Token）。
+    * <pre>
+    * - null。非安全模式下可设置为 null。安全性不高，建议在产品正式上线前联系对应商务经理转为安全模式。
+    * - 已获取的 NERTC Token。安全模式下必须设置为获取到的 Token 。若未传入正确的 Token，用户将无法进入房间。推荐使用安全模式。
+    * </pre>
+    * @param {string} channelName 期望切换到的目标房间名称。
+    * @param {Object} channelOptions 加入音视频房间时的一些可选信息。
+    * @param {string} channelOptions.custom_info 自定义信息，最长支持 127 个字符。
+    * @param {string} channelOptions.permission_key 权限密钥。能控制通话时长及媒体权限能力。
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功。
+    * - 其他：方法调用失败。
+    * </pre>
+    */
+    switchChannelWithOptionsEx(token: string, channelName: string, channelOptions: NERtcJoinChannelOptionsEx): number;
     /**
     * 设置本地用户的媒体流优先级。
     * @since 4.4.8
@@ -3584,7 +3427,227 @@ declare class NERtcEngine extends EventEmitter {
      * </pre>
      */
     updatePermissionKey(key: string): number;
-    setAudioFrameObserver(enable: boolean): void;
+    /**
+     * 设置玩家本人在房间中的范围语音模式，该设置不影响其他人。
+     * @since V5.5.10
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前后均可调用。
+     * <b>NOTE:</b>
+     * - 离开房间后，此参数不会自动重置为默认模式，所以请在每次加入房间之前都调用此方法设置语音模式。
+     * - 加入房间后，可以随时修改语音模式，并立即生效。
+     * </pre>
+     * @param {number} mode 范围语音模式，包括所有人和仅小队两种模式。
+     * <pre>
+     * - 0: 默认模式。设置后玩家附近一定范围的人都能听到该玩家讲话，如果范围内也有玩家设置为此模式，则也可以互相通话。
+     * - 1: 小组模式。仅TeamID相同的队友可以互相听到
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    setRangeAudioMode(mode: number): number;
+    /**
+     * 设置范围语音的小队ID。
+     * @since V5.5.10
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前后均可调用。
+     * <b>NOTE:</b>
+     * - 离开房间后，TeamID 失效，需要重新配置TeamID ，请在每次加入房间之前都调用此方法设置 TeamID。
+     * - 离开房间后，TeamID 失效，需要重新配置TeamID ，请在每次加入房间之前都调用此方法设置队伍号。
+     * - 如果离开房间后再加入房间，请在收到退房成功回调（onLeaveChannel）后，再调用此方法设置队伍号。
+     * - 若加入房间后，调用此接口修改队伍号，设置后立即生效。
+     * - 请配合 #setRangeAudioMode  接口一起使用。
+     * </pre>
+     * @param {number} team_id 小队ID, 有效值: >=0。若team_id = 0，则房间内所有人（不论范围语音的模式是所有人还是仅小队）都可以听到该成员的声音。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    setRangeAudioTeamID(team_id: number): number;
+    /**
+     * 设置空间音效的距离衰减属性和语音范围。
+     * @since V5.5.10
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前后均可调用。
+     * <b>NOTE:</b>
+     * - 若要使用范围语音或3D音效功能，加入房间前需要调用一次本接口。
+     * - 仅使用范围语音时，您只需要设置audible_distance参数，其他参数设置不生效，填写默认值即可。
+     * </pre>
+     * @param {number} audible_distance 监听器能够听到扬声器并接收其语音的距离扬声器的最大距离。距离有效范围：[1,max int) ，无默认值。
+     * @param {number} conversational_distance 范围语音场景中，该参数设置的值不起作用，保持默认值即可。空间音效场景中，需要配置该参数。控制音频保持其原始音量的范围，超出该范围时，语音聊天的响度在被听到时开始淡出。
+     * 默认值为 1。
+     * @param {number} roll_off 范围语音场景中，该参数设置的值不起作用，保持默认值即可。
+     * <pre>
+     * - 0: 指数模式
+     * - 1: 线性模式
+     * - 2: 无衰减
+     * - 3: 仅线性衰减,没有方位效果
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    setAudioRecvRange(audible_distance: number, conversational_distance: number, roll_off: number): number;
+    /**
+     * 更新本地用户的空间位置。
+     * @since V5.5.10
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前后均可调用。
+     * </pre>
+     * @param {Object} info L通过 info 参数设置空间音效中说话者和接收者的空间位置信息。
+     * @param {Array<Number>} info.speaker_position 说话者的位置信息，三个值依次表示X、Y、Z的坐标值。默认值[0,0,0]。
+     * @param {Array<Number>} info.speaker_quaternion 说话者的旋转信息，通过四元组来表示，数据格式为[w, x, y, z]。默认值[0,0,0,0]。
+     * @param {Array<Number>} info.head_position 接收者的位置信息，三个值依次表示X、Y、Z的坐标值。默认值[0,0,0]。
+     * @param {Array<Number>} info.head_quaternion 接收者的旋转信息，通过四元组来表示，数据格式为[w, x, y, z]。默认值[0,0,0,0]。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    updateSelfPosition(info: any): number;
+    /**
+     * 开启或关闭空间音效的房间混响效果.
+     * @since V5.4.0
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前后均可调用。
+     * - 该接口不支持Linux平台
+     * - 请先调用enableSpatializer接口启用空间音效，再调用本接口。
+     * </pre>
+     * @param {boolean} enable 混响效果开关，默认值关闭。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    enableSpatializerRoomEffects(enable: boolean): number;
+    /**
+     * 设置空间音效的房间混响属性。
+     * @since V5.4.0
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前才可调用。
+     * - 该接口不支持 Linux。
+     * - 请先调用 \ref  #enableSpatializer 接口启用空间音效，再调用本接口。
+     * </pre>
+     * @param {Object} config 房间属性。
+     * @param {number} config.room_capacity 房间大小。
+     * <pre>
+     * - 0: 小房间。
+     * - 1: 中等大小房间。
+     * - 2: 大房间。
+     * - 3: 巨大房间。
+     * - 4: 无房间效果
+     * </pre>
+     * @param {number} config.material 房间材质。
+     * <pre>
+     * - 0: 透明的
+     * - 1: 声学天花板，未开放
+     * - 2: 砖块，未开放
+     * - 3: 涂漆的砖块，未开放
+     * - 4: 粗糙的混凝土块，未开放
+     * - 5: 涂漆的混凝土块，未开放
+     * - 6: 厚重的窗帘
+     * - 7: 隔音的玻璃纤维，未开放
+     * - 8: 薄的的玻璃，未开放
+     * - 9: 茂密的草地，未开放
+     * - 10: 草地
+     * - 11: 铺装了油毡的混凝土，未开放
+     * - 12: 大理石
+     * - 13: 金属，未开放
+     * - 14: 镶嵌木板的混凝土，未开放
+     * - 15: 石膏，未开放
+     * - 16: 粗糙石膏，未开放
+     * - 17: 光滑石膏，未开放
+     * - 18: 木板，未开放
+     * - 19: 石膏灰胶纸板，未开放
+     * - 20: 水面或者冰面，未开放
+     * - 21: 木头天花板，未开放
+     * - 22: 木头枪板，未开放
+     * - 23: 均匀分布，未开放
+     * </pre>
+     * @param {number} config.reflection_scalar 反射比例，默认值1.0。
+     * @param {number} config.reverb_gain 混响增益比例因子，默认值1.0。
+     * @param {number} config.reverb_time 混响时间比例因子，默认值1.0。
+     * @param {number} config.reverb_brightness 混响亮度，默认值1.0。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    setSpatializerRoomProperty(config: any): number;
+    /**
+     * 设置空间音效的渲染模式。
+     * @since V5.4.0
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前才可调用。
+     * <b>NOTE:</b>
+     * - 该接口不支持 Linux 平台。
+     * - 请先调用 \ref  #enableSpatializer 接口启用空间音效，再调用本接口。
+     * </pre>
+     * @param {number} mode 渲染模式。
+     * <pre>
+     * - 0: 立体声
+     * - 1: 双声道低
+     * - 2: 双声道中
+     * - 3: 双声道高
+     * - 4: 仅房间音效
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    setSpatializerRenderMode(mode: number): number;
+    /**
+     * 初始化引擎3D音效算法。
+     * @since V5.5.10
+     * <pre>
+     * - 此接口在加入房间前调用后均可调用。
+     * <b>NOTE:</b>
+     * - 该接口不支持 Linux 平台。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    initSpatializer(): number;
+    /**
+     * 开启或关闭空间音效。
+     * @since V5.4.0
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前后均可调用。
+     * <b>NOTE:</b>
+     * - 该接口不支持 Linux 平台。
+     * - 开启空间音效后，通话结束时仍保留该开关状态，不重置。
+     * - 请先调用 \ref  #initSpatializer 接口初始化空间音效算法，再调用本接口。
+     * </pre>
+     * @param {boolean} enable 是否打开3D音效算法功能，默认为关闭状态。
+     * <pre>
+     * - true: 开启空间音效。
+     * - false: 关闭空间音效。
+     * </pre>
+     * @param {boolean} apply_to_team 是否仅本小队开启3D音效。默认为 false。
+     * <pre>
+     * - true: 仅在接收本小队的语音时有3D音效。
+     * - false: 接收到所有的语音都有3D音效。
+     * </pre>
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
+    enableSpatializer(enable: boolean, apply_to_team: boolean): number;
     /**
      * init event handler
      * @private

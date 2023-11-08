@@ -52,6 +52,7 @@ import {
     NERtcAudioRecordingQuality,
     NERtcEncryptionConfig,
     NERtcJoinChannelOptions,
+    NERtcJoinChannelOptionsEx,
     NERtcCameraCaptureConfig,
     NERtcVideoOutputOrientationMode,
     NERtcDistanceRolloffModel,
@@ -198,7 +199,7 @@ class NERtcEngine extends EventEmitter {
      */
     setChannelProfile(profile: NERtcChannelProfileType): number {
         return this.nertcEngine.setChannelProfile(profile);
-    }
+    } 
 
     /**
      * 加入频道。如果频道还未创建，会自动尝试创建频道。
@@ -238,8 +239,8 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    joinChannelEx(token: string, channelName: string, uid: number, channelOptions: NERtcJoinChannelOptions): number {
-        return this.nertcEngine.joinChannelEx(token, channelName, uid, channelOptions);
+    joinChannelWithOptions(token: string, channelName: string, uid: number, channelOptions: NERtcJoinChannelOptions): number {
+        return this.nertcEngine.joinChannelWithOptions(token, channelName, uid, channelOptions);
     }
 
     /**
@@ -412,8 +413,8 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    enableLocalVideoEx(streamType: NERtcVideoStreamType, enabled: boolean): number {
-        return this.nertcEngine.enableLocalVideoEx(streamType, enabled);
+    enableLocalVideoWithType(streamType: NERtcVideoStreamType, enabled: boolean): number {
+        return this.nertcEngine.enableLocalVideoWithType(streamType, enabled);
     }
 
     /**
@@ -636,6 +637,45 @@ class NERtcEngine extends EventEmitter {
     }
 
     /**
+     * 你可以调用该方法指定只订阅的音频流。
+     * <pre>
+     *  - 此接口需要在加入房间成功后调用。
+     *  - 对于调用接口时不在房间的 uid 不生效。
+     * </pre>
+     * @param {Array<Number>} uids 只订阅此用户uid列表 的音频.此列表为全量列表。如果列表为空或 null，取消订阅白名单。例如：[uid1,uid2...]。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功。
+     * - 其他：方法调用失败。
+     * </pre>
+     */
+    setSubscribeAudioAllowlist(uids: Array<Number>): number {
+        return this.nertcEngine.setSubscribeAudioAllowlist(uids);
+    }
+
+    /**
+     * 你可以调用该方法指定不订阅的音频流。
+     * <pre>
+     *  - 此接口需要在加入房间成功后调用。
+     *  - 对于调用接口时不在房间的 uid 不生效。
+     * </pre>
+     * @param {number} audioStreamType 音频流类型。
+     * <pre>
+     * - 0: 主流
+     * - 1: 辅流
+     * </pre>
+     * @param {Array<Number>} uids 只订阅此用户uid列表 的音频.此列表为全量列表。如果列表为空或 null，取消订阅白名单。例如：[uid1,uid2...]。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功。
+     * - 其他：方法调用失败。
+     * </pre>
+     */
+    setSubscribeAudioBlocklist(audioStreamType: number, uids: Array<Number>): number {
+        return this.nertcEngine.setSubscribeAudioBlocklist(audioStreamType, uids);
+    }
+
+    /**
      * 开启精准对齐。
      * @since V5.4.0
      * <pre>
@@ -722,8 +762,8 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setCameraCaptureConfigEx(streamType: NERtcVideoStreamType, config: NERtcCameraCaptureConfig): number {
-        return this.nertcEngine.setCameraCaptureConfigEx(streamType, config);
+    setCameraCaptureConfigWithType(streamType: NERtcVideoStreamType, config: NERtcCameraCaptureConfig): number {
+        return this.nertcEngine.setCameraCaptureConfigWithType(streamType, config);
     }
 
     /**
@@ -875,8 +915,8 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setVideoConfigEx(streamType: NERtcVideoStreamType, config: NERtcVideoConfig): number {
-        return this.nertcEngine.setVideoConfigEx(streamType, config);
+    setVideoConfigWithType(streamType: NERtcVideoStreamType, config: NERtcVideoConfig): number {
+        return this.nertcEngine.setVideoConfigWithType(streamType, config);
     }
 
     /**
@@ -1044,8 +1084,8 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setLocalVideoMirrorModeEx(streamType: NERtcVideoStreamType, mode: NERtcVideoMirrorMode): number {
-        return this.nertcEngine.setLocalVideoMirrorModeEx(streamType, mode);
+     setLocalVideoMirrorModeWithType(streamType: NERtcVideoStreamType, mode: NERtcVideoMirrorMode): number {
+        return this.nertcEngine.setLocalVideoMirrorModeWithType(streamType, mode);
     }
 
     /**
@@ -1146,8 +1186,8 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    startVideoPreviewEx(streamType: number): number {
-        return this.nertcEngine.startVideoPreviewEx(streamType);
+    startVideoPreviewWithType(streamType: number): number {
+        return this.nertcEngine.startVideoPreviewWithType(streamType);
     }
 
     /**
@@ -1181,8 +1221,8 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    stopVideoPreviewEx(streamType: number): number {
-        return this.nertcEngine.stopVideoPreviewEx(streamType);
+    stopVideoPreviewWithType(streamType: number): number {
+        return this.nertcEngine.stopVideoPreviewWithType(streamType);
     }
 
     /**
@@ -1226,8 +1266,8 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    muteLocalVideoStreamEx(streamType: number, enabled: boolean): number {
-        return this.nertcEngine.muteLocalVideoStreamEx(streamType, enabled);
+    muteLocalVideoStreamWithType(streamType: number, enabled: boolean): number {
+        return this.nertcEngine.muteLocalVideoStreamWithType(streamType, enabled);
     }
 
     /**
@@ -1412,8 +1452,8 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    startAudioDumpEx(type: number): number {
-        return this.nertcEngine.startAudioDumpEx(type);
+    startAudioDumpWithType(type: number): number {
+        return this.nertcEngine.startAudioDumpWithType(type);
     }
 
     /**
@@ -2193,60 +2233,24 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.resumeScreenCapture();
     }
 
-    /**
-     * 开启声音共享。
-     * @deprecated 该接口已经在 4.1.x 版本后废弃
-     * <pre>
-     * <b>NOTE:</b>
-     * - 该方法仅适用于 Windows。
-     * - 请在频道内调用该方法，该方法会捕获系统声音发送，开启本地语音后工作。
-     * </pre>
-     * @return {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    startSystemAudioLoopbackCapture(): number {
-        return this.nertcEngine.startSystemAudioLoopbackCapture();
-    }
 
-    /**
-     * 关闭声音共享。
-     * @deprecated 该接口已经在 4.1.x 版本后废弃
-     * <pre>
-     * <b>NOTE:</b>
-     * - 该方法仅适用于 Windows。
-     * - 请在频道内调用该方法，通话结束后自动关闭。
-     * </pre>
-     * @return {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    stopSystemAudioLoopbackCapture(): number {
-        return this.nertcEngine.stopSystemAudioLoopbackCapture();
-    }
-
-    /**
-     * 设置声音共享音量。
-     * @deprecated 该接口已经在 4.1.x 版本后废弃
-     * <pre>
-     * <b>NOTE:</b>
-     * - 该方法仅适用于 Windows。
-     * - 请在频道内调用该方法。
-     * </pre>
-     * @param {number} volume 音效音量范围为 0~100。默认 100 为原始音量。
-     * @return {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    setSystemAudioLoopbackCaptureVolume(volume: number): number {
-        return this.nertcEngine.setSystemAudioLoopbackCaptureVolume(volume);
-    }
+    // /**
+    //  * 关闭声音共享。
+    //  * @deprecated 该接口已经在 4.1.x 版本后废弃
+    //  * <pre>
+    //  * <b>NOTE:</b>
+    //  * - 该方法仅适用于 Windows。
+    //  * - 请在频道内调用该方法，通话结束后自动关闭。
+    //  * </pre>
+    //  * @return {number}
+    //  * <pre>
+    //  * - 0: 方法调用成功；
+    //  * - 其他: 方法调用失败。
+    //  * </pre>
+    //  */
+    // stopSystemAudioLoopbackCapture(): number {
+    //     return this.nertcEngine.stopSystemAudioLoopbackCapture();
+    // }
 
     /**
      * 发送媒体补充增强信息（SEI）。
@@ -2297,58 +2301,58 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    sendSEIMsgEx(data: ArrayBuffer, type: NERtcStreamChannelType) {
-        return this.nertcEngine.sendSEIMsgEx(data, type);
+    sendSEIMsgWithType(data: ArrayBuffer, type: NERtcStreamChannelType) {
+        return this.nertcEngine.sendSEIMsgWithType(data, type);
     }
 
-    /**
-     * 拉取外部音频数据。
-     * @since 4.1.110
-     * <pre>
-     * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
-     * <b>NOTE:</b>
-     * - 该方法需要在加入房间后调用。
-     * - 数据帧时长建议匹配 10ms 周期。
-     * - 该方法在音频渲染设备关闭后不再生效，此时会返回空数据。例如通话结束、通话前扬声器设备测试关闭等情况下，该设置不再生效。
-     * </pre>
-     * @param {boolean} enable 是否外部数据输出
-     * <pre>
-     * - true: 开启外部数据渲染
-     * - false: 关闭外部数据渲染 (默认)
-     * </pre>
-     * @param {number} sampleRate 数据采样率，后续数据按该格式返回。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效
-     * @param {number} channels channels 数据声道数，后续数据按该格式返回。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效。
-     * @return {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number {
-        return this.nertcEngine.setExternalAudioRender(enable, sampleRate, channels);
-    }
+    // /**
+    //  * 拉取外部音频数据。
+    //  * @since 4.1.110
+    //  * <pre>
+    //  * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
+    //  * <b>NOTE:</b>
+    //  * - 该方法需要在加入房间后调用。
+    //  * - 数据帧时长建议匹配 10ms 周期。
+    //  * - 该方法在音频渲染设备关闭后不再生效，此时会返回空数据。例如通话结束、通话前扬声器设备测试关闭等情况下，该设置不再生效。
+    //  * </pre>
+    //  * @param {boolean} enable 是否外部数据输出
+    //  * <pre>
+    //  * - true: 开启外部数据渲染
+    //  * - false: 关闭外部数据渲染 (默认)
+    //  * </pre>
+    //  * @param {number} sampleRate 数据采样率，后续数据按该格式返回。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效
+    //  * @param {number} channels channels 数据声道数，后续数据按该格式返回。注意：调用接口关闭功能时可传入任意合法值，此时设置不会生效。
+    //  * @return {number}
+    //  * <pre>
+    //  * - 0: 方法调用成功；
+    //  * - 其他: 方法调用失败。
+    //  * </pre>
+    //  */
+    // setExternalAudioRender(enable: boolean, sampleRate: number, channels: number): number {
+    //     return this.nertcEngine.setExternalAudioRender(enable, sampleRate, channels);
+    // }
 
-    /**
-     * 拉取外部音频数据。
-     * @since 4.1.110
-     * <pre>
-     * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
-     * <b>NOTE:</b>
-     * - 该方法需要在加入房间后调用。
-     * - 数据帧时长建议匹配 10ms 周期。
-     * - 该方法在音频渲染设备关闭后不再生效，此时会返回空数据。例如通话结束、通话前扬声器设备测试关闭等情况下，该设置不再生效。
-     * </pre>
-     * @param {number} pullLength 待拉取音频数据的字节数，单位为 byte
-     * @param {function} cb 拉取数据的回调函数
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number {
-        return this.nertcEngine.pullExternalAudioFrame(pullLength, cb);
-    }
+    // /**
+    //  * 拉取外部音频数据。
+    //  * @since 4.1.110
+    //  * <pre>
+    //  * - 该方法将从内部引擎拉取音频数据。 通过 setExternalAudioRender 启用外部音频数据渲染功能成功后，可以使用 pullExternalAudioFrame 接口获取音频 PCM 数据。
+    //  * <b>NOTE:</b>
+    //  * - 该方法需要在加入房间后调用。
+    //  * - 数据帧时长建议匹配 10ms 周期。
+    //  * - 该方法在音频渲染设备关闭后不再生效，此时会返回空数据。例如通话结束、通话前扬声器设备测试关闭等情况下，该设置不再生效。
+    //  * </pre>
+    //  * @param {number} pullLength 待拉取音频数据的字节数，单位为 byte
+    //  * @param {function} cb 拉取数据的回调函数
+    //  * @returns {number}
+    //  * <pre>
+    //  * - 0: 方法调用成功；
+    //  * - 其他: 方法调用失败。
+    //  * </pre>
+    //  */
+    // pullExternalAudioFrame(pullLength: number, cb: NERtcPullExternalAudioFrameCb): number {
+    //     return this.nertcEngine.pullExternalAudioFrame(pullLength, cb);
+    // }
 
     /**
      * 查询 SDK 版本号。
@@ -2460,7 +2464,7 @@ class NERtcEngine extends EventEmitter {
      * @param {number} info.layout.users[].width 画面在主画面的显示宽度，画面右边超出主画面会失败
      * @param {number} info.layout.users[].height 画面在主画面的显示高度，画面底边超出主画面会失败
      * @param {boolean} info.layout.users[].audio_push 是否推送该用户音频流
-     * @param {object} info.layout.users[].bg_image 背景图信息:
+     * @param {object} info.layout.users[].bg_image 背景图信息
      * @param {String} info.layout.users[].bg_image.url 图片地址
      * @param {number} info.layout.users[].bg_image.x 画面离主画面左边距
      * @param {number} info.layout.users[].bg_image.y 画面离主画面上边距
@@ -2975,8 +2979,8 @@ class NERtcEngine extends EventEmitter {
      * - 其他: 方法调用失败。
      * </pre>
      */
-    setVideoDeviceEx(id: string, streamType: NERtcVideoStreamType): number {
-        return this.nertcEngine.setDeviceEx(id, streamType);
+     setVideoDeviceWithType(id: string, streamType: NERtcVideoStreamType): number {
+        return this.nertcEngine.setDeviceWithType(id, streamType);
     }
 
     /**
@@ -2996,8 +3000,8 @@ class NERtcEngine extends EventEmitter {
      * </pre>
      * @returns {String} 设备ID
      */
-    getVideoDeviceEx(streamType: NERtcVideoStreamType): string {
-        return this.nertcEngine.getDeviceEx(streamType);
+    getVideoDeviceWithType(streamType: NERtcVideoStreamType): string {
+        return this.nertcEngine.getDeviceWithType(streamType);
     }
 
     /**
@@ -3267,8 +3271,38 @@ class NERtcEngine extends EventEmitter {
     * - 其他：方法调用失败。
     * </pre>
     */
-    switchChannelEx(token: string, channelName: string, channelOptions: NERtcJoinChannelOptions): number {
+    switchChannelWithOptions(token: string, channelName: string, channelOptions: NERtcJoinChannelOptions): number {
         return this.nertcEngine.switchChannelEx(token, channelName, channelOptions);
+    }
+
+    /**
+    * 快速切换音视频房间。
+    * @since V5.4.0
+    * <pre>
+    * - 房间场景为直播场景时，房间中角色为观众的成员可以调用该方法从当前房间快速切换至另一个房间。
+    * - 成功调用该方切换房间后，本端用户会先收到离开房间的回调 onLeaveChannel，再收到成功加入新房间的回调 onJoinChannel。远端用户会收到 onUserLeave 和 onUserJoined 回调。
+    * <b>NOTE:</b>
+    * - 快速切换房间功能默认关闭。如需使用，请联系技术支持免费开通。
+    * - 该方法仅适用于直播场景中，角色为观众的音视频房间成员。即已通过接口 setchannelprofile 设置房间场景为直播，通过 setClientRole 设置房间成员的角色为观众。
+    * - 房间成员成功切换房间后，默认订阅房间内所有其他成员的音频流，因此产生用量并影响计费。如果想取消订阅，可以通过调用相应的 subscribeRemoteAudio 方法传入 false 实现。
+    * </pre>
+    * @param {number}  token 安全认证签名（NERTC Token）。
+    * <pre>
+    * - null。非安全模式下可设置为 null。安全性不高，建议在产品正式上线前联系对应商务经理转为安全模式。
+    * - 已获取的 NERTC Token。安全模式下必须设置为获取到的 Token 。若未传入正确的 Token，用户将无法进入房间。推荐使用安全模式。
+    * </pre>
+    * @param {string} channelName 期望切换到的目标房间名称。
+    * @param {Object} channelOptions 加入音视频房间时的一些可选信息。
+    * @param {string} channelOptions.custom_info 自定义信息，最长支持 127 个字符。
+    * @param {string} channelOptions.permission_key 权限密钥。能控制通话时长及媒体权限能力。
+    * @return {number}
+    * <pre>
+    * - 0: 方法调用成功。
+    * - 其他：方法调用失败。
+    * </pre>
+    */
+    switchChannelWithOptionsEx(token: string, channelName: string, channelOptions: NERtcJoinChannelOptionsEx): number {
+        return this.nertcEngine.switchChannelWithOptionsEx(token, channelName, channelOptions);
     }
 
     /**
@@ -4389,73 +4423,73 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.enableSpatializer(enable, apply_to_team);
     }
 
-    setAudioFrameObserver(enable: boolean) {
-        const self = this;
-        const fire = (event: string, ...args: Array<any>) => {
-            setImmediate(() => {
-                this.emit(event, ...args);
-            });
-        };
+    // setAudioFrameObserver(enable: boolean) {
+    //     const self = this;
+    //     const fire = (event: string, ...args: Array<any>) => {
+    //         setImmediate(() => {
+    //             this.emit(event, ...args);
+    //         });
+    //     };
 
-        /**
-         * 采集音频数据回调。
-         * <pre>
-         * 有本地音频数据驱动就会回调。
-         * </pre>
-         * @event NERtcEngine#onAudioFrameEvent
-         * @param {object} frame 音频帧。
-         * @param {number} frame.format 音频格式。
-         * @param {number} frame.format.type 音频类型, 默认：0 PCM 音频格式。
-         * @param {number} frame.format.channels 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。
-         * @param {number} frame.format.sample_rate 采样率。
-         * @param {number} frame.format.bytes_per_sample 每个采样点的字节数。对于 PCM 来说，一般使用 16 bit，即两个字节。
-         * @param {number} frame.format.samples_per_channel 每个房间的样本数量。
-         * @param {number} frame.data 数据缓冲区。有效数据长度为：samples_per_channel * channels * bytes_per_sample。
-         * @param {number} frame.sync_timestamp 同步音频主辅流的时间戳，一般只有在同时开启外部音频主流及辅流输入时用到。
-         */
-        this.nertcEngine.onAudioFrameEvent('onAudioFrameDidRecord', function (frame: any) {
-            fire('onAudioFrameDidRecord', frame);
-        }, enable);
-        /**
-         * 获取本地用户和所有远端用户混音后的原始音频数据。
-         * <pre>
-         * 返回音频数据只读，有本地音频数据驱动就会回调。
-         * </pre>
-         * @event NERtcEngine#onMixedAudioFrame
-         * @param {object} frame 音频帧。
-         * @param {number} frame.format 音频格式。
-         * @param {number} frame.format.type 音频类型, 默认：0 PCM 音频格式。
-         * @param {number} frame.format.channels 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。
-         * @param {number} frame.format.sample_rate 采样率。
-         * @param {number} frame.format.bytes_per_sample 每个采样点的字节数。对于 PCM 来说，一般使用 16 bit，即两个字节。
-         * @param {number} frame.format.samples_per_channel 每个房间的样本数量。
-         * @param {number} frame.data 数据缓冲区。有效数据长度为：samples_per_channel * channels * bytes_per_sample。
-         * @param {number} frame.sync_timestamp 同步音频主辅流的时间戳，一般只有在同时开启外部音频主流及辅流输入时用到。
-         */
-        this.nertcEngine.onAudioFrameEvent('onMixedAudioFrame', function (frame: any) {
-            fire('onMixedAudioFrame', frame);
-        }, enable);
-        /**
-         *播放音频数据回调，用于声音处理等操作。
-         * <pre>
-         * 有本地音频数据驱动就会回调。
-         * </pre>
-         * @event NERtcEngine#onAudioFrameEvent
-         * @param {object} frame 音频帧。
-         * @param {number} frame.format 音频格式。
-         * @param {number} frame.format.type 音频类型, 默认：0 PCM 音频格式。
-         * @param {number} frame.format.channels 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。
-         * @param {number} frame.format.sample_rate 采样率。
-         * @param {number} frame.format.bytes_per_sample 每个采样点的字节数。对于 PCM 来说，一般使用 16 bit，即两个字节。
-         * @param {number} frame.format.samples_per_channel 每个房间的样本数量。
-         * @param {number} frame.data 数据缓冲区。有效数据长度为：samples_per_channel * channels * bytes_per_sample。
-         * @param {number} frame.sync_timestamp 同步音频主辅流的时间戳，一般只有在同时开启外部音频主流及辅流输入时用到。
-         */
-        this.nertcEngine.onAudioFrameEvent('onAudioFrameWillPlayback', function (frame: any) {
-            fire('onAudioFrameWillPlayback', frame);
-        }, enable);
+    //     /**
+    //      * 采集音频数据回调。
+    //      * <pre>
+    //      * 有本地音频数据驱动就会回调。
+    //      * </pre>
+    //      * @event NERtcEngine#onAudioFrameEvent
+    //      * @param {object} frame 音频帧。
+    //      * @param {number} frame.format 音频格式。
+    //      * @param {number} frame.format.type 音频类型, 默认：0 PCM 音频格式。
+    //      * @param {number} frame.format.channels 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。
+    //      * @param {number} frame.format.sample_rate 采样率。
+    //      * @param {number} frame.format.bytes_per_sample 每个采样点的字节数。对于 PCM 来说，一般使用 16 bit，即两个字节。
+    //      * @param {number} frame.format.samples_per_channel 每个房间的样本数量。
+    //      * @param {number} frame.data 数据缓冲区。有效数据长度为：samples_per_channel * channels * bytes_per_sample。
+    //      * @param {number} frame.sync_timestamp 同步音频主辅流的时间戳，一般只有在同时开启外部音频主流及辅流输入时用到。
+    //      */
+    //     this.nertcEngine.onAudioFrameEvent('onAudioFrameDidRecord', function (frame: any) {
+    //         fire('onAudioFrameDidRecord', frame);
+    //     }, enable);
+    //     /**
+    //      * 获取本地用户和所有远端用户混音后的原始音频数据。
+    //      * <pre>
+    //      * 返回音频数据只读，有本地音频数据驱动就会回调。
+    //      * </pre>
+    //      * @event NERtcEngine#onMixedAudioFrame
+    //      * @param {object} frame 音频帧。
+    //      * @param {number} frame.format 音频格式。
+    //      * @param {number} frame.format.type 音频类型, 默认：0 PCM 音频格式。
+    //      * @param {number} frame.format.channels 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。
+    //      * @param {number} frame.format.sample_rate 采样率。
+    //      * @param {number} frame.format.bytes_per_sample 每个采样点的字节数。对于 PCM 来说，一般使用 16 bit，即两个字节。
+    //      * @param {number} frame.format.samples_per_channel 每个房间的样本数量。
+    //      * @param {number} frame.data 数据缓冲区。有效数据长度为：samples_per_channel * channels * bytes_per_sample。
+    //      * @param {number} frame.sync_timestamp 同步音频主辅流的时间戳，一般只有在同时开启外部音频主流及辅流输入时用到。
+    //      */
+    //     this.nertcEngine.onAudioFrameEvent('onMixedAudioFrame', function (frame: any) {
+    //         fire('onMixedAudioFrame', frame);
+    //     }, enable);
+    //     /**
+    //      *播放音频数据回调，用于声音处理等操作。
+    //      * <pre>
+    //      * 有本地音频数据驱动就会回调。
+    //      * </pre>
+    //      * @event NERtcEngine#onAudioFrameEvent
+    //      * @param {object} frame 音频帧。
+    //      * @param {number} frame.format 音频格式。
+    //      * @param {number} frame.format.type 音频类型, 默认：0 PCM 音频格式。
+    //      * @param {number} frame.format.channels 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。
+    //      * @param {number} frame.format.sample_rate 采样率。
+    //      * @param {number} frame.format.bytes_per_sample 每个采样点的字节数。对于 PCM 来说，一般使用 16 bit，即两个字节。
+    //      * @param {number} frame.format.samples_per_channel 每个房间的样本数量。
+    //      * @param {number} frame.data 数据缓冲区。有效数据长度为：samples_per_channel * channels * bytes_per_sample。
+    //      * @param {number} frame.sync_timestamp 同步音频主辅流的时间戳，一般只有在同时开启外部音频主流及辅流输入时用到。
+    //      */
+    //     this.nertcEngine.onAudioFrameEvent('onAudioFrameWillPlayback', function (frame: any) {
+    //         fire('onAudioFrameWillPlayback', frame);
+    //     }, enable);
 
-    }
+    // }
 
     /**
      * init event handler
@@ -4510,6 +4544,95 @@ class NERtcEngine extends EventEmitter {
             msg: string
         ) {
             fire('onApiCallExecuted', apiName, code, msg);
+        });
+
+        /**
+         * 接收的远端视频分辨率变化回调。
+         * @since V5.4.1
+         * <pre>
+          * 当远端用户视频流的分辨率发生变化时，会触发此回调，例如推流端调用 SetVideoConfig 更改了编码分辨率设置，本地会收到该远端用户分辨率变化通知。
+          * </pre>
+         * @event NERtcEngine#onRemoteVideoReceiveSizeChanged
+         * @param {number} uid 远端用户ID，指定是哪个用户的视频流
+         * @param {number} type 视频通道类型
+         * <pre>
+         * - 0 主流
+         * - 1 辅流
+         * </pre>
+         * @param {number} width 视频采集的宽，单位为 px
+         * @param {number} height 视频采集的高，单位为 px
+         */
+        this.nertcEngine.onEvent('onRemoteVideoReceiveSizeChanged', function (
+            uid: number, 
+            type: number, 
+            width: number,
+            height: number
+        ) {
+            fire('onRemoteVideoReceiveSizeChanged', uid, type, width, height);
+        });
+
+        /**
+         * 本地视频预览的分辨率变化回调, 与是否进入房间的状态无关，与硬件状态有关，也适用于预览。
+         * @since V5.4.1
+         * <pre>
+          * 当本地视频的分辨率发生变化，会触发此回调。
+          * 当调用 SetCaptureConfig 设置采集分辨率或调用 SetVideoConfig 设置编码属性时可以触发该回调。回调的分辨率宽和高为本地预览的宽和高，和实际编码发送的分辨率不一定一致
+          * 开发者可以根据该回调的分辨率来动态调整预览视图的比例等。
+          * </pre>
+         * @event NERtcEngine#onLocalVideoRenderSizeChanged
+         * @param {number} type 视频通道类型
+         * <pre>
+         * - 0 主流
+         * - 1 辅流
+         * </pre>
+         * @param {number} width 视频采集的宽，单位为 px
+         * @param {number} height 视频采集的高，单位为 px
+         */
+        this.nertcEngine.onEvent('onLocalVideoRenderSizeChanged', function (
+            type: number, 
+            width: number,
+            height: number
+        ) {
+            fire('onLocalVideoRenderSizeChanged', type, width, height);
+        });
+
+        /**
+         * 已接收到远端视频首帧并完成渲染的回调。
+         * <pre>
+          * 当 SDK 收到远端视频的第一帧并渲染成功时，会触发该回调。
+          * </pre>
+         * @event NERtcEngine#onFirstVideoFrameRender
+         * @param {number} type 视频通道类型
+         * <pre>
+         * - 0 主流
+         * - 1 辅流
+         * </pre>
+         * @param {number} uid 用户 ID，提示是哪个用户的视频流。
+         * @param {number} width 首帧视频的宽度，单位为 px。
+         * @param {number} height 视频采集的高，单位为 px
+         * * @param {number} 首帧视频的高度，单位为 px。
+         */
+        this.nertcEngine.onEvent('onFirstVideoFrameRender', function (
+            type: number, 
+            uid: number, 
+            width: number,
+            height: number,
+            elapsed: number
+        ) {
+            fire('onFirstVideoFrameRender', type, uid, type, width, height, elapsed);
+        });
+
+        /**
+         * 实验功能回调接口，用于回调一些非正式的事件及数据通知。
+         * @event NERtcEngine#onLabFeatureCallback
+         * @param {string} key 返回回调类型。
+         * @param {string} param 值内容。对应字符串的参数值，如果是结构体对象，需要转成json格式。
+         */
+        this.nertcEngine.onEvent('onLabFeatureCallback', function (
+            key: string, 
+            param: string
+        ) {
+            fire('onLabFeatureCallback', key, param);
         });
 
         /**
@@ -4692,11 +4815,11 @@ class NERtcEngine extends EventEmitter {
          * @param {object} extra_info 一些可选信息:
          * @param {string} extra_info.custom_info 自定义信息，来源于远端用户joinChannel时填的 {@link NERtcJoinChannelOptions#custom_info}参数，默认为空字符串。
          */
-        this.nertcEngine.onEvent('onUserJoinedEx', function (
+        this.nertcEngine.onEvent('onUserJoinedWithExtraInfo', function (
             uid: number, 
             userName: number, 
             extra_info: any) {
-            fire('onUserJoinedEx', uid, userName, extra_info);
+            fire('onUserJoinedWithExtraInfo', uid, userName, extra_info);
         });
 
         /**
@@ -4741,11 +4864,11 @@ class NERtcEngine extends EventEmitter {
          * @param {object} extra_info 一些可选信息:
          * @param {string} extra_info.custom_info 自定义信息，来源于远端用户joinChannel时填的 {@link NERtcJoinChannelOptions#custom_info}参数，默认为空字符串。
          */
-        this.nertcEngine.onEvent('onUserLeftEx', function (
+        this.nertcEngine.onEvent('onUserLeftWithExtraInfo', function (
             uid: number, 
             reason: number, 
             extra_info: any) {
-            fire('onUserLeftEx', uid, reason, extra_info);
+            fire('onUserLeftWithExtraInfo', uid, reason, extra_info);
         });
 
         /**
@@ -5003,11 +5126,11 @@ class NERtcEngine extends EventEmitter {
          * </pre>
          * @param {number} uid 用户 ID，指定是哪个用户的视频流。
          */
-        this.nertcEngine.onEvent('onFirstVideoDataReceivedEx', function (
+        this.nertcEngine.onEvent('onFirstVideoDataReceivedWithType', function (
             streamType: number, 
             uid: number
         ) {
-            fire('onFirstVideoDataReceivedEx', streamType, uid);
+            fire('onFirstVideoDataReceivedWithType', streamType, uid);
         });
 
         /**
@@ -5055,13 +5178,13 @@ class NERtcEngine extends EventEmitter {
          * @param {number} width 视频流宽（px）。
          * @param {number} height 视频流高（px）。
          */
-        this.nertcEngine.onEvent('onFirstVideoFrameDecodedEx', function (
+        this.nertcEngine.onEvent('onFirstVideoFrameDecodedWithType', function (
             streamType: number, 
             uid: number, 
             width: number, 
             height: number
         ) {
-            fire('onFirstVideoFrameDecodedEx', streamType, uid, width, height);
+            fire('onFirstVideoFrameDecodedWithType', streamType, uid, width, height);
         });
 
         /**
@@ -5470,21 +5593,6 @@ class NERtcEngine extends EventEmitter {
         */
         this.nertcEngine.onEvent('onLastmileProbeResult', function (result: any) {
             fire('onLastmileProbeResult', result);
-        });
-
-         /**
-         * 远端用户暂停或恢复发送音频辅流的回调。
-         * @since V5.4.0
-         * @event NERtcEngine#onUserSubStreamAudioMute 
-         * @param {number} uid 远端用户的 ID。
-         * @param {boolean} mute 是否停止发送音频辅流:
-         * <pre>
-         * - true 该用户已暂停发送音频辅流。
-         * - false 该用户已恢复发送音频辅流。
-         * </pre>
-         */
-         this.nertcEngine.onEvent('onUserSubStreamAudioMute', function (uid: number, mute: number) {
-            fire('onUserSubStreamAudioMute', uid, mute);
         });
 
         /**
