@@ -1623,8 +1623,8 @@ class NERtcChannel extends events_1.EventEmitter {
      * - 其他：方法调用失败。
      * </pre>
      */
-    setSubscribeAudioAllowlist(uids) {
-        return this.rtcChannel.setSubscribeAudioAllowlist(uids);
+    setSubscribeAudioAllowlist(uids, size) {
+        return this.rtcChannel.setSubscribeAudioAllowlist(uids, size);
     }
     /**
      * 你可以调用该方法指定不订阅的音频流。
@@ -1644,8 +1644,8 @@ class NERtcChannel extends events_1.EventEmitter {
      * - 其他：方法调用失败。
      * </pre>
      */
-    setSubscribeAudioBlocklist(audioStreamType, uids) {
-        return this.rtcChannel.setSubscribeAudioBlocklist(audioStreamType, uids);
+    setSubscribeAudioBlocklist(audioStreamType, uids, size) {
+        return this.rtcChannel.setSubscribeAudioBlocklist(audioStreamType, uids, size);
     }
     /**
      * 设置玩家本人在房间中的范围语音模式，该设置不影响其他人。

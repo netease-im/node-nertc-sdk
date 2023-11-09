@@ -1042,13 +1042,13 @@ class NERtcEngine extends EventEmitter {
     /**
      * 设置本地视频镜像模式。
      * <pre>
-     * 该方法设置本地视频镜像模式。 App 可以多次调用此方法更改镜像模式。
+     *  该方法设置本地视频镜像模式。 App 可以多次调用此方法更改镜像模式。
      * </pre>
      * @param {number} mode  视频镜像模式:
      * <pre>
-     * - 0 Windows/macOS SDK 启用镜像模式。
+     * - 0 默认关闭镜像模式。
      * - 1 启用镜像模式。
-     * - 2 （默认）关闭镜像模式。
+     * - 2 关闭镜像模式。
      * </pre>
      * @returns {number}
      * <pre>
@@ -1344,88 +1344,88 @@ class NERtcEngine extends EventEmitter {
         return this.nertcEngine.getParameters(parameters, extra_info);
     }
 
-     /**
-     * 设置采集的音频格式。
-     * @since V5.4.0
-     * <pre>
-     * <b>NOTE:</b>
-     * - 请在初始化后调用该方法，且该方法在加入房间前后均可调用。
-     * - 适用于需要监听音频 PCM 采集数据回调并指定回调的数据格式的场景。
-     * - 若您希望使用音频的原始格式，format 参数传 NULL 即可。
-     * </pre>
-     * @param {object} format 音频帧请求格式
-     * @param {Number} format.channels 音频声道数量:
-     * <pre>
-     * - 1 单声道
-     * - 2 双声道
-     * </pre>
-     * @param {Number} format.sample_rate 采样率。
-     * @param {number} format.mode 读写模式：
-     * <pre>
-     * 0 返回数据只读模式
-     * 1 返回数据可读写
-     * </pre>
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    setRecordingAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number {
-        return this.nertcEngine.setRecordingAudioFrameParameters(format);
-    }
+    //  /**
+    //  * 设置采集的音频格式。
+    //  * @since V5.4.0
+    //  * <pre>
+    //  * <b>NOTE:</b>
+    //  * - 请在初始化后调用该方法，且该方法在加入房间前后均可调用。
+    //  * - 适用于需要监听音频 PCM 采集数据回调并指定回调的数据格式的场景。
+    //  * - 若您希望使用音频的原始格式，format 参数传 NULL 即可。
+    //  * </pre>
+    //  * @param {object} format 音频帧请求格式
+    //  * @param {Number} format.channels 音频声道数量:
+    //  * <pre>
+    //  * - 1 单声道
+    //  * - 2 双声道
+    //  * </pre>
+    //  * @param {Number} format.sample_rate 采样率。
+    //  * @param {number} format.mode 读写模式：
+    //  * <pre>
+    //  * 0 返回数据只读模式
+    //  * 1 返回数据可读写
+    //  * </pre>
+    //  * @returns {number}
+    //  * <pre>
+    //  * - 0: 方法调用成功；
+    //  * - 其他: 方法调用失败。
+    //  * </pre>
+    //  */
+    // setRecordingAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number {
+    //     return this.nertcEngine.setRecordingAudioFrameParameters(format);
+    // }
 
-    /**
-     * 设置音频播放回调的声音格式。
-     * @since V5.4.0
-     * <pre>
-     * <b>NOTE:</b>
-     * - 请在初始化后调用该方法，且该方法仅可在加入房间后调用。
-     * - 适用于需要自行对待播放的声音进行二次处理的场景。
-     * </pre>
-     * @param {object} format 音频帧请求格式
-     * @param {Number} format.channels 音频声道数量:
-     * <pre>
-     * - 1 单声道
-     * - 2 双声道
-     * </pre>
-     * @param {Number} format.sample_rate 采样率。
-     * @param {number} format.mode 读写模式：
-     * <pre>
-     * 0 返回数据只读模式
-     * 1 返回数据可读写
-     * </pre>
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    setPlaybackAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number {
-        return this.nertcEngine.setPlaybackAudioFrameParameters(format);
-    }
+    // /**
+    //  * 设置音频播放回调的声音格式。
+    //  * @since V5.4.0
+    //  * <pre>
+    //  * <b>NOTE:</b>
+    //  * - 请在初始化后调用该方法，且该方法仅可在加入房间后调用。
+    //  * - 适用于需要自行对待播放的声音进行二次处理的场景。
+    //  * </pre>
+    //  * @param {object} format 音频帧请求格式
+    //  * @param {Number} format.channels 音频声道数量:
+    //  * <pre>
+    //  * - 1 单声道
+    //  * - 2 双声道
+    //  * </pre>
+    //  * @param {Number} format.sample_rate 采样率。
+    //  * @param {number} format.mode 读写模式：
+    //  * <pre>
+    //  * 0 返回数据只读模式
+    //  * 1 返回数据可读写
+    //  * </pre>
+    //  * @returns {number}
+    //  * <pre>
+    //  * - 0: 方法调用成功；
+    //  * - 其他: 方法调用失败。
+    //  * </pre>
+    //  */
+    // setPlaybackAudioFrameParameters(format: NERtcAudioFrameRequestFormat): number {
+    //     return this.nertcEngine.setPlaybackAudioFrameParameters(format);
+    // }
 
-     /**
-     * 设置采集和播放声音混音后的音频数据采样率。
-     * @since V5.4.0
-     * <pre>
-     * 通过本接口可以实现设置 onMixedAudioFrame回调的混音音频采样率
-     * <b>NOTE:</b>
-     * - 请在初始化后调用该方法，且该方法在加入房间前后均可调用。
-     * - 适用于需要获取本地用户和远端所有用户的声音的场景，比如通话录音的场景。
-     * - 该方法设置内部引擎为启用状态，在离开房间后设置会重置为默认状态。
-     * - 未调用该接口设置返回的音频数据格式时，回调中的采样率取默认值。
-     * </pre>
-     * @param {Number} sample_rate 采样率。
-     * @returns {number}
-     * <pre>
-     * - 0: 方法调用成功；
-     * - 其他: 方法调用失败。
-     * </pre>
-     */
-    setMixedAudioFrameParameters(sample_rate: number): number {
-        return this.nertcEngine.setMixedAudioFrameParameters(sample_rate);
-    }
+    //  /**
+    //  * 设置采集和播放声音混音后的音频数据采样率。
+    //  * @since V5.4.0
+    //  * <pre>
+    //  * 通过本接口可以实现设置 onMixedAudioFrame回调的混音音频采样率
+    //  * <b>NOTE:</b>
+    //  * - 请在初始化后调用该方法，且该方法在加入房间前后均可调用。
+    //  * - 适用于需要获取本地用户和远端所有用户的声音的场景，比如通话录音的场景。
+    //  * - 该方法设置内部引擎为启用状态，在离开房间后设置会重置为默认状态。
+    //  * - 未调用该接口设置返回的音频数据格式时，回调中的采样率取默认值。
+    //  * </pre>
+    //  * @param {Number} sample_rate 采样率。
+    //  * @returns {number}
+    //  * <pre>
+    //  * - 0: 方法调用成功；
+    //  * - 其他: 方法调用失败。
+    //  * </pre>
+    //  */
+    // setMixedAudioFrameParameters(sample_rate: number): number {
+    //     return this.nertcEngine.setMixedAudioFrameParameters(sample_rate);
+    // }
 
     /**
      * 开启音频dump。

@@ -101,7 +101,8 @@ VideoFrameInfo& NodeVideoFrameTransporter::getVideoFrameInfo(NodeRenderType type
     }
 }
 
-int NodeVideoFrameTransporter::deliverFrame_I420(NodeRenderType type, nertc::uid_t uid, std::string channelId, const IVideoFrame& videoFrame, int rotation, bool mirrored)
+int NodeVideoFrameTransporter::deliverFrame_I420(NodeRenderType type, nertc::uid_t uid, std::string channelId, 
+    const IVideoFrame& videoFrame, int rotation, bool mirrored, nertc::NERtcVideoStreamType localVideoStreamType)
 {
     if (!init)
         return -1;
@@ -116,26 +117,30 @@ int NodeVideoFrameTransporter::deliverFrame_I420(NodeRenderType type, nertc::uid
     if (s < imageSize || s >= imageSize * 2)
         info.m_buffer.resize(imageSize);
     image_header_type* hdr = reinterpret_cast<image_header_type*>(&info.m_buffer[0]);
-    if (type == NODE_RENDER_TYPE_LOCAL || type == NODE_RENDER_TYPE_REMOTE)
+    hdr->mirrored = mirrored ? 1 : 0;
+    switch (type)
     {
-        if (uid == 0)
-        {
-            if (m_localVideoMirrorMode == 0)
-            {
-                hdr->mirrored = mirrored ? 1 : 0;
-            }
-            else
-            {
+        case NODE_RENDER_TYPE_LOCAL:
+            if (m_localVideoStreamType == nertc::kNERTCVideoStreamMain) {
                 hdr->mirrored = m_localVideoMirrorMode == 1 ? 1 : 0;
             }
-        }
-        else
-        {
-            hdr->mirrored = 0;
-        }
-    } else {
-        hdr->mirrored = mirrored ? 1 : 0;
+            break;
+        case NODE_RENDER_TYPE_REMOTE:
+            hdr->mirrored = mirrored ? 1 : 0;
+            break;
+        case NODE_RENDER_TYPE_LOCAL_SUBSTREAM:
+            if (m_localVideoStreamType == nertc::kNERTCVideoStreamSub) {
+                hdr->mirrored = m_localVideoMirrorMode == 1 ? 1 : 0;
+            }
+            break;
+        case NODE_RENDER_TYPE_REMOTE_SUBSTREAM:
+            hdr->mirrored = mirrored ? 1 : 0;
+            break;
+        default:
+            hdr->mirrored = mirrored ? 1 : 0;
+            break;
     }
+
     hdr->rotation = htons(rotation);
     setupFrameHeader(hdr, destStride, destWidth, destHeight);
     copyFrame(videoFrame, info, destStride, videoFrame.stride[0], destWidth, destHeight);
@@ -449,4 +454,11 @@ void NodeVideoFrameTransporter::onSubstreamFrameDataCallback(
     //     pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, false);
     // }
 }
+
+void NodeVideoFrameTransporter::setLocalVideoMirrorModeWithType(nertc::NERtcVideoStreamType videoStreamType, uint32_t mirrorMode) {
+    m_localVideoStreamType =  videoStreamType;
+    m_localVideoMirrorMode = mirrorMode;
+}
+
+
 }

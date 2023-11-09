@@ -1746,8 +1746,8 @@ class NERtcChannel extends EventEmitter {
      * - 其他：方法调用失败。
      * </pre>
      */
-    setSubscribeAudioAllowlist(uids: Array<Number>): number {
-        return this.rtcChannel.setSubscribeAudioAllowlist(uids);
+    setSubscribeAudioAllowlist(uids: Array<Number>, size: number): number {
+        return this.rtcChannel.setSubscribeAudioAllowlist(uids, size);
     }
 
     /**
@@ -1768,8 +1768,8 @@ class NERtcChannel extends EventEmitter {
      * - 其他：方法调用失败。
      * </pre>
      */
-    setSubscribeAudioBlocklist(audioStreamType: number, uids: Array<Number>): number {
-        return this.rtcChannel.setSubscribeAudioBlocklist(audioStreamType, uids);
+    setSubscribeAudioBlocklist(audioStreamType: number, uids: Array<Number>, size: number): number {
+        return this.rtcChannel.setSubscribeAudioBlocklist(audioStreamType, uids, size);
     }
 
     /**

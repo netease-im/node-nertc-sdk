@@ -1439,7 +1439,7 @@ declare class NERtcChannel extends EventEmitter {
      * - 其他：方法调用失败。
      * </pre>
      */
-    setSubscribeAudioAllowlist(uids: Array<Number>): number;
+    setSubscribeAudioAllowlist(uids: Array<Number>, size: number): number;
     /**
      * 你可以调用该方法指定不订阅的音频流。
      * <pre>
@@ -1458,7 +1458,7 @@ declare class NERtcChannel extends EventEmitter {
      * - 其他：方法调用失败。
      * </pre>
      */
-    setSubscribeAudioBlocklist(audioStreamType: number, uids: Array<Number>): number;
+    setSubscribeAudioBlocklist(audioStreamType: number, uids: Array<Number>, size: number): number;
     /**
      * 设置玩家本人在房间中的范围语音模式，该设置不影响其他人。
      * @since V5.5.10
