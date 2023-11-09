@@ -38,7 +38,7 @@ public:
     virtual void onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile) override;
     virtual void onUserVideoStop(nertc::uid_t uid) override;
     virtual void onUserVideoMute(nertc::uid_t uid, bool mute) override;
-    virtual void onUserVideoMute(nertc::NERtcVideoStreamType videoStreamType,nertc::uid_t uid, bool mute) override;
+    virtual void onUserVideoMute(nertc::NERtcVideoStreamType videoStreamType, nertc::uid_t uid, bool mute) override;
     virtual void onUserSubStreamVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile) override;
     virtual void onUserSubStreamVideoStop(nertc::uid_t uid) override;
     virtual void onScreenCaptureStatus(nertc::NERtcScreenCaptureStatus status) override;

@@ -813,13 +813,13 @@ declare class NERtcEngine extends EventEmitter {
     /**
      * 设置本地视频镜像模式。
      * <pre>
-     * 该方法设置本地视频镜像模式。 App 可以多次调用此方法更改镜像模式。
+     *  该方法设置本地视频镜像模式。 App 可以多次调用此方法更改镜像模式。
      * </pre>
      * @param {number} mode  视频镜像模式:
      * <pre>
-     * - 0 Windows/macOS SDK 启用镜像模式。
+     * - 0 默认关闭镜像模式。
      * - 1 启用镜像模式。
-     * - 2 （默认）关闭镜像模式。
+     * - 2 关闭镜像模式。
      * </pre>
      * @returns {number}
      * <pre>

@@ -83,7 +83,7 @@ namespace nertc_node
             uint64_t thisAddr = *((nertc::uid_t *)user_data);
 		    NodeVideoFrameTransporter * pTransporter = g_channel_transporter_map[thisAddr];
 		    if (pTransporter) {
-			    pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, frame.uid == 0);
+			    pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, frame.uid == 0, (nertc::NERtcVideoStreamType)type);
 		    }
         }
 	}
@@ -146,7 +146,7 @@ namespace nertc_node
 		NodeVideoFrameTransporter * pTransporter = g_channel_transporter_map[thisAddr];
 		if (pTransporter)
 		{
-			pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, false);
+			pTransporter->deliverFrame_I420(nrt, frame.uid, "", frame, rotate, false, (nertc::NERtcVideoStreamType)type);
 		}
 	}
 /****************************************************************************************************************************/
@@ -867,19 +867,18 @@ NIM_SDK_NODE_API_DEF(setLocalVideoMirrorModeWithType)
 {
     INIT_ENV
     do{
-        //todo
-        // uint32_t type;
-        // uint32_t mode;
-        // napi_get_value_uint32(info[0], type);
-        // napi_get_value_uint32(info[1], mode);
-        // LOG_F(INFO, "mode:%d", mode);
-        // uint64_t thisAddr = (uint64_t)this;
-        // NodeVideoFrameTransporter * pTransporter = g_channel_transporter_map[thisAddr];
-		// if (pTransporter)
-        // {
-        //     pTransporter->setLocalVideoMirrorMode(type, mode);
-        //     ret = 0;
-        // }
+        uint32_t type;
+        uint32_t mode;
+        napi_get_value_uint32(info[0], type);
+        napi_get_value_uint32(info[1], mode);
+        LOG_F(INFO, "mode:%d", mode);
+        uint64_t thisAddr = (uint64_t)this;
+        NodeVideoFrameTransporter * pTransporter = g_channel_transporter_map[thisAddr];
+		if (pTransporter)
+        {
+            pTransporter->setLocalVideoMirrorModeWithType((nertc::NERtcVideoStreamType)type, mode);
+            ret = 0;
+        }
     }while(false);
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);

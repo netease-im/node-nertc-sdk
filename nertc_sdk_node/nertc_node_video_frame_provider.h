@@ -107,9 +107,11 @@ namespace nertc_node
         NodeVideoFrameTransporter();
         ~NodeVideoFrameTransporter();
 
-        void setLocalVideoMirrorMode(uint32_t mirrorMode) { m_localVideoMirrorMode = mirrorMode; }
+        void setLocalVideoMirrorMode(uint32_t mirrorMode) { m_localVideoMirrorMode = mirrorMode;}
+        void setLocalVideoMirrorModeWithType(nertc::NERtcVideoStreamType videoStreamType, uint32_t mirrorMode);
         bool initialize(Napi::FunctionReference&& function);
-        int deliverFrame_I420(NodeRenderType type, nertc::uid_t uid, std::string channelId, const IVideoFrame &videoFrame, int rotation, bool mirrored);
+        int deliverFrame_I420(NodeRenderType type, nertc::uid_t uid, std::string channelId,
+            const IVideoFrame &videoFrame, int rotation, bool mirrored, nertc::NERtcVideoStreamType localVideoStreamType);
         int setVideoDimension(NodeRenderType, nertc::uid_t uid, std::string channelId, uint32_t width, uint32_t height);
         static void onFrameDataCallback(
             nertc::uid_t uid,
@@ -169,12 +171,7 @@ namespace nertc_node
 
     private:
         bool init;
-        // Napi::Env env;
-        // Isolate *env;
-        // Persistent<Function> callback;
-        // Napi::FunctionReference js_callback;
         FrameDataCallback* m_pFrameDataCallback;
-        // Persistent<Object> js_this;
         std::unordered_map<nertc::uid_t, VideoFrameInfo> m_remoteVideoFrames;
         std::unique_ptr<VideoFrameInfo> m_localVideoFrame;
         std::unordered_map<nertc::uid_t, VideoFrameInfo> m_substreamVideoFrame;
@@ -184,8 +181,8 @@ namespace nertc_node
         std::unique_ptr<std::thread> m_thread;
         uint32_t m_FPS;
         uint32_t m_localVideoMirrorMode = 0; //0-auto 1-mirror 2-unmirror
-        // std::atomic<int> count_task = 0;
-
+        nertc::NERtcVideoStreamType m_localVideoStreamType = nertc::kNERTCVideoStreamMain;
+        
     };
 
     // NodeVideoFrameTransporter *getNodeVideoFrameTransporter();
