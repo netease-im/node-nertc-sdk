@@ -551,14 +551,15 @@ class NERtcEngine extends events_1.EventEmitter {
      *  - 对于调用接口时不在房间的 uid 不生效。
      * </pre>
      * @param {Array<Number>} uids 只订阅此用户uid列表 的音频.此列表为全量列表。如果列表为空或 null，取消订阅白名单。例如：[uid1,uid2...]。
+     * @param {number} size 数组长度
      * @return {number}
      * <pre>
      * - 0: 方法调用成功。
      * - 其他：方法调用失败。
      * </pre>
      */
-    setSubscribeAudioAllowlist(uids) {
-        return this.nertcEngine.setSubscribeAudioAllowlist(uids);
+    setSubscribeAudioAllowlist(uids, size) {
+        return this.nertcEngine.setSubscribeAudioAllowlist(uids, size);
     }
     /**
      * 你可以调用该方法指定不订阅的音频流。
@@ -572,14 +573,15 @@ class NERtcEngine extends events_1.EventEmitter {
      * - 1: 辅流
      * </pre>
      * @param {Array<Number>} uids 只订阅此用户uid列表 的音频.此列表为全量列表。如果列表为空或 null，取消订阅白名单。例如：[uid1,uid2...]。
+     * @param {number} size 数组长度
      * @return {number}
      * <pre>
      * - 0: 方法调用成功。
      * - 其他：方法调用失败。
      * </pre>
      */
-    setSubscribeAudioBlocklist(audioStreamType, uids) {
-        return this.nertcEngine.setSubscribeAudioBlocklist(audioStreamType, uids);
+    setSubscribeAudioBlocklist(audioStreamType, uids, size) {
+        return this.nertcEngine.setSubscribeAudioBlocklist(audioStreamType, uids, size);
     }
     /**
      * 开启精准对齐。
@@ -4091,7 +4093,7 @@ class NERtcEngine extends events_1.EventEmitter {
      * </pre>
      */
     setSpatializerRoomProperty(config) {
-        return this.nertcEngine.updateSelfPosition(config);
+        return this.nertcEngine.setSpatializerRoomProperty(config);
     }
     /**
      * 设置空间音效的渲染模式。
@@ -4636,8 +4638,8 @@ class NERtcEngine extends events_1.EventEmitter {
          * @param {number} uid 远端用户ID。
          * @param {boolean} mute 是否禁视频流。
          */
-        this.nertcEngine.onEvent('onUserVideoMuteEx', function (streamType, uid, mute) {
-            fire('onUserVideoMuteEx', streamType, uid, mute);
+        this.nertcEngine.onEvent('onUserVideoMuteWithType', function (streamType, uid, mute) {
+            fire('onUserVideoMuteWithType', streamType, uid, mute);
         });
         /**
          * 音频设备状态更改回调。

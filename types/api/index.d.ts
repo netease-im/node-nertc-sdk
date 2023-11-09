@@ -475,13 +475,14 @@ declare class NERtcEngine extends EventEmitter {
      *  - 对于调用接口时不在房间的 uid 不生效。
      * </pre>
      * @param {Array<Number>} uids 只订阅此用户uid列表 的音频.此列表为全量列表。如果列表为空或 null，取消订阅白名单。例如：[uid1,uid2...]。
+     * @param {number} size 数组长度
      * @return {number}
      * <pre>
      * - 0: 方法调用成功。
      * - 其他：方法调用失败。
      * </pre>
      */
-    setSubscribeAudioAllowlist(uids: Array<Number>): number;
+    setSubscribeAudioAllowlist(uids: Array<Number>, size: number): number;
     /**
      * 你可以调用该方法指定不订阅的音频流。
      * <pre>
@@ -494,13 +495,14 @@ declare class NERtcEngine extends EventEmitter {
      * - 1: 辅流
      * </pre>
      * @param {Array<Number>} uids 只订阅此用户uid列表 的音频.此列表为全量列表。如果列表为空或 null，取消订阅白名单。例如：[uid1,uid2...]。
+     * @param {number} size 数组长度
      * @return {number}
      * <pre>
      * - 0: 方法调用成功。
      * - 其他：方法调用失败。
      * </pre>
      */
-    setSubscribeAudioBlocklist(audioStreamType: number, uids: Array<Number>): number;
+    setSubscribeAudioBlocklist(audioStreamType: number, uids: Array<Number>, size: number): number;
     /**
      * 开启精准对齐。
      * @since V5.4.0

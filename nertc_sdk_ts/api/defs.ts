@@ -1124,6 +1124,6 @@ export interface NERtcEngineAPI {
     initSpatializer(): number;
     enableSpatializer(enable: boolean, apply_to_team: boolean): number;
     onQsObserver(eventName: String, enabled: boolean, callback: Function): void;
-    setSubscribeAudioAllowlist(uids: Array<Number>): number;
-    setSubscribeAudioBlocklist(audioStreamType: number, uids: Array<Number>): number;
+    setSubscribeAudioAllowlist(uids: Array<Number>, size: number): number;
+    setSubscribeAudioBlocklist(audioStreamType: number, uids: Array<Number>, size: number): number;
 }

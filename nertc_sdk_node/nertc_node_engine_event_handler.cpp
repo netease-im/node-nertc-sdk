@@ -1314,7 +1314,7 @@ void NertcNodeEventHandler::onUserVideoMute(nertc::NERtcVideoStreamType videoStr
 
 void NertcNodeEventHandler::Node_onUserVideoMute(nertc::NERtcVideoStreamType videoStreamType, nertc::uid_t uid, bool mute)
 {
-    auto it = _callbacks.find("onUserVideoMuteEx");
+    auto it = _callbacks.find("onUserVideoMuteWithType");
     if (it != _callbacks.end())
     {
         auto function_reference = it->second;
