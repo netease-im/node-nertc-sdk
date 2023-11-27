@@ -42,6 +42,8 @@ public:
     NIM_SDK_NODE_API(enableLocalVideoWithType);
     NIM_SDK_NODE_API(muteLocalVideoStream);
     NIM_SDK_NODE_API(muteLocalVideoStreamWithType);
+    NIM_SDK_NODE_API(getScreenCaptureSources);
+    NIM_SDK_NODE_API(setScreenCaptureSource);
     NIM_SDK_NODE_API(startScreenCaptureByScreenRect); 
     NIM_SDK_NODE_API(startScreenCaptureByDisplayId);
     NIM_SDK_NODE_API(startScreenCaptureByWindowId);

@@ -1576,6 +1576,27 @@ void NertcNodeEventHandler::Node_onLabFeatureCallback(std::string key, std::stri
     }
 }
 
+void NertcNodeEventHandler::onScreenCaptureSourceDataUpdate(nertc::NERtcScreenCaptureSourceData data)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onScreenCaptureSourceDataUpdate(data);
+    });
+}
+
+void NertcNodeEventHandler::Node_onScreenCaptureSourceDataUpdate(nertc::NERtcScreenCaptureSourceData data)
+{
+    auto it = _callbacks.find("onScreenCaptureSourceDataUpdate");
+    if (it != _callbacks.end())
+    {
+        auto function_reference = it->second;
+        auto env = function_reference->function.Env();
+        Napi::Object o = Napi::Object::New(env);
+        nertc_screen_capture_source_data_update_to_obj(env, data, o);
+        const std::vector<napi_value> args = {o};
+        function_reference->function.Call(args);
+    }
+}
+
 void NertcNodeEventHandler::onUserJoined(nertc::uid_t uid, const char* user_name, nertc::NERtcUserJoinExtraInfo join_extra_info)
 {
     std::string userName = user_name;
@@ -2129,36 +2150,39 @@ void NertcNodeAudioFrameObserverHandler::Node_onMixedAudioFrame(nertc::NERtcAudi
 
 void NertcNodeAudioFrameObserverHandler::onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame)
 {
-    // try{
-       
-
-
-    // }catch(...){
-    //     LOG_F(INFO, "onPlaybackAudioFrameBeforeMixing exception");
-    // }
 }
 
 void NertcNodeAudioFrameObserverHandler::onPlaybackAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame, nertc::channel_id_t cid)
 {
-    // try{
-       
-
-
-    // }catch(...){
-    //     LOG_F(INFO, "onPlaybackAudioFrameBeforeMixing2 exception");
-    // }
 }
 
 void NertcNodeAudioFrameObserverHandler::onPlaybackSubStreamAudioFrameBeforeMixing(uint64_t userID, nertc::NERtcAudioFrame* frame,
                                                            nertc::channel_id_t cid)
 {
-    // try{
-       
+}
 
+bool NertcNodePacketObserver::onSendAudioPacket(nertc::NERtcMediaPacket& packet)
+{
+    //encode
+    return true;
+}
 
-    // }catch(...){
-    //     LOG_F(INFO, "onPlaybackSubStreamAudioFrameBeforeMixing exception");
-    // }
+bool NertcNodePacketObserver::onSendVideoPacket(nertc::NERtcMediaPacket& packet)
+{
+    //encode
+    return true;
+}
+
+bool NertcNodePacketObserver::onReceiveAudioPacket(nertc::NERtcMediaPacket& packet)
+{
+    //decode
+    return true;
+}
+
+bool NertcNodePacketObserver::onReceiveVideoPacket(nertc::NERtcMediaPacket& packet)
+{
+    //decode
+    return true;
 }
 
 }

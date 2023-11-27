@@ -2756,6 +2756,12 @@ class NERtcEngine extends events_1.EventEmitter {
     enumerateScreenCaptureSourceInfo(thumbWidth, thumbHeight, iconWidth, iconHeight) {
         return this.nertcEngine.enumerateScreenCaptureSourceInfo(thumbWidth, thumbHeight, iconWidth, iconHeight);
     }
+
+    getScreenCaptureSources(thumbSize, iconSize, includeScreen) {
+        return this.nertcEngine.getScreenCaptureSources(thumbSize, iconSize, includeScreen);
+    }
+
+
     /**
      * 指定视频采集设备。
      * @param {string} id 视频采集设备的设备 ID。可以通过 {@link NERtcEngine#enumerateCaptureDevices}获取。

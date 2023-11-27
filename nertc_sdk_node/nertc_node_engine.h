@@ -140,6 +140,8 @@ public:
     NIM_SDK_NODE_API(setEarbackVolume);
     NIM_SDK_NODE_API(enableAudioVolumeIndication);
     NIM_SDK_NODE_API(enableAudioVolumeIndicationEx);
+    NIM_SDK_NODE_API(getScreenCaptureSources);
+    NIM_SDK_NODE_API(setScreenCaptureSource);
     NIM_SDK_NODE_API(startScreenCaptureByScreenRect);
     NIM_SDK_NODE_API(startScreenCaptureByDisplayId);
     NIM_SDK_NODE_API(startScreenCaptureByWindowId);
@@ -183,6 +185,7 @@ public:
     NIM_SDK_NODE_API(setRemoteHighPriorityAudioStream);
     NIM_SDK_NODE_API(checkNECastAudioDriver);
     NIM_SDK_NODE_API(enableVirtualBackground);
+    NIM_SDK_NODE_API(isFeatureSupported);
     NIM_SDK_NODE_API(setCloudProxy);
     NIM_SDK_NODE_API(enableLocalData);
     NIM_SDK_NODE_API(subscribeRemoteData);
@@ -260,6 +263,7 @@ private:
     std::shared_ptr<NertcNodeRtcMediaStatsHandler> _stats_observer;
     std::shared_ptr<NertcNodeVideoEncoderQosObserver> _qs_handler;
     std::shared_ptr<NertcNodeAudioFrameObserverHandler> _audio_observer;
+    std::shared_ptr<NertcNodePacketObserver> _packet_observer;
     bool is_qosObserver_init_ = false;
 
 #ifdef WIN32

@@ -256,6 +256,31 @@ napi_status nertc_screen_capture_params_obj_to_struct(const Napi::Env& env, cons
             }
         }
     }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"enable_high_performance"))))
+    {
+        out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"enable_high_performance"))).As<Napi::Boolean>().Value();
+        params.enable_high_performance = out_b;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"enable_high_light"))))
+    {
+        out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"enable_high_light"))).As<Napi::Boolean>().Value();
+        params.enable_high_light = out_b;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"high_light_width"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"high_light_width"))).As<Napi::Number>().Int32Value();
+        params.high_light_width = out_i;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"high_light_color"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"high_light_color"))).As<Napi::Number>().Int32Value();
+        params.high_light_color = out_i;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"high_light_length"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"high_light_length"))).As<Napi::Number>().Int32Value();
+        params.high_light_length = out_i;
+    }
     return napi_ok;
 }
 
@@ -912,7 +937,7 @@ napi_status nertc_lastmile_probe_obj_to_struct(const Napi::Env& env, const Napi:
     return napi_ok;
 }
 
-napi_status nertc_channel_option_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcJoinChannelOptions& config)
+napi_status nertc_join_channel_option_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcJoinChannelOptions& config)
 {
     std::string out;
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"custom_info"))))
@@ -930,6 +955,28 @@ napi_status nertc_channel_option_to_struct(const Napi::Env& env, const Napi::Obj
         std::strcpy(ptr, cstr);
         ptr[out.length()] = '\0';  
         config.permission_key = ptr;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"range_audio_info"))))
+    {
+        Napi::Object so = obj.Get(static_cast<napi_value>(Napi::String::New(env,"range_audio_info"))).As<Napi::Object>();
+        
+        if(so.Has(static_cast<napi_value>(Napi::String::New(env,"team_id"))))
+        {
+            int team_id_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"team_id"))).As<Napi::Number>().Int32Value();
+            config.range_audio_info.team_id = team_id_;
+        }
+    
+        if(so.Has(static_cast<napi_value>(Napi::String::New(env,"mode"))))
+        {
+            int mode_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"mode"))).As<Napi::Number>().Int32Value();
+            config.range_audio_info.mode = (nertc::NERtcRangeAudioMode)mode_;
+        }
+    
+        if(so.Has(static_cast<napi_value>(Napi::String::New(env,"audible_distance"))))
+        {
+            int audible_distance_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"audible_distance"))).As<Napi::Number>().Int32Value();
+            config.range_audio_info.audible_distance = audible_distance_;
+        }
     }
     return napi_ok;
 }
@@ -1130,6 +1177,40 @@ napi_status nertc_position_info_to_struct(const Napi::Env& env, const Napi::Obje
     return napi_ok;
 }
 
+// napi_status nertc_screen_capture_source_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcScreenCaptureSourceInfo& source)
+// {
+//     // int out_i;
+//     // if(obj.has(static_cast<napi_value>(Napi::String::New(env,"type"))))
+//     // {
+//     //     out_i = obj.get(static_cast<napi_value>(Napi::String::New(env,"type"))).as<napi_number>().int32value();
+//     //     source.type = (nertc::NERtcScreenCaptureSourceType)out_i;
+//     // }
+//     // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"source_id"))))
+//     // {
+//     //     int64_t * source_id_ptr = new int64_t;
+//     //     *source_id_ptr = obj.get(static_cast<napi_value>(Napi::String::New(env,"source_id"))).as<napi_number>().int64value();
+//     // }
+    
+//     return napi_ok;
+// }
+
+napi_status nertc_screen_size_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcSize& size)
+{
+    int32_t out_i;
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"width"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"width"))).As<Napi::Number>().Int32Value();
+        size.width = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"height"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"height"))).As<Napi::Number>().Int32Value();
+        size.height = out_i;
+    }
+    return napi_ok;    
+}
+
 napi_status nertc_spatializer_position_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcPositionInfo& config)
 {
     float out_f;
@@ -1281,6 +1362,22 @@ napi_status nertc_user_join_extra_info_to_obj(const Napi::Env env, const nertc::
 {
     std::string str_custom_info = join_extra_info.custom_info;
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"custom_info")), str_custom_info);
+    return napi_ok;
+}
+
+napi_status nertc_screen_capture_source_data_update_to_obj(const Napi::Env env, const nertc::NERtcScreenCaptureSourceData& data,  Napi::Object& obj)
+{
+    obj.Set(static_cast<napi_value>(Napi::String::New(env,"type")), (int32_t)data.type);
+    int64_t source_id_ = reinterpret_cast<int64_t>(data.source_id);
+    obj.Set(Napi::String::New(env, "source_id"), Napi::Number::New(env, source_id_));
+    obj.Set(Napi::String::New(env, "status"), Napi::Number::New(env, data.status));
+    obj.Set(Napi::String::New(env, "action"), Napi::Number::New(env, data.action));
+    
+    Napi::Object o1 = Napi::Object::New(env);
+    nertc::NERtcRectangle capture_rect = data.capture_rect;
+    nertc_rectangle_obj_to_struct(env, o1, capture_rect);
+    obj.Set(Napi::String::New(env, "capture_rect"), o1);
+    obj.Set(Napi::String::New(env, "level"), Napi::Number::New(env, data.level));
     return napi_ok;
 }
 

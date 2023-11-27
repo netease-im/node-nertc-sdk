@@ -925,6 +925,12 @@ export interface NERtcReverbParam {
     preDelay: number;   /**< 延迟长度，取值范围为 0 ~ 1，默认值为 0.0f。 */
 }
 
+/**  */
+export interface NERtcSize {
+    width: number;  /**< The target width (px) of the thumbnail or icon. The default value is 0.*/
+    height: number; /**< The target height (px) of the thumbnail or icon. The default value is 0. */
+}
+
 export interface NERtcEngineAPI {
     initialize(context: NERtcEngineContext): number;
     release(): void;
@@ -1016,6 +1022,7 @@ export interface NERtcEngineAPI {
     startAudioDeviceLoopbackTest(interval: number): number;
     stopAudioDeviceLoopbackTest(): number;
     enumerateCaptureDevices(): Array<NERtcDevice>;
+    getScreenCaptureSources(thumbSize: NERtcSize, iconSize: NERtcSize, includeScreen: boolean): Array<Object>;
     setDevice(id: String): number; //<256chars
     getDevice(): String;
     setLocalVideoMirrorMode(mode: NERtcVideoMirrorMode): number;

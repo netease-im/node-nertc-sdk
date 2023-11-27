@@ -1076,6 +1076,25 @@ uint8_t *RGBAToBGRA(void *src, int size)
     return reinterpret_cast<uint8_t *>(Pixels);
 }
 
+uint8_t *ARGBToBGRA(char*src, int size)
+{
+     char* pixelsRGBA = src;
+    void* Pixels = malloc(size);
+    const int bytesPerPixel = 4;
+    int count = size / bytesPerPixel;
+    char* pixelsBGRA = static_cast<char*>(Pixels);
+    for (size_t i = 0; i < count; i++)
+    {
+        pixelsBGRA[0] = pixelsRGBA[2];  // B
+        pixelsBGRA[1] = pixelsRGBA[1];  // G
+        pixelsBGRA[2] = pixelsRGBA[0];  // R
+        pixelsBGRA[3] = pixelsRGBA[3];  // A
+        pixelsBGRA += bytesPerPixel;
+        pixelsRGBA += bytesPerPixel;
+    }
+    return static_cast<uint8_t*>(Pixels);
+}
+
 uint8_t *GetWindowsIconRGBA(HWND hWnd, int *width, int *height, int *size)
 {
     if (TRUE != IsWindow(hWnd))

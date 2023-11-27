@@ -154,6 +154,7 @@ private:
 int GetRGBASize(int width, int height);
 uint8_t *GetWindowsIconRGBA(HWND hWnd, int *width, int *height, int *size);
 uint8_t *RGBAToBGRA(void *src, int size);
+uint8_t *ARGBToBGRA(char *src, int size);
 // void *CaptureScreen(int x, int y, int width, int height);
 
 }

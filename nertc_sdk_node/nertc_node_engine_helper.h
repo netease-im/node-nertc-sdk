@@ -24,13 +24,15 @@ napi_status nertc_media_relay_obj_to_struct(const Napi::Env& env, const Napi::Ob
 napi_status nertc_encry_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcEncryptionConfig& config);
 napi_status nertc_channel_media_relay_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcChannelMediaRelayInfo& config);
 napi_status nertc_lastmile_probe_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcLastmileProbeConfig& config);
-napi_status nertc_channel_option_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcJoinChannelOptions& config);
+napi_status nertc_join_channel_option_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcJoinChannelOptions& config);
 napi_status nertc_channel_optionex_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcJoinChannelOptionsEx& config);
 napi_status nertc_recording_option_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcAudioRecordingConfiguration& config);
 napi_status nertc_virtual_background_option_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::VirtualBackgroundSource& config);
 napi_status nertc_spatializer_room_property_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcSpatializerRoomProperty& config);
 napi_status nertc_spatializer_position_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcPositionInfo& config);
 napi_status nertc_position_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcPositionInfo& info);
+// napi_status nertc_screen_capture_source_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcScreenCaptureSourceInfo& source);
+napi_status nertc_screen_size_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcSize& size);
 
 
 //set object field
@@ -43,6 +45,8 @@ napi_status nertc_network_quality_to_obj(const Napi::Env env, const nertc::NERtc
 napi_status nertc_audio_volume_info_to_obj(const Napi::Env env, const nertc::NERtcAudioVolumeInfo& config,  Napi::Object& obj);
 napi_status nertc_lastmile_probe_result_to_obj(const Napi::Env env, const nertc::NERtcLastmileProbeResult& config,  Napi::Object& obj);
 napi_status nertc_user_join_extra_info_to_obj(const Napi::Env env, const nertc::NERtcUserJoinExtraInfo& join_extra_info,  Napi::Object& obj);
+napi_status nertc_screen_capture_source_data_update_to_obj(const Napi::Env env, const nertc::NERtcScreenCaptureSourceData& data,  Napi::Object& obj);
+
 
 // channel helper
 //obj->struct

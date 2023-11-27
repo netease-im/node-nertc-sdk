@@ -70,7 +70,7 @@ public:
     virtual void onLocalVideoRenderSizeChanged(nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height) override;
     virtual void onFirstVideoFrameRender(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height, uint64_t elapsed) override;
     virtual void onLabFeatureCallback(const char* key, const char* param) override;
-
+    virtual void onScreenCaptureSourceDataUpdate(nertc::NERtcScreenCaptureSourceData data) override;
 private:
     void Node_onError(int error_code, std::string msg);
     void Node_onWarning(int warn_code, std::string msg);
@@ -124,7 +124,7 @@ private:
     void Node_onLocalVideoRenderSizeChanged(nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height);
     void Node_onFirstVideoFrameRender(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height, uint64_t elapsed);
     void Node_onLabFeatureCallback(std::string, std::string param);
-
+    void Node_onScreenCaptureSourceDataUpdate(nertc::NERtcScreenCaptureSourceData data);
 };
 
 
