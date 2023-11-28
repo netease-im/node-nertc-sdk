@@ -62,7 +62,10 @@ import {
     NERtcAudioRecordingConfiguration,
     VirtualBackgroundSource,
     NERtcReverbParam,
-    NERtcSize
+    NERtcSize,
+    CaptureSoureInfo,
+    NERtcFeatureType,
+    NERtcScreenCaptureSourceData
 } from './defs'
 import { EventEmitter } from 'events'
 import process from 'process';
@@ -2958,26 +2961,39 @@ class NERtcEngine extends EventEmitter {
     /**
      * 枚举屏幕分享源信息。
      * @since 5.5.20
-     * @param {number} thumbSize 缩略图宽度 px。
-     * @param {number} thumbHeight 缩略图高度 px。
-     * @param {number} iconWidth 图标宽度 px。
-     * @param {number} iconHeight 图标高度 px。
+     * @param {Object} thumbSize 屏幕或窗口的缩略图的目标尺寸（宽高单位为像素）:
+     * @param {number} thumbSize.width 缩略图缩略图宽度px默认0
+     * @param {number} thumbSize.height 缩略图高度px默认0
+     * <pre>
+     * <b>NOTE:</b>
+     * - SDK 会在保证原图不变形的前提下，缩放原图，使图片最长边和目标尺寸的最长边的长度一致。
+     * - 如果目标尺寸大于原图尺寸，缩略图即为原图，SDK 不进行缩放操作。
+     * </pre>
+     * @param {Object} iconSize 程序所对应的图标的目标尺寸px。
+     * @param {number} iconSize.width 程序所对应的图标宽度px默认0
+     * @param {number} iconSize.height 程序所对应的图标高度px默认0
+     * <b>NOTE:</b>
+     * - SDK 会在保证原图不变形的前提下，缩放原图，使图片最长边和目标尺寸的最长边的长度一致。
+     * - 如果目标尺寸大于原图尺寸，缩略图即为原图，SDK 不进行缩放操作。
+     * </pre>
+     * @param includeScreen 除了窗口信息外，SDK 是否还返回屏幕信息：
+     * <pre>
+     * - true: SDK 返回屏幕和窗口信息；
+     * - false: SDK 仅返回窗口信息。
+     * </pre>
      * @returns {Object[]}
      * <pre>
      * - Object[] : 调用成功；
      * <table style="width:100%;">
-     * <tr><th>Name</th><th>Type</th><th>Description</th></tr>
-     * <tr><td>Object.sourceId</td><td>number</td><td>信息源ID</td></tr>
-     * <tr><td>Object.displayId</td><td>String</td><td>如果是屏幕设备则为屏幕 ID</td></tr>
-     * <tr><td>Object.sourceName</td><td>String</td><td>信息源名称</td></tr>
-     * <tr><td>Object.type</td><td>int</td><td>信息源类型:1-屏幕 2-窗口</td></tr>
-     * <tr><td>Object.isMinimizeWindow</td><td>boolean</td><td>窗口是否最小化状态</td></tr>
-     * <tr><td>Object.thumbBGRA</td><td>object</td><td>缩略图信息,使用前需要判断是否undefined:
+     * <tr><td>Object.type</td><td>int</td><td>信息源类型:-1-未知 0-窗口 1-屏幕 2-自定义</td></tr>
+     * <tr><td>Object.source_id</td><td>number</td><td>信息源ID</td></tr>
+     * <tr><td>Object.source_name</td><td>String</td><td>信息源名称</td></tr>
+     * <tr><td>Object.thumb_image</td><td>object</td><td>缩略图信息,使用前需要判断是否undefined:
      * - buffer - BGRA二进制数据
      * - length - 数据大小 byte
      * - width - 图片宽度 px
      * - height - 图片高度 px</td></tr>
-     * <tr><td>Object.iconBGRA</td><td>object</td><td>图标信息,使用前需要判断是否undefined:
+     * <tr><td>Object.icon_image</td><td>object</td><td>图标信息,使用前需要判断是否undefined:
      * - buffer - BGRA二进制数据
      * - length - 数据大小 byte
      * - width - 图片宽度 px
@@ -2988,6 +3004,44 @@ class NERtcEngine extends EventEmitter {
      */
     getScreenCaptureSources(thumbSize: NERtcSize, iconSize: NERtcSize, includeScreen: boolean): Array<Object> {
         return this.nertcEngine.getScreenCaptureSources(thumbSize, iconSize, includeScreen);
+    }
+
+    /**
+     * 设置屏幕分享参数，该方法在屏幕分享过程中调用，用来快速切换采集源。
+     * @since 5.5.20
+     * @param {CaptureSoureInfo} source 屏幕或窗口的缩略图的目标尺寸（宽高单位为像素）:
+     * @param {number} source.type 信息源类型:-1-未知 0-窗口 1-屏幕 2-自定义
+     * @param {number} source.source_id 信息源ID
+     * @param {object} [regionRect=] (可选) 指定待共享区域相对于整个屏幕屏幕的位置。如果设置的共享区域超出了屏幕的边界，则只共享屏幕内的内容；如果将 width 或 height 设为 0, 则共享整个屏幕。
+     * @param {number} regionRect.x 左上角的横向偏移
+     * @param {number} regionRect.y 左上角的纵向偏移
+     * @param {number} regionRect.width 待共享区域的宽
+     * @param {number} regionRect.height 待共享区域的高
+     * @param {object} param 屏幕共享的编码参数配置。
+     * @param {object} [param.profile=2] 屏幕共享编码参数配置:
+     * <pre>
+     * - 0 640x480, 5fps
+     * - 1 1280x720, 5fps
+     * - 2 1920x1080, 5fps。默认
+     * - 3 自定义
+     * </pre>
+     * @param {object} param.dimensions 屏幕共享视频发送的最大像素值，param.profile=3时生效:
+     * @param {number} param.dimensions.width  宽度
+     * @param {number} param.dimensions.height  高度
+     * @param {number} [param.frame_rate=5] 共享视频的帧率，param.profile=3时生效，单位为 fps；默认值为 5，建议不要超过 15
+     * @param {number} [param.bitrate=0] 共享视频的码率，单位为 bps；默认值为 0，表示 SDK 根据当前共享屏幕的分辨率计算出一个合理的值
+     * @param {boolean} param.capture_mouse_cursor 是否采集鼠标用于屏幕共享
+     * @param {boolean} param.window_focus 调用 {@link NERtcEngine#startScreenCaptureByWindowId} 方法共享窗口时，是否将该窗口前置
+     * @param {number[]} param.excluded_window_list 待屏蔽窗口的 ID 列表
+     * @param {number} param.excluded_window_count 待屏蔽窗口的数量
+     * @param {number} param.prefer 编码策略倾向:
+     * <pre>
+     * - 0 动画模式
+     * - 1 细节模式
+     * </pre>
+     */
+    setScreenCaptureSource(source: CaptureSoureInfo, regionRect: NERtcRectangle, capture_params: NERtcScreenCaptureParameters): number {
+        return this.nertcEngine.setScreenCaptureSource(source, regionRect, capture_params);
     }
 
     /**
@@ -3310,7 +3364,7 @@ class NERtcEngine extends EventEmitter {
     * </pre>
     */
     switchChannelWithOptions(token: string, channelName: string, channelOptions: NERtcJoinChannelOptions): number {
-        return this.nertcEngine.switchChannelEx(token, channelName, channelOptions);
+        return this.nertcEngine.switchChannelWithOptions(token, channelName, channelOptions);
     }
 
     /**
@@ -3667,6 +3721,10 @@ class NERtcEngine extends EventEmitter {
      * @param {number} config.mode 媒体流加密模式。
      * <pre>
      * - 0: 128 位 SM4 加密，ECB 模式
+     * - 1: 自定义加密
+     * <b>NOTE:</b>
+     * - 自定义加密需要在cpp层开发自定义算法，实现nertc_node_engine_event_handler文件中NertcNodePacketObserver中相关方法
+     * - 自定义加密 key设置为null。
      * </pre>
      * @param {String} config.key 媒体流加密密钥。字符串类型，推荐设置为英文字符串。
      * @return
@@ -3809,6 +3867,23 @@ class NERtcEngine extends EventEmitter {
      */
     enableVirtualBackground(enable: boolean, backgroundSource: VirtualBackgroundSource): number {
         return this.nertcEngine.enableVirtualBackground(enable, backgroundSource);
+    }
+
+    /**
+     * 获取当前设备是否支持虚拟背景功能。
+     * @since V5.4.0
+     * <pre>
+     * 此接口在初始化引擎之后调用
+     * </pre>
+     * @param type 功能类型： 0:-虚拟背景
+     * @return
+     * <pre>
+     * - true 支持虚拟背景。
+     * - false 不支持虚拟背景
+     * </pre>
+     */
+    isFeatureSupported(type: NERtcFeatureType): boolean {
+        return this.nertcEngine.isFeatureSupported(type);
     }
 
      /**
@@ -4671,6 +4746,26 @@ class NERtcEngine extends EventEmitter {
             param: string
         ) {
             fire('onLabFeatureCallback', key, param);
+        });
+
+        /**
+         * 屏幕共享源采集范围等变化的回调。
+         * @event NERtcEngine#onLabFeatureCallback
+         * @param {Object} data 返回回调类型。
+         * @param {number} data.type 屏幕分享类型。
+         * @param {number} data.source_id 屏幕分享源的ID。
+         * @param {number} data.status 屏幕分享状态。
+         * @param {number} data.action 屏幕分享自定义高亮框的设置动作，结合capture_rect使用。
+         * @param {number} data.regionRect.x 左上角的横向偏移
+         * @param {number} data.regionRect.y 左上角的纵向偏移
+         * @param {number} data.regionRect.width 待共享区域的宽
+         * @param {number} data.regionRect.height 待共享区域的高
+         * @param {number} data.level 屏幕分享源的层级，仅用于macOS
+         */
+        this.nertcEngine.onEvent('onScreenCaptureSourceDataUpdate', function (
+            data: NERtcScreenCaptureSourceData
+        ) {
+            fire('onScreenCaptureSourceDataUpdate', data);
         });
 
         /**

@@ -60,6 +60,9 @@ napi_status nertc_camera_capture_struct_to_obj(const Napi::Env env,  nertc::NERt
 napi_status nertc_audio_format_to_obj(const Napi::Env env, const nertc::NERtcAudioFormat& config,  Napi::Object& obj);
 napi_status nertc_audio_frame_to_obj(const Napi::Env env, const nertc::NERtcAudioFrame& config,  Napi::Object& obj);
 
+///////////////////////////
+uint8_t *ARGBToBGRA(char *src, int size);
+
 }
 
 //饿汉模式

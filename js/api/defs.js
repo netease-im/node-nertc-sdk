@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NERtcBackgroundSourceType = exports.NERtcAudioRecordingCycleTime = exports.NERtcAudioRecordingPosition = exports.NERtcSpatializerRenderMode = exports.NERtcSpatializerMaterialName = exports.NERtcSpatializerRoomCapacity = exports.NERtcVoiceEqualizationBand = exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcVideoStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcEncryptionMode = exports.NERtcAudioRecordingQuality = exports.NERtcMediaPriorityType = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDistanceRolloffModel = exports.NERtcAudioStreamType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcRawAudioFrameOpModeType = exports.NERtcVideoOutputOrientationMode = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcRangeAudioMode = exports.NERtcLogLevel = void 0;
+exports.NERtcScreenCaptureCustomHLBorderAction = exports.NERtcScreenCaptureStatus = exports.NERtcFeatureType = exports.NERtcBackgroundSourceType = exports.NERtcAudioRecordingCycleTime = exports.NERtcAudioRecordingPosition = exports.NERtcSpatializerRenderMode = exports.NERtcSpatializerMaterialName = exports.NERtcSpatializerRoomCapacity = exports.NERtcVoiceEqualizationBand = exports.NERtcVoiceBeautifierType = exports.NERtcVoiceChangerType = exports.NERtcMediaStatsEventName = exports.NERtcLiveStreamStateCode = exports.NERtcAudioMixingErrorCode = exports.NERtcAudioMixingState = exports.NERtcAudioDeviceState = exports.NERtcAudioDeviceType = exports.NERtcReasonConnectionChangedType = exports.NERtcConnectionStateType = exports.NERtcNetworkQualityType = exports.NERtcVideoStreamType = exports.NERtcStreamChannelType = exports.NERtcClientRole = exports.NERtcVideoDeviceTransportType = exports.NERtcAudioDeviceTransportType = exports.NERtcLiveStreamAudioCodecProfile = exports.NERtcLiveStreamAudioSampleRate = exports.NERtcLiveStreamVideoScaleMode = exports.NERtcLiveStreamMode = exports.NERtcEncryptionMode = exports.NERtcAudioRecordingQuality = exports.NERtcMediaPriorityType = exports.NERtcSubStreamContentPrefer = exports.NERtcScreenProfileType = exports.NERtcDistanceRolloffModel = exports.NERtcAudioStreamType = exports.NERtcDegradationPreference = exports.NERtcVideoFramerateType = exports.NERtcVideoCropMode = exports.NERtcAudioScenarioType = exports.NERtcAudioProfileType = exports.NERtcRawAudioFrameOpModeType = exports.NERtcVideoOutputOrientationMode = exports.NERtcVideoMirrorMode = exports.NERtcVideoScalingMode = exports.NERtcVideoProfileType = exports.NERtcSessionLeaveReason = exports.NERtcErrorCode = exports.NERtcRemoteVideoStreamType = exports.NERtcChannelProfileType = exports.NERtcRangeAudioMode = exports.NERtcLogLevel = void 0;
 /** 日志级别。 */
 var NERtcLogLevel;
 (function (NERtcLogLevel) {
@@ -260,6 +260,7 @@ var NERtcAudioRecordingQuality;
 var NERtcEncryptionMode;
 (function (NERtcEncryptionMode) {
     NERtcEncryptionMode[NERtcEncryptionMode["kNERtcGMCryptoSM4ECB"] = 0] = "kNERtcGMCryptoSM4ECB";
+    NERtcEncryptionMode[NERtcEncryptionMode["kNERtcEncryptionModeCustom"] = 1] = "kNERtcEncryptionModeCustom";
 })(NERtcEncryptionMode = exports.NERtcEncryptionMode || (exports.NERtcEncryptionMode = {}));
 /** 直播推流模式 */
 var NERtcLiveStreamMode;
@@ -531,3 +532,27 @@ var NERtcBackgroundSourceType;
     NERtcBackgroundSourceType[NERtcBackgroundSourceType["kNERtcBackgroundColor"] = 1] = "kNERtcBackgroundColor";
     NERtcBackgroundSourceType[NERtcBackgroundSourceType["kNERtcBackgroundImage"] = 2] = "kNERtcBackgroundImage";
 })(NERtcBackgroundSourceType = exports.NERtcBackgroundSourceType || (exports.NERtcBackgroundSourceType = {}));
+/** 功能类型 */
+var NERtcFeatureType;
+(function (NERtcFeatureType) {
+    NERtcFeatureType[NERtcFeatureType["kNERTCVirtualBackground"] = 0] = "kNERTCVirtualBackground"; /**< 虚拟背景*/
+})(NERtcFeatureType = exports.NERtcFeatureType || (exports.NERtcFeatureType = {}));
+/** 屏幕分享状态 */
+var NERtcScreenCaptureStatus;
+(function (NERtcScreenCaptureStatus) {
+    NERtcScreenCaptureStatus[NERtcScreenCaptureStatus["kScreenCaptureStatusStart"] = 1] = "kScreenCaptureStatusStart";
+    NERtcScreenCaptureStatus[NERtcScreenCaptureStatus["kScreenCaptureStatusPause"] = 2] = "kScreenCaptureStatusPause";
+    NERtcScreenCaptureStatus[NERtcScreenCaptureStatus["kScreenCaptureStatusResume"] = 3] = "kScreenCaptureStatusResume";
+    NERtcScreenCaptureStatus[NERtcScreenCaptureStatus["kScreenCaptureStatusStop"] = 4] = "kScreenCaptureStatusStop";
+    NERtcScreenCaptureStatus[NERtcScreenCaptureStatus["kScreenCaptureStatusCovered"] = 5] = "kScreenCaptureStatusCovered";
+    NERtcScreenCaptureStatus[NERtcScreenCaptureStatus["kScreenCaptureStatusAbort"] = 6] = "kScreenCaptureStatusAbort";
+})(NERtcScreenCaptureStatus = exports.NERtcScreenCaptureStatus || (exports.NERtcScreenCaptureStatus = {}));
+/** The type of the shared target. */
+var NERtcScreenCaptureCustomHLBorderAction;
+(function (NERtcScreenCaptureCustomHLBorderAction) {
+    NERtcScreenCaptureCustomHLBorderAction[NERtcScreenCaptureCustomHLBorderAction["kSetPos"] = 0] = "kSetPos";
+    NERtcScreenCaptureCustomHLBorderAction[NERtcScreenCaptureCustomHLBorderAction["kSetAbove"] = 1] = "kSetAbove";
+    NERtcScreenCaptureCustomHLBorderAction[NERtcScreenCaptureCustomHLBorderAction["kSetBelow"] = 2] = "kSetBelow";
+    NERtcScreenCaptureCustomHLBorderAction[NERtcScreenCaptureCustomHLBorderAction["kHide"] = 3] = "kHide";
+    NERtcScreenCaptureCustomHLBorderAction[NERtcScreenCaptureCustomHLBorderAction["kShow"] = 4] = "kShow";
+})(NERtcScreenCaptureCustomHLBorderAction = exports.NERtcScreenCaptureCustomHLBorderAction || (exports.NERtcScreenCaptureCustomHLBorderAction = {}));

@@ -635,7 +635,7 @@ NIM_SDK_NODE_API_DEF(setScreenCaptureSource)
         if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"source_id"))))
         {
             out_64 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"source_id"))).As<Napi::Number>().Int64Value();
-            source.source_id = (nertc::source_id_t)&out_64;
+            source.source_id = (nertc::source_id_t)out_64;
         }
        
 

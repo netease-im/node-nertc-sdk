@@ -1502,4 +1502,25 @@ napi_status nertc_audio_frame_to_obj(const Napi::Env env, const nertc::NERtcAudi
 	return napi_ok;
 }
 
+///////////////////////////////////////////////////////
+uint8_t *ARGBToBGRA(char*src, int size)
+{
+    char* pixelsRGBA = src;
+    void* Pixels = malloc(size);
+    const int bytesPerPixel = 4;
+    int count = size / bytesPerPixel;
+    char* pixelsBGRA = static_cast<char*>(Pixels);
+    for (size_t i = 0; i < count; i++)
+    {
+        pixelsBGRA[0] = pixelsRGBA[2];  // B
+        pixelsBGRA[1] = pixelsRGBA[1];  // G
+        pixelsBGRA[2] = pixelsRGBA[0];  // R
+        pixelsBGRA[3] = pixelsRGBA[3];  // A
+        pixelsBGRA += bytesPerPixel;
+        pixelsRGBA += bytesPerPixel;
+    }
+    return static_cast<uint8_t*>(Pixels);
+}
+
+
 }

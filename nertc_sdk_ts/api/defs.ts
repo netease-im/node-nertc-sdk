@@ -419,6 +419,7 @@ export interface NERtcChannelMediaRelayConfiguration
 export enum NERtcEncryptionMode
 {
     kNERtcGMCryptoSM4ECB      = 0, /**< 128-bit SM4 encryption, ECB mode. */
+    kNERtcEncryptionModeCustom = 1, /**< custom encryption. >*/
 }
 
 /** Media stream encryption scheme. */
@@ -931,6 +932,52 @@ export interface NERtcSize {
     height: number; /**< The target height (px) of the thumbnail or icon. The default value is 0. */
 }
 
+export interface NERtcSize {
+    width: number;  /**< The target width (px) of the thumbnail or icon. The default value is 0.*/
+    height: number; /**< The target height (px) of the thumbnail or icon. The default value is 0. */
+}
+
+export interface CaptureSoureInfo {
+    type: number;  /**< 信息源类型:-1-未知 0-窗口 1-屏幕 2-自定义*/
+    source_id: number; /**< 信息源ID. */
+}
+
+/** 功能类型 */
+export enum NERtcFeatureType
+{
+    kNERTCVirtualBackground = 0 /**< 虚拟背景*/
+}
+
+/** 屏幕分享状态 */
+export enum NERtcScreenCaptureStatus
+{
+    kScreenCaptureStatusStart = 1, /**< 开始屏幕共享*/
+    kScreenCaptureStatusPause = 2, /**< 暂停屏幕共享*/
+    kScreenCaptureStatusResume = 3, /**< 开始屏幕共享*/
+    kScreenCaptureStatusStop = 4, /**< 开始屏幕共享*/
+    kScreenCaptureStatusCovered = 5, /**< 开始屏幕共享*/
+    kScreenCaptureStatusAbort = 6, /**< 开始屏幕共享*/
+}
+
+/** The type of the shared target. */
+export enum NERtcScreenCaptureCustomHLBorderAction
+{
+    kSetPos = 0, /**< The shared target is a window.*/
+    kSetAbove = 1, /**<  The shared target is a screen of a particular monitor.*/
+    kSetBelow = 2, /**< Reserved parameter.*/
+    kHide = 3, /**< The shared target is a window.*/
+    kShow = 4, /**< The shared target is a window.*/
+}
+
+export interface NERtcScreenCaptureSourceData {
+    type: CaptureSoureInfo;  /**< 信息源类型:-1-未知 0-窗口 1-屏幕 2-自定义*/
+    source_id: number; /**< 信息源ID. */
+    status: NERtcScreenCaptureStatus; /**< 屏幕分享状态*/
+    action: NERtcScreenCaptureCustomHLBorderAction; /**< 屏幕分享自定义高亮框的设置动作，结合capture_rect使用。*/
+    level: number; /**< 屏幕分享源的层级，仅用于macOS */
+    capture_rect: NERtcRectangle; /**< 屏幕分享源的采集范围，可用于设置用户自定义高亮框的位置。*/
+}
+
 export interface NERtcEngineAPI {
     initialize(context: NERtcEngineContext): number;
     release(): void;
@@ -1133,4 +1180,7 @@ export interface NERtcEngineAPI {
     onQsObserver(eventName: String, enabled: boolean, callback: Function): void;
     setSubscribeAudioAllowlist(uids: Array<Number>, size: number): number;
     setSubscribeAudioBlocklist(audioStreamType: number, uids: Array<Number>, size: number): number;
+    setScreenCaptureSource(source: Object, regionRect: NERtcRectangle, capture_params: NERtcScreenCaptureParameters): number;
+    isFeatureSupported(type: NERtcFeatureType): boolean;
+    switchChannelWithOptions(token: string, channelName: string, channelOptions: NERtcJoinChannelOptions): number;
 }
