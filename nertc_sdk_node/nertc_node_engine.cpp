@@ -2403,7 +2403,7 @@ NIM_SDK_NODE_API_DEF(startScreenCaptureByWindowId)
 #ifdef WIN32
         ret = rtc_engine_->startScreenCaptureByWindowId(reinterpret_cast<void *>(windowid), region_rect, param);
 #else
-        ret = rtc_engine_->startScreenCaptureByWindowId(reinterpret_cast<void *>(&windowid), region_rect, param);
+        ret = rtc_engine_->startScreenCaptureByWindowId(reinterpret_cast<void *>(windowid), region_rect, param);
 #endif
         if (param.excluded_window_list != nullptr)
         {
