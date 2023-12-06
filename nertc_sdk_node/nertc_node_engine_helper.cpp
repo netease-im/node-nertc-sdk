@@ -9,6 +9,7 @@ namespace nertc_node
 {
 napi_status nertc_engine_context_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcEngineContext& context)
 {
+    bool out_b;
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"log_level"))))
     {
         int log_level_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"log_level"))).As<Napi::Number>().Int32Value();
@@ -112,6 +113,16 @@ napi_status nertc_engine_context_obj_to_struct(const Napi::Env& env, const Napi:
     {
         int area_code_type_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"area_code_type"))).As<Napi::Number>().Int32Value();
         context.area_code_type = area_code_type_;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"video_prefer_hw_decoder"))))
+    {
+        out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"video_prefer_hw_decoder"))).As<Napi::Boolean>().Value();
+        context.video_prefer_hw_decoder =  out_b;
+    }
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"video_prefer_hw_encoder"))))
+    {
+        out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"video_prefer_hw_encoder"))).As<Napi::Boolean>().Value();
+        context.video_prefer_hw_encoder =  out_b;
     }
     return napi_ok;
 }
