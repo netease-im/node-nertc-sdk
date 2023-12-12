@@ -3675,6 +3675,30 @@ declare class NERtcEngine extends EventEmitter {
      */
     enableSpatializer(enable: boolean, apply_to_team: boolean): number;
     /**
+ * 设置空间音效的渲染模式。
+ * @since V5.4.0
+ * <pre>
+ * - 请在引擎初始化后调用此接口，且该方法在加入房间前才可调用。
+ * <b>NOTE:</b>
+ * - 该接口不支持 Linux 平台。
+ * - 请先调用 \ref  #enableSpatializer 接口启用空间音效，再调用本接口。
+ * </pre>
+ * @param {number} mode 渲染模式。
+ * <pre>
+ * - 0: 立体声
+ * - 1: 双声道低
+ * - 2: 双声道中
+ * - 3: 双声道高
+ * - 4: 仅房间音效
+ * </pre>
+ * @return {number}
+ * <pre>
+ * - 0: 方法调用成功
+ * - 其他: 调用失败
+ * </pre>
+ */
+    setLocalVideoWatermarkConfigs(enbale: boolean, type: number, config: any): number;
+    /**
      * init event handler
      * @private
      */

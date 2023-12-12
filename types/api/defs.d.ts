@@ -1025,4 +1025,5 @@ export interface NERtcEngineAPI {
     setScreenCaptureSource(source: Object, regionRect: NERtcRectangle, capture_params: NERtcScreenCaptureParameters): number;
     isFeatureSupported(type: NERtcFeatureType): boolean;
     switchChannelWithOptions(token: string, channelName: string, channelOptions: NERtcJoinChannelOptions): number;
+    setLocalVideoWatermarkConfigs(enbale: boolean, type: number, config: any): number;
 }

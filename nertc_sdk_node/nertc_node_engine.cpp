@@ -378,6 +378,7 @@ Napi::Object NertcNodeEngine::Init(Napi::Env env, Napi::Object exports) {
     
         // CUSTOM
 		SET_PROTOTYPE(enumerateScreenCaptureSourceInfo),
+        SET_PROTOTYPE(setLocalVideoWatermarkConfigs),
 
     });
 
@@ -4081,6 +4082,26 @@ NIM_SDK_NODE_API_DEF(setSpatializerRenderMode)
     LOG_F(INFO, "ret:%d", ret);
     return Napi::Number::New(env, ret);
 }
+
+NIM_SDK_NODE_API_DEF(setLocalVideoWatermarkConfigs)
+{
+    INIT_ENV
+    do
+    {
+        bool enbale;
+        napi_get_value_bool(info[0], enbale);
+        int32_t type;
+        napi_get_value_int32(info[1], type);
+        LOG_F(INFO, "enbale:%d type:%d", enbale, type);
+        nertc::NERtcVideoWatermarkConfig config;
+        Napi::Object obj = info[2].As<Napi::Object>();
+        nertc_video_water_mark_config_to_struct(env, obj, config);
+        ret = rtc_engine_->setLocalVideoWatermarkConfigs(enbale, (nertc::NERtcVideoStreamType)type, config);
+    } while (false);
+    LOG_F(INFO, "ret:%d", ret);
+    return Napi::Number::New(env, ret);
+}
+
 
 
 

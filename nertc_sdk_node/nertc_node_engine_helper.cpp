@@ -1222,6 +1222,228 @@ napi_status nertc_screen_size_info_to_struct(const Napi::Env& env, const Napi::O
     return napi_ok;    
 }
 
+napi_status nertc_video_water_mark_image_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcVideoWatermarkImageConfig& config)
+{
+    bool enable;
+    uint32_t out_u;
+    float out_f;
+    int32_t out_i;
+    std::string out;
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"image_paths"))))//list
+    {
+		Napi::Array objs = obj.Get(static_cast<napi_value>(Napi::String::New(env, "image_paths"))).As<Napi::Array>();
+        for (size_t i = 0; i < objs.Length(); i++) 
+        {
+            out = objs.Get(i).As<Napi::String>().Utf8Value();
+            memset(config.image_paths[i], 0, kNERtcMaxURILength);
+            strncpy(config.image_paths[i], out.c_str(), kNERtcMaxURILength);
+        }
+    }
+    
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_alpha"))))
+    {
+        out_f = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_alpha"))).As<Napi::Number>().FloatValue();
+        config.wm_alpha = out_f;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_width"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_width"))).As<Napi::Number>().Int32Value();
+        config.wm_width = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_height"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_height"))).As<Napi::Number>().Int32Value();
+        config.wm_height = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"offset_x"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"offset_x"))).As<Napi::Number>().Int32Value();
+        config.offset_x = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"offset_y"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"offset_y"))).As<Napi::Number>().Int32Value();
+        config.offset_y = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"fps"))))
+    {
+        out_u = obj.Get(static_cast<napi_value>(Napi::String::New(env,"fps"))).As<Napi::Number>().Uint32Value();
+        config.fps = out_u;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"loop"))))
+    {
+        enable = obj.Get(static_cast<napi_value>(Napi::String::New(env,"loop"))).As<Napi::Boolean>().Value();
+        config.loop = enable;
+    }
+
+    return napi_ok;
+}
+
+napi_status nertc_video_water_mark_txt_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcVideoWatermarkTextConfig& config)
+{
+    float out_f;
+    int32_t out_i;
+    std::string out;
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"content"))))
+    {
+		out = obj.Get(static_cast<napi_value>(Napi::String::New(env, "content"))).As<Napi::String>().Utf8Value();;
+        memset(config.content, 0, kNERtcMaxBuffLength);
+        strncpy(config.content, out.c_str(), kNERtcMaxBuffLength);
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_name"))))
+    {
+		out = obj.Get(static_cast<napi_value>(Napi::String::New(env, "font_name"))).As<Napi::String>().Utf8Value();;
+        memset(config.font_name, 0, kNERtcMaxBuffLength);
+        strncpy(config.font_name, out.c_str(), kNERtcMaxBuffLength);
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_color"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"font_color"))).As<Napi::Number>().Int32Value();
+        config.font_color = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_size"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"font_size"))).As<Napi::Number>().Int32Value();
+        config.font_size = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_color"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_color"))).As<Napi::Number>().Int32Value();
+        config.wm_color = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_alpha"))))
+    {
+        out_f = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_alpha"))).As<Napi::Number>().FloatValue();
+        config.wm_alpha = out_f;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_width"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_width"))).As<Napi::Number>().Int32Value();
+        config.wm_width = out_i;
+    }
+    
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_height"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_height"))).As<Napi::Number>().Int32Value();
+        config.wm_height = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"offset_x"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"offset_x"))).As<Napi::Number>().Int32Value();
+        config.offset_x = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"offset_y"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"offset_y"))).As<Napi::Number>().Int32Value();
+        config.offset_y = out_i;
+    }
+
+    return napi_ok;
+}
+
+napi_status nertc_video_water_mark_time_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcVideoWatermarkTimestampConfig& config)
+{
+    float out_f;
+    int32_t out_i;
+    std::string out;
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_name"))))
+    {
+		out = obj.Get(static_cast<napi_value>(Napi::String::New(env, "font_name"))).As<Napi::String>().Utf8Value();;
+        memset(config.font_name, 0, kNERtcMaxURILength);
+        strncpy(config.font_name, out.c_str(), kNERtcMaxURILength);
+    }
+    
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_color"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"font_color"))).As<Napi::Number>().Int32Value();
+        config.font_color = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_size"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"font_size"))).As<Napi::Number>().Int32Value();
+        config.font_size = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_color"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_color"))).As<Napi::Number>().Int32Value();
+        config.wm_color = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_alpha"))))
+    {
+        out_f = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_alpha"))).As<Napi::Number>().FloatValue();
+        config.wm_alpha = out_f;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_width"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_width"))).As<Napi::Number>().Int32Value();
+        config.wm_width = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_height"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_height"))).As<Napi::Number>().Int32Value();
+        config.wm_height = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"offset_x"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"offset_x"))).As<Napi::Number>().Int32Value();
+        config.offset_x = out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"offset_y"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"offset_y"))).As<Napi::Number>().Int32Value();
+        config.offset_y = out_i;
+    }
+    return napi_ok;
+}
+
+napi_status nertc_video_water_mark_config_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcVideoWatermarkConfig& config)
+{
+    int32_t out_i;
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"watermark_type"))))
+    {
+        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"watermark_type"))).As<Napi::Number>().Int32Value();
+        config.watermark_type = (nertc::NERtcVideoWatermarkConfig::NERtcWatermarkType)out_i;
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"image_watermarks")))) {
+        Napi::Object o = obj.Get(static_cast<napi_value>(Napi::String::New(env,"image_watermarks"))).As<Napi::Object>();
+        nertc_video_water_mark_image_to_struct(env, o, config.image_watermarks);
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"text_watermarks")))) {
+        Napi::Object o = obj.Get(static_cast<napi_value>(Napi::String::New(env,"text_watermarks"))).As<Napi::Object>();
+        nertc_video_water_mark_txt_to_struct(env, o, config.text_watermarks);
+    }
+
+    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"timestamp_watermark")))) {
+        Napi::Object o = obj.Get(static_cast<napi_value>(Napi::String::New(env,"timestamp_watermark"))).As<Napi::Object>();
+        nertc_video_water_mark_time_to_struct(env, o, config.timestamp_watermark);
+    }
+
+    return napi_ok;
+}
+
 napi_status nertc_spatializer_position_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcPositionInfo& config)
 {
     float out_f;
@@ -1512,6 +1734,8 @@ napi_status nertc_audio_frame_to_obj(const Napi::Env env, const nertc::NERtcAudi
     obj.Set(static_cast<napi_value>(Napi::String::New(env,"sync_timestamp")), config.sync_timestamp);
 	return napi_ok;
 }
+
+
 
 ///////////////////////////////////////////////////////
 uint8_t *ARGBToBGRA(char*src, int size)

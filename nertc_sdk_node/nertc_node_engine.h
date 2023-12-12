@@ -253,6 +253,7 @@ public:
 
     // CUSTOM
     NIM_SDK_NODE_API(enumerateScreenCaptureSourceInfo);
+    NIM_SDK_NODE_API(setLocalVideoWatermarkConfigs);
 
 
 private:

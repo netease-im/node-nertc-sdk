@@ -33,6 +33,10 @@ napi_status nertc_spatializer_position_to_struct(const Napi::Env& env, const Nap
 napi_status nertc_position_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcPositionInfo& info);
 // napi_status nertc_screen_capture_source_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcScreenCaptureSourceInfo& source);
 napi_status nertc_screen_size_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcSize& size);
+napi_status nertc_video_water_mark_image_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcVideoWatermarkImageConfig& config);
+napi_status nertc_video_water_mark_txt_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcVideoWatermarkTextConfig& config);
+napi_status nertc_video_water_mark_time_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcVideoWatermarkTimestampConfig& config);
+napi_status nertc_video_water_mark_config_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcVideoWatermarkConfig& config);
 
 
 //set object field
