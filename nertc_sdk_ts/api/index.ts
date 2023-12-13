@@ -5825,30 +5825,30 @@ class NERtcEngine extends EventEmitter {
             fire('onVirtualBackgroundSourceEnabled', enabled, reason);
         });
 
-        // /**
-        //  * 本地视频水印生效结果回调。
-        //  * @since V5.4.0
-        //  * @event NERtcEngine#onLocalVideoWatermarkState 
-        //  * @param {number} videoStreamType 对应的视频流类型
-        //  * <pre>
-        //  * - 0 主流
-        //  * - 1 辅流
-        //  * </pre>
-        //  * @param {number} state 水印状态
-        //  * <pre>
-        //  * - 0 虚拟背景开启成功。
-        //  * - 1 自定义背景图片不存在。
-        //  * - 2 自定义背景图片的图片格式无效。
-        //  * - 3 自定义背景图片的颜色格式无效。
-        //  * </pre>
-        //  * </pre>
-        //  */
-        // this.nertcEngine.onEvent('onLocalVideoWatermarkState', function (
-        //     videoStreamType: number, 
-        //     state: number
-        // ) {
-        //     fire('onLocalVideoWatermarkState', videoStreamType, state);
-        // });
+        /**
+         * 本地视频水印生效结果回调。
+         * @since V5.4.0
+         * @event NERtcEngine#onLocalVideoWatermarkState 
+         * @param {number} videoStreamType 对应的视频流类型
+         * <pre>
+         * - 0 主流
+         * - 1 辅流
+         * </pre>
+         * @param {number} state 水印状态
+         * <pre>
+         * - 0 虚拟背景开启成功。
+         * - 1 自定义背景图片不存在。
+         * - 2 自定义背景图片的图片格式无效。
+         * - 3 自定义背景图片的颜色格式无效。
+         * </pre>
+         * </pre>
+         */
+        this.nertcEngine.onEvent('onLocalVideoWatermarkState', function (
+            videoStreamType: number, 
+            state: number
+        ) {
+            fire('onLocalVideoWatermarkState', videoStreamType, state);
+        });
 
         /**
          * 权限密钥即将过期事件回调

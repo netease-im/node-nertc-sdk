@@ -1392,12 +1392,12 @@ void NertcNodeEventHandler::Node_onVirtualBackgroundSourceEnabled(bool enabled, 
     }
 }
 
-// void NertcNodeEventHandler::onLocalVideoWatermarkState(nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state)
-// {
-//     // nim_node::node_async_call::async_call([=]() {
-//     //     Node_onLocalVideoWatermarkState(videoStreamType, state);
-//     // });
-// }
+void NertcNodeEventHandler::onLocalVideoWatermarkState(nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state)
+{
+    nim_node::node_async_call::async_call([=]() {
+        Node_onLocalVideoWatermarkState(videoStreamType, state);
+    });
+}
 
 void NertcNodeEventHandler::Node_onLocalVideoWatermarkState(nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state)
 {

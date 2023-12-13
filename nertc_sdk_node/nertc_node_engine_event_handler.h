@@ -113,7 +113,7 @@ public:
     virtual void onMediaRightChange(bool is_audio_banned, bool is_video_banned) override;
     virtual void onCheckNECastAudioDriverResult(nertc::NERtcInstallCastAudioDriverResult result) override;
     virtual void onVirtualBackgroundSourceEnabled(bool enabled, nertc::NERtcVirtualBackgroundSourceStateReason reason) override;
-    // virtual void onLocalVideoWatermarkState(nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state) override;
+    virtual void onLocalVideoWatermarkState(nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state) override;
     virtual void onUserDataReceiveMessage(nertc::uid_t uid, void* pData, uint64_t size) override;
     virtual void onUserDataStart(nertc::uid_t uid) override;
     virtual void onUserDataStop(nertc::uid_t uid) override;
@@ -127,6 +127,7 @@ public:
     virtual void onFirstVideoFrameRender(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height, uint64_t elapsed) override;
     virtual void onLabFeatureCallback(const char* key, const char* param) override;
     virtual void onScreenCaptureSourceDataUpdate(nertc::NERtcScreenCaptureSourceData data) override;
+    virtual void (nertc::NERtcVideoStreamType videoStreamType, nertc::NERtcLocalVideoWatermarkState state) override;
     
 public:
     void onPullExternalAudioFrame(Napi::FunctionReference&& function, const std::shared_ptr<unsigned char>& data, uint32_t length);
