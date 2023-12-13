@@ -1306,8 +1306,10 @@ napi_status nertc_video_water_mark_txt_to_struct(const Napi::Env& env, const Nap
 
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_color"))))
     {
-        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"font_color"))).As<Napi::Number>().Int32Value();
-        config.font_color = out_i;
+        out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"font_color"))).As<Napi::String>().Utf8Value();
+        int nValude = 0;
+        sscanf(out.c_str(), "%x", &nValude);
+        config.font_color = nValude;
     }
 
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_size"))))
@@ -1318,8 +1320,10 @@ napi_status nertc_video_water_mark_txt_to_struct(const Napi::Env& env, const Nap
 
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_color"))))
     {
-        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_color"))).As<Napi::Number>().Int32Value();
-        config.wm_color = out_i;
+        out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_color"))).As<Napi::String>().Utf8Value();
+        int nValude = 0;
+        sscanf(out.c_str(), "%x", &nValude);
+        config.wm_color = nValude;
     }
 
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_alpha"))))
@@ -1369,8 +1373,10 @@ napi_status nertc_video_water_mark_time_to_struct(const Napi::Env& env, const Na
     
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_color"))))
     {
-        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"font_color"))).As<Napi::Number>().Int32Value();
-        config.font_color = out_i;
+        out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"font_color"))).As<Napi::String>().Utf8Value();
+        int nValude = 0;
+        sscanf(out.c_str(), "%x", &nValude);
+        config.font_color = nValude;
     }
 
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_size"))))
@@ -1381,8 +1387,10 @@ napi_status nertc_video_water_mark_time_to_struct(const Napi::Env& env, const Na
 
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_color"))))
     {
-        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_color"))).As<Napi::Number>().Int32Value();
-        config.wm_color = out_i;
+        out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"wm_color"))).As<Napi::String>().Utf8Value();
+        int nValude = 0;
+        sscanf(out.c_str(), "%x", &nValude);
+        config.wm_color = nValude;
     }
 
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"wm_alpha"))))
