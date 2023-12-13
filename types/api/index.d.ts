@@ -3675,28 +3675,33 @@ declare class NERtcEngine extends EventEmitter {
      */
     enableSpatializer(enable: boolean, apply_to_team: boolean): number;
     /**
- * 设置空间音效的渲染模式。
- * @since V5.4.0
- * <pre>
- * - 请在引擎初始化后调用此接口，且该方法在加入房间前才可调用。
- * <b>NOTE:</b>
- * - 该接口不支持 Linux 平台。
- * - 请先调用 \ref  #enableSpatializer 接口启用空间音效，再调用本接口。
- * </pre>
- * @param {number} mode 渲染模式。
- * <pre>
- * - 0: 立体声
- * - 1: 双声道低
- * - 2: 双声道中
- * - 3: 双声道高
- * - 4: 仅房间音效
- * </pre>
- * @return {number}
- * <pre>
- * - 0: 方法调用成功
- * - 其他: 调用失败
- * </pre>
- */
+     * 设置视频水印，水印在本地预览及发送过程中均生效
+     * @since V5.5.20
+     * <pre>
+     * - 请在引擎初始化后调用此接口，且该方法在加入房间前才可调用。
+     * <b>NOTE:</b>
+     * - 该接口不支持 Linux 平台。
+     * - 设置水印后，建议关注水印状态回调 \ref nertc::IRtcEngineEventHandlerEx::onLocalVideoWatermarkState "onLocalVideoWatermarkState"。
+     * </pre>
+     * @param {boolean} enbale 渲染模式。
+     * <pre>
+     * - true: 添加水印
+     * - false: 删除水印
+     * </pre>
+     * @param {number} type 视频流类型
+     * <pre>
+     * - 0: 主流
+     * - 1: 辅流
+     * </pre>
+     * @param {Object} config
+     * @param {number} config.watermark_type 视频水印类型。
+     * @param {Object} config.image_watermarks 图片水印。
+     * @return {number}
+     * <pre>
+     * - 0: 方法调用成功
+     * - 其他: 调用失败
+     * </pre>
+     */
     setLocalVideoWatermarkConfigs(enbale: boolean, type: number, config: any): number;
     /**
      * init event handler
