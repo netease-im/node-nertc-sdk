@@ -1300,8 +1300,7 @@ napi_status nertc_video_water_mark_txt_to_struct(const Napi::Env& env, const Nap
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_name"))))
     {
 		out = obj.Get(static_cast<napi_value>(Napi::String::New(env, "font_name"))).As<Napi::String>().Utf8Value();;
-        memset(config.font_name, 0, kNERtcMaxBuffLength);
-        strncpy(config.font_name, out.c_str(), kNERtcMaxBuffLength);
+        memcpy(config.font_name, out.c_str(), out.size());
     }
 
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_color"))))
@@ -1367,8 +1366,7 @@ napi_status nertc_video_water_mark_time_to_struct(const Napi::Env& env, const Na
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_name"))))
     {
 		out = obj.Get(static_cast<napi_value>(Napi::String::New(env, "font_name"))).As<Napi::String>().Utf8Value();;
-        memset(config.font_name, 0, kNERtcMaxURILength);
-        strncpy(config.font_name, out.c_str(), kNERtcMaxURILength);
+        memcpy(config.font_name, out.c_str(), out.size());
     }
     
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"font_color"))))

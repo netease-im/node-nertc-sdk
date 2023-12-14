@@ -58,6 +58,7 @@ public:
     NIM_SDK_NODE_API(enableLocalVideo);
     NIM_SDK_NODE_API(enableLocalVideoWithType);
     NIM_SDK_NODE_API(subscribeRemoteVideoStream);
+    NIM_SDK_NODE_API(setLocalVideoWatermarkConfigs);
 
 
     NIM_SDK_NODE_API(onVideoFrame);
@@ -253,7 +254,7 @@ public:
 
     // CUSTOM
     NIM_SDK_NODE_API(enumerateScreenCaptureSourceInfo);
-    NIM_SDK_NODE_API(setLocalVideoWatermarkConfigs);
+    
 
 
 private:

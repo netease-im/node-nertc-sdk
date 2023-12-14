@@ -4300,7 +4300,8 @@ class NERtcEngine extends events_1.EventEmitter {
      * </pre>
      */
     setLocalVideoWatermarkConfigs(enbale, type, config) {
-        return this.nertcEngine.setLocalVideoWatermarkConfigs(enbale, type, config);
+        let ret = this.nertcEngine.setLocalVideoWatermarkConfigs(enbale, type, config);
+        return ret;
     }
     // setAudioFrameObserver(enable: boolean) {
     //     const self = this;
