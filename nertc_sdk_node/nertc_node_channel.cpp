@@ -749,7 +749,7 @@ NIM_SDK_NODE_API_DEF(startScreenCaptureByDisplayId)
             //5520
             // ret = _channel->startScreenCaptureByDisplayId(reinterpret_cast<void *>(display), region_rect, param);
 #else
-            ret = _channel->startScreenCaptureByDisplayId(reinterpret_cast<void *>(display), region_rect, param);
+            ret = _channel->startScreenCaptureByDisplayId(display, region_rect, param);
 #endif
             if (param.excluded_window_list != nullptr)
             {
@@ -782,11 +782,11 @@ NIM_SDK_NODE_API_DEF(startScreenCaptureByWindowId)
                 *(wnd_list + index++) = e;
             }
         }
-        param.excluded_window_list = (nertc::source_id_t*)wnd_list;
+        param.excluded_window_list = (void **)wnd_list;
 #ifdef WIN32
-        ret = _channel->startScreenCaptureByWindowId(reinterpret_cast<void *>(windowid), region_rect, param);
+        ret = _channel->startScreenCaptureByWindowId(reinterpret_cast<void *>(&windowid), region_rect, param);
 #else
-        ret = _channel->startScreenCaptureByWindowId(reinterpret_cast<void *>(windowid), region_rect, param);
+        ret = _channel->startScreenCaptureByWindowId(reinterpret_cast<void *>(&windowid), region_rect, param);
 #endif
         if (param.excluded_window_list != nullptr)
         {
