@@ -141,8 +141,8 @@ public:
     NIM_SDK_NODE_API(setEarbackVolume);
     NIM_SDK_NODE_API(enableAudioVolumeIndication);
     NIM_SDK_NODE_API(enableAudioVolumeIndicationEx);
-    NIM_SDK_NODE_API(getScreenCaptureSources);
-    NIM_SDK_NODE_API(setScreenCaptureSource);
+    // NIM_SDK_NODE_API(getScreenCaptureSources);//5520
+    // NIM_SDK_NODE_API(setScreenCaptureSource);//5520
     NIM_SDK_NODE_API(startScreenCaptureByScreenRect);
     NIM_SDK_NODE_API(startScreenCaptureByDisplayId);
     NIM_SDK_NODE_API(startScreenCaptureByWindowId);

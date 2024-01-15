@@ -1576,26 +1576,26 @@ void NertcNodeEventHandler::Node_onLabFeatureCallback(std::string key, std::stri
     }
 }
 
-void NertcNodeEventHandler::onScreenCaptureSourceDataUpdate(nertc::NERtcScreenCaptureSourceData data)
-{
-    nim_node::node_async_call::async_call([=]() {
-        Node_onScreenCaptureSourceDataUpdate(data);
-    });
-}
+// void NertcNodeEventHandler::onScreenCaptureSourceDataUpdate(nertc::NERtcScreenCaptureSourceData data)
+// {
+//     nim_node::node_async_call::async_call([=]() {
+//         Node_onScreenCaptureSourceDataUpdate(data);
+//     });
+// }
 
-void NertcNodeEventHandler::Node_onScreenCaptureSourceDataUpdate(nertc::NERtcScreenCaptureSourceData data)
-{
-    auto it = _callbacks.find("onScreenCaptureSourceDataUpdate");
-    if (it != _callbacks.end())
-    {
-        auto function_reference = it->second;
-        auto env = function_reference->function.Env();
-        Napi::Object o = Napi::Object::New(env);
-        nertc_screen_capture_source_data_update_to_obj(env, data, o);
-        const std::vector<napi_value> args = {o};
-        function_reference->function.Call(args);
-    }
-}
+// void NertcNodeEventHandler::Node_onScreenCaptureSourceDataUpdate(nertc::NERtcScreenCaptureSourceData data)
+// {
+//     auto it = _callbacks.find("onScreenCaptureSourceDataUpdate");
+//     if (it != _callbacks.end())
+//     {
+//         auto function_reference = it->second;
+//         auto env = function_reference->function.Env();
+//         Napi::Object o = Napi::Object::New(env);
+//         nertc_screen_capture_source_data_update_to_obj(env, data, o);
+//         const std::vector<napi_value> args = {o};
+//         function_reference->function.Call(args);
+//     }
+// }
 
 void NertcNodeEventHandler::onUserJoined(nertc::uid_t uid, const char* user_name, nertc::NERtcUserJoinExtraInfo join_extra_info)
 {

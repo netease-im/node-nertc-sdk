@@ -176,8 +176,8 @@ Napi::Object NertcNodeChannel::Init(Napi::Env env, Napi::Object exports) {
         SET_PROTOTYPE(enableLocalVideoWithType),
         SET_PROTOTYPE(muteLocalVideoStream),
         SET_PROTOTYPE(muteLocalVideoStreamWithType),
-        SET_PROTOTYPE(getScreenCaptureSources),
-        SET_PROTOTYPE(setScreenCaptureSource),
+        // SET_PROTOTYPE(getScreenCaptureSources),
+        // SET_PROTOTYPE(setScreenCaptureSource),
         SET_PROTOTYPE(startScreenCaptureByScreenRect),
         SET_PROTOTYPE(startScreenCaptureByDisplayId),
         SET_PROTOTYPE(startScreenCaptureByWindowId),
@@ -542,127 +542,127 @@ NIM_SDK_NODE_API_DEF(muteLocalVideoStreamWithType)
     return Napi::Number::New(env, ret);
 }
 
-NIM_SDK_NODE_API_DEF(getScreenCaptureSources)
-{
-    INIT_ENV
-    Napi::Array infos = Napi::Array::New(env);
-    do
-    {
-        nertc::NERtcSize thumbSize = {};
-        nertc_screen_size_info_to_struct(env, info[0].As<Napi::Object>(), thumbSize);
-        nertc::NERtcSize iconSize = {};
-        nertc_screen_size_info_to_struct(env, info[1].As<Napi::Object>(), iconSize);
-        bool includeScreen = info[2].As<Napi::Boolean>().Value();
-        int count = 0;
-        auto source_list = _channel->getScreenCaptureSources(thumbSize, iconSize, includeScreen);
-        if (source_list) {
-            count = source_list->getCount();
-        }
+// NIM_SDK_NODE_API_DEF(getScreenCaptureSources)
+// {
+//     INIT_ENV
+//     Napi::Array infos = Napi::Array::New(env);
+//     do
+//     {
+//         nertc::NERtcSize thumbSize = {};
+//         nertc_screen_size_info_to_struct(env, info[0].As<Napi::Object>(), thumbSize);
+//         nertc::NERtcSize iconSize = {};
+//         nertc_screen_size_info_to_struct(env, info[1].As<Napi::Object>(), iconSize);
+//         bool includeScreen = info[2].As<Napi::Boolean>().Value();
+//         int count = 0;
+//         auto source_list = _channel->getScreenCaptureSources(thumbSize, iconSize, includeScreen);
+//         if (source_list) {
+//             count = source_list->getCount();
+//         }
 
-        for (int index = 0; index < count; index++) {
+//         for (int index = 0; index < count; index++) {
 
-            nertc::NERtcScreenCaptureSourceInfo info = source_list->getSourceInfo(index);
+//             nertc::NERtcScreenCaptureSourceInfo info = source_list->getSourceInfo(index);
             
-            Napi::Object obj = Napi::Object::New(env);
-            obj.Set(Napi::String::New(env, "type"), Napi::Number::New(env, info.type));
+//             Napi::Object obj = Napi::Object::New(env);
+//             obj.Set(Napi::String::New(env, "type"), Napi::Number::New(env, info.type));
             
-            int64_t source_id_ = reinterpret_cast<int64_t>(info.source_id);
-            obj.Set(Napi::String::New(env, "source_id"), Napi::Number::New(env, source_id_));
+//             int64_t source_id_ = reinterpret_cast<int64_t>(info.source_id);
+//             obj.Set(Napi::String::New(env, "source_id"), Napi::Number::New(env, source_id_));
             
-            std::string source_name_ = info.source_name;
-            obj.Set(Napi::String::New(env, "source_name"), Napi::String::New(env, source_name_));
+//             std::string source_name_ = info.source_name;
+//             obj.Set(Napi::String::New(env, "source_name"), Napi::String::New(env, source_name_));
 
-            { //thumb_image
-                Napi::Object thumb = Napi::Object::New(env);
-                thumb.Set(Napi::String::New(env, "length"), Napi::Number::New(env, info.thumb_image.length));
-                thumb.Set(Napi::String::New(env, "width"), Napi::Number::New(env, info.thumb_image.width));
-                thumb.Set(Napi::String::New(env, "height"), Napi::Number::New(env, info.thumb_image.height));
-                uint8_t *data = ARGBToBGRA(const_cast<char*>(info.thumb_image.buffer), info.thumb_image.length);
-                Napi::ArrayBuffer buff = Napi::ArrayBuffer::New(env, info.thumb_image.length);
-                memcpy(buff.Data(), data, info.thumb_image.length);
-                Napi::Uint8Array dataarray = Napi::TypedArrayOf<uint8_t>::New(env, buff.ByteLength(), buff, 0, napi_uint8_array);
-                thumb.Set(Napi::String::New(env, "buffer"), dataarray);
-                obj.Set(Napi::String::New(env, "thumb_image"), thumb);
-            }
+//             { //thumb_image
+//                 Napi::Object thumb = Napi::Object::New(env);
+//                 thumb.Set(Napi::String::New(env, "length"), Napi::Number::New(env, info.thumb_image.length));
+//                 thumb.Set(Napi::String::New(env, "width"), Napi::Number::New(env, info.thumb_image.width));
+//                 thumb.Set(Napi::String::New(env, "height"), Napi::Number::New(env, info.thumb_image.height));
+//                 uint8_t *data = ARGBToBGRA(const_cast<char*>(info.thumb_image.buffer), info.thumb_image.length);
+//                 Napi::ArrayBuffer buff = Napi::ArrayBuffer::New(env, info.thumb_image.length);
+//                 memcpy(buff.Data(), data, info.thumb_image.length);
+//                 Napi::Uint8Array dataarray = Napi::TypedArrayOf<uint8_t>::New(env, buff.ByteLength(), buff, 0, napi_uint8_array);
+//                 thumb.Set(Napi::String::New(env, "buffer"), dataarray);
+//                 obj.Set(Napi::String::New(env, "thumb_image"), thumb);
+//             }
 
-            {  //icon_image
-                Napi::Object icon = Napi::Object::New(env);
-                icon.Set(Napi::String::New(env, "length"), Napi::Number::New(env, info.icon_image.length));
-                icon.Set(Napi::String::New(env, "width"), Napi::Number::New(env, info.icon_image.width));
-                icon.Set(Napi::String::New(env, "height"), Napi::Number::New(env, info.icon_image.height));
-                uint8_t *data1 = ARGBToBGRA(const_cast<char*>(info.icon_image.buffer), info.icon_image.length);
-                Napi::ArrayBuffer buff1 = Napi::ArrayBuffer::New(env, info.icon_image.length);
-                memcpy(buff1.Data(), data1, info.icon_image.length);
-                Napi::Uint8Array dataarray = Napi::TypedArrayOf<uint8_t>::New(env, buff1.ByteLength(), buff1, 0, napi_uint8_array);
-                icon.Set(Napi::String::New(env, "buffer"), dataarray);
-                obj.Set(Napi::String::New(env, "icon_image"), icon);
-            }
+//             {  //icon_image
+//                 Napi::Object icon = Napi::Object::New(env);
+//                 icon.Set(Napi::String::New(env, "length"), Napi::Number::New(env, info.icon_image.length));
+//                 icon.Set(Napi::String::New(env, "width"), Napi::Number::New(env, info.icon_image.width));
+//                 icon.Set(Napi::String::New(env, "height"), Napi::Number::New(env, info.icon_image.height));
+//                 uint8_t *data1 = ARGBToBGRA(const_cast<char*>(info.icon_image.buffer), info.icon_image.length);
+//                 Napi::ArrayBuffer buff1 = Napi::ArrayBuffer::New(env, info.icon_image.length);
+//                 memcpy(buff1.Data(), data1, info.icon_image.length);
+//                 Napi::Uint8Array dataarray = Napi::TypedArrayOf<uint8_t>::New(env, buff1.ByteLength(), buff1, 0, napi_uint8_array);
+//                 icon.Set(Napi::String::New(env, "buffer"), dataarray);
+//                 obj.Set(Napi::String::New(env, "icon_image"), icon);
+//             }
 
-            std::string process_path_ = info.process_path;
-            obj.Set(Napi::String::New(env, "process_path"), Napi::String::New(env, process_path_));
+//             std::string process_path_ = info.process_path;
+//             obj.Set(Napi::String::New(env, "process_path"), Napi::String::New(env, process_path_));
 
-            std::string source_title_ = info.source_title;
-            obj.Set(Napi::String::New(env, "source_title"), Napi::String::New(env, source_title_));
+//             std::string source_title_ = info.source_title;
+//             obj.Set(Napi::String::New(env, "source_title"), Napi::String::New(env, source_title_));
             
-            obj.Set(Napi::String::New(env, "primary_monitor"), Napi::Boolean::New(env, info.primaryMonitor));
+//             obj.Set(Napi::String::New(env, "primary_monitor"), Napi::Boolean::New(env, info.primaryMonitor));
 
-            infos.Set(static_cast<napi_value>(Napi::Number::New(env, index)),  obj);
-        }
+//             infos.Set(static_cast<napi_value>(Napi::Number::New(env, index)),  obj);
+//         }
 
-        if (source_list) {
-            source_list->release();
-        }
+//         if (source_list) {
+//             source_list->release();
+//         }
        
-    } while (false);
-    LOG_F(INFO, "ret:%d", ret);
-    return infos;
-}
+//     } while (false);
+//     LOG_F(INFO, "ret:%d", ret);
+//     return infos;
+// }
 
-NIM_SDK_NODE_API_DEF(setScreenCaptureSource)
-{
-    INIT_ENV
-    do
-    {
-        int32_t out_i = 0;
-        int64_t out_64 = 0;
-        nertc::NERtcScreenCaptureSourceInfo source = {};
-        Napi::Object obj = info[0].As<Napi::Object>();
-        if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"type"))))
-        {
-            out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"type"))).As<Napi::Number>().Int32Value();
-            source.type = (nertc::NERtcScreenCaptureSourceType)out_i;
-        }
-        if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"source_id"))))
-        {
-            out_64 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"source_id"))).As<Napi::Number>().Int64Value();
-            source.source_id = (nertc::source_id_t)out_64;
-        }
+// NIM_SDK_NODE_API_DEF(setScreenCaptureSource)
+// {
+//     INIT_ENV
+//     do
+//     {
+//         int32_t out_i = 0;
+//         int64_t out_64 = 0;
+//         nertc::NERtcScreenCaptureSourceInfo source = {};
+//         Napi::Object obj = info[0].As<Napi::Object>();
+//         if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"type"))))
+//         {
+//             out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"type"))).As<Napi::Number>().Int32Value();
+//             source.type = (nertc::NERtcScreenCaptureSourceType)out_i;
+//         }
+//         if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"source_id"))))
+//         {
+//             out_64 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"source_id"))).As<Napi::Number>().Int64Value();
+//             source.source_id = (nertc::source_id_t)out_64;
+//         }
        
 
-        nertc::NERtcRectangle region_rect = {};
-        nertc::NERtcScreenCaptureParameters capture_params = {};
-        nertc_rectangle_obj_to_struct(env, info[1].As<Napi::Object>(), region_rect);
-        std::set<int64_t> vsWindowId;
-        nertc_screen_capture_params_obj_to_struct(env, info[2].As<Napi::Object>(), capture_params, vsWindowId);
-        intptr_t* wnd_list = nullptr;
-        int index = 0;
-        if (!vsWindowId.empty()) {
-            wnd_list = new intptr_t[vsWindowId.size()];
-            for (auto e : vsWindowId) {
-                *(wnd_list + index++) = e;
-            }
-        }
-        capture_params.excluded_window_list = (nertc::source_id_t*)wnd_list;
-        ret = _channel->setScreenCaptureSource(source, region_rect, capture_params);
-        if (capture_params.excluded_window_list != nullptr)
-        {
-            delete[] capture_params.excluded_window_list;
-            capture_params.excluded_window_list = nullptr;
-        }
-    } while (false);
-    LOG_F(INFO, "ret:%d", ret);
-    return Napi::Number::New(env, ret);
-}
+//         nertc::NERtcRectangle region_rect = {};
+//         nertc::NERtcScreenCaptureParameters capture_params = {};
+//         nertc_rectangle_obj_to_struct(env, info[1].As<Napi::Object>(), region_rect);
+//         std::set<int64_t> vsWindowId;
+//         nertc_screen_capture_params_obj_to_struct(env, info[2].As<Napi::Object>(), capture_params, vsWindowId);
+//         intptr_t* wnd_list = nullptr;
+//         int index = 0;
+//         if (!vsWindowId.empty()) {
+//             wnd_list = new intptr_t[vsWindowId.size()];
+//             for (auto e : vsWindowId) {
+//                 *(wnd_list + index++) = e;
+//             }
+//         }
+//         capture_params.excluded_window_list = (nertc::source_id_t*)wnd_list;
+//         ret = _channel->setScreenCaptureSource(source, region_rect, capture_params);
+//         if (capture_params.excluded_window_list != nullptr)
+//         {
+//             delete[] capture_params.excluded_window_list;
+//             capture_params.excluded_window_list = nullptr;
+//         }
+//     } while (false);
+//     LOG_F(INFO, "ret:%d", ret);
+//     return Napi::Number::New(env, ret);
+// }
 
 NIM_SDK_NODE_API_DEF(startScreenCaptureByScreenRect)
 {
@@ -717,35 +717,37 @@ NIM_SDK_NODE_API_DEF(startScreenCaptureByDisplayId)
         }
         param.excluded_window_list = (nertc::source_id_t*)wnd_list;
 #ifdef WIN32
-            // RECT rc = _windows_helper->getCachedRect(display);
-            // if (rc.bottom == 0 && rc.left == 0 && rc.right == 0 && rc.top == 0)
-            // {
-            //     WindowsHelpers::CaptureTargetInfoList list;
-            //     _windows_helper->getCaptureWindowList(&list, 1);
-            //     for (auto w : list)
-            //     {
-            //         if (std::to_string(display) == w.display_id)
-            //         {
-            //             rc = w.rc;
-            //             _windows_helper->updateCachedInfos(display, rc);
-            //             break;
-            //         }
-            //     }
-            // }
-            // if (rc.bottom != 0 || rc.left != 0 || rc.right != 0 || rc.top != 0)
-            // {
-            //     nertc::NERtcRectangle screen_rect = {};
-            //     screen_rect.x = rc.left;
-            //     screen_rect.y = rc.top;
-            //     screen_rect.width = rc.right - rc.left;
-            //     screen_rect.height = rc.bottom - rc.top;
-            //     ret = _channel->startScreenCaptureByScreenRect(screen_rect, region_rect, param);
-            // }
-            // else
-            // {
-            //     ret = -100;
-            // }
-            ret = _channel->startScreenCaptureByDisplayId(reinterpret_cast<void *>(display), region_rect, param);
+            RECT rc = _windows_helper->getCachedRect(display);
+            if (rc.bottom == 0 && rc.left == 0 && rc.right == 0 && rc.top == 0)
+            {
+                WindowsHelpers::CaptureTargetInfoList list;
+                _windows_helper->getCaptureWindowList(&list, 1);
+                for (auto w : list)
+                {
+                    if (std::to_string(display) == w.display_id)
+                    {
+                        rc = w.rc;
+                        _windows_helper->updateCachedInfos(display, rc);
+                        break;
+                    }
+                }
+            }
+            if (rc.bottom != 0 || rc.left != 0 || rc.right != 0 || rc.top != 0)
+            {
+                nertc::NERtcRectangle screen_rect = {};
+                screen_rect.x = rc.left;
+                screen_rect.y = rc.top;
+                screen_rect.width = rc.right - rc.left;
+                screen_rect.height = rc.bottom - rc.top;
+                ret = _channel->startScreenCaptureByScreenRect(screen_rect, region_rect, param);
+            }
+            else
+            {
+                ret = -100;
+            }
+
+            //5520
+            // ret = _channel->startScreenCaptureByDisplayId(reinterpret_cast<void *>(display), region_rect, param);
 #else
             ret = _channel->startScreenCaptureByDisplayId(reinterpret_cast<void *>(display), region_rect, param);
 #endif

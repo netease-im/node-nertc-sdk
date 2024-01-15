@@ -126,7 +126,7 @@ public:
     virtual void onLocalVideoRenderSizeChanged(nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height) override;
     virtual void onFirstVideoFrameRender(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height, uint64_t elapsed) override;
     virtual void onLabFeatureCallback(const char* key, const char* param) override;
-    virtual void onScreenCaptureSourceDataUpdate(nertc::NERtcScreenCaptureSourceData data) override;
+    // virtual void onScreenCaptureSourceDataUpdate(nertc::NERtcScreenCaptureSourceData data) override;
     
 public:
     void onPullExternalAudioFrame(Napi::FunctionReference&& function, const std::shared_ptr<unsigned char>& data, uint32_t length);
@@ -205,7 +205,7 @@ private:
     void Node_onLocalVideoRenderSizeChanged(nertc::NERtcVideoStreamType type, uint32_t width, uint32_t height);
     void Node_onFirstVideoFrameRender(nertc::NERtcVideoStreamType type, nertc::uid_t uid, uint32_t width, uint32_t height, uint64_t elapsed);
     void Node_onLabFeatureCallback(std::string key, std::string param);
-    void Node_onScreenCaptureSourceDataUpdate(nertc::NERtcScreenCaptureSourceData data);
+    // void Node_onScreenCaptureSourceDataUpdate(nertc::NERtcScreenCaptureSourceData data);
     
     
 };

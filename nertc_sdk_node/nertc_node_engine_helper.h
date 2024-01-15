@@ -32,7 +32,7 @@ napi_status nertc_spatializer_room_property_to_struct(const Napi::Env& env, cons
 napi_status nertc_spatializer_position_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcPositionInfo& config);
 napi_status nertc_position_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcPositionInfo& info);
 // napi_status nertc_screen_capture_source_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcScreenCaptureSourceInfo& source);
-napi_status nertc_screen_size_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcSize& size);
+// napi_status nertc_screen_size_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcSize& size);
 napi_status nertc_video_water_mark_image_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcVideoWatermarkImageConfig& config);
 napi_status nertc_video_water_mark_txt_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcVideoWatermarkTextConfig& config);
 napi_status nertc_video_water_mark_time_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcVideoWatermarkTimestampConfig& config);
@@ -49,7 +49,7 @@ napi_status nertc_network_quality_to_obj(const Napi::Env env, const nertc::NERtc
 napi_status nertc_audio_volume_info_to_obj(const Napi::Env env, const nertc::NERtcAudioVolumeInfo& config,  Napi::Object& obj);
 napi_status nertc_lastmile_probe_result_to_obj(const Napi::Env env, const nertc::NERtcLastmileProbeResult& config,  Napi::Object& obj);
 napi_status nertc_user_join_extra_info_to_obj(const Napi::Env env, const nertc::NERtcUserJoinExtraInfo& join_extra_info,  Napi::Object& obj);
-napi_status nertc_screen_capture_source_data_update_to_obj(const Napi::Env env, const nertc::NERtcScreenCaptureSourceData& data,  Napi::Object& obj);
+// napi_status nertc_screen_capture_source_data_update_to_obj(const Napi::Env env, const nertc::NERtcScreenCaptureSourceData& data,  Napi::Object& obj);
 
 
 // channel helper

@@ -267,31 +267,31 @@ napi_status nertc_screen_capture_params_obj_to_struct(const Napi::Env& env, cons
             }
         }
     }
-    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"enable_high_performance"))))
-    {
-        out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"enable_high_performance"))).As<Napi::Boolean>().Value();
-        params.enable_high_performance = out_b;
-    }
-    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"enable_high_light"))))
-    {
-        out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"enable_high_light"))).As<Napi::Boolean>().Value();
-        params.enable_high_light = out_b;
-    }
-    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"high_light_width"))))
-    {
-        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"high_light_width"))).As<Napi::Number>().Int32Value();
-        params.high_light_width = out_i;
-    }
-    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"high_light_color"))))
-    {
-        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"high_light_color"))).As<Napi::Number>().Int32Value();
-        params.high_light_color = out_i;
-    }
-    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"high_light_length"))))
-    {
-        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"high_light_length"))).As<Napi::Number>().Int32Value();
-        params.high_light_length = out_i;
-    }
+    // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"enable_high_performance"))))
+    // {
+    //     out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"enable_high_performance"))).As<Napi::Boolean>().Value();
+    //     params.enable_high_performance = out_b;
+    // }
+    // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"enable_high_light"))))
+    // {
+    //     out_b = obj.Get(static_cast<napi_value>(Napi::String::New(env,"enable_high_light"))).As<Napi::Boolean>().Value();
+    //     params.enable_high_light = out_b;
+    // }
+    // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"high_light_width"))))
+    // {
+    //     out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"high_light_width"))).As<Napi::Number>().Int32Value();
+    //     params.high_light_width = out_i;
+    // }
+    // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"high_light_color"))))
+    // {
+    //     out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"high_light_color"))).As<Napi::Number>().Int32Value();
+    //     params.high_light_color = out_i;
+    // }
+    // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"high_light_length"))))
+    // {
+    //     out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"high_light_length"))).As<Napi::Number>().Int32Value();
+    //     params.high_light_length = out_i;
+    // }
     return napi_ok;
 }
 
@@ -967,28 +967,28 @@ napi_status nertc_join_channel_option_to_struct(const Napi::Env& env, const Napi
         ptr[out.length()] = '\0';  
         config.permission_key = ptr;
     }
-    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"range_audio_info"))))
-    {
-        Napi::Object so = obj.Get(static_cast<napi_value>(Napi::String::New(env,"range_audio_info"))).As<Napi::Object>();
+    // if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"range_audio_info"))))
+    // {
+    //     Napi::Object so = obj.Get(static_cast<napi_value>(Napi::String::New(env,"range_audio_info"))).As<Napi::Object>();
         
-        if(so.Has(static_cast<napi_value>(Napi::String::New(env,"team_id"))))
-        {
-            int team_id_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"team_id"))).As<Napi::Number>().Int32Value();
-            config.range_audio_info.team_id = team_id_;
-        }
+    //     if(so.Has(static_cast<napi_value>(Napi::String::New(env,"team_id"))))
+    //     {
+    //         int team_id_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"team_id"))).As<Napi::Number>().Int32Value();
+    //         config.range_audio_info.team_id = team_id_;
+    //     }
     
-        if(so.Has(static_cast<napi_value>(Napi::String::New(env,"mode"))))
-        {
-            int mode_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"mode"))).As<Napi::Number>().Int32Value();
-            config.range_audio_info.mode = (nertc::NERtcRangeAudioMode)mode_;
-        }
+    //     if(so.Has(static_cast<napi_value>(Napi::String::New(env,"mode"))))
+    //     {
+    //         int mode_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"mode"))).As<Napi::Number>().Int32Value();
+    //         config.range_audio_info.mode = (nertc::NERtcRangeAudioMode)mode_;
+    //     }
     
-        if(so.Has(static_cast<napi_value>(Napi::String::New(env,"audible_distance"))))
-        {
-            int audible_distance_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"audible_distance"))).As<Napi::Number>().Int32Value();
-            config.range_audio_info.audible_distance = audible_distance_;
-        }
-    }
+    //     if(so.Has(static_cast<napi_value>(Napi::String::New(env,"audible_distance"))))
+    //     {
+    //         int audible_distance_ = obj.Get(static_cast<napi_value>(Napi::String::New(env,"audible_distance"))).As<Napi::Number>().Int32Value();
+    //         config.range_audio_info.audible_distance = audible_distance_;
+    //     }
+    // }
     return napi_ok;
 }
 
@@ -1085,8 +1085,10 @@ napi_status nertc_virtual_background_option_to_struct(const Napi::Env& env, cons
 
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"color"))))
     {
-        out_32 = obj.Get(static_cast<napi_value>(Napi::String::New(env,"color"))).As<Napi::Number>().Int32Value();
-        config.color = out_32;
+        out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"color"))).As<Napi::String>().Utf8Value();
+        uint32_t nValude = 0;
+        sscanf(out.c_str(), "%x", &nValude);
+        config.color = nValude;
     }
 
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"source"))))
@@ -1205,22 +1207,22 @@ napi_status nertc_position_info_to_struct(const Napi::Env& env, const Napi::Obje
 //     return napi_ok;
 // }
 
-napi_status nertc_screen_size_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcSize& size)
-{
-    int32_t out_i;
-    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"width"))))
-    {
-        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"width"))).As<Napi::Number>().Int32Value();
-        size.width = out_i;
-    }
+// napi_status nertc_screen_size_info_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcSize& size)
+// {
+//     int32_t out_i;
+//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"width"))))
+//     {
+//         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"width"))).As<Napi::Number>().Int32Value();
+//         size.width = out_i;
+//     }
 
-    if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"height"))))
-    {
-        out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"height"))).As<Napi::Number>().Int32Value();
-        size.height = out_i;
-    }
-    return napi_ok;    
-}
+//     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"height"))))
+//     {
+//         out_i = obj.Get(static_cast<napi_value>(Napi::String::New(env,"height"))).As<Napi::Number>().Int32Value();
+//         size.height = out_i;
+//     }
+//     return napi_ok;    
+// }
 
 napi_status nertc_video_water_mark_image_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::NERtcVideoWatermarkImageConfig& config)
 {
@@ -1604,21 +1606,21 @@ napi_status nertc_user_join_extra_info_to_obj(const Napi::Env env, const nertc::
     return napi_ok;
 }
 
-napi_status nertc_screen_capture_source_data_update_to_obj(const Napi::Env env, const nertc::NERtcScreenCaptureSourceData& data,  Napi::Object& obj)
-{
-    obj.Set(static_cast<napi_value>(Napi::String::New(env,"type")), (int32_t)data.type);
-    int64_t source_id_ = reinterpret_cast<int64_t>(data.source_id);
-    obj.Set(Napi::String::New(env, "source_id"), Napi::Number::New(env, source_id_));
-    obj.Set(Napi::String::New(env, "status"), Napi::Number::New(env, data.status));
-    obj.Set(Napi::String::New(env, "action"), Napi::Number::New(env, data.action));
+// napi_status nertc_screen_capture_source_data_update_to_obj(const Napi::Env env, const nertc::NERtcScreenCaptureSourceData& data,  Napi::Object& obj)
+// {
+//     obj.Set(static_cast<napi_value>(Napi::String::New(env,"type")), (int32_t)data.type);
+//     int64_t source_id_ = reinterpret_cast<int64_t>(data.source_id);
+//     obj.Set(Napi::String::New(env, "source_id"), Napi::Number::New(env, source_id_));
+//     obj.Set(Napi::String::New(env, "status"), Napi::Number::New(env, data.status));
+//     obj.Set(Napi::String::New(env, "action"), Napi::Number::New(env, data.action));
     
-    Napi::Object o1 = Napi::Object::New(env);
-    nertc::NERtcRectangle capture_rect = data.capture_rect;
-    nertc_rectangle_obj_to_struct(env, o1, capture_rect);
-    obj.Set(Napi::String::New(env, "capture_rect"), o1);
-    obj.Set(Napi::String::New(env, "level"), Napi::Number::New(env, data.level));
-    return napi_ok;
-}
+//     Napi::Object o1 = Napi::Object::New(env);
+//     nertc::NERtcRectangle capture_rect = data.capture_rect;
+//     nertc_rectangle_obj_to_struct(env, o1, capture_rect);
+//     obj.Set(Napi::String::New(env, "capture_rect"), o1);
+//     obj.Set(Napi::String::New(env, "level"), Napi::Number::New(env, data.level));
+//     return napi_ok;
+// }
 
 //channnel
 napi_status nertc_camera_capture_obj_to_struct(const Napi::Env env, Napi::Object& obj, nertc::NERtcCameraCaptureConfig& config)
@@ -1654,6 +1656,7 @@ napi_status nertc_uid_list_to_struct(const Napi::Env& env, const Napi::Object& o
 
 napi_status nertc_virtual_backgroup_source_obj_to_struct(const Napi::Env& env, const Napi::Object& obj, nertc::VirtualBackgroundSource& config)
 {
+    std::string out;
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"background_source_type"))))
     {
         int iBgSourceType = obj.Get(static_cast<napi_value>(Napi::String::New(env,"background_source_type"))).As<Napi::Number>().Int32Value();
@@ -1661,8 +1664,10 @@ napi_status nertc_virtual_backgroup_source_obj_to_struct(const Napi::Env& env, c
     }
     if(obj.Has(static_cast<napi_value>(Napi::String::New(env,"color"))))
     {
-        int iColor = obj.Get(static_cast<napi_value>(Napi::String::New(env,"color"))).As<Napi::Number>().Int32Value();
-        config.color =  iColor;
+        out = obj.Get(static_cast<napi_value>(Napi::String::New(env,"color"))).As<Napi::String>().Utf8Value();
+        uint32_t nValude = 0;
+        sscanf(out.c_str(), "%x", &nValude);
+        config.color =  nValude;
     }
 
     //todo source
