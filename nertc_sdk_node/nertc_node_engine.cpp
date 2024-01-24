@@ -629,10 +629,10 @@ NIM_SDK_NODE_API_DEF(subscribeRemoteVideoStream)
     do
     {
         // nertc::uid_t uid;
-        unsigned int uid;
+        int64_t uid;
         uint32_t type;
         bool sub;
-        napi_get_value_uint32(info[0], uid);
+        napi_get_value_int64(info[0], uid);
         napi_get_value_uint32(info[1], type);
         napi_get_value_bool(info[2], sub);
         LOG_F(INFO, "uid:%llu, type:%d, sub:%d", uid, type, sub);
@@ -782,8 +782,8 @@ NIM_SDK_NODE_API_DEF(subscribeRemoteVideoSubStream)
     {
         bool sub;
         // nertc::uid_t uid;
-        unsigned int uid;
-        napi_get_value_uint32(info[0], uid);
+        int64_t uid;
+        napi_get_value_int64(info[0], uid);
         napi_get_value_bool(info[1], sub);
         LOG_F(INFO, "uid:%llu, sub:%d", uid, sub);
         ret = rtc_engine_->subscribeRemoteVideoSubStream(uid, sub);
@@ -1500,9 +1500,9 @@ NIM_SDK_NODE_API_DEF(subscribeRemoteAudioStream)
     INIT_ENV
     do
     {
-        uint32_t uid;
+        int64_t uid;
         bool enable;
-        napi_get_value_uint32(info[0], uid);
+        napi_get_value_int64(info[0], uid);
         napi_get_value_bool(info[1], enable);
         LOG_F(INFO, "uid:%llu enable:%d", uid, enable);
         ret = rtc_engine_->subscribeRemoteAudioStream(uid, enable);
@@ -3256,9 +3256,9 @@ NIM_SDK_NODE_API_DEF(subscribeRemoteSubStreamAudio)
     INIT_ENV
     do
     {
-        uint32_t uid;
+        int64_t uid;
         bool subscribe;
-        napi_get_value_uint32(info[0], uid);
+        napi_get_value_int64(info[0], uid);
         napi_get_value_bool(info[1], subscribe);
         LOG_F(INFO, "uid:%llu subscribe:%d", uid, subscribe);
         ret = rtc_engine_->subscribeRemoteSubStreamAudio(uid, subscribe);
@@ -3880,9 +3880,9 @@ NIM_SDK_NODE_API_DEF(subscribeRemoteData)
     INIT_ENV
     do
     {
-        unsigned int uid;
+        int64_t uid;
         bool sub = false;
-        napi_get_value_uint32(info[0], uid);
+        napi_get_value_int64(info[0], uid);
         napi_get_value_bool(info[1], sub);
         ret = rtc_engine_->subscribeRemoteData(uid, sub);
     } while (false);
