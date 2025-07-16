@@ -52,7 +52,7 @@ function removeNativeSdk() {
 }
 
 function copySDKToBinaryDir() {
-  const temp = glob.sync('/**/+(*.dll|*.framework|*.dylib|*.so|*.node)', {
+  const temp = glob.sync('/**/+(*.dll|*.framework|*.xcframework|*.dylib|*.so|*.node)', {
     root: sdk_path
   })
   const files = []
