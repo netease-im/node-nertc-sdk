@@ -76,7 +76,7 @@ module.exports = ({
         copyFiles(headersDirectory, path.join(extractPath, 'api'), '.h')
       } else if (platform === 'darwin') {
         let frameworkDirectory = ''
-        const marchFramework = new RegExp(/.+\.framework|\.driver|\.a|\.sh$/)
+        const marchFramework = new RegExp(/.+\.framework|\.xcframework|\.driver|\.a|\.sh$/)
         const exceptRegex = new RegExp('/.+sdk\/demo/')
         function readDirectory(rootDir, arch) {
           const dirs = fs.readdirSync(rootDir)

@@ -8,7 +8,6 @@
         "<!@(node -p \"require('node-addon-api').include\")",
         './nertc_sdk',
         './nertc_sdk/api',
-        './nertc_sdk/nertc_sdk_Mac.xcframework/macos-arm64_x86_64/nertc_sdk_Mac.framework/Headers/',
         './shared',
         './shared/libyuv/include',
       ],
@@ -197,34 +196,51 @@
             }],
             'defines': [
             ],
-            'mac_framework_dirs': [
-              '../nertc_sdk/'
+            'include_dirs': [
+              './nertc_sdk/nertc_sdk_Mac.xcframework/macos-arm64_x86_64/nertc_sdk_Mac.framework/Headers/'
             ],
             'library_dirs': [
-              '../nertc_sdk/'
+              './nertc_sdk/nertc_sdk_Mac.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcAiDenoise.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcAiHowling.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcAudio3D.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcBeauty.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcFaceDetect.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcFaceEnhance.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcnn.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcPersonSegment.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcScreenShareEnhance.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcSuperResolution.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcVideoDenoise.xcframework/macos-arm64_x86_64'
+            ],
+            'mac_framework_dirs': [
+              './nertc_sdk/nertc_sdk_Mac.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcAiDenoise.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcAiHowling.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcAudio3D.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcBeauty.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcFaceDetect.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcFaceEnhance.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcnn.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcPersonSegment.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcScreenShareEnhance.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcSuperResolution.xcframework/macos-arm64_x86_64',
+              './nertc_sdk/NERtcVideoDenoise.xcframework/macos-arm64_x86_64'
             ],
             'link_settings': {
               'libraries': [
-                'nertc_sdk_Mac.xcframework',
-                'NERtcAiDenoise.xcframework',
-                'NERtcAiHowling.xcframework',
-                'NERtcAudio3D.xcframework',
-                'NERtcBeauty.xcframework',
-                'NERtcFaceDetect.xcframework',
-                'NERtcFaceEnhance.xcframework',
-                'NERtcnn.xcframework',
-                'NERtcPersonSegment.xcframework',
-                'NERtcScreenShareEnhance.xcframework',
-                'NERtcSuperResolution.xcframework',
-                'NERtcVideoDenoise.xcframework',
-                # 'Foundation.framework',
-                # 'nertc_sdk_Mac.framework',
-                # 'NEFundation_Mac.framework',
-                # 'NERtcBeauty.framework',
-                # 'NERtcFaceDetect.framework',
-                # 'NERtcnn.framework',
-                # 'NERtcPersonSegment.framework',
-                #'libNERTCPrivilegedTask.a',
+                'nertc_sdk_Mac.framework',
+                'NERtcAiDenoise.framework',
+                'NERtcAiHowling.framework',
+                'NERtcAudio3D.framework',
+                'NERtcBeauty.framework',
+                'NERtcFaceDetect.framework',
+                'NERtcFaceEnhance.framework',
+                'NERtcnn.framework',
+                'NERtcPersonSegment.framework',
+                'NERtcScreenShareEnhance.framework',
+                'NERtcSuperResolution.framework',
+                'NERtcVideoDenoise.framework',
                 '-Wl,-rpath,@loader_path',
                 '-ObjC'
               ]
@@ -242,16 +258,45 @@
             ],
             'xcode_settings': {
               'ARCHS': [ 'x86_64', 'arm64' ],
-              'MACOSX_DEPLOYMENT_TARGET': '10.14',
-              'EXCUTABLE_EXTENSION': 'node',
+              'MACOSX_DEPLOYMENT_TARGET': '10.15',
+              'EXECUTABLE_EXTENSION': 'node',
               'FRAMEWORK_SEARCH_PATHS': [
-                './nertc_sdk/bin/darwin'
+                '$(inherited)',
+                '$(SRCROOT)/build/Release',
+                '$(SRCROOT)/build/Release/nertc_sdk_Mac.xcframework/macos-arm64_x86_64',
+                '$(SRCROOT)/build/Release/NERtcAiDenoise.xcframework/macos-arm64_x86_64',
+                '$(SRCROOT)/build/Release/NERtcAiHowling.xcframework/macos-arm64_x86_64',
+                '$(SRCROOT)/build/Release/NERtcAudio3D.xcframework/macos-arm64_x86_64',
+                '$(SRCROOT)/build/Release/NERtcBeauty.xcframework/macos-arm64_x86_64',
+                '$(SRCROOT)/build/Release/NERtcFaceDetect.xcframework/macos-arm64_x86_64',
+                '$(SRCROOT)/build/Release/NERtcFaceEnhance.xcframework/macos-arm64_x86_64',
+                '$(SRCROOT)/build/Release/NERtcnn.xcframework/macos-arm64_x86_64',
+                '$(SRCROOT)/build/Release/NERtcPersonSegment.xcframework/macos-arm64_x86_64',
+                '$(SRCROOT)/build/Release/NERtcScreenShareEnhance.xcframework/macos-arm64_x86_64',
+                '$(SRCROOT)/build/Release/NERtcSuperResolution.xcframework/macos-arm64_x86_64',
+                '$(SRCROOT)/build/Release/NERtcVideoDenoise.xcframework/macos-arm64_x86_64'
               ],
               'DEBUG_INFORMATION_FORMAT': 'dwarf-with-dsym',
               'OTHER_CFLAGS': [
+                '-fvisibility=hidden'
               ],
+              'CODE_SIGN_IDENTITY': '-',
+              'CODE_SIGNING_REQUIRED': 'NO',
+              'CODE_SIGNING_ALLOWED': 'NO',
               "LD_RUNPATH_SEARCH_PATHS": [
-                 "@loader_path"
+                 "@loader_path",
+                 "@loader_path/nertc_sdk_Mac.xcframework/macos-arm64_x86_64",
+                 "@loader_path/NERtcAiDenoise.xcframework/macos-arm64_x86_64",
+                 "@loader_path/NERtcAiHowling.xcframework/macos-arm64_x86_64",
+                 "@loader_path/NERtcAudio3D.xcframework/macos-arm64_x86_64",
+                 "@loader_path/NERtcBeauty.xcframework/macos-arm64_x86_64",
+                 "@loader_path/NERtcFaceDetect.xcframework/macos-arm64_x86_64",
+                 "@loader_path/NERtcFaceEnhance.xcframework/macos-arm64_x86_64",
+                 "@loader_path/NERtcnn.xcframework/macos-arm64_x86_64",
+                 "@loader_path/NERtcPersonSegment.xcframework/macos-arm64_x86_64",
+                 "@loader_path/NERtcScreenShareEnhance.xcframework/macos-arm64_x86_64",
+                 "@loader_path/NERtcSuperResolution.xcframework/macos-arm64_x86_64",
+                 "@loader_path/NERtcVideoDenoise.xcframework/macos-arm64_x86_64"
                ]
             }
           }

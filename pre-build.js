@@ -80,8 +80,13 @@ function build(arch) {
   shell.exec(`${gypExec} clean`, {silent});
 
   if(platform === 'darwin') {
-    shell.exec(`${gypExec} configure -- -f xcode`, {silent});
-    shell.exec(`xcodebuild -project ./build/binding.xcodeproj -configuration Release`, {silent});
+    const command = [`${gypExec} configure`];
+    if (arch) {
+      command.push(`--arch=${arch}`);
+    }
+    command.push('-- -f xcode');
+    shell.exec(command.join(' '), {silent});
+    shell.exec(`xcodebuild -project ./build/binding.xcodeproj -configuration Release -arch x86_64 -arch arm64`, {silent});
   } else {
     const command = [`${gypExec} configure`];
     command.push(`--arch=${arch}`);
