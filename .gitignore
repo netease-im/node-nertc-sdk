@@ -16,3 +16,4 @@ out/
 build/
 nertc_sdk/
 *.zip
+*.gz
