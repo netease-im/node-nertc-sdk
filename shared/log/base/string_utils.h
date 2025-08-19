@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cstring>
 
 std::string ToHexString(uint8_t* data, size_t length);
 

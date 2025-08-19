@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstring>
 
 #include "ring_buffer_mapping_file.h"
 

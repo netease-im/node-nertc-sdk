@@ -4,6 +4,7 @@
 #include <mutex>
 #include <string>
 #include <functional>
+#include <condition_variable>
 
 namespace nelog {
 class RingBufferMappingFile {
