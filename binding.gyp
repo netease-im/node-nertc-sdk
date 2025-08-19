@@ -16,11 +16,8 @@
       ],
       'defines': [
         "NAPI_DISABLE_CPP_EXCEPTIONS",
-        # 'NAPI_CPP_EXCEPTIONS',
         "NODE_ADDON_API_DISABLE_DEPRECATED",
-        "NAPI_VERSION=4", # <=electron10.x  = 4 else 6
-        # "NAPI_EXPERIMENTAL",
-        # "NAPI_VERSION=6",
+        "NAPI_VERSION=4"
       ],
       "sources": [
           "./nertc_sdk_node/addon.cc", 
@@ -80,23 +77,7 @@
           './shared/libyuv/source/scale_neon64.cc',
           './shared/libyuv/source/rotate_neon.cc',
           './shared/libyuv/source/rotate_neon64.cc',
-          './shared/util/logger.h',
-          './shared/util/logger.cpp',
-          './shared/log/logging/logging.h',
-          './shared/log/logging/logging.cc',
-          './shared/log/logging/log_file_stream/log_file_stream.h',
-          './shared/log/logging/log_file_stream/log_file_stream.cc',
-          './shared/log/logging/log_file_stream/ring_buffer_mapping_file/ring_buffer_mapping_file.h',
-          './shared/log/base/string_utils.h',
-          './shared/log/base/string_utils.cc',
-          './shared/log/base/file_utils.cc',
-          './shared/log/base/file_utils.h',
-          './shared/log/base/synchronization/rw_lock_wrapper.h',
-          './shared/log/base/synchronization/rw_lock_wrapper.cc',
-          './shared/log/base/file/platform_file.h',
-          './shared/log/base/file/platform_file.cc',
-          './shared/log/base/file/file.h',
-          './shared/log/base/file/file.cc'
+
       ],
       'conditions': [
         [
@@ -142,12 +123,28 @@
               './shared/util/windows_helper.cpp',   
               './shared/util/string_util.h',
               './shared/util/string_util.cpp',    
-              './shared/util/ConvertUTF.c',
-              './shared/util/ConvertUTF.h',
-              './shared/log/logging/log_file_stream/ring_buffer_mapping_file/ring_buffer_mapping_file_win.cc',
-              './shared/log/base/synchronization/rw_lock_win.h',
-              './shared/log/base/synchronization/rw_lock_win.cc',
-              './shared/log/base/file/file_win.cc'
+                             './shared/util/ConvertUTF.c',
+               './shared/util/ConvertUTF.h',
+               './shared/log/logging/logging.cc',
+               './shared/log/logging/log_file_stream/log_file_stream.h',
+               './shared/log/logging/log_file_stream/log_file_stream.cc',
+               './shared/log/logging/log_file_stream/ring_buffer_mapping_file/ring_buffer_mapping_file.h',
+               './shared/log/logging/log_file_stream/ring_buffer_mapping_file/ring_buffer_mapping_file_win.cc',
+               './shared/log/base/string_utils.h',
+               './shared/log/base/string_utils.cc',
+               './shared/log/base/file_utils.cc',
+               './shared/log/base/file_utils.h',
+               './shared/log/base/synchronization/rw_lock_wrapper.h',
+               './shared/log/base/synchronization/rw_lock_wrapper.cc',
+               './shared/log/base/synchronization/rw_lock_win.h',
+               './shared/log/base/synchronization/rw_lock_win.cc',
+               './shared/log/base/file/platform_file.h',
+               './shared/log/base/file/platform_file.cc',
+               './shared/log/base/file/file.h',
+               './shared/log/base/file/file.cc',
+               './shared/log/base/file/file_win.cc',
+               './shared/util/logger.h',
+               './shared/util/logger.cpp'
             ],
             'configurations': {
               'Release': {
@@ -245,17 +242,33 @@
                 '-ObjC'
               ]
             },
-            'sources': [
-              './nertc_sdk_node/NERTCPrivilegedTask.h',
-              './shared/libyuv/source/compare_gcc.cc',
-              './shared/libyuv/source/rotate_gcc.cc',
-              './shared/libyuv/source/row_gcc.cc',
-              './shared/libyuv/source/scale_gcc.cc',
-              './shared/log/logging/log_file_stream/ring_buffer_mapping_file/ring_buffer_mapping_file_posix.cc',
-              './shared/log/base/synchronization/rw_lock_posix.h',
-              './shared/log/base/synchronization/rw_lock_posix.cc',
-              './shared/log/base/file/file_posix.cc',
-            ],
+                         'sources': [
+               './nertc_sdk_node/NERTCPrivilegedTask.h',
+               './shared/libyuv/source/compare_gcc.cc',
+               './shared/libyuv/source/rotate_gcc.cc',
+               './shared/libyuv/source/row_gcc.cc',
+               './shared/libyuv/source/scale_gcc.cc',
+               './shared/log/logging/logging.cc',
+               './shared/log/logging/log_file_stream/log_file_stream.h',
+               './shared/log/logging/log_file_stream/log_file_stream.cc',
+               './shared/log/logging/log_file_stream/ring_buffer_mapping_file/ring_buffer_mapping_file.h',
+               './shared/log/logging/log_file_stream/ring_buffer_mapping_file/ring_buffer_mapping_file_posix.cc',
+               './shared/log/base/string_utils.h',
+               './shared/log/base/string_utils.cc',
+               './shared/log/base/file_utils.cc',
+               './shared/log/base/file_utils.h',
+               './shared/log/base/synchronization/rw_lock_wrapper.h',
+               './shared/log/base/synchronization/rw_lock_wrapper.cc',
+               './shared/log/base/synchronization/rw_lock_posix.h',
+               './shared/log/base/synchronization/rw_lock_posix.cc',
+               './shared/log/base/file/platform_file.h',
+               './shared/log/base/file/platform_file.cc',
+               './shared/log/base/file/file.h',
+               './shared/log/base/file/file.cc',
+               './shared/log/base/file/file_posix.cc',
+               './shared/util/logger.h',
+               './shared/util/logger.cpp'
+             ],
             'xcode_settings': {
               'ARCHS': [ 'x86_64', 'arm64' ],
               'MACOSX_DEPLOYMENT_TARGET': '10.15',
@@ -300,8 +313,117 @@
                ]
             }
           }
+        ],
+        [
+          'OS=="linux"',
+          {
+            'defines': [
+              'LINUX',
+              '_GNU_SOURCE',
+              '_REENTRANT'
+            ],
+            'link_settings': {
+              'libraries': [
+                '-lnertc_sdk',
+                '-lpthread',
+                '-ldl',
+                '-lrt',
+                '-lm'
+              ]
+            },
+            'ldflags': [
+              '-Wl,-rpath,$ORIGIN',
+              '-Wl,-rpath,$ORIGIN/../'
+            ],
+            'sources': [
+              './shared/libyuv/source/compare_gcc.cc',
+              './shared/libyuv/source/rotate_gcc.cc',
+              './shared/libyuv/source/row_gcc.cc',
+              './shared/libyuv/source/scale_gcc.cc',
+              './shared/log/logging/logging.h',
+              './shared/log/logging/logging_linux.cc',
+              './shared/util/logger.h',
+              './shared/util/logger.cpp'
+            ],
+            'cflags': [
+              '-fPIC',
+              '-fvisibility=hidden',
+              '-Wall',
+              '-Wextra'
+            ],
+            'cflags_cc': [
+              '-fPIC',
+              '-fvisibility=hidden',
+              '-Wall',
+              '-Wextra'
+            ],
+            'cflags!': [
+              '-std=gnu++20'
+            ],
+            'cflags_cc!': [
+              '-std=gnu++20'
+            ],
+            'make_global_settings': [
+              ['CXX', 'g++'],
+              ['CC', 'gcc']
+            ],
+            'conditions': [
+              [
+                'target_arch=="x64"',
+                {
+                  'copies': [
+                    {
+                      'destination': '<(PRODUCT_DIR)',
+                      'files': [
+                        './nertc_sdk/nertc_linux_v5.7.4/x86_64/lib/libnertc_sdk.so',
+                        './nertc_sdk/nertc_linux_v5.7.4/x86_64/lib/libNERtcPersonSegment.so',
+                        './nertc_sdk/nertc_linux_v5.7.4/x86_64/lib/libNERtcSuperResolution.so',
+                        './nertc_sdk/nertc_linux_v5.7.4/x86_64/lib/libNERtcAiDenoise.so'
+                      ]
+                    }
+                  ],
+                  'include_dirs': [
+                    './nertc_sdk/nertc_linux_v5.7.4/x86_64/include'
+                  ],
+                  'library_dirs': [
+                    './nertc_sdk/nertc_linux_v5.7.4/x86_64/lib',
+                    '<(PRODUCT_DIR)'
+                  ]
+                }
+              ],
+              [
+                'target_arch=="arm64"',
+                {
+                  'copies': [
+                    {
+                      'destination': '<(PRODUCT_DIR)/linux/lib',
+                      'files': [
+                        './nertc_sdk/nertc_linux_v5.7.4/arm64/lib/libnertc_sdk.so',
+                        './nertc_sdk/nertc_linux_v5.7.4/arm64/lib/libNERtcPersonSegment.so',
+                        './nertc_sdk/nertc_linux_v5.7.4/arm64/lib/libNERtcSuperResolution.so',
+                        './nertc_sdk/nertc_linux_v5.7.4/arm64/lib/libNERtcAiDenoise.so'
+                      ]
+                    },
+                    {
+                      'destination': '<(PRODUCT_DIR)/linux/include',
+                      'files': [
+                        './nertc_sdk/nertc_linux_v5.7.4/arm64/include/*'
+                      ]
+                    }
+                  ],
+                  'include_dirs': [
+                    './nertc_sdk/nertc_linux_v5.7.4/arm64/include'
+                  ],
+                  'library_dirs': [
+                    './nertc_sdk/nertc_linux_v5.7.4/arm64/lib',
+                    '<(PRODUCT_DIR)/linux/lib'
+                  ]
+                }
+              ]
+            ]
+          }
         ]
-      ],
+      ]
     }
   ]
 }
