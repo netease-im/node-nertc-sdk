@@ -1,6 +1,6 @@
 {
   "name": "nertc-electron-sdk",
-  "version": "5.7.4-rc-1000",
+  "version": "5.7.4",
   "description": "nertc-electron-sdk",
   "main": "js/nertc_sdk.js",
   "types": "types/nertc_sdk.d.ts",
@@ -48,9 +48,13 @@
     "clean": "node ./pre-build.js clean",
     "install:ia32": "node ./pre-build.js install -a ia32",
     "install:x64": "node ./pre-build.js install -a x64",
+    "install:linux:x64": "node ./pre-build.js install -a x64 --fall-back-to-build",
+    "install:linux:arm64": "node ./pre-build.js install -a arm64 --fall-back-to-build",
     "build:win32:x64": "node ./pre-build.js build -a x64 -p",
     "build:win32:ia32": "node ./pre-build.js build -a ia32 -p",
     "build:darwin:universal": "node ./pre-build.js build -a universal -p",
+    "build:linux:x64": "node ./pre-build.js build -a x64 -p",
+    "build:linux:arm64": "node ./pre-build.js build -a arm64 -p",
     "build:api": "rimraf ./out && jsdoc -c ./scripts/conf.json -t ./node_modules/ink-docstrap/template --readme ./README.md"
   },
   "node_pre_build": {
