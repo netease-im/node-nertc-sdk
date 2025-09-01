@@ -29,7 +29,10 @@ fi
 
 if [ ! -d node_modules ]; then
     echo "📥 安装依赖: npm ci"
-    npm ci --no-audit --no-fund
+    if ! npm ci --no-audit --no-fund; then
+        echo "⚠️ npm ci 失败，尝试 npm install 同步 lockfile"
+        npm install --no-audit --no-fund
+    fi
 fi
 
 echo "🧹 清理旧构建"
