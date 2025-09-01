@@ -332,8 +332,8 @@
               ]
             },
             'ldflags': [
-              '-Wl,-rpath,$ORIGIN',
-              '-Wl,-rpath,$ORIGIN/../'
+              '-Wl,-rpath,$$ORIGIN',
+              '-Wl,-rpath,$$ORIGIN/../'
             ],
             'sources': [
               './shared/libyuv/source/compare_gcc.cc',
