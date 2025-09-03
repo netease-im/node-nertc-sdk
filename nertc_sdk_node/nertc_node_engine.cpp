@@ -2438,11 +2438,11 @@ NIM_SDK_NODE_API_DEF(startScreenCaptureByWindowId)
             }
         }
         param.excluded_window_list = (nertc::source_id_t*)wnd_list;
-#ifdef WIN32
+// #ifdef WIN32
         ret = rtc_engine_->startScreenCaptureByWindowId(reinterpret_cast<void *>(windowid), region_rect, param);
-#else
-        ret = rtc_engine_->startScreenCaptureByWindowId(reinterpret_cast<void *>(&windowid), region_rect, param);
-#endif
+// #else
+        // ret = rtc_engine_->startScreenCaptureByWindowId(reinterpret_cast<void *>(&windowid), region_rect, param);
+// #endif
         if (param.excluded_window_list != nullptr)
         {
             delete[] param.excluded_window_list;

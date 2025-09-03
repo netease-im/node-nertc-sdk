@@ -1,6 +1,6 @@
 {
   "name": "nertc-electron-sdk",
-  "version": "5.7.4-rc-1000",
+  "version": "5.7.4-rc-1001",
   "description": "nertc-electron-sdk",
   "main": "js/nertc_sdk.js",
   "types": "types/nertc_sdk.d.ts",
@@ -10,20 +10,20 @@
   },
   "dependencies": {
     "bindings": "^1.5.0",
-    "node-addon-api": "^4.2.0",
-    "yuv-buffer": "^1.0.0",
-    "yuv-canvas": "^1.2.6",
-    "lodash.isequal": "^4.5.0",
-    "node-gyp": "^9.1.0",
     "commander": "^8.2.0",
     "download": "^8.0.0",
     "fs-extra": "^10.0.0",
     "git-last-commit": "^1.0.1",
     "glob": "^7.2.0",
+    "lodash.isequal": "^4.5.0",
     "node_modules-path": "^2.0.5",
+    "node-addon-api": "^4.2.0",
     "node-fetch": "^2.6.5",
+    "node-gyp": "^9.1.0",
     "path": "^0.12.7",
-    "shelljs": "^0.8.4"
+    "shelljs": "^0.8.4",
+    "yuv-buffer": "^1.0.0",
+    "yuv-canvas": "^1.2.6"
   },
   "devDependencies": {
     "@types/node": "^12.12.22",
