@@ -101,6 +101,16 @@ function build(arch) {
     } else if (arch === 'ia32' || arch === 'x86') {
       target_arch = 'ia32';
     }
+
+    // 若为 arm64，设置交叉编译工具链（需要系统已安装 aarch64-linux-gnu-*）
+    if (target_arch === 'arm64') {
+      process.env.CC = process.env.CC || 'aarch64-linux-gnu-gcc';
+      process.env.CXX = process.env.CXX || 'aarch64-linux-gnu-g++';
+      process.env.AR = process.env.AR || 'aarch64-linux-gnu-ar';
+      process.env.LD = process.env.LD || 'aarch64-linux-gnu-g++';
+      process.env.LINK = process.env.LINK || 'aarch64-linux-gnu-g++';
+      console.log(`[node_pre_build] arm64 cross toolchain: CC=${process.env.CC}, CXX=${process.env.CXX}, LD=${process.env.LD}`);
+    }
     
     console.log(`[node_pre_build] Linux build: mapped arch ${arch} to ${target_arch}`);
     
@@ -109,10 +119,8 @@ function build(arch) {
     
     // Linux 平台特定的编译选项
     if (target_arch === 'arm64') {
-      // ARM64 架构可能需要特殊的编译标志
       command.push('-- -DCMAKE_CXX_FLAGS="-march=armv8-a"');
     } else if (target_arch === 'x64') {
-      // x64 架构的优化标志
       command.push('-- -DCMAKE_CXX_FLAGS="-march=x86-64 -mtune=generic"');
     }
     

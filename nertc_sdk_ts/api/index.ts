@@ -70,6 +70,8 @@ import {
 import { EventEmitter } from 'events'
 import process from 'process';
 // const nertc = require('bindings')('nertc-electron-sdk');
+
+ // 直接加载标准路径的 native addon
 const nertc = require('../../build/Release/nertc-electron-sdk.node');
 const NERtcChannel = require('./channel').default;
 

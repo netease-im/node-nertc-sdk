@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const renderer_1 = require("../renderer");
 const defs_1 = require("./defs");
 const events_1 = require("events");
-// const nertc = require('bindings')('nertc-electron-sdk');
+// 直接加载标准路径的 native addon
 const nertc = require('../../build/Release/nertc-electron-sdk.node');
 const NERtcChannel = require('./channel').default;
 /**

@@ -55,7 +55,12 @@
     "build:darwin:universal": "node ./pre-build.js build -a universal -p",
     "build:linux:x64": "node ./pre-build.js build -a x64 -p",
     "build:linux:arm64": "node ./pre-build.js build -a arm64 -p",
-    "build:api": "rimraf ./out && jsdoc -c ./scripts/conf.json -t ./node_modules/ink-docstrap/template --readme ./README.md"
+    "build:api": "rimraf ./out && jsdoc -c ./scripts/conf.json -t ./node_modules/ink-docstrap/template --readme ./README.md",
+    "integrate": "node ./scripts/integrate.js",
+    "test:integration": "node ./scripts/integrate.js",
+    "package:all": "node ./scripts/package_release.js --all",
+    "package:x64": "node ./scripts/package_release.js --x64",
+    "package:arm64": "node ./scripts/package_release.js --arm64"
   },
   "node_pre_build": {
     "sdk-dir": "nertc_sdk",

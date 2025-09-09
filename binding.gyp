@@ -417,6 +417,12 @@
                   'library_dirs': [
                     './nertc_sdk/nertc_linux_v5.7.4/arm64/lib',
                     '<(PRODUCT_DIR)/linux/lib'
+                  ],
+                  'make_global_settings': [
+                    ['CXX', 'aarch64-linux-gnu-g++'],
+                    ['CC', 'aarch64-linux-gnu-gcc'],
+                    ['AR', 'aarch64-linux-gnu-ar'],
+                    ['LD', 'aarch64-linux-gnu-ld']
                   ]
                 }
               ]
