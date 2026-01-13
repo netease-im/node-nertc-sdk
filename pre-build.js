@@ -193,15 +193,24 @@ function install(options) {
     }
   }
   console.log(`install optins arch:${arch}`)
-  // fetch publish list··
-  fetch('https://admin.netease.im/public-service/free/publish/list').then((res) => {return res.json()}).then((json) => {
-    let res_data = json.data;
-    return downloadSDK(name_sdk, arch, res_data).then(() => {
+  // fetch publish list
+  fetch('https://admin.netease.im/public-service/free/publish/list?application=NERtcSDK_Special_Test')
+    .then((res) => res.json())
+    .then((json) => {
+      let res_data = json.data;
+      return downloadSDK(name_sdk, arch, res_data);
+    })
+    .then(() => {
+      return fetch('https://admin.netease.im/public-service/free/publish/list?application=electron');
+    })
+    .then((res) => res.json())
+    .then((json) => {
+      let res_data = json.data;
       return downloadAddon(name_addon, arch, options.fallBackToBuild, res_data);
+    })
+    .catch((err) => {
+      console.error(err);
     });
-  }).catch((err) => {
-    console.error(err);
-  });
 }
 
 // command-line options
